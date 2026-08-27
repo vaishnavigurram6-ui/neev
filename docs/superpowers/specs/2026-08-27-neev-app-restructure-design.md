@@ -277,6 +277,30 @@ Money is stored pre-formatted in the prototypes (`"₹32,00,000"`,
 `"12 cum × ₹9,800 = ₹1,17,600"`). Never persist display strings — store numbers,
 render through one `formatINR()` helper with full Indian grouping.
 
+### 6.1a Fidelity: directional reference, not a pixel contract
+
+The `.dc.html` files are **partial mockup fragments generated in Claude Design** —
+selected pieces of a larger intended product, not a finished or exhaustive
+specification. The handoff README's instruction to "recreate pixel-perfectly" is
+therefore read as *honor the visual language*, not *reproduce each file byte for
+byte*. This is the correct reading of the evidence: the files disagree with each
+other in ways only fragments do — three different logo treatments, a nav item
+present on one bank screen and deleted from two others, a designed officer tab
+with no copy behind it, dead `href="#"` links, and pre-formatted display strings
+standing in for computed values.
+
+Consequences for the build:
+
+- **The component kit is the source of truth, not any individual file.** Where
+  screens disagree, the kit wins and the odd screen is brought into line — never
+  the reverse, and never by forking a component.
+- **Gaps are filled by extending existing patterns**, not by inventing new ones.
+  Screens the mockups never covered (empty states, error states, the officer
+  rationale panel, mobile layouts) are composed from the same primitives so they
+  look native to the system rather than bolted on.
+- **Consistency outranks fidelity to any single mockup.** If matching one file
+  exactly would make it inconsistent with the other fourteen, match the fourteen.
+
 ### 6.2 Shared components (built in wave 0, before any screen)
 
 `TopBar` (owner/bank/pre-auth skins), `NavTabs`, `ProfileChip`,
@@ -287,6 +311,29 @@ render through one `formatINR()` helper with full Indian grouping.
 The top bar markup is byte-identical across ten files — it was copy-pasted, so
 one component with a `role` prop replaces all of it. `StatusPill` is the most
 repeated atom in the bundle (10+ files, six different vocabularies).
+
+**Reuse is enforced, not encouraged.** The mockups hardcode hex hundreds of times
+across fifteen files; if that survives the port, retoning becomes impossible and
+the screens drift apart. So:
+
+- **No inline hex in any screen.** Colors come only from theme tokens. A lint
+  rule fails the build on a raw `#rrggbb` outside the theme file.
+- **No bespoke per-screen components.** A screen may compose and lay out kit
+  components; it may not define its own pill, card, table, or bar. Needing a new
+  variant means extending the kit with a prop, in the kit's own file, so every
+  other screen inherits it.
+- **One vocabulary per concept.** `tone` is the only status dimension
+  (`danger | warn | success | neutral`), used identically by flags, tranche
+  status, question status, bank actions, contractor tiers, and confidence. Six
+  different vocabularies in the mockups collapse into this one.
+- **One formatter.** Every rupee figure renders through `formatINR()`; no screen
+  stores or emits a pre-formatted money string.
+- **Two skins, one system.** Owner (warm neutral, 20–24px radii) and bank (dark
+  `#111827` chrome, 10px radii) are props on the same components, never parallel
+  component trees. This is what keeps the two consoles recognizably one product.
+
+Screens are reviewed for kit compliance in wave 3: any screen importing something
+the kit should own is a defect, including the scaffolded ones.
 
 ### 6.3 Theme
 
@@ -325,20 +372,163 @@ artboard rather than a screen — extract SVG paths from it, never port it.
 
 ---
 
-## 7. Open design questions to resolve in wave 0
+### 6.6 Routing
 
-1. **Logo is inconsistent across three sources.** The Logo Explorations file
-   marks turn 5a canonical (brick square + house + door + plinth bar); the 15
-   screens use a simpler glyph (house path only); the bank screens use an
-   entirely different white square with a `न` character. Pick one before
-   building `<Logo>`.
+The prototypes navigate by relative `.dc.html` links. Those become real routes —
+never client-side-only state — so every screen is deep-linkable, shareable,
+bookmarkable, and works with browser back/forward.
+
+| Prototype file | Route |
+|---|---|
+| Neev Landing | `/` |
+| Neev Login | `/login` |
+| Neev 0 Owner Onboarding | `/owner/onboarding` |
+| Neev 0b Analyzing | `/owner/loans/[loanId]/analyzing` |
+| Neev 1 BoQ Review | `/owner/loans/[loanId]/boq` |
+| Neev 1a Upload Revision | `/owner/loans/[loanId]/boq/revise` |
+| Neev 1b Revised Contract | `/owner/loans/[loanId]/boq/rev/[rev]` |
+| Neev 2 Sanction Check | `/owner/loans/[loanId]/sanction` |
+| Neev 3 Build Progress | `/owner/loans/[loanId]/progress` |
+| Neev 3b Update Progress | `/owner/loans/[loanId]/progress/report` |
+| Neev 6 Change Orders | `/owner/loans/[loanId]/changes` |
+| Neev 4 Portfolio Hotlist | `/bank/portfolio` |
+| Neev 3 Tranche Decision | `/bank/loans/[loanId]/tranches/[n]` |
+| Neev 5 Contractor Scorecard | `/bank/contractors` |
+| Neev 7 Bank Onboarding | `/bank/setup` |
+
+Rules that fall out of this:
+
+- **Revisions are routes, not state.** The designs already treat them that way —
+  Revised Contract's "Rev 1" toggle is an `<a href>` back to BoQ Review, so
+  `/boq/rev/1` and `/boq/rev/2` are distinct URLs. `/boq` resolves to the latest.
+- **Route groups carry the chrome.** `(marketing)`, `(owner)`, and `(bank)` each
+  own a `layout.tsx` supplying the right top bar, nav, and profile chip, so no
+  screen re-implements it. This is what makes the bank's dark `#111827` console
+  chrome automatic.
+- **Filters and tabs belong in the URL.** BoQ Review's Flagged/All toggle,
+  Portfolio's All/Needs-action/On-track filter, and Tranche Decision's
+  owner/officer tabs become search params (`?view=flagged`) so a shared link
+  reproduces what the sender saw — which matters when a credit officer sends a
+  loan to a colleague.
+- **Every dynamic route needs `loading.tsx`, `error.tsx`, and `not-found.tsx`.**
+  An unknown `loanId` must render a real 404, not a crash or an empty shell.
+- **Role enforcement lives in middleware**, redirecting to `/login` with a
+  `?next=` param. Owner routes reject bank sessions and vice versa. The mock
+  session still exercises this boundary so real auth is a drop-in.
+- Fix the two link defects the prototypes carry: Onboarding's "see a sample
+  report" points at `href="#"`, and only loan 1001 has a real drill-in href on
+  the Portfolio table — every row must link to its own tranche page.
+
+### 6.7 Web fundamentals — non-negotiable in the port
+
+The prototypes are canvas mockups, not web pages: **there is not a single
+`<button>`, `<input>`, or `<form>` in the entire bundle.** Every control is a
+styled `<div>`, the phone field is a div containing placeholder text, and the
+voice-note textarea is a div. Ported literally, nothing would be keyboard
+reachable, screen readers would announce nothing, and no form would submit. The
+port restores real semantics.
+
+**Semantics.** Actions are `<button>`; navigation is `<a>`; the BoQ, portfolio,
+scorecard and math grids are `<table>` (CSS grid for layout, table semantics for
+meaning) so row and column relationships survive; one `<main>`, `<nav>`,
+`<header>` per page; headings nest correctly with exactly one `<h1>`.
+
+**Accessibility (WCAG 2.1 AA).** This product is aimed at first-time home
+builders who "don't speak builder" — accessibility is core to the premise, not a
+checkbox. Every interactive element is keyboard reachable in logical order with a
+visible focus ring. Segmented toggles use `role="tablist"`/`aria-selected` and
+respond to arrow keys. Status is never conveyed by color alone: every pill keeps
+its text label, so "Rate +22%" reads correctly to someone who cannot distinguish
+the red tint. Photo slots get real labels and upload status is announced via a
+live region.
+
+Three handoff tokens were measured against AA and **fail as specified**:
+
+| Token | On | Ratio | Verdict |
+|---|---|---|---|
+| `faint #9b938a` | `bg #faf9f7` | 2.88:1 | Fails at any size |
+| `brick #b4552e` | tint `#f9ece5` | 4.24:1 | Fails at the 11px pill size |
+| `sand #8a6d4f` | tint `#f4efe6` | 4.19:1 | Fails at the 11px pill size |
+
+The brick and sand pairs are the flag pills — the most repeated element in the
+bundle (10+ files, six vocabularies) — and the designs set them at 11px, which is
+normal text needing 4.5:1, not large text needing 3:1. Wave 0 darkens these three
+tokens just enough to clear AA and re-measures, keeping the palette's character.
+Everything else measured clean: `sub` 5.38:1, `action` 5.12:1, `green` 6.00:1,
+`ink` 14.22:1, and the bank bar's inactive grey 6.99:1. The design's own `role="button"`
+`aria-label` usage is inconsistent across files; normalize it rather than copying
+it verbatim.
+
+The accessibility cluster the designs place on every owner screen is **specified
+as functional, not decorative** (handoff README: "mocked in prototype, must be
+functional in build"). In this build: the theme toggle works app-wide, and the
+language switcher and listen-aloud control render with correct semantics and
+disabled state, since translation and TTS are out of scope. A disabled control
+that announces why beats a dead control that lies.
+
+**Responsive.** Every artboard is a fixed 1440px canvas (`$preview.width: 1440`),
+so the designs specify desktop only. Layouts must still reflow: the two-column
+`1fr 340px` shells collapse to a single column, the sticky rail moves below the
+content, and wide tables scroll inside their own container so the page body never
+scrolls horizontally. Fluid type and relative units throughout.
+
+**Performance.** Fonts via `next/font` with `display: swap` and preconnect, so
+Baloo 2 and JetBrains Mono do not block first paint. Server Components by default
+— only genuinely interactive screens (Analyzing's stream, BoQ Review's filter,
+Change Orders' mutations) opt into the client. Site photos go through
+`next/image` with explicit dimensions to prevent layout shift, and are downscaled
+client-side before upload. Route-level code splitting is automatic; keep it that
+way by not barrel-importing the component kit.
+
+**Metadata.** Per-route `title` and `description`; Open Graph on the landing page
+only. Owner and bank routes are `noindex` — they render private loan data.
+
+**States.** Every data-driven screen implements four states, not one: loading
+(skeletons matching final layout, so nothing jumps), empty, error with a retry
+affordance, and populated. The prototypes only ever show the populated state,
+which is the single easiest thing to forget when porting from a mockup.
+
+**Forms.** Real `<form>` elements with controlled inputs, inline validation tied
+to fields via `aria-describedby`, disabled-and-labelled submit while pending, and
+no double-submit. This covers Login's phone/OTP, Onboarding's three-step wizard,
+Update Progress's milestone-plus-photos submission, and Bank Onboarding's
+threshold settings.
+
+**Theme.** Only the Landing prototype implements dark mode. Its
+`body` / `body.dark` custom-property block is lifted into the app-wide theme so
+every screen honors the toggle and `prefers-color-scheme`, with the choice
+persisted.
+
+---
+
+## 7. Gaps the mockups leave open — decided in wave 0
+
+These are fragment artifacts rather than genuine ambiguities. Each is decided
+once, recorded here, and applied everywhere by the component kit.
+
+1. **Logo appears in three treatments.** The explorations file marks turn 5a
+   canonical (brick square + house + door + plinth bar); the fifteen screens use a
+   simpler house-only glyph; the bank screens use a white square with a `न`
+   character. *Decision: adopt the simple house glyph as `<Logo>` for both roles,
+   recolored per skin — it is what fourteen screens already show, and one mark
+   across both consoles is what makes them read as one product. The 5a
+   door-and-plinth variant is kept for brand/marketing use only.*
 2. **Credit-officer rationale copy does not exist.** Tranche Decision designs the
-   owner/officer tab pair but only the owner panel has content. The officer text
-   must be written — the `explainer` agent's `officer_view` supplies the numbers.
+   owner/officer tab pair but only the owner panel has content. *Decision: write
+   it in the bank voice — compact and factual — sourced from the `explainer`
+   agent's `officer_view`, citing exposure, verified value, and the evidence list.*
 3. **Bank nav is inconsistent.** "Setup" appears only on Bank Onboarding; the
-   other two bank screens have blank lines where it was deleted. Decide whether
-   Setup is a nav item.
-4. **Dead link** on Onboarding: "see a sample report" points at `href="#"`.
+   other two bank screens carry blank lines where it was removed. *Decision:
+   Setup stays in the nav on all bank routes — it owns the thresholds that drive
+   every recommendation, so it must remain reachable.*
+4. **Dead and partial links.** Onboarding's "see a sample report" points at
+   `href="#"`, and only loan 1001 has a real drill-in on the Portfolio table.
+   *Decision: point the sample link at the golden case's BoQ Review, and generate
+   every portfolio row's href from its own loan id.*
+5. **Mobile is undesigned.** Every artboard is a fixed 1440px canvas. *Decision:
+   the kit is responsive from the start (§6.7) and the demo is presented at
+   desktop width. A mobile-first pass for owners — who in reality would use
+   phones — is deferred, and flagged as the largest known design debt.*
 
 ---
 
