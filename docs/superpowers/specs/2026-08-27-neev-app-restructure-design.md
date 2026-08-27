@@ -2,9 +2,11 @@
 
 *Date: 2026-08-27 · Status: awaiting review · Supersedes the UI portions of `docs/Neev_Implementation_Plan.md` §4*
 
-Turn the repo from a single ADK agent package into a four-package application:
-a dependency-free core, the AI pipeline, a FastAPI backend, and a Next.js
-frontend built from the screens in `design_handoff_neev/`.
+Turn the repo from a single ADK agent package into a three-package application:
+the AI pipeline, a FastAPI backend, and a Next.js frontend built from the screens
+in `design_handoff_neev/`. This phase builds the **web app from the mockups**;
+the pipeline is relocated intact and wired in later, through a seam specified
+here (§5.1a).
 
 ---
 
@@ -21,7 +23,7 @@ frontend built from the screens in `design_handoff_neev/`.
 | Timeline | **Hackathon demo soon** | Every demo path needs an offline fallback |
 | **Build scope** | **Web app from the mockups** | Product/number accuracy is a later phase (§4.4); UI ships the designs' figures verbatim |
 | **Google spend** | **Zero — dry run throughout** | No Gemini, no BigQuery calls during the entire build |
-| Python environments | **Per-package venvs** | `agents/.venv` and `backend/.venv` on Python 3.11; `neev_core` installed editable into both |
+| Python environments | **Per-package venvs** | `agents/.venv` and `backend/.venv`, both Python 3.11, both editable installs |
 
 **Non-negotiable:** `adk web` must keep working. The demo plan states the agent
 trace *"is the proof of a real multi-agent pipeline, worth more to an ADK panel
@@ -78,7 +80,6 @@ Frontend uses plain `npm` with a committed `package-lock.json`.
 
 ```
 neev/
-├── core/                            # `neev_core` — LATER PHASE, not created in this build
 ├── agents/                          # AI pipeline — RELOCATED AS-IS, unrefactored
 │   ├── neev_pipeline/               # was buildguard/ — contents unchanged
 │   │   ├── __init__.py              # `from . import agent` — ADK discovery contract
@@ -103,8 +104,14 @@ neev/
 │   ├── app/(bank)/                  # portfolio, tranche, contractors, setup
 │   ├── components/{ui,owner,bank}/
 │   └── lib/{api.ts,format.ts,types.ts}
+├── tests/test_offline.py            # stays at repo root this phase (see §4.1)
 ├── fixtures/  design_handoff_neev/  docs/  scripts/
 ```
+
+`core/` — the dependency-free `neev_core` package — is **not created in this
+build**. It is the planned home for the risk math when the pipeline is wired in;
+§3's rationale for why it must be a sibling package rather than
+`neev_pipeline/core/` is recorded below so that decision is not relitigated.
 
 **Dependency rule, strictly one-directional:**
 
@@ -145,24 +152,24 @@ rename the data layer and break BigQuery. Only the Python package is renamed.
 
 ### 4.1 The move
 
-`buildguard/` → `agents/neev_pipeline/`, with the pure modules lifted out to
-`core/neev_core/`. The package is internally relative-import clean, so the
-`buildguard.`-prefixed breakage is **6 absolute-import lines across 2 files**:
-five in `tests/test_offline.py` (lines 71, 72, 73, 202, 211) and one in
-`scripts/golden_run.py` (line 31).
+`buildguard/` → `agents/neev_pipeline/`, contents unchanged. The package is
+internally relative-import clean, so the breakage is **6 absolute-import lines
+across 2 files**: five in `tests/test_offline.py` (lines 71, 72, 73, 202, 211)
+and one in `scripts/golden_run.py` (line 31). Each becomes `neev_pipeline.…`,
+resolved by `pip install -e agents`.
 
-A **seventh** import breaks without naming `buildguard` at all:
-`tests/test_offline.py:293` does `from scripts.boq_data import …`, which works
-today only because the suite runs from the repo root. Once tests move under
-`agents/`, it fails and takes all seven `TestFixtureBoQs` tests with it — and an
-editable install of `neev_pipeline` does not fix it, because `scripts/` is not
-part of that package. This is why `boq_data.py` moves into `neev_core`.
+**`tests/` and `scripts/` stay at the repo root this phase.** That is deliberate,
+and it sidesteps a trap: `test_offline.py:293` does `from scripts.boq_data import
+…`, which resolves only because the suite runs from the repo root. Moving tests
+under `agents/` would break it — taking all seven `TestFixtureBoQs` tests with it
+— and an editable install of `neev_pipeline` would *not* fix it, because
+`scripts/` is not part of that package. Leaving both at the root keeps all 28
+tests passing with no path surgery. They relocate later, alongside the
+`boq_data.py` → `neev_core` move.
 
-Path-relative references to `../fixtures/` and `../scripts/`
-(`test_offline.py:221, 223, 288`, `golden_run.py:33`) also shift and must be
-repointed at the repo root. Note the existing suite has no `sys.path` hack — it
-manipulates `sys.modules` to stub the Google libraries; only `golden_run.py:30`
-touches `sys.path`, and the editable installs remove the need for it.
+The suite has no `sys.path` hack, contrary to a common assumption — it
+manipulates `sys.modules` to stub the Google libraries. Only `golden_run.py:30`
+touches `sys.path`, and the editable install removes the need for it.
 
 `adk web` then runs from `agents/`, discovering `neev_pipeline.agent.root_agent`.
 `__init__.py` must keep `from . import agent` or discovery breaks.
@@ -835,7 +842,7 @@ owns disjoint files.
 
 | Wave | Tasks | Agents | Parallel |
 |---|---|---|---|
-| **0** | Toolchain install · 4-package split with `pyproject.toml`s · package move + 7 import fixes · `boq_data`→`neev_core` · lazy genai client · **golden-number reconciliation (§4.4)** · AA token fixes · Pydantic schemas → TS types · Tailwind theme + shared component kit | — | No (sequential, foundational) |
+| **0** | Toolchain install · `buildguard`→`agents/neev_pipeline` + 6 import fixes + `pyproject.toml`s · **pipeline-shaped Pydantic schemas → TS types (§5.1a)** · `PipelineRunner` protocol + factory · AA token fixes · Tailwind theme + shared component kit | — | No (sequential, foundational) |
 | **1** | (a) DB models + seed · (b) pipeline runner + authored fixture + SSE · (c) frontend shell, routing, API client | 3 | Yes |
 | **2** | (a) Landing+Login · (b) Onboarding+Analyzing · (c) BoQ Review · (d) Sanction Check · (e) Portfolio+Tranche · (f) 7 scaffold screens · (g) backend routes | 7 | Yes |
 | **3** | Integration + golden-path E2E · offline test suite green · demo runbook + README rewrite | 2 | Yes |
@@ -848,13 +855,13 @@ and carries the most demo weight — it gets a dedicated agent and the largest b
 
 No wave is complete on "code written". Each ends with commands that ran:
 
-- Wave 0: all 28 existing tests pass after the split (7 of them, `TestFixtureBoQs`,
-  depend on the `boq_data` → `neev_core` move) · `npm run build` → clean ·
-  `pip install -e` succeeds for all three Python packages
+- Wave 0: all 28 existing tests pass unchanged after the move · `npm run build`
+  → clean · `pip install -e` succeeds for both Python packages
 - Wave 1: backend boots, `/api/portfolio` returns 10 loans, SSE stream observed
 - Wave 2: every route renders; typecheck and build clean
 - Wave 3: golden path passes end-to-end in **fixture mode with no credentials
-  and no network**
+  and no network** · the §5.1a contract test proves every fixture validates
+  against the schemas the live pipeline must emit
 
 Every gate runs in fixture mode. Live mode is never invoked in any wave — it
 ships code-complete and unexercised, to be validated by the user in Cloud Shell
