@@ -296,8 +296,8 @@ Consequences for the build:
   the reverse, and never by forking a component.
 - **Gaps are filled by extending existing patterns**, not by inventing new ones.
   Screens the mockups never covered (empty states, error states, the officer
-  rationale panel, mobile layouts) are composed from the same primitives so they
-  look native to the system rather than bolted on.
+  rationale panel) are composed from the same primitives so they look native to
+  the system rather than bolted on.
 - **Consistency outranks fidelity to any single mockup.** If matching one file
   exactly would make it inconsistent with the other fourteen, match the fourteen.
 
@@ -466,11 +466,24 @@ language switcher and listen-aloud control render with correct semantics and
 disabled state, since translation and TTS are out of scope. A disabled control
 that announces why beats a dead control that lies.
 
-**Responsive.** Every artboard is a fixed 1440px canvas (`$preview.width: 1440`),
-so the designs specify desktop only. Layouts must still reflow: the two-column
-`1fr 340px` shells collapse to a single column, the sticky rail moves below the
-content, and wide tables scroll inside their own container so the page body never
-scrolls horizontally. Fluid type and relative units throughout.
+**Viewport: laptop only.** Users work on laptops, so v1 targets laptop widths and
+builds no phone layouts. The designs agree — every artboard is a fixed 1440px
+canvas (`$preview.width: 1440`).
+
+- **Supported range: 1280–1920px**, verified at 1280, 1440, and 1920. 1440 is the
+  design width and the demo width.
+- Content sits in a centered `max-width` (920–1280px per the handoff) so 1920
+  screens do not stretch text to unreadable line lengths.
+- The two-column `1fr 340px` shells stay two-column throughout the range; the
+  sticky rail stays a rail. No collapse behavior is built.
+- **Below 1280 the layout degrades gracefully but is not a target**: wide tables
+  scroll inside their own `overflow-x` container so the page body never scrolls
+  horizontally, and nothing is clipped or overlapped. This costs almost nothing
+  and prevents an embarrassing break if a demo machine runs 1024 or a projector
+  forces a smaller effective width.
+
+No mobile breakpoints, no touch affordances, no hamburger nav in v1. Phone
+support is a later phase (§7.5).
 
 **Performance.** Fonts via `next/font` with `display: swap` and preconnect, so
 Baloo 2 and JetBrains Mono do not block first paint. Server Components by default
@@ -525,10 +538,13 @@ once, recorded here, and applied everywhere by the component kit.
    `href="#"`, and only loan 1001 has a real drill-in on the Portfolio table.
    *Decision: point the sample link at the golden case's BoQ Review, and generate
    every portfolio row's href from its own loan id.*
-5. **Mobile is undesigned.** Every artboard is a fixed 1440px canvas. *Decision:
-   the kit is responsive from the start (§6.7) and the demo is presented at
-   desktop width. A mobile-first pass for owners — who in reality would use
-   phones — is deferred, and flagged as the largest known design debt.*
+5. **Mobile is undesigned** — every artboard is a fixed 1440px canvas.
+   *Decision (owner's call): laptop is the primary and only v1 target. Users work
+   on laptops, so no phone layouts are built. The supported range is 1280–1920px
+   with graceful degradation below it (§6.7). Phone support is a deliberate later
+   phase rather than debt — when it comes, the public Landing page is the natural
+   first candidate, and the kit's token-and-props structure means adding
+   breakpoints then does not require re-authoring screens.*
 
 ---
 
