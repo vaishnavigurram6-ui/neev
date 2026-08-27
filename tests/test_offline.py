@@ -16,7 +16,7 @@ import unittest
 # ---------------------------------------------------------------- stubs
 def _install_stubs():
     """Stub google.cloud.bigquery / google.genai / google.adk so the
-    buildguard package imports without the real dependencies or any creds.
+    neev_pipeline package imports without the real dependencies or any creds.
     The stubbed clients raise if actually used — these tests only touch
     pure-python code paths."""
 
@@ -68,9 +68,9 @@ def _install_stubs():
 
 _install_stubs()
 
-from buildguard import config  # noqa: E402
-from buildguard.tools.disbursal_risk_tool import assess_tranche  # noqa: E402
-from buildguard.tools.boq_analyst_tool import (  # noqa: E402
+from neev_pipeline import config  # noqa: E402
+from neev_pipeline.tools.disbursal_risk_tool import assess_tranche  # noqa: E402
+from neev_pipeline.tools.boq_analyst_tool import (  # noqa: E402
     check_rate_deviation,
     check_steel_rcc_ratio,
     check_missing_scope,
@@ -199,7 +199,7 @@ class TestBoqChecks(unittest.TestCase):
 
 class TestPipelineWiring(unittest.TestCase):
     def test_agent_module_imports_and_wires_five_agents(self):
-        from buildguard import agent
+        from neev_pipeline import agent
         names = [a.name for a in agent.root_agent.sub_agents]
         self.assertEqual(names, [
             "boq_analyst_agent", "cost_estimation_agent",
@@ -208,7 +208,7 @@ class TestPipelineWiring(unittest.TestCase):
         ])
 
     def test_every_agent_has_output_key(self):
-        from buildguard import agent
+        from neev_pipeline import agent
         for a in agent.root_agent.sub_agents:
             self.assertTrue(getattr(a, "output_key", None), f"{a.name} missing output_key")
 

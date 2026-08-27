@@ -27,8 +27,10 @@ import sys
 
 from google.genai import types
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from buildguard.agent import root_agent  # noqa: E402
+# No-op once `pip install -e agents` has been run; kept so the script also
+# works from a bare checkout.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agents"))
+from neev_pipeline.agent import root_agent  # noqa: E402
 
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fixtures")
 

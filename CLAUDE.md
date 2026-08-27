@@ -52,6 +52,10 @@ Frontend uses `npm`.
 
 ## Where things are
 
+- `agents/neev_pipeline/` — the ADK pipeline (was `buildguard/`). `adk web` runs
+  from `agents/` and discovers `neev_pipeline.agent.root_agent`. The GCP project
+  `buildguard-ai-2026` and BigQuery dataset `buildguard_data` keep those names —
+  only the Python package was renamed.
 - `docs/superpowers/specs/` — design specs; the current one is
   `2026-08-27-neev-app-restructure-design.md`
 - `design_handoff_neev/` — 16 hi-fi screen prototypes plus a build-notes README

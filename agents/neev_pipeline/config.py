@@ -1,4 +1,4 @@
-# buildguard/config.py
+# agents/neev_pipeline/config.py
 # Central configuration for the Neev (BuildGuard) pipeline.
 # Every constant that any agent's math depends on lives here — never in a prompt.
 

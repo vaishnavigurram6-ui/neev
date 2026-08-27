@@ -1,4 +1,4 @@
-# buildguard/tools/cost_estimation_tool.py
+# agents/neev_pipeline/tools/cost_estimation_tool.py
 # Fixed: project/table names from config (no YOUR_PROJECT_ID placeholder);
 # added completed-value estimate from metro_city_prices for live-LTV use.
 

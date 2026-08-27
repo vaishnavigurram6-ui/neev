@@ -1,4 +1,4 @@
-# buildguard/tools/boq_analyst_tool.py
+# agents/neev_pipeline/tools/boq_analyst_tool.py
 # Tools for the boq_analyst_agent. The agent (Gemini) READS the BoQ document
 # and extracts line items; these tools supply every FACT (benchmark rates,
 # ratios, thresholds). Grounding rule: no number in a flag may come from

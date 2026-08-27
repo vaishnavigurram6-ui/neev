@@ -1,4 +1,4 @@
-# buildguard/agent.py
+# agents/neev_pipeline/agent.py
 # Neev pipeline: SequentialAgent, five specialists, shared state via output_key.
 # NOTE: replaces the earlier Workflow(edges=...) form, which is not the ADK API.
 

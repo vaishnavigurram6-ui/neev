@@ -1,4 +1,4 @@
-# buildguard/tools/disbursal_risk_tool.py
+# agents/neev_pipeline/tools/disbursal_risk_tool.py
 # Pure arithmetic — no LLM inside the math, no nested dicts (flat scalar
 # params avoid the KeyError class of failures when the model builds the call).
 

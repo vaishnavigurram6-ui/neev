@@ -1,4 +1,4 @@
-# buildguard/tools/visual_inspector_tool.py
+# agents/neev_pipeline/tools/visual_inspector_tool.py
 # Fixed: (1) generate_content was called BEFORE the prompt was defined and then
 # again via an undefined `model` object — single correct call now; (2) model
 # name comes from config; (3) stage names aligned with MILESTONE_WEIGHTS so

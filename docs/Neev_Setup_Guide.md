@@ -48,7 +48,7 @@ cp .env.example .env    # then edit .env
 - `GOOGLE_CLOUD_PROJECT` — your GCP project id.
 
 All other knobs (dataset name, model, thresholds, milestone weights) live in
-`buildguard/config.py` with comments explaining each one. Default project id
+`agents/neev_pipeline/config.py` with comments explaining each one. Default project id
 is `buildguard-ai-2026`; the env var overrides it.
 
 ## 4. Load the data layer
@@ -89,13 +89,15 @@ cross-validation of both BoQ fixtures against the benchmark table.
 
 ## 6. Run it
 
-From the **parent** directory of the repo:
+From the repo's **`agents/`** directory (ADK discovers agent packages in the
+directory it is run from):
 
 ```bash
+cd agents
 adk web --allow_origins 'regex:https://.*\.cloudshell\.dev'
 ```
 
-Pick `buildguard` in the ADK UI, then run the golden case: upload
+Pick `neev_pipeline` in the ADK UI, then run the golden case: upload
 `fixtures/sample_boq.pdf`, say the location is "Kompally, Hyderabad",
 1800 sqft, sanctioned ₹28,00,000, ₹18,00,000 disbursed, claimed stage
 "slab", and attach 2–3 slab-stage photos.
@@ -159,8 +161,8 @@ photos of a slab-stage site, plus one deliberately blurry shot.
 
 ## Troubleshooting
 
-- **`buildguard` not listed in adk web** — run from the repo's *parent*
-  directory; `buildguard/__init__.py` must contain `from . import agent`.
+- **`neev_pipeline` not listed in adk web** — run from `agents/`;
+  `agents/neev_pipeline/__init__.py` must contain `from . import agent`.
 - **`403` / `Could not determine credentials`** — `gcloud auth
   application-default login`, and check `GOOGLE_CLOUD_PROJECT`.
 - **`Not found: Dataset ... buildguard_data`** — step 4 didn't run against

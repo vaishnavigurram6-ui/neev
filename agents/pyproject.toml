@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neev-pipeline"
+version = "0.1.0"
+description = "Neev's ADK agent pipeline: BoQ analysis, cost estimation, visual inspection, disbursal risk, explanation."
+requires-python = ">=3.10"
+dependencies = [
+    "google-adk>=1.0.0",
+    "google-genai>=1.0.0",
+    "google-cloud-bigquery>=3.20.0",
+]
+
+[project.optional-dependencies]
+# Only needed to regenerate the sample BoQ PDFs in fixtures/.
+fixtures = ["reportlab>=4.0"]
+
+[tool.setuptools]
+packages = ["neev_pipeline", "neev_pipeline.tools"]

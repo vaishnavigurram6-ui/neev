@@ -7,7 +7,7 @@
 -- computes expected cost from the BoQ + benchmarks per loan). Loans surfaced
 -- here get the full 5-agent run before any action.
 --
--- CASE weights are the CUMULATIVE milestone weights from buildguard/config.py
+-- CASE weights are the CUMULATIVE milestone weights from agents/neev_pipeline/config.py
 -- (MILESTONE_WEIGHTS); tests/test_offline.py asserts they stay in sync.
 --
 -- __PROJECT__ is substituted by scripts/load_bigquery.sh.

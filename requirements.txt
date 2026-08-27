@@ -1,8 +1,7 @@
-# Neev (BuildGuard) — runtime dependencies.
-# Target runtime: Cloud Shell, Python 3.10+ (google-adk requires >=3.10).
-google-adk>=1.0
-google-genai>=1.0
-google-cloud-bigquery>=3.20
-
-# Fixture regeneration only (scripts/make_sample_boq.py)
-reportlab>=4.0
+# Neev — the agent pipeline's dependencies now live in agents/pyproject.toml.
+# This file is kept so `pip install -r requirements.txt` still works from the
+# repo root; it performs an editable install of the agents package.
+#
+# The backend has its own, disjoint dependency set in backend/pyproject.toml —
+# it deliberately does NOT carry google-adk.
+-e ./agents
