@@ -19,6 +19,7 @@ frontend built from the screens in `design_handoff_neev/`.
 | Auth | **Mocked session, real boundary** | Role cookie + `get_current_user` dependency; OTP drops in later |
 | Pipeline execution | **Async job + SSE progress** | Feeds the Analyzing screen's 5-phase design |
 | Timeline | **Hackathon demo soon** | Every demo path needs an offline fallback |
+| **Build scope** | **Web app from the mockups** | Product/number accuracy is a later phase (§4.4); UI ships the designs' figures verbatim |
 | **Google spend** | **Zero — dry run throughout** | No Gemini, no BigQuery calls during the entire build |
 | Python environments | **Per-package venvs** | `agents/.venv` and `backend/.venv` on Python 3.11; `neev_core` installed editable into both |
 
@@ -50,23 +51,21 @@ because their dependency sets are disjoint — the backend must not carry
 `google-adk` transitively, and the agents package must not carry FastAPI.
 
 ```bash
-# agents — ADK pipeline (only venv that carries google-adk)
+# agents — ADK pipeline (the only venv that carries google-adk)
 cd agents && /opt/homebrew/bin/python3.11 -m venv .venv
-source .venv/bin/activate && pip install -e ../core && pip install -e .
+source .venv/bin/activate && pip install -e .
 
-# backend — fixture mode needs NO ADK
+# backend — serves mockup fixtures; needs NO ADK and no pipeline import
 cd backend && /opt/homebrew/bin/python3.11 -m venv .venv
-source .venv/bin/activate && pip install -e ../core && pip install -e .
-# live mode only, when credits are approved:  pip install -e ../agents
+source .venv/bin/activate && pip install -e .
 ```
 
-Each package ships a `pyproject.toml` — without one, `pip install -e` fails
-outright, and the repo currently has none. `neev_core` declares **no
-dependencies at all**; `neev_pipeline` declares the ADK stack; the backend
-declares FastAPI plus `neev_core`, and takes `neev_pipeline` as an optional
-`[live]` extra. That is what makes "the backend does not carry `google-adk`"
-literally true rather than aspirational: the default backend install cannot
-import ADK, so it cannot accidentally make a billed call.
+Both packages ship a `pyproject.toml` — without one `pip install -e` fails
+outright, and the repo currently has none. `neev_pipeline` declares the ADK
+stack; the backend declares only FastAPI, SQLAlchemy and friends. **The backend
+has no dependency on the pipeline in this phase at all**, which is the strongest
+possible spend guard: it cannot make a billed call because it cannot import the
+code that would make one.
 
 Editable installs also remove the `sys.path` hack in `golden_run.py`. Both venvs
 are git-ignored; `.python-version` pins 3.11.
@@ -79,22 +78,13 @@ Frontend uses plain `npm` with a committed `package-lock.json`.
 
 ```
 neev/
-├── core/                            # `neev_core` — pure Python, ZERO third-party deps
-│   ├── neev_core/
-│   │   ├── config.py                # thresholds, weights, LTV bands
-│   │   ├── risk.py                  # assess_tranche
-│   │   ├── boq_checks.py            # the 4 pure BoQ checks
-│   │   └── boq_fixtures.py          # moved from scripts/boq_data.py
-│   ├── tests/                       # pure-math tests, no stubs needed
-│   └── pyproject.toml
-├── agents/                          # AI pipeline — no knowledge of HTTP or DB
-│   ├── neev_pipeline/
+├── core/                            # `neev_core` — LATER PHASE, not created in this build
+├── agents/                          # AI pipeline — RELOCATED AS-IS, unrefactored
+│   ├── neev_pipeline/               # was buildguard/ — contents unchanged
 │   │   ├── __init__.py              # `from . import agent` — ADK discovery contract
-│   │   ├── agent.py                 # root_agent: SequentialAgent of 5
-│   │   ├── config.py                # re-exports neev_core.config for compatibility
-│   │   └── tools/                   # I/O-bearing ADK tools; wrap neev_core
-│   ├── tests/test_offline.py        # wiring + stubbed-import tests
-│   └── pyproject.toml               # depends on neev_core
+│   │   ├── agent.py  config.py  tools/
+│   ├── tests/test_offline.py        # the 28 tests, moved with it
+│   └── pyproject.toml
 ├── backend/
 │   ├── app/
 │   │   ├── main.py                  # FastAPI app factory
@@ -119,14 +109,14 @@ neev/
 **Dependency rule, strictly one-directional:**
 
 ```
-frontend → backend → neev_core
-                  ↘ neev_pipeline (optional, live mode only) → neev_core
+frontend → backend → (mockup fixtures)
+agents/neev_pipeline → unchanged, standalone, driven by `adk web`
 ```
 
-`neev_core` depends on nothing but the standard library. `neev_pipeline` never
-imports backend code. The backend imports `neev_core` always and `neev_pipeline`
-**only inside the live runner's function body**, so a fixture-mode install needs
-no ADK at all.
+In this phase the two halves are fully independent: the backend serves fixture
+data and never imports the pipeline; the pipeline keeps working exactly as it
+does today. When the pipeline is later wired in, `neev_core` (§4.4a) is extracted
+so the backend gains the risk math without gaining ADK.
 
 **Why `neev_core` is a separate top-level package, not `neev_pipeline/core/`.**
 Python executes a package's `__init__.py` before any submodule, and
@@ -225,9 +215,78 @@ package move nor an editable install of `neev_pipeline`. Making it part of
 
 ---
 
-### 4.4 The golden-case numbers do not agree — decide before building
+### 4.4 The golden-case numbers do not agree — DEFERRED, not a blocker
 
-⚠️ **Open decision. Blocks wave 2. Needs the owner's call.**
+✅ **Scope decision (owner, 2026-08-27): out of scope for this build.**
+
+This build implements the **web app from the mockups**. Product accuracy — which
+exposure formula is right, what the BoQ should total — is separate work for a
+later phase. So the resolution here is deliberately simple:
+
+> **The mockups' numbers are the fixture data, verbatim.** Every figure the UI
+> displays is whatever the corresponding `.dc.html` file shows. Nothing is
+> recomputed, reconciled, or "corrected" against the Python or the SQL.
+
+That removes the contradiction entirely: there is no attempt to make
+`assess_tranche` produce ₹32,00,000 or 1.29, because the pipeline is not driving
+these screens yet. It also removes the fixture-authoring risk — the numbers are
+already written, internally consistent within each screen, and visibly correct
+when demoed.
+
+The conflict is recorded below so it is not rediscovered later, and so that
+whoever wires the real pipeline knows exactly what they are walking into.
+
+**The conflict, for the record.** Loan 1001 has four number sets in circulation,
+all recomputed from the code and fixtures:
+
+| Formula | Verified value | Exposure | Cost-to-complete gap | Where it lives |
+|---|---|---|---|---|
+| `assess_tranche` — `expected_cost × pct_complete` | ₹17.50L | **1.03** | **−₹7.50L** | `disbursal_risk_tool.py`, tested |
+| `portfolio_hotlist` — `sanctioned × pct` (proxy) | ₹14.00L | **1.29** | **−₹4.00L** | `portfolio_view.sql`, tested |
+| **The designs → what this build ships** | ₹13.90L | **1.29** | **−₹5.80L** | Tranche Decision screen |
+| `Neev_Implementation_Plan.md` | — | **1.4** | **−₹4.20L** | Doc only — matches no formula |
+
+The designs use a third model — cost-to-complete as "remaining BoQ items ×
+current Kompally rates" (₹15.80L), implying a ₹29.70L total — which neither the
+Python nor the SQL implements. The Implementation Plan's 1.4 / −₹4.20L is
+derivable from nothing and traces to a speculative line at `HANDOFF.md:41`.
+
+The BoQ total conflicts too: `RAVI_ITEMS` sums to **₹28,47,930**, while the
+designs *and* the Demo Plan say **₹32,00,000**. The designs are internally
+consistent around ₹32L (45% before slab = ₹14.40L; GST at 18% = ₹5.76L), so the
+fixture is the outlier — another reason taking the mockups' numbers is the low-risk
+choice today.
+
+**When the pipeline is wired (later phase), the open questions will be:** whether
+to reprice the Ravi fixture to ₹32L; whether the per-loan screen shows
+`assess_tranche`'s 1.03 rather than the portfolio proxy's 1.29 — which
+`portfolio_view.sql:5-8` explicitly demands, *"this is a SCREEN, not the per-loan
+verdict"*; and whether to implement the designs' remaining-scope re-pricing model
+as new work. None of that blocks the UI.
+
+### 4.4a What this scope decision removes from the build
+
+Because the pipeline is not driving the screens yet, three things drop out of
+wave 0 and become later-phase work:
+
+- **`neev_core` extraction** — the backend serves mockup fixtures and needs no
+  risk math, so nothing has to be decoupled from ADK yet. The four-package
+  structure in §3 remains the target, but `core/` is not created in this build and
+  `agents/` is relocated **as-is, unrefactored**. The extraction is pre-planned
+  (§3) so it is additive when it happens: nothing built now has to move.
+- **The lazy `genai.Client()` fix** — only matters when the backend imports the
+  pipeline. It doesn't yet.
+- **JSON-parsing and validating the five `output_key` values** — no live output
+  to parse.
+
+This is a real risk reduction: the 28 passing tests move with the package and
+keep passing, rather than being refactored while nothing can run the pipeline to
+check the result.
+
+**None of it is deferred by ignoring it.** §5.1a specifies the seam each deferred
+piece plugs into, and a wave-3 contract test enforces that the fixtures already
+match the shape live output will have. Deferred means *not built yet*, not
+*not designed for*.
 
 Loan 1001 (Ravi) is the demo's spine, and four different number sets for it are
 in circulation. All were recomputed from the code and fixtures:
@@ -288,9 +347,11 @@ Recomputing gives materially different values and three status flips:
 Only 1001 and 1002 match. Sort order differs too: the SQL orders by gap ascending
 (1004, 1003, 1001…), the design by exposure descending (1003, 1004, 1001…).
 
-**Decision:** the portfolio table renders **computed** values, and the design's
-row figures are treated as placeholder. Ranking follows the SQL. An implementer
-must not "fix" a mismatch against the mockup — the mockup is wrong here.
+**Decision (per §4.4):** the portfolio table renders the **design's** figures and
+ordering verbatim, because the mockups are the source for this build. The
+computed column above is recorded only so that whoever later wires the real
+pipeline knows these rows will move — and that three of them change status when
+they do.
 
 ---
 
@@ -330,18 +391,82 @@ repo and already consistent with each other:
 | Flags and their evidence | The four seeded flaws (F1 rate outliers on 2.3/3.1/3.2; F2 missing waterproofing, external plaster, anti-termite; F3 ungraded TMT on 4.2; F4 45% before slab; GST silent) |
 | Benchmark rates | `fixtures/rate_benchmarks.csv` |
 | Loan/tranche context | `fixtures/draw_schedule.csv` (loan 1001 golden, 1002 clean) |
-| Risk numbers | Computed live by the **pure** `assess_tranche` — real math, no I/O |
+| Risk numbers | The design screens' own values — not recomputed (§4.4) |
 | Display figures | The design screens' own values (₹32,00,000 quoted, 9 flags, exposure 1.29, −₹5,80,000 gap) |
 
-Risk and BoQ-check numbers are genuinely computed by the extracted pure core
-rather than typed in, so the fixture path exercises real logic. What gets
-substituted is exactly the billed surface: the five agents' Gemini completions,
-the vision call in `verify_construction_stage`, and the BigQuery lookups in
-`lookup_benchmark_rate` and `estimate_construction_cost`. Owner and officer
-narrative text is authored prose stored alongside the fixture.
+Every displayed figure is taken from the mockups (§4.4), so the fixture needs no
+computation and no reconciliation — it is transcription, which is both faster and
+impossible to get subtly wrong. Line items, quantities and rates still come from
+`boq_data.py` where the mockups only show a subset. Owner and officer narrative
+text is authored prose stored alongside the fixture.
+
+The whole billed surface is simply absent: no Gemini completions, no vision call,
+no BigQuery lookups. The backend does not import the pipeline at all in this
+phase.
 
 Once credits are available, `scripts/record_golden_run.py` (wave 3, not run)
 overwrites the authored fixture with a real captured run in the same schema.
+
+### 5.1a Extensibility — the seam the live pipeline plugs into
+
+⚠️ **Binding constraint on every wave.** Serving mockup data now must not create
+work later. The rule that guarantees this:
+
+> **Fixtures are shaped like the pipeline's real output, never like the screens.**
+
+The five ADK `output_key` values — `boq_findings`, `cost_estimate`,
+`inspection_result`, `risk_assessment`, `explanation` — define the Pydantic
+schemas. The authored fixture fills those exact shapes with the mockups' numbers.
+Screens read the schema, never a screen-specific blob. So switching to live data
+changes *where the object comes from* and nothing else.
+
+Concretely, four seams are built now and left unused:
+
+**1. `PipelineRunner` protocol.** One interface, two implementations:
+
+```python
+class PipelineRunner(Protocol):
+    async def run(self, req: BoqAnalysisRequest) -> AsyncIterator[PipelineEvent]: ...
+
+class FixtureRunner:  # this build — replays authored events on a timer
+class AdkPipelineRunner:  # later — imports neev_pipeline inside the method body
+```
+
+Routes depend on the protocol and are resolved by a factory keyed on `NEEV_MODE`.
+Adding live mode means adding one class and one factory branch — no route, no
+schema, and no component changes.
+
+**2. The event contract.** The SSE stream (`phase` / `finding` / `progress` /
+`done`) is the pipeline's vocabulary, not the Analyzing screen's. The
+tool-call → phase map in §5.2 is written now precisely so the live runner has a
+defined target to emit against, rather than being reverse-engineered from a
+finished UI.
+
+**3. One mapper layer.** `backend/app/mappers/` converts pipeline-shaped objects
+into the view models screens consume. It is the *only* place that knows about
+presentation. Today it maps fixture → view model; later it maps live → view model
+through the identical function, because both inputs have the same shape.
+
+**4. Persisted results are pipeline-shaped too.** `BoqRevision`, `Flag`,
+`Tranche` and `Decision` store the pipeline's fields (evidence strings, tool
+citations, confidence bands, `needs_human_review`), not the mockups' display
+strings. Fields the mockups never show are stored anyway, nullable — a real run
+populates them without a migration.
+
+**Prohibited, because each would force a rewrite:**
+
+- No literal figures in components. Every number arrives as a prop from a
+  fixture; no screen contains `₹32,00,000` in its JSX.
+- No pre-formatted money in fixtures or the DB. Store integers, render through
+  `formatINR()` (§6.2).
+- No screen-shaped API endpoints. `GET /api/loans/1001/boq-review-page` is
+  forbidden; endpoints return domain objects.
+- No fixture branching inside components or routes. Mode is resolved once, in the
+  runner factory.
+
+**Acceptance test for the seam** (wave 3, runs in fixture mode): a contract test
+asserts every fixture validates against the same Pydantic schemas the live runner
+will emit. If a future live response would fail that schema, the test fails today.
 
 ### 5.2 API surface
 
@@ -747,7 +872,8 @@ against the extracted pure core.
 |---|---|
 | No Node/Python 3.10 locally → unverifiable code | Wave 0 installs both and proves boot before fan-out |
 | **Accidental Google spend during the build** | Fixture default + `NEEV_ALLOW_BILLED_CALLS` fence + socket-blocked tests |
-| **Live path ships unexercised** (accepted trade-off of the dry run) | Shares the pure core and response schemas with the tested fixture path, so only the billed I/O calls are unproven; user validates in Cloud Shell |
+| **Live path ships unexercised** (accepted trade-off of the dry run) | Fixtures validate against the same schemas live output must satisfy (§5.1a contract test), so the shape is proven even though the calls are not |
+| **Fixture work becomes throwaway when the pipeline lands** | §5.1a: fixtures are pipeline-shaped, one `PipelineRunner` protocol, one mapper layer, no screen-shaped endpoints, no literals in components |
 | Live Gemini/BigQuery fails during demo | `NEEV_MODE=fixture` serves the authored run with zero external calls |
 | Restructure breaks the working `adk web` demo | Relocate rather than rewrite; 28 tests gate every wave |
 | Parallel agents conflict | Contracts and shared components precede all fan-out; disjoint file ownership |
