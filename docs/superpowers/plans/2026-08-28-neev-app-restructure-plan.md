@@ -12,6 +12,29 @@
 
 ---
 
+## Status — where to resume
+
+*Last updated 2026-08-28.*
+
+**Two tasks' worth of work is already done and pushed. Start at Task 2.**
+
+| Done | Commit | Detail |
+|---|---|---|
+| Pipeline relocation (Task 4.1 of the spec) | `bac5e69` | `buildguard/` → `agents/neev_pipeline/`. 7 absolute imports rewritten across `tests/test_offline.py` and `scripts/golden_run.py`; `agents/pyproject.toml` added; `tests/__init__.py` puts `agents/` on `sys.path` for bare clones; `golden_run.py`'s `sys.path` hack retargeted; `adk web` now runs from `agents/`; `requirements.txt` reduced to `-e ./agents`; `.gitignore` covers `.venv/`, `node_modules/`, `.next/`. **All 28 offline tests pass unchanged.** Only the Python package was renamed — the GCP project `buildguard-ai-2026` and BigQuery dataset `buildguard_data` deliberately keep their names. |
+| This plan | `a6fb347` | 21 tasks, 3 phases. |
+| **Task 1 — toolchain** | — | Installed and verified on the build machine: **Node v26.7.0**, **npm 11.19.0**, **Python 3.11.16** at `/opt/homebrew/bin/python3.11`. `agents/.venv` exists and `pip install -e agents` succeeds. System Python is still 3.9.6, untouched. Task 1's remaining steps are `.python-version` / `.node-version` / the `CLAUDE.md` note — do those, skip the `brew install`. |
+
+**Not started:** `backend/` and `frontend/` do not exist yet. Nothing in Phase 0 Tasks 2–8, Phase 1, Phase 2, or Phase 3 has been written.
+
+### Execution guidance
+
+- **Phase 0 is sequential.** Contracts before fan-out: the schemas, the runner protocol, and the component kit must exist before any screen work, because parallel agents collide when they invent overlapping interfaces.
+- **The one safe Phase 0 parallelisation is `backend/` (Tasks 2–5) against `frontend/` (Tasks 6–8)** — disjoint file trees, no runtime dependency between them.
+- **Parallel agents sharing one working tree must not run git commands.** Concurrent `git add` / `git commit` race on `index.lock`. Have each agent skip every "Commit" step and let the coordinating session commit their work afterwards; or give each agent its own worktree and merge the branches, which is clean here because the trees are disjoint.
+- **Do not skip the "run it to verify it fails" steps.** They are what catch a test that passes vacuously.
+
+---
+
 ## Global Constraints
 
 Every task's requirements implicitly include this section. Violating any line here is a defect regardless of whether the task's own steps mention it.
