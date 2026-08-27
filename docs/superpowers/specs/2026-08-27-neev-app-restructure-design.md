@@ -20,7 +20,7 @@ frontend built from the screens in `design_handoff_neev/`.
 | Pipeline execution | **Async job + SSE progress** | Feeds the Analyzing screen's 5-phase design |
 | Timeline | **Hackathon demo soon** | Every demo path needs an offline fallback |
 | **Google spend** | **Zero — dry run throughout** | No Gemini, no BigQuery calls during the entire build |
-| Python environments | **Per-package venvs** | `agents/.venv` and `backend/.venv`, both Python 3.11 |
+| Python environments | **Per-package venvs** | `agents/.venv` and `backend/.venv` on Python 3.11; `neev_core` installed editable into both |
 
 **Non-negotiable:** `adk web` must keep working. The demo plan states the agent
 trace *"is the proof of a real multi-agent pipeline, worth more to an ADK panel
