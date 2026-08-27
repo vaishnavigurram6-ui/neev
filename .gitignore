@@ -1,5 +1,6 @@
-# Secrets — never commit
-.env
+# Secrets — never commit. Covers .env, .env.local, .env.disabled-backup, etc.
+.env*
+!.env.example
 
 # Python
 __pycache__/
