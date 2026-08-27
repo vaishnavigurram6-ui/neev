@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#f7f7f5;font-family:'Instrument Sans',sans-serif;color:#111827;-webkit-font-smoothing:antialiased}a{color:#111827;text-decoration:none}a:hover{color:#2d5bff}</style></helmet>
+<div data-screen-label="4 · Portfolio Hotlist" style="min-height:100vh">
+  <div style="position:sticky;top:0;z-index:10;background:#111827;border-bottom:1px solid #111827;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px">
+    <div style="display:flex;align-items:center;gap:22px">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:24px;height:24px;border-radius:7px;background:#fff;color:#111827;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">न</div><span style="font-size:16px;font-weight:700;letter-spacing:-.01em;color:#fff">Neev</span></div>
+      <div style="display:flex;gap:4px;font-size:13.5px;font-weight:500">
+        
+        
+        
+        <a href="Neev 4 Portfolio Hotlist.dc.html" style="padding:7px 13px;border-radius:8px;background:#fff;color:#111827">Portfolio</a>
+        <a href="Neev 5 Contractor Scorecard.dc.html" style="padding:7px 13px;border-radius:8px;color:#9ca3af" style-hover="background:rgba(255,255,255,.12);color:#fff">Contractors</a>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="text-align:right"><div style="font-size:13px;font-weight:600;line-height:1.2;color:#fff">Anita Mehta</div><div style="font-size:11px;color:#9ca3af">Credit officer · Hyderabad</div></div><div style="width:32px;height:32px;border-radius:50%;background:#2d5bff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">AM</div></div>
+      
+    </div>
+  </div>
+  <div style="max-width:1280px;margin:0 auto;padding:36px 28px 80px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px">
+      <div>
+        <h1 style="font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0">Construction portfolio</h1>
+        <div style="font-size:13.5px;color:#6b7280;margin-top:5px">10 active loans, ranked by disbursement exposure · refreshed today 06:00</div>
+      </div>
+      <div style="display:flex;gap:8px;flex:none;align-items:center">
+        <div style="display:flex;background:#f1f0ec;border-radius:9px;padding:3px;font-size:12px;font-weight:600"><div style="padding:5px 12px;border-radius:7px;background:#fff;box-shadow:0 1px 2px rgba(17,24,39,.08)">All</div><div style="padding:5px 12px;color:#6b7280;cursor:pointer">Needs action</div><div style="padding:5px 12px;color:#6b7280;cursor:pointer">On track</div></div>
+        <div style="border:1px solid #e0ded8;background:#fff;border-radius:9px;padding:8px 14px;font-size:12.5px;font-weight:600;color:#374151;cursor:pointer" style-hover="border-color:#111827">Export</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="4">
+        <div style="background:#fff;border:1px solid #ebe9e4;border-radius:14px;padding:18px 20px;box-shadow:0 1px 2px rgba(17,24,39,.04)">
+          <div style="font-size:12px;font-weight:600;color:#9ca3af;letter-spacing:.04em">{{ c.label }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:23px;font-weight:600;margin-top:10px;color:{{ c.valColor }}">{{ c.value }}</div>
+          <div style="font-size:12.5px;color:#6b7280;margin-top:6px;line-height:1.5">{{ c.sub }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="background:#fff;border:1px solid #ebe9e4;border-radius:14px;overflow:hidden;margin-top:20px;box-shadow:0 1px 2px rgba(17,24,39,.04)">
+      <div style="display:grid;grid-template-columns:70px 1.4fr 1fr 1fr 110px 90px 110px 110px;gap:12px;padding:12px 22px;border-bottom:1px solid #f1f0ec;font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#9ca3af">
+        <span>LOAN</span><span>BORROWER · LOCATION</span><span>PAID UP TO</span><span>SEEN ON SITE</span><span style="text-align:right">DISBURSED</span><span style="text-align:right">EXPOSURE</span><span style="text-align:right">CTC GAP</span><span style="text-align:right">ACTION</span>
+      </div>
+      <sc-for list="{{ loans }}" as="l" hint-placeholder-count="8">
+        <a href="{{ l.href }}" style="display:grid;grid-template-columns:70px 1.4fr 1fr 1fr 110px 90px 110px 110px;gap:12px;padding:13px 22px;border-bottom:1px solid #f6f5f2;align-items:center;font-size:13px;background:{{ l.bg }};color:#111827" style-hover="background:#fafaf8">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#6b7280">{{ l.id }}</span>
+          <span><b>{{ l.name }}</b> <span style="color:#9ca3af">· {{ l.loc }}</span></span>
+          <span style="color:#6b7280">{{ l.paidTo }}</span>
+          <span style="color:{{ l.seenColor }};font-weight:{{ l.seenWeight }}">{{ l.seen }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;text-align:right">{{ l.disbursed }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-align:right;color:{{ l.expColor }}">{{ l.exposure }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;text-align:right;color:{{ l.gapColor }}">{{ l.gap }}</span>
+          <span style="text-align:right"><span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:{{ l.pillBg }};color:{{ l.pillFg }}">{{ l.action }}</span></span>
+        </a>
+      </sc-for>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:12px;color:#9ca3af"><span>Exposure = cumulative disbursed ÷ verified value in place · CTC gap = undrawn balance − cost to complete at current rates</span><span>10 loans · illustrative draw schedule</span></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    const cards = [
+      { label: "ACTIVE CONSTRUCTION LOANS", value: "10", sub: "₹2.57 cr sanctioned across the book", valColor: "#111827" },
+      { label: "NEEDS ACTION", value: "3 loans", sub: "Paid ahead of verified progress", valColor: "#b42318" },
+      { label: "CAPITAL AT RISK", value: "₹18,40,000", sub: "Disbursed beyond value in place, 3 loans", valColor: "#b42318" },
+      { label: "SITE VISITS SAVED", value: "22 of 34", sub: "Fast-tracked where photos, BoQ and draws agree", valColor: "#067647" }
+    ];
+    const RED = "#b42318", AMBER = "#b54708", OK = "#067647";
+    const mk = (id, name, loc, paidTo, seen, bad, disbursed, exposure, gap, action) => {
+      const hold = action === "HOLD", esc = action === "INSPECT", ok = action === "ON TRACK";
+      return { id, name, loc, paidTo, seen, disbursed, exposure, gap,
+        href: id === "1001" ? "Neev 3 Tranche Decision.dc.html" : "#",
+        seenColor: bad ? RED : "#6b7280", seenWeight: bad ? 600 : 400,
+        expColor: parseFloat(exposure) > 1.1 ? RED : parseFloat(exposure) > 0.95 ? AMBER : "#111827",
+        gapColor: gap.startsWith("−") ? RED : OK,
+        bg: hold || esc ? "#fffbfa" : "transparent",
+        pillBg: hold ? "#fef3f2" : esc ? "#fffaeb" : "#ecfdf3",
+        pillFg: hold ? RED : esc ? AMBER : OK, action };
+    };
+    const loans = [
+      mk("1003", "K. Srinivas", "Medchal", "Slab (T3)", "Plinth only", true, "₹19,21,557", "1.42", "−₹6,90,000", "HOLD"),
+      mk("1004", "P. Anjali", "Shamirpet", "Roof (T4)", "Slab only", true, "₹37,57,129", "1.35", "−₹8,20,000", "HOLD"),
+      mk("1001", "Ravi Kumar", "Kompally", "Slab (T3)", "Slab ✓", false, "₹18,00,000", "1.29", "−₹5,80,000", "HOLD"),
+      mk("1009", "M. Farhan", "Bachupally", "Roof (T4)", "Roof ✓", false, "₹24,87,861", "1.04", "−₹1,10,000", "INSPECT"),
+      mk("1006", "T. Lakshmi", "Kompally", "Slab (T3)", "Slab ✓", false, "₹12,96,892", "0.98", "+₹40,000", "INSPECT"),
+      mk("1010", "S. Reddy", "Alwal", "Roof (T4)", "Roof ✓", false, "₹16,08,035", "0.96", "+₹75,000", "ON TRACK"),
+      mk("1002", "D. Prasad", "Kukatpally", "Slab (T3)", "Slab ✓", false, "₹12,14,337", "0.97", "+₹1,05,000", "ON TRACK"),
+      mk("1007", "V. Naidu", "Suraram", "Done (T5)", "Finishing ✓", false, "₹25,00,000", "0.94", "closed", "ON TRACK"),
+      mk("1008", "G. Swathi", "Jeedimetla", "Done (T5)", "Finishing ✓", false, "₹25,00,000", "0.93", "closed", "ON TRACK"),
+      mk("1005", "B. Yadav", "Quthbullapur", "Done (T5)", "Finishing ✓", false, "₹15,00,000", "0.91", "closed", "ON TRACK")
+    ];
+    loans[7].gapColor = "#9ca3af"; loans[8].gapColor = "#9ca3af"; loans[9].gapColor = "#9ca3af";
+    return { cards, loans };
+  }
+}
+</script>
+</body>
+</html>

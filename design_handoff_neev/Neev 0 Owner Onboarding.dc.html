@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Baloo+2:wght@500;600;700&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#faf9f7;font-family:'Instrument Sans',sans-serif;color:#2b2622;-webkit-font-smoothing:antialiased}a{color:#2b2622;text-decoration:none}a:hover{color:#3d7a52}</style></helmet>
+<div data-screen-label="Owner · Onboarding" style="min-height:100vh">
+  <div style="height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #ece9e4;background:#fff">
+    <div style="display:flex;align-items:center;gap:9px"><div style="width:24px;height:24px;border-radius:8px;background:#e07856;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 40 40"><path d="M20 6 L34 18 L31 18 L31 30 L9 30 L9 18 L6 18 Z" fill="#fff"></path></svg></div><span style="font-family:'Baloo 2',sans-serif;font-size:17px;font-weight:700;color:#2b2622">Neev</span></div>
+    <div style="font-size:13px;color:#6d665e">Already have an account? <a href="Neev Login.dc.html" style="color:#3d7a52;font-weight:600">Log in</a></div>
+  </div>
+  <div style="max-width:960px;margin:0 auto;padding:48px 28px 80px">
+    <div style="text-align:center;max-width:620px;margin:0 auto">
+      <h1 style="font-family:'Baloo 2',sans-serif;font-size:32px;font-weight:700;letter-spacing:-.02em;margin:0;line-height:1.25">Your contractor has priced 400 houses.<br>You're pricing one.</h1>
+      <div style="font-size:15px;color:#6d665e;margin-top:12px;line-height:1.6">Neev reads your construction contract, flags what's inflated, missing or vague — then keeps checking it against real site progress until your house is finished.</div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:0;margin-top:36px">
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+        <div style="display:flex;align-items:center">
+          <div style="display:flex;align-items:center;gap:9px;padding:8px 16px;border-radius:24px;background:{{ s.bg }};border:1px solid {{ s.border }}">
+            <div style="width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;background:{{ s.numBg }};color:{{ s.numFg }}">{{ s.n }}</div>
+            <span style="font-size:13px;font-weight:600;color:{{ s.fg }}">{{ s.label }}</span>
+          </div>
+          <sc-if value="{{ s.connector }}" hint-placeholder-val="{{ false }}"><div style="width:36px;height:1px;background:#dcd7d0"></div></sc-if>
+        </div>
+      </sc-for>
+    </div>
+    <div style="max-width:640px;margin:28px auto 0;background:#fff;border:1px solid #ece9e4;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(20,15,10,.05)">
+      <div style="border:1.5px dashed #c9c2b8;border-radius:12px;padding:44px 24px;text-align:center;cursor:pointer" style-hover="border-color:#3d7a52;background:#f7f6f4">
+        <div style="width:44px;height:44px;border-radius:12px;background:#f2f0ec;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:20px">↑</div>
+        <div style="font-size:15px;font-weight:700;margin-top:14px">Drop your Bill of Quantities here</div>
+        <div style="font-size:13px;color:#6d665e;margin-top:5px">PDF, Excel — or just photos of the pages. We read all of them.</div>
+        <div style="display:inline-block;margin-top:16px;background:#3d7a52;color:#fff;border-radius:20px;padding:10px 20px;font-weight:600;font-size:13.5px">Choose file</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:12.5px;color:#9b938a">
+        <span>Typically 80–150 line items · read in about a minute</span>
+        <span style="font-family:'JetBrains Mono',monospace">no BoQ yet? <a href="#" style="color:#3d7a52;font-weight:600">see a sample report</a></span>
+      </div>
+    </div>
+    <div style="max-width:720px;margin:52px auto 0">
+      <div style="text-align:center;font-size:12px;font-weight:600;letter-spacing:.08em;color:#9b938a">HOW NEEV STAYS WITH YOU</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px">
+        <sc-for list="{{ stages }}" as="st" hint-placeholder-count="4">
+          <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#9b938a">STAGE {{ st.n }}</div>
+            <div style="font-size:13.5px;font-weight:700;margin-top:8px">{{ st.name }}</div>
+            <div style="font-size:12px;color:#6d665e;line-height:1.55;margin-top:5px">{{ st.desc }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="text-align:center;font-size:12.5px;color:#9b938a;margin-top:20px;line-height:1.6">One document, ingested once, used at every stage. Your lender sees the same evidence — fewer site-visit delays, faster releases.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    const steps = [
+      { n: "1", label: "Upload your BoQ", bg: "#2b2622", border: "#2b2622", fg: "#fff", numBg: "#fff", numFg: "#2b2622", connector: true },
+      { n: "2", label: "Your plot & area", bg: "#fff", border: "#ece9e4", fg: "#6d665e", numBg: "#f2f0ec", numFg: "#6d665e", connector: true },
+      { n: "3", label: "Your loan", bg: "#fff", border: "#ece9e4", fg: "#6d665e", numBg: "#f2f0ec", numFg: "#6d665e", connector: false }
+    ];
+    const stages = [
+      { n: "0", name: "Before signing", desc: "Inflated rates, missing scope and vague specs flagged — as questions to send your contractor." },
+      { n: "1", name: "At sanction", desc: "Will the approved amount actually finish the house at local rates? Know before drawdown." },
+      { n: "2", name: "Through the build", desc: "Site photos checked against your contract at every payment — stalls caught early." },
+      { n: "3", name: "On every change", desc: "Each change order priced against what you signed, so extras stay honest." }
+    ];
+    return { steps, stages };
+  }
+}
+</script>
+</body>
+</html>

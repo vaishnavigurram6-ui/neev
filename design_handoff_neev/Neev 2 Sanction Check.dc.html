@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Baloo+2:wght@500;600;700&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#faf9f7;font-family:'Instrument Sans',sans-serif;color:#2b2622;-webkit-font-smoothing:antialiased}a{color:#2b2622;text-decoration:none}a:hover{color:#3d7a52}</style></helmet>
+<div data-screen-label="2 · Sanction Check" style="min-height:100vh">
+  <div style="position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid #ece9e4;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px">
+    <div style="display:flex;align-items:center;gap:22px">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:24px;height:24px;border-radius:8px;background:#e07856;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 40 40"><path d="M20 6 L34 18 L31 18 L31 30 L9 30 L9 18 L6 18 Z" fill="#fff"></path></svg></div><span style="font-family:'Baloo 2',sans-serif;font-size:17px;font-weight:700;color:#2b2622">Neev</span></div>
+      <div style="display:flex;gap:4px;font-size:13.5px;font-weight:500">
+        <a href="Neev 1 BoQ Review.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">My contract</a>
+        <a href="Neev 2 Sanction Check.dc.html" style="padding:7px 13px;border-radius:8px;background:#2b2622;color:#fff">Sanction check</a>
+        <a href="Neev 3 Build Progress.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">Build progress</a>
+        <a href="Neev 6 Change Orders.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">Changes</a>
+        
+        
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:14px"><div style="display:flex;align-items:center;gap:6px"><div style="border:1px solid #dcd7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#6d665e;cursor:pointer" title="Language: English / हिंदी / తెలుగు">EN ▾</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Listen to this page" role="button" aria-label="Listen to this page">🔊</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Switch to dark theme" role="button" aria-label="Switch theme">◐</div></div><div style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="text-align:right"><div style="font-size:13px;font-weight:600;line-height:1.2">Ravi Kumar</div><div style="font-size:11px;color:#9b938a">Owner · Plot 47, Kompally</div></div><div style="width:32px;height:32px;border-radius:50%;background:#2b2622;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">RK</div></div></div>
+      
+    </div>
+  </div>
+  <div style="max-width:1080px;margin:0 auto;padding:36px 28px 80px">
+    <div style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9b938a">AT SANCTION</div>
+    <h1 style="font-family:'Baloo 2',sans-serif;font-size:28px;font-weight:700;letter-spacing:-.02em;margin:8px 0 0">Will ₹28,00,000 finish this house?</h1>
+    <div style="font-size:14px;color:#6d665e;margin-top:6px">Your BoQ scope, re-priced at today's Kompally rates — before any money moves.</div>
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:20px;margin-top:28px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <sc-for list="{{ bars }}" as="b" hint-placeholder-count="3">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;font-weight:600;color:#6d665e">{{ b.label }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:{{ b.valColor }}">{{ b.value }}</span></div>
+                <div style="height:22px;background:#f2f0ec;border-radius:8px;margin-top:8px;overflow:hidden"><div style="height:100%;width:{{ b.w }};background:{{ b.color }};border-radius:8px"></div></div>
+                <div style="font-size:12px;color:#9b938a;margin-top:5px">{{ b.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:22px;padding:16px 18px;background:#f9ece5;border-radius:10px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:13px;font-weight:700;color:#b4552e">Shortfall of ₹7,00,000 — flagged before drawdown</div><div style="font-size:12.5px;color:#b4552e;opacity:.8;margin-top:3px">At current rates, funds run out around brickwork. Re-scope now, while the plan can still change.</div></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;color:#b4552e;flex:none;margin-left:16px">−20%</div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="padding:16px 22px;border-bottom:1px solid #f2f0ec;font-size:14.5px;font-weight:700">Where the gap comes from</div>
+          <sc-for list="{{ sections }}" as="s" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:1fr 110px 110px 80px;gap:12px;padding:12px 22px;border-bottom:1px solid #f5f3f0;align-items:center;font-size:13px">
+              <span style="font-weight:500">{{ s.name }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#9b938a;text-align:right">{{ s.quoted }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;text-align:right">{{ s.market }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;text-align:right;color:{{ s.deltaColor }}">{{ s.delta }}</span>
+            </div>
+          </sc-for>
+          <div style="display:grid;grid-template-columns:1fr 110px 110px 80px;gap:12px;padding:8px 22px 4px;font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#b0a89d"><span></span><span style="text-align:right">QUOTED</span><span style="text-align:right">MARKET</span><span style="text-align:right">Δ</span></div>
+          <div style="height:12px"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:82px">
+        <div style="background:#fff;color:#2b2622;border:1px solid #ece9e4;border-radius:14px;padding:22px 24px">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9b938a">WHAT THIS MEANS</div>
+          <div style="font-size:19px;font-weight:700;line-height:1.4;margin-top:10px">The sanction won't reach a habitable structure as scoped.</div>
+          <div style="font-size:13px;color:#6d665e;line-height:1.6;margin-top:10px">Three ways forward, in order of least pain:</div>
+        </div>
+        <sc-for list="{{ options }}" as="o" hint-placeholder-count="3">
+          <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:18px 20px;box-shadow:0 1px 2px rgba(20,15,10,.05)" style-hover="border-color:#2b2622">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13.5px;font-weight:700">{{ o.title }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#2f6647">{{ o.saves }}</span></div>
+            <div style="font-size:12.5px;color:#6d665e;line-height:1.55;margin-top:5px">{{ o.desc }}</div>
+          </div>
+        </sc-for>
+        <div style="font-size:12px;color:#9b938a;line-height:1.6;padding:0 4px">Rates: 32,963 real listings across six metros · CPWD DSR construction benchmarks · updated monthly.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    const bars = [
+      { label: "Contractor's quote", value: "₹32,00,000", w: "91%", color: "#9b938a", valColor: "#2b2622", sub: "As submitted, before negotiation" },
+      { label: "Realistic cost at Kompally rates", value: "₹35,00,000", w: "100%", color: "#2b2622", valColor: "#2b2622", sub: "Quote re-priced + missing scope added back (plaster, waterproofing, GST risk)" },
+      { label: "Sanctioned amount", value: "₹28,00,000", w: "80%", color: "#c26a4a", valColor: "#b4552e", sub: "What the bank has approved" }
+    ];
+    const sections = [
+      { name: "RCC & foundation over-rates negotiated back", quoted: "₹4,75,000", market: "₹3,94,000", delta: "−₹81,000", deltaColor: "#2f6647" },
+      { name: "Missing scope added back (plaster + waterproofing)", quoted: "—", market: "₹1,54,000", delta: "+₹1,54,000", deltaColor: "#b4552e" },
+      { name: "TMT steel at Fe 500 market rate", quoted: "₹2,97,600", market: "₹3,49,600", delta: "+₹52,000", deltaColor: "#b4552e" },
+      { name: "GST provision (12% composite)", quoted: "not stated", market: "₹3,45,000", delta: "+₹3,45,000", deltaColor: "#b4552e" },
+      { name: "Balance of scope at market", quoted: "₹24,27,400", market: "₹22,57,400", delta: "−₹1,70,000", deltaColor: "#2f6647" }
+    ];
+    const options = [
+      { title: "Negotiate the flagged rates", saves: "≈ ₹1,60,000", desc: "The four questions from your BoQ review already cover this — RCC rates and the steel grade." },
+      { title: "Phase the finishing scope", saves: "≈ ₹2,40,000", desc: "Defer the main gate, granite platform and exterior painting to a post-handover phase." },
+      { title: "Top-up before drawdown", saves: "closes the rest", desc: "A ₹3,00,000 top-up now costs far less than a stalled build at tranche four." }
+    ];
+    return { bars, sections, options };
+  }
+}
+</script>
+</body>
+</html>

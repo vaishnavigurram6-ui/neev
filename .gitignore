@@ -10,3 +10,9 @@ __pycache__/
 
 # Local demo photos (add manually per SETUP)
 demo_assets/
+
+# macOS
+.DS_Store
+
+# Local scratch, not part of the project
+_to_delete/

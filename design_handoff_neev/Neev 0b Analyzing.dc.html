@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Baloo+2:wght@500;600;700&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#faf9f7;font-family:'Instrument Sans',sans-serif;color:#2b2622;-webkit-font-smoothing:antialiased}a{color:#2b2622;text-decoration:none}a:hover{color:#3d7a52}@keyframes nv-pulse{0%,100%{opacity:1}50%{opacity:.35}}@keyframes nv-bar{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}</style></helmet>
+<div data-screen-label="Owner · Analyzing" style="min-height:100vh">
+  <div style="height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #ece9e4;background:#fff">
+    <div style="display:flex;align-items:center;gap:9px"><div style="width:24px;height:24px;border-radius:8px;background:#e07856;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 40 40"><path d="M20 6 L34 18 L31 18 L31 30 L9 30 L9 18 L6 18 Z" fill="#fff"></path></svg></div><span style="font-family:'Baloo 2',sans-serif;font-size:17px;font-weight:700;color:#2b2622">Neev</span></div>
+    <div style="display:flex;align-items:center;gap:14px"><div style="display:flex;align-items:center;gap:6px"><div style="border:1px solid #dcd7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#6d665e;cursor:pointer" title="Language: English / हिंदी / తెలుగు">EN ▾</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Listen to this page" role="button" aria-label="Listen to this page">🔊</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Switch to dark theme" role="button" aria-label="Switch theme">◐</div></div><div style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="text-align:right"><div style="font-size:13px;font-weight:600;line-height:1.2">Ravi Kumar</div><div style="font-size:11px;color:#9b938a">Owner · Plot 47, Kompally</div></div><div style="width:32px;height:32px;border-radius:50%;background:#2b2622;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">RK</div></div></div>
+  </div>
+  <div style="max-width:680px;margin:0 auto;padding:56px 28px 80px">
+    <div style="text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid #ece9e4;border-radius:24px;padding:8px 16px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+        <span style="font-size:15px">📄</span><span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#6d665e">BoQ — Sri Sai Constructions.pdf</span><span style="font-size:11.5px;color:#9b938a">· 3 pages</span>
+      </div>
+      <h1 style="font-family:'Baloo 2',sans-serif;font-size:26px;font-weight:700;letter-spacing:-.02em;margin:20px 0 0">Reading your contract…</h1>
+      <div style="font-size:14px;color:#6d665e;margin-top:8px">40 line items found. Checking each against real Kompally rates — this takes about a minute.</div>
+    </div>
+    <div style="margin-top:28px;background:#fff;border:1px solid #ece9e4;border-radius:16px;padding:8px 24px;box-shadow:0 1px 3px rgba(20,15,10,.05)">
+      <sc-for list="{{ phases }}" as="p" hint-placeholder-count="5">
+        <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #f5f3f0">
+          <div style="flex:none;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;background:{{ p.dotBg }};color:{{ p.dotFg }};animation:{{ p.anim }}">{{ p.mark }}</div>
+          <div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:{{ p.fg }}">{{ p.name }}</div><div style="font-size:12px;color:#9b938a;margin-top:2px">{{ p.sub }}</div></div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:{{ p.statusColor }};font-weight:600">{{ p.status }}</div>
+        </div>
+      </sc-for>
+      <div style="padding:14px 0 16px">
+        <div style="height:6px;border-radius:6px;background:#f2f0ec;overflow:hidden;position:relative"><div style="position:absolute;inset:0;width:38%;border-radius:6px;background:#2b2622;overflow:hidden"><div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:nv-bar 1.4s linear infinite"></div></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#9b938a;margin-top:8px"><span>item 17 of 40 · section 6, plastering</span><span style="font-family:'JetBrains Mono',monospace">~40s left</span></div>
+      </div>
+    </div>
+    <div style="margin-top:20px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9b938a;padding:0 4px">FOUND SO FAR</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+        <sc-for list="{{ findings }}" as="f" hint-placeholder-count="2">
+          <div style="display:flex;align-items:flex-start;gap:12px;background:#fff;border:1px solid #ece9e4;border-radius:12px;padding:14px 18px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+            <span style="flex:none;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:{{ f.pillBg }};color:{{ f.pillFg }}">{{ f.flag }}</span>
+            <div style="font-size:13px;line-height:1.55;color:#6d665e">{{ f.text }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="text-align:center;margin-top:24px">
+        <div style="display:inline-block;background:#f2f0ec;color:#9b938a;border-radius:10px;padding:12px 28px;font-weight:600;font-size:14px;cursor:default">Your full report opens when the check finishes</div>
+        <div style="font-size:12px;color:#9b938a;margin-top:10px">Or skip ahead — <a href="Neev 1 BoQ Review.dc.html" style="color:#3d7a52;font-weight:600">see the finished report</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    const done = { mark: "✓", dotBg: "#eaf4ee", dotFg: "#2f6647", fg: "#2b2622", status: "done", statusColor: "#2f6647", anim: "none" };
+    const run = { mark: "●", dotBg: "#eaf4ee", dotFg: "#3d7a52", fg: "#2b2622", status: "running", statusColor: "#3d7a52", anim: "nv-pulse 1.2s ease-in-out infinite" };
+    const wait = { mark: "·", dotBg: "#f2f0ec", dotFg: "#9b938a", fg: "#9b938a", status: "queued", statusColor: "#b0a89d", anim: "none" };
+    const phases = [
+      { ...done, name: "Reading the document", sub: "40 items across 12 sections, payment schedule, terms" },
+      { ...done, name: "Checking every rate against Kompally benchmarks", sub: "CPWD DSR + 32,963 real listings" },
+      { ...run, name: "Looking for missing scope", sub: "Comparing against what similar houses always include" },
+      { ...wait, name: "Checking specifications and quantities", sub: "Grades, brands, IS standards, steel-to-concrete ratios" },
+      { ...wait, name: "Reviewing the payment schedule and terms", sub: "How much is demanded before real work exists" }
+    ];
+    const findings = [
+      { flag: "Rate +22%", pillBg: "#f9ece5", pillFg: "#b4552e", text: "RCC M25 is priced at ₹9,800/cum — Kompally benchmark is ₹8,033. Appears on 2 items." },
+      { flag: "No grade", pillBg: "#f4efe6", pillFg: "#8a6d4f", text: "TMT bars (4,800 kg) name no grade — Fe 415 vs Fe 500 changes how much steel your house needs." }
+    ];
+    return { phases, findings };
+  }
+}
+</script>
+</body>
+</html>

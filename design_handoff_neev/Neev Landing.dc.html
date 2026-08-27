@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=Baloo+2:wght@500;600;700&amp;display=swap" rel="stylesheet"><script src="./image-slot.js"></script><style>body{margin:0;--bg:#faf9f7;--card:#fff;--ink:#2b2622;--sub:#6d665e;--faint:#9b938a;--line:#ece9e4;--act:#3d7a52;--actHover:#336847;background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;-webkit-font-smoothing:antialiased;transition:background .3s}body.dark{--bg:#241c15;--card:#2e251d;--ink:#f3e9dc;--sub:#b8a794;--faint:#8f7f6d;--line:#3f342a;--act:#4c9367;--actHover:#5aa576}a{color:var(--ink);text-decoration:none}a:hover{color:var(--act)}</style></helmet>
+<div data-screen-label="Landing" style="min-height:100vh;display:flex;flex-direction:column">
+  <div style="height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 40px">
+    <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:8px;background:#e07856;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 40 40"><path d="M20 6 L34 18 L31 18 L31 30 L9 30 L9 18 L6 18 Z" fill="#fff"></path></svg></div><span style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:700">Neev</span></div>
+    <div style="display:flex;align-items:center;gap:18px;font-size:13.5px;font-weight:600">
+      <a href="Neev 7 Bank Onboarding.dc.html" style="color:var(--sub)">For lenders</a>
+      <div onClick="{{ toggleTheme }}" style="width:32px;height:32px;border:1px solid var(--line);background:var(--card);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;color:var(--ink)" title="Light / dark">◐</div>
+      <a href="Neev Login.dc.html" style="border:1.5px solid var(--line);background:var(--card);border-radius:20px;padding:8px 18px">Log in</a>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;align-items:center">
+    <div style="max-width:1060px;margin:0 auto;padding:40px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center;width:100%">
+      <div>
+        <div style="font-family:'Baloo 2',sans-serif;font-size:46px;font-weight:700;line-height:1.18;letter-spacing:-.01em">The home you dream of.<br><span style="color:var(--act)">Built the way you were promised.</span></div>
+        <div style="font-size:16px;color:var(--sub);line-height:1.7;margin-top:16px;max-width:440px;text-wrap:pretty">You don't need to speak builder. Neev reads the contract, checks the prices, and watches your money become your home.</div>
+        <div style="display:flex;align-items:center;gap:16px;margin-top:28px">
+          <a href="Neev 0 Owner Onboarding.dc.html" style="background:var(--act);color:#fff;border-radius:24px;padding:14px 26px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px" style-hover="background:var(--actHover);color:#fff">Check my contract — free</a>
+          <span style="font-size:13px;font-weight:600;color:var(--faint)">2 minutes · no sign-up</span>
+        </div>
+      </div>
+      <div style="position:relative;width:100%;height:380px"><image-slot id="landing-family" shape="rounded" radius="22" placeholder="Family playing with their kid, new home behind"></image-slot></div>
+    </div>
+  </div>
+  <div style="border-top:1px solid var(--line)">
+    <div style="max-width:1060px;margin:0 auto;padding:28px 40px;display:grid;grid-template-columns:repeat(3,1fr);gap:32px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'Baloo 2',sans-serif;font-size:15px;font-weight:700;color:var(--act)">1</span><div><div style="font-size:13.5px;font-weight:700">Share your contract</div><div style="font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.55">A photo of it is enough.</div></div></div>
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'Baloo 2',sans-serif;font-size:15px;font-weight:700;color:var(--act)">2</span><div><div style="font-size:13.5px;font-weight:700">We read every line</div><div style="font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.55">Prices checked against your neighbourhood.</div></div></div>
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'Baloo 2',sans-serif;font-size:15px;font-weight:700;color:var(--act)">3</span><div><div style="font-size:13.5px;font-weight:700">Build with open eyes</div><div style="font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.55">Every payment checked against real progress.</div></div></div>
+    </div>
+    <div style="text-align:center;font-size:11.5px;color:var(--faint);padding:0 40px 20px">Neev · नींव — the foundation · English · हिंदी · తెలుగు</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { toggleTheme: () => document.body.classList.toggle("dark") };
+  }
+}
+</script>
+</body>
+</html>

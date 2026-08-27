@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Baloo+2:wght@500;600;700&amp;display=swap" rel="stylesheet"><script src="./image-slot.js"></script><style>body{margin:0;background:#faf9f7;font-family:'Instrument Sans',sans-serif;color:#2b2622;-webkit-font-smoothing:antialiased}a{color:#2b2622;text-decoration:none}a:hover{color:#3d7a52}</style></helmet>
+<div data-screen-label="Owner · Report Progress" style="min-height:100vh">
+  <div style="position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid #ece9e4;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px">
+    <div style="display:flex;align-items:center;gap:22px">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:24px;height:24px;border-radius:8px;background:#e07856;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 40 40"><path d="M20 6 L34 18 L31 18 L31 30 L9 30 L9 18 L6 18 Z" fill="#fff"></path></svg></div><span style="font-family:'Baloo 2',sans-serif;font-size:17px;font-weight:700;color:#2b2622">Neev</span></div>
+      <div style="display:flex;gap:4px;font-size:13.5px;font-weight:500">
+        <a href="Neev 1b Revised Contract.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">My contract</a>
+        <a href="Neev 2 Sanction Check.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">Sanction check</a>
+        <a href="Neev 3 Build Progress.dc.html" style="padding:7px 13px;border-radius:8px;background:#2b2622;color:#fff">Build progress</a>
+        <a href="Neev 6 Change Orders.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">Changes</a>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px"><div style="display:flex;align-items:center;gap:6px"><div style="border:1px solid #dcd7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#6d665e;cursor:pointer" title="Language: English / हिंदी / తెలుగు">EN ▾</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Listen to this page">🔊</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Switch to dark theme">◐</div></div><div style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="text-align:right"><div style="font-size:13px;font-weight:600;line-height:1.2">Ravi Kumar</div><div style="font-size:11px;color:#9b938a">Owner · Plot 47, Kompally</div></div><div style="width:32px;height:32px;border-radius:50%;background:#2b2622;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">RK</div></div></div>
+  </div>
+  <div style="max-width:1080px;margin:0 auto;padding:36px 28px 80px">
+    <div style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9b938a"><a href="Neev 3 Build Progress.dc.html" style="color:#3d7a52">BUILD PROGRESS</a> · REPORT A MILESTONE</div>
+    <h1 style="font-family:'Baloo 2',sans-serif;font-size:28px;font-weight:700;letter-spacing:-.02em;margin:8px 0 0">Footings done? Show us.</h1>
+    <div style="font-size:14px;color:#6d665e;margin-top:6px">Your photos are the evidence that releases the foundation payment — verified in minutes, not after a site-visit queue.</div>
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;margin-top:28px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="font-size:14.5px;font-weight:700">1 · Which milestone is complete?</div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px">
+            <sc-for list="{{ stages }}" as="s" hint-placeholder-count="5">
+              <div style="border-radius:10px;padding:12px;border:1.5px solid {{ s.border }};background:{{ s.bg }};cursor:pointer;text-align:center">
+                <div style="font-size:15px">{{ s.mark }}</div>
+                <div style="font-size:12px;font-weight:600;margin-top:5px;color:{{ s.fg }}">{{ s.name }}</div>
+                <div style="font-size:10.5px;color:#9b938a;margin-top:2px">{{ s.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14.5px;font-weight:700">2 · Add today's photos</span><span style="font-size:12px;color:#9b938a">3 needed · same spots as last time</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;height:140px">
+            <image-slot id="footing-wide" shape="rounded" radius="10" placeholder="Wide shot from the gate"></image-slot>
+            <image-slot id="footing-trench" shape="rounded" radius="10" placeholder="Footing trench, close up"></image-slot>
+            <image-slot id="footing-starters" shape="rounded" radius="10" placeholder="Column starter bars"></image-slot>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+            <span style="font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:20px;background:#eaf4ee;color:#2f6647">✓ Location matches Plot 47</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:20px;background:#eaf4ee;color:#2f6647">✓ Taken today, 10:20</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:20px;background:#f2f0ec;color:#6d665e">Same-angle check runs on submit</span>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14.5px;font-weight:700">3 · Attach bills <span style="font-weight:400;color:#9b938a;font-size:12.5px">optional, but speeds up release</span></span><span style="font-size:12px;color:#9b938a">photo or PDF</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;height:110px">
+            <image-slot id="bill-cement" shape="rounded" radius="10" placeholder="Cement / steel invoice"></image-slot>
+            <image-slot id="bill-labour" shape="rounded" radius="10" placeholder="Labour / contractor bill"></image-slot>
+            <div style="border:1.5px dashed #dcd7d0;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:#9b938a" style-hover="border-color:#3d7a52;color:#3d7a52"><span style="font-size:18px">＋</span><span style="font-size:12px;font-weight:600">Add another</span></div>
+          </div>
+          <div style="font-size:12px;color:#9b938a;margin-top:12px;line-height:1.55">Bills are cross-checked against your BoQ quantities — 4,800 kg of steel billed should match the steel your slab needs. They go to the bank with the photos as the disbursement record.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="font-size:14.5px;font-weight:700">4 · Anything to add? <span style="font-weight:400;color:#9b938a;font-size:12.5px">optional</span></div>
+          <div style="margin-top:12px;background:#faf9f7;border-radius:10px;padding:14px 16px;font-size:13px;color:#9b938a">e.g. "Anti-termite treatment done before PCC, bill attached" — or tap 🎙 to say it in your language</div>
+          <div style="display:flex;justify-content:flex-end;margin-top:16px">
+            <div style="background:#3d7a52;color:#fff;border-radius:20px;padding:12px 22px;font-weight:600;font-size:14px;cursor:pointer" style-hover="background:#336847">Send for verification</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:82px">
+        <div style="background:#fff;color:#2b2622;border:1px solid #ece9e4;border-radius:14px;padding:22px 24px">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9b938a">WHAT HAPPENS ON SUBMIT</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px;font-size:12.5px;line-height:1.6;color:#6d665e">
+            <div style="display:flex;gap:10px"><span style="font-family:'JetBrains Mono',monospace;color:#3d7a52">1</span><span>Photos are read against your BoQ — footings, PCC and starter bars checked as line items, not a vague "15%".</span></div>
+            <div style="display:flex;gap:10px"><span style="font-family:'JetBrains Mono',monospace;color:#3d7a52">2</span><span>Value in place is computed from your contract's own rates.</span></div>
+            <div style="display:flex;gap:10px"><span style="font-family:'JetBrains Mono',monospace;color:#3d7a52">3</span><span>Your bank gets the evidence with a release recommendation — usually same day.</span></div>
+          </div>
+          <div style="border-top:1px solid #ece9e4;margin-top:14px;padding-top:12px;display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12.5px;color:#6d665e">Releases on verification</span><span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:#2f6647">₹2,80,000</span></div>
+        </div>
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:20px 22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="font-size:14px;font-weight:700">Good photos = fast release</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;font-size:12.5px;line-height:1.55;color:#6d665e">
+            <div style="display:flex;gap:10px"><span style="color:#9b938a">→</span><span>Stand at the gate for the wide shot — same spot every time.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:#9b938a">→</span><span>Get the whole trench and the steel in frame, in daylight.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:#9b938a">→</span><span>Blurry or mismatched photos route to a physical visit — nothing is auto-rejected.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    const sel = { border: "#3d7a52", bg: "#eaf4ee", fg: "#2b2622" };
+    const off = { border: "#ece9e4", bg: "#fff", fg: "#6d665e" };
+    const stages = [
+      { ...sel, mark: "◉", name: "Footings", sub: "you are here" },
+      { ...off, mark: "·", name: "Plinth", sub: "next" },
+      { ...off, mark: "·", name: "Roof slab", sub: "" },
+      { ...off, mark: "·", name: "Brickwork", sub: "" },
+      { ...off, mark: "·", name: "Finishing", sub: "" }
+    ];
+    return { stages };
+  }
+}
+</script>
+</body>
+</html>

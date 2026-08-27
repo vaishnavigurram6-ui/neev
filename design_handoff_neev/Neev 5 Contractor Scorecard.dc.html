@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#f7f7f5;font-family:'Instrument Sans',sans-serif;color:#111827;-webkit-font-smoothing:antialiased}a{color:#111827;text-decoration:none}a:hover{color:#2d5bff}</style></helmet>
+<div data-screen-label="5 · Contractor Scorecard" style="min-height:100vh">
+  <div style="position:sticky;top:0;z-index:10;background:#111827;border-bottom:1px solid #111827;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px">
+    <div style="display:flex;align-items:center;gap:22px">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:24px;height:24px;border-radius:7px;background:#fff;color:#111827;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">न</div><span style="font-size:16px;font-weight:700;letter-spacing:-.01em;color:#fff">Neev</span></div>
+      <div style="display:flex;gap:4px;font-size:13.5px;font-weight:500">
+        
+        
+        
+        <a href="Neev 4 Portfolio Hotlist.dc.html" style="padding:7px 13px;border-radius:8px;color:#9ca3af" style-hover="background:rgba(255,255,255,.12);color:#fff">Portfolio</a>
+        <a href="Neev 5 Contractor Scorecard.dc.html" style="padding:7px 13px;border-radius:8px;background:#fff;color:#111827">Contractors</a>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="text-align:right"><div style="font-size:13px;font-weight:600;line-height:1.2;color:#fff">Anita Mehta</div><div style="font-size:11px;color:#9ca3af">Credit officer · Hyderabad</div></div><div style="width:32px;height:32px;border-radius:50%;background:#2d5bff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">AM</div></div>
+      
+    </div>
+  </div>
+  <div style="max-width:1180px;margin:0 auto;padding:36px 28px 80px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px">
+      <div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9ca3af">CONTRACTOR SCORECARD</div>
+        <h1 style="font-size:28px;font-weight:700;letter-spacing:-.02em;margin:8px 0 0">The builders behind the book</h1>
+        <div style="font-size:14px;color:#6b7280;margin-top:6px">A credit signal on contractors, not borrowers — accumulated from every BoQ parsed and every site verified. No lender holds this today.</div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#9ca3af;flex:none">illustrative · compounds with every loan</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:28px">
+      <sc-for list="{{ contractors }}" as="c" hint-placeholder-count="4">
+        <div style="background:#fff;border:1px solid #ebe9e4;border-radius:14px;padding:20px 24px;box-shadow:0 1px 2px rgba(17,24,39,.04);display:grid;grid-template-columns:1.3fr repeat(4,1fr) 120px;gap:18px;align-items:center" style-hover="border-color:#d3d1cb">
+          <div>
+            <div style="font-size:14.5px;font-weight:700">{{ c.name }}</div>
+            <div style="font-size:12px;color:#9ca3af;margin-top:3px">{{ c.meta }}</div>
+          </div>
+          <div><div style="font-size:10.5px;font-weight:600;letter-spacing:.05em;color:#9ca3af">FLAGS / BoQ</div><div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;margin-top:4px;color:{{ c.flagColor }}">{{ c.flags }}</div></div>
+          <div><div style="font-size:10.5px;font-weight:600;letter-spacing:.05em;color:#9ca3af">UNDER-SPECIFIED</div><div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;margin-top:4px;color:{{ c.specColor }}">{{ c.underspec }}</div></div>
+          <div><div style="font-size:10.5px;font-weight:600;letter-spacing:.05em;color:#9ca3af">BUDGET OVERRUN</div><div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;margin-top:4px;color:{{ c.overColor }}">{{ c.overrun }}</div></div>
+          <div><div style="font-size:10.5px;font-weight:600;letter-spacing:.05em;color:#9ca3af">SITES GONE QUIET</div><div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;margin-top:4px;color:{{ c.quietColor }}">{{ c.quiet }}</div></div>
+          <div style="justify-self:end"><span style="font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;background:{{ c.pillBg }};color:{{ c.pillFg }}">{{ c.tier }}</span></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px">
+      <div style="background:#111827;color:#fff;border-radius:14px;padding:22px 24px">
+        <div style="font-size:14px;font-weight:700">Why this compounds</div>
+        <div style="font-size:13px;color:#c7cbd4;line-height:1.65;margin-top:8px">The same local contractors appear across dozens of loans. After a few hundred, this becomes a private credit signal on builders that no Indian lender holds for small contractors — and it gets sharper with every BoQ parsed.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #ebe9e4;border-radius:14px;padding:22px 24px;box-shadow:0 1px 2px rgba(17,24,39,.04)">
+        <div style="font-size:14px;font-weight:700">How the tiers are set</div>
+        <div style="font-size:13px;color:#6b7280;line-height:1.65;margin-top:8px">Derived only from per-loan pipeline outputs: flags per BoQ parsed, share of under-specified lines, verified overrun against original BoQ, and inter-tranche site inactivity. No manual ratings.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    const RED = "#b42318", AMBER = "#b54708", OK = "#067647", INK = "#111827";
+    const mk = (name, meta, flags, underspec, overrun, quiet, tier, sev) => ({
+      name, meta, flags, underspec, overrun, quiet, tier,
+      flagColor: sev[0] ? RED : INK, specColor: sev[1] ? RED : INK, overColor: sev[2] ? RED : INK, quietColor: sev[3] ? RED : INK,
+      pillBg: tier === "WATCH" ? "#fef3f2" : tier === "REVIEW" ? "#fffaeb" : "#ecfdf3",
+      pillFg: tier === "WATCH" ? RED : tier === "REVIEW" ? AMBER : OK
+    });
+    const contractors = [
+      mk("Sri Sai Constructions", "6 loans · Kompally, Medchal · since 2024", "7.2", "4 of 6 BoQs", "+19% avg", "2 sites", "WATCH", [1,1,1,1]),
+      mk("SVR Infra Projects", "4 loans · Shamirpet, Alwal · since 2025", "5.1", "2 of 4 BoQs", "+11% avg", "1 site", "REVIEW", [1,0,1,0]),
+      mk("Manjunath Builders", "9 loans · Bachupally, Suraram · since 2023", "2.3", "1 of 9 BoQs", "+4% avg", "0 sites", "RELIABLE", [0,0,0,0]),
+      mk("Lakshmi Constructions", "5 loans · Kukatpally, Jeedimetla · since 2024", "1.8", "0 of 5 BoQs", "+2% avg", "0 sites", "RELIABLE", [0,0,0,0])
+    ];
+    return { contractors };
+  }
+}
+</script>
+</body>
+</html>

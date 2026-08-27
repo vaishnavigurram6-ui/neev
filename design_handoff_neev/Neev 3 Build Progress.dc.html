@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Baloo+2:wght@500;600;700&amp;display=swap" rel="stylesheet"><script src="./image-slot.js"></script><style>body{margin:0;background:#faf9f7;font-family:'Instrument Sans',sans-serif;color:#2b2622;-webkit-font-smoothing:antialiased}a{color:#2b2622;text-decoration:none}a:hover{color:#3d7a52}</style></helmet>
+<div data-screen-label="Owner · Build Progress" style="min-height:100vh">
+  <div style="position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid #ece9e4;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px">
+    <div style="display:flex;align-items:center;gap:22px">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:24px;height:24px;border-radius:8px;background:#e07856;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 40 40"><path d="M20 6 L34 18 L31 18 L31 30 L9 30 L9 18 L6 18 Z" fill="#fff"></path></svg></div><span style="font-family:'Baloo 2',sans-serif;font-size:17px;font-weight:700;color:#2b2622">Neev</span></div>
+      <div style="display:flex;gap:4px;font-size:13.5px;font-weight:500">
+        <a href="Neev 1 BoQ Review.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">My contract</a>
+        <a href="Neev 2 Sanction Check.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">Sanction check</a>
+        <a href="Neev 3 Build Progress.dc.html" style="padding:7px 13px;border-radius:8px;background:#2b2622;color:#fff">Build progress</a>
+        <a href="Neev 6 Change Orders.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">Changes</a>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px"><div style="display:flex;align-items:center;gap:6px"><div style="border:1px solid #dcd7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#6d665e;cursor:pointer" title="Language: English / हिंदी / తెలుగు">EN ▾</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Listen to this page" role="button" aria-label="Listen to this page">🔊</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Switch to dark theme" role="button" aria-label="Switch theme">◐</div></div><div style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="text-align:right"><div style="font-size:13px;font-weight:600;line-height:1.2">Ravi Kumar</div><div style="font-size:11px;color:#9b938a">Owner · Plot 47, Kompally</div></div><div style="width:32px;height:32px;border-radius:50%;background:#2b2622;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">RK</div></div></div>
+  </div>
+  <div style="max-width:1120px;margin:0 auto;padding:36px 28px 80px">
+    <div style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9b938a">THROUGH THE BUILD</div>
+    <h1 style="font-family:'Baloo 2',sans-serif;font-size:28px;font-weight:700;letter-spacing:-.02em;margin:8px 0 0">Your build, payment by payment</h1>
+    <div style="font-size:14px;color:#6d665e;margin-top:6px">₹18,00,000 of ₹28,00,000 drawn · slab cast · last verified 10 Aug 2026</div>
+    <div style="margin-top:22px;background:#f4efe6;border:1px solid #eee5d2;border-radius:14px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px">
+      <div style="font-size:13.5px;line-height:1.6;color:#8a6d4f"><b>The next release is paused — and that's protecting you.</b> More has been paid out than the structure is worth so far. Pausing now forces the re-scope while there's still money left to re-scope with.</div>
+      <a href="Neev 2 Sanction Check.dc.html" style="flex:none;background:#3d7a52;color:#fff;border-radius:20px;padding:10px 16px;font-weight:600;font-size:13px" style-hover="background:#336847;color:#fff">See your options</a>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:22px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="font-size:14.5px;font-weight:700">Payments so far</div>
+          <div style="display:flex;flex-direction:column;margin-top:6px">
+            <sc-for list="{{ tranches }}" as="t" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:26px 1fr auto auto;gap:14px;padding:14px 0;border-bottom:1px solid #f5f3f0;align-items:center">
+                <div style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;background:{{ t.dotBg }};color:{{ t.dotFg }}">{{ t.mark }}</div>
+                <div><div style="font-size:13.5px;font-weight:600">{{ t.name }}</div><div style="font-size:12px;color:#9b938a;margin-top:2px">{{ t.sub }}</div></div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:{{ t.amtColor }}">{{ t.amount }}</div>
+                <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:{{ t.pillBg }};color:{{ t.pillFg }};min-width:64px;text-align:center">{{ t.status }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14.5px;font-weight:700">This month's site photos</span><a href="Neev 3b Update Progress.dc.html" style="font-size:12px;color:#3d7a52;font-weight:600">Report a milestone →</a></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;height:130px">
+            <image-slot id="owner-photo-1" shape="rounded" radius="10" placeholder="Add photo — front angle"></image-slot>
+            <image-slot id="owner-photo-2" shape="rounded" radius="10" placeholder="Add photo — slab"></image-slot>
+            <image-slot id="owner-photo-3" shape="rounded" radius="10" placeholder="Add photo — inside"></image-slot>
+          </div>
+          <div style="font-size:12px;color:#9b938a;margin-top:10px;line-height:1.5">Take photos from the same spots each month — it speeds up verification and releases.</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:82px">
+        <div style="background:#fff;color:#2b2622;border:1px solid #ece9e4;border-radius:14px;padding:22px 24px">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9b938a">WHERE YOU STAND</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+            <sc-for list="{{ standing }}" as="s" hint-placeholder-count="4">
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:#6d665e">{{ s.label }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:{{ s.color }}">{{ s.value }}</span></div>
+            </sc-for>
+          </div>
+          <div style="border-top:1px solid #ece9e4;margin-top:14px;padding-top:12px;font-size:12.5px;line-height:1.6;color:#6d665e">At today's rates you'd be <b style="color:#b4552e">₹5,80,000 short</b> of a finished house. Fixable now — much harder at the roof.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:20px 22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="font-size:14px;font-weight:700">What to do this week</div>
+          <div style="display:flex;flex-direction:column;margin-top:8px">
+            <sc-for list="{{ steps }}" as="st" hint-placeholder-count="3">
+              <div style="display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #f5f3f0;align-items:flex-start">
+                <div style="flex:none;width:20px;height:20px;border-radius:50%;background:#f2f0ec;font-family:'JetBrains Mono',monospace;font-size:11px;display:flex;align-items:center;justify-content:center;color:#6d665e">{{ st.n }}</div>
+                <div style="font-size:12.5px;line-height:1.55">{{ st.text }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <a href="Neev 1 BoQ Review.dc.html" style="flex:1;border:1px solid #dcd7d0;border-radius:10px;padding:9px 0;text-align:center;font-weight:600;font-size:12.5px" style-hover="border-color:#2b2622">Your 4 questions</a>
+            <a href="Neev 2 Sanction Check.dc.html" style="flex:1;background:#3d7a52;color:#fff;border-radius:20px;padding:9px 0;text-align:center;font-weight:600;font-size:12.5px" style-hover="background:#336847;color:#fff">Re-scope options</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    const paid = { mark: "✓", dotBg: "#eaf4ee", dotFg: "#2f6647", pillBg: "#eaf4ee", pillFg: "#2f6647", status: "Paid", amtColor: "#2b2622" };
+    const tranches = [
+      { ...paid, name: "Foundation", sub: "Verified & released 20 Jan 2026", amount: "₹6,00,000" },
+      { ...paid, name: "Plinth", sub: "Verified & released 5 Mar 2026", amount: "₹6,00,000" },
+      { ...paid, name: "Roof slab", sub: "Slab cast, verified from photos 10 Aug 2026", amount: "₹6,00,000" },
+      { mark: "‖", dotBg: "#f9ece5", dotFg: "#b4552e", pillBg: "#f9ece5", pillFg: "#b4552e", status: "On hold", amtColor: "#b4552e", name: "Brickwork & roof", sub: "Paused pending re-scope — see your options", amount: "₹6,00,000" },
+      { mark: "·", dotBg: "#f2f0ec", dotFg: "#9b938a", pillBg: "#faf9f7", pillFg: "#9b938a", status: "Upcoming", amtColor: "#9b938a", name: "Finishing & handover", sub: "Final release", amount: "₹4,00,000" }
+    ];
+    const standing = [
+      { label: "Paid to your contractor", value: "₹18,00,000", color: "#2b2622" },
+      { label: "Work standing on site", value: "₹13,90,000", color: "#b4552e" },
+      { label: "Left in your sanction", value: "₹10,00,000", color: "#2b2622" },
+      { label: "Needed to finish", value: "₹15,80,000", color: "#b4552e" }
+    ];
+    const steps = [
+      { n: 1, text: "Send the 4 written questions from your contract review — they cover the over-priced RCC and the missing waterproofing." },
+      { n: 2, text: "Pick one of the three re-scope options and agree it with your contractor." },
+      { n: 3, text: "Add this month's photos so the next verification is instant." }
+    ];
+    return { tranches, standing, steps };
+  }
+}
+</script>
+</body>
+</html>

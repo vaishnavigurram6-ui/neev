@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Baloo+2:wght@500;600;700&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#faf9f7;font-family:'Instrument Sans',sans-serif;color:#2b2622;-webkit-font-smoothing:antialiased}a{color:#2b2622;text-decoration:none}a:hover{color:#3d7a52}</style></helmet>
+<div data-screen-label="Login" style="min-height:100vh;display:grid;grid-template-columns:1fr 1.1fr">
+  <div style="background:#fff;color:#2b2622;border:1px solid #ece9e4;padding:48px 52px;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:8px;background:#e07856;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 40 40"><path d="M20 6 L34 18 L31 18 L31 30 L9 30 L9 18 L6 18 Z" fill="#fff"></path></svg></div><span style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:700">Neev</span></div>
+    <div style="margin:auto 0;padding:40px 0">
+      <div style="font-size:30px;font-weight:700;line-height:1.3;letter-spacing:-.02em">The home builder's side<br>of the table.</div>
+      <div style="font-size:14px;color:#9b938a;line-height:1.7;margin-top:14px;max-width:400px">Your contract read line by line. Your money released against real progress. Your changes priced against what you signed.</div>
+      <div style="display:flex;flex-direction:column;gap:0;margin-top:32px;max-width:400px">
+        <sc-for list="{{ stages }}" as="s" hint-placeholder-count="4">
+          <div style="display:flex;gap:14px;padding:11px 0;border-bottom:1px solid #ece9e4;align-items:baseline">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3d7a52;flex:none;width:16px">{{ s.n }}</span>
+            <span style="font-size:13px;font-weight:600;flex:none;width:130px">{{ s.name }}</span>
+            <span style="font-size:12px;color:#9b938a;line-height:1.5">{{ s.desc }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="font-size:11.5px;color:#6d665e">नींव — the foundation. The first thing built, the first thing verified.</div>
+  </div>
+  <div style="display:flex;flex-direction:column;padding:24px 28px">
+    <div style="display:flex;justify-content:flex-end;gap:6px">
+      <div style="border:1px solid #dcd7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#6d665e;cursor:pointer" title="Language">EN · हिंदी · తెలుగు ▾</div>
+      <div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Listen to this page">🔊</div>
+      <div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Switch to dark theme">◐</div>
+    </div>
+    <div style="margin:auto;width:400px;max-width:100%">
+      <div style="font-size:23px;font-weight:700;letter-spacing:-.02em">Welcome back</div>
+      <div style="display:flex;background:#f2f0ec;border-radius:11px;padding:4px;font-size:13px;font-weight:600;margin-top:18px">
+        <div style="flex:1;text-align:center;padding:9px 0;border-radius:8px;background:#fff;box-shadow:0 1px 2px rgba(20,15,10,.07)">I'm building a home</div>
+        <div style="flex:1;text-align:center;padding:9px 0;color:#6d665e;cursor:pointer">I'm a lender</div>
+      </div>
+      <div style="background:#fff;border:1px solid #ece9e4;border-radius:16px;padding:24px;margin-top:16px;box-shadow:0 1px 3px rgba(20,15,10,.05)">
+        <div style="font-size:12.5px;font-weight:600;color:#6d665e">Mobile number</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <div style="border:1px solid #dcd7d0;border-radius:10px;padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:13.5px;color:#6d665e">+91</div>
+          <div style="flex:1;border:1px solid #dcd7d0;border-radius:10px;padding:11px 14px;font-family:'JetBrains Mono',monospace;font-size:13.5px;color:#9b938a">98490 12345</div>
+        </div>
+        <div style="margin-top:14px;background:#3d7a52;color:#fff;border-radius:20px;padding:12px 0;text-align:center;font-weight:600;font-size:14px;cursor:pointer" style-hover="background:#336847">Send OTP</div>
+        <div style="display:flex;align-items:center;gap:12px;margin:18px 0"><div style="flex:1;height:1px;background:#ece9e4"></div><span style="font-size:11.5px;color:#9b938a">or</span><div style="flex:1;height:1px;background:#ece9e4"></div></div>
+        <div style="border:1px solid #dcd7d0;border-radius:10px;padding:11px 0;text-align:center;font-weight:600;font-size:13.5px;cursor:pointer" style-hover="border-color:#2b2622">Continue with the link your bank sent</div>
+        <div style="font-size:11.5px;color:#9b938a;text-align:center;margin-top:12px;line-height:1.5">No passwords. Your number is your login.</div>
+      </div>
+      <div style="text-align:center;font-size:13px;color:#6d665e;margin-top:18px">New here? <a href="Neev 0 Owner Onboarding.dc.html" style="color:#3d7a52;font-weight:600">Start by uploading your contract</a></div>
+    </div>
+    <div style="text-align:center;font-size:11.5px;color:#b0a89d">Works in English, हिंदी and తెలుగు · every screen can be read aloud</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    const stages = [
+      { n: "0", name: "Before signing", desc: "flags what's inflated, missing or vague" },
+      { n: "1", name: "At sanction", desc: "will the loan actually finish the house?" },
+      { n: "2", name: "Through the build", desc: "photos verify each payment" },
+      { n: "3", name: "On every change", desc: "extras priced against the signed contract" }
+    ];
+    return { stages };
+  }
+}
+</script>
+</body>
+</html>

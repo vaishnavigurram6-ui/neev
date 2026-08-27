@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Baloo+2:wght@500;600;700&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#faf9f7;font-family:'Instrument Sans',sans-serif;color:#2b2622;-webkit-font-smoothing:antialiased}a{color:#2b2622;text-decoration:none}a:hover{color:#3d7a52}</style></helmet>
+<div data-screen-label="1 · BoQ Review" style="min-height:100vh">
+  <div style="position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid #ece9e4;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px">
+    <div style="display:flex;align-items:center;gap:22px">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:24px;height:24px;border-radius:8px;background:#e07856;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 40 40"><path d="M20 6 L34 18 L31 18 L31 30 L9 30 L9 18 L6 18 Z" fill="#fff"></path></svg></div><span style="font-family:'Baloo 2',sans-serif;font-size:17px;font-weight:700;color:#2b2622">Neev</span></div>
+      <div style="display:flex;gap:4px;font-size:13.5px;font-weight:500">
+        <a href="Neev 1 BoQ Review.dc.html" style="padding:7px 13px;border-radius:8px;background:#2b2622;color:#fff">My contract</a>
+        <a href="Neev 2 Sanction Check.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">Sanction check</a>
+        <a href="Neev 3 Build Progress.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">Build progress</a>
+        <a href="Neev 6 Change Orders.dc.html" style="padding:7px 13px;border-radius:8px;color:#6d665e" style-hover="background:#f2f0ec;color:#2b2622">Changes</a>
+        
+        
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:14px"><div style="display:flex;align-items:center;gap:6px"><div style="border:1px solid #dcd7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#6d665e;cursor:pointer" title="Language: English / हिंदी / తెలుగు">EN ▾</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Listen to this page" role="button" aria-label="Listen to this page">🔊</div><div style="width:30px;height:30px;border:1px solid #dcd7d0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer" title="Switch to dark theme" role="button" aria-label="Switch theme">◐</div></div><div style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="text-align:right"><div style="font-size:13px;font-weight:600;line-height:1.2">Ravi Kumar</div><div style="font-size:11px;color:#9b938a">Owner · Plot 47, Kompally</div></div><div style="width:32px;height:32px;border-radius:50%;background:#2b2622;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">RK</div></div></div>
+      
+    </div>
+  </div>
+  <div style="max-width:1280px;margin:0 auto;padding:36px 28px 80px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px">
+      <div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9b938a">BEFORE SIGNING</div>
+        <h1 style="font-family:'Baloo 2',sans-serif;font-size:28px;font-weight:700;letter-spacing:-.02em;margin:8px 0 0">Your contract, checked line by line</h1>
+        <div style="font-size:14px;color:#6d665e;margin-top:6px">Sri Sai Constructions · received 12 Aug · 40 items checked against Kompally benchmarks</div>
+      </div>
+      <div style="display:flex;gap:10px;flex:none">
+        <div style="border:1px solid #dcd7d0;background:#fff;border-radius:10px;padding:10px 16px;font-weight:600;font-size:13.5px;cursor:pointer" style-hover="border-color:#2b2622">Marked-up PDF</div>
+        <a href="Neev 1a Upload Revision.dc.html" style="border:1px solid #dcd7d0;background:#fff;border-radius:10px;padding:10px 16px;font-weight:600;font-size:13.5px" style-hover="border-color:#2b2622;color:#2b2622">Upload revised BoQ</a>
+        <div style="background:#3d7a52;color:#fff;border-radius:20px;padding:11px 16px;font-weight:600;font-size:13.5px;cursor:pointer" style-hover="background:#336847">Send 4 questions</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="4">
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:18px 20px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="font-size:12px;font-weight:600;color:#9b938a;letter-spacing:.04em">{{ c.label }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:23px;font-weight:600;margin-top:10px;letter-spacing:-.02em;color:{{ c.valColor }}">{{ c.value }}</div>
+          <div style="font-size:12.5px;color:#6d665e;margin-top:6px;line-height:1.5">{{ c.sub }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;margin-top:20px;align-items:start">
+      <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid #f2f0ec">
+          <div style="font-size:14.5px;font-weight:700">9 of 40 items need your attention</div>
+          <div style="display:flex;background:#f2f0ec;border-radius:9px;padding:3px;font-size:12px;font-weight:600"><div style="padding:4px 12px;border-radius:7px;background:#fff;box-shadow:0 1px 2px rgba(20,15,10,.07)">Flagged</div><div style="padding:4px 12px;color:#6d665e;cursor:pointer">All 40</div></div>
+        </div>
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+          <div style="padding:10px 22px 4px;font-size:11px;font-weight:600;letter-spacing:.07em;color:#9b938a">{{ g.name }}</div>
+          <sc-for list="{{ g.items }}" as="r" hint-placeholder-count="1">
+            <div style="display:grid;grid-template-columns:44px 1fr auto;gap:14px;padding:13px 22px;border-bottom:1px solid #f5f3f0;align-items:start" style-hover="background:#f7f6f4">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9b938a;padding-top:2px">{{ r.id }}</div>
+              <div>
+                <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">{{ r.desc }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#9b938a">{{ r.figures }}</span></div>
+                <div style="font-size:12.5px;line-height:1.55;color:#6d665e;margin-top:4px;max-width:560px">{{ r.note }}</div>
+              </div>
+              <span style="font-size:11px;font-weight:600;letter-spacing:.03em;padding:4px 10px;border-radius:20px;background:{{ r.pillBg }};color:{{ r.pillFg }};white-space:nowrap">{{ r.flag }}</span>
+            </div>
+          </sc-for>
+        </sc-for>
+        <div style="padding:13px 22px;font-size:12.5px;color:#9b938a;display:flex;justify-content:space-between"><span>31 items matched local benchmarks</span><span style="color:#3d7a52;font-weight:600;cursor:pointer">Show all</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:82px">
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:20px 22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;font-weight:700">Payment schedule</span><span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:#f9ece5;color:#b4552e">Front-loaded</span></div>
+          <div style="font-size:12.5px;color:#6d665e;line-height:1.55;margin-top:8px">45% is due before the slab is cast. The standard is 25%.</div>
+          <div style="display:flex;height:10px;border-radius:20px;overflow:hidden;margin-top:16px;gap:2px">
+            <div style="width:20%;background:#c26a4a"></div><div style="width:15%;background:#d68a6d"></div><div style="width:10%;background:#e5b39e"></div><div style="width:20%;background:#dcd7d0"></div><div style="width:20%;background:#dcd7d0"></div><div style="width:15%;background:#dcd7d0"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-top:8px;font-family:'JetBrains Mono',monospace"><span style="color:#b4552e">before slab · ₹14,40,000</span><span style="color:#9b938a">after · ₹17,60,000</span></div>
+        </div>
+        <div style="background:#fff;border:1px solid #ece9e4;border-radius:14px;padding:20px 22px;box-shadow:0 1px 2px rgba(20,15,10,.05)">
+          <div style="font-size:14px;font-weight:700">Send before you sign</div>
+          <div style="font-size:12.5px;color:#6d665e;margin-top:4px;line-height:1.5">Questions, not accusations — each one your contractor can confirm in writing.</div>
+          <div style="display:flex;flex-direction:column;margin-top:8px">
+            <sc-for list="{{ questions }}" as="q" hint-placeholder-count="4">
+              <div style="display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #f5f3f0;align-items:flex-start">
+                <div style="flex:none;width:20px;height:20px;border-radius:50%;background:#f2f0ec;font-family:'JetBrains Mono',monospace;font-size:11px;display:flex;align-items:center;justify-content:center;color:#6d665e">{{ q.n }}</div>
+                <div style="font-size:12.5px;line-height:1.55">{{ q.text }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:16px;background:#3d7a52;color:#fff;border-radius:20px;padding:10px 0;text-align:center;font-weight:600;font-size:13px;cursor:pointer" style-hover="background:#336847">Copy as WhatsApp message</div>
+        </div>
+        <div style="background:#f4efe6;border:1px solid #eee5d2;border-radius:14px;padding:16px 20px;font-size:12.5px;line-height:1.6;color:#8a6d4f"><b>GST is not mentioned anywhere.</b> At 12–18% that is up to ₹5,76,000 unbudgeted. Ask whether rates are inclusive.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440}}">
+class Component extends DCLogic {
+  renderVals() {
+    const red = { pillBg: "#f9ece5", pillFg: "#b4552e" }, amber = { pillBg: "#f4efe6", pillFg: "#8a6d4f" };
+    const cards = [
+      { label: "QUOTED vs FAIR PRICE", value: "₹32,00,000", sub: "Kompally rates price this scope at ₹29,15,000", valColor: "#2b2622" },
+      { label: "FLAGS RAISED", value: "9 items", sub: "3 rate outliers · 2 missing scope · 4 vague specs", valColor: "#b4552e" },
+      { label: "MISSING SCOPE", value: "≈ ₹1,54,000", sub: "External plaster and terrace waterproofing absent", valColor: "#b4552e" },
+      { label: "DUE BEFORE SLAB", value: "45%", sub: "₹14,40,000 before meaningful structure exists", valColor: "#8a6d4f" }
+    ];
+    const groups = [
+      { name: "FOUNDATION & RCC", items: [
+        { id: "2.3", desc: "Plinth beam RCC M20 incl. shuttering", figures: "6.5 cum × ₹9,800 = ₹63,700", note: "M20 concrete priced at the M25 rate. Kompally benchmark ₹8,300/cum.", flag: "Rate +18%", ...red },
+        { id: "3.1", desc: "RCC M25 for columns incl. shuttering & curing", figures: "12 cum × ₹9,800 = ₹1,17,600", note: "Benchmark ₹8,033/cum — about ₹21,200 excess on this line.", flag: "Rate +22%", ...red },
+        { id: "3.2", desc: "RCC M25 for roof slab 125mm incl. shuttering", figures: "22.5 cum × ₹9,800 = ₹2,20,500", note: "Benchmark ₹8,033/cum — about ₹39,800 excess on this line.", flag: "Rate +22%", ...red } ] },
+      { name: "STEEL", items: [
+        { id: "4.2", desc: "TMT bars, cut bent and placed incl. wastage", figures: "4,800 kg × ₹62 = ₹2,97,600", note: "No grade stated. Fe 415 vs Fe 500 vs Fe 500D changes the tonnage needed for the same strength — and this rate is below market: the classic low-bid trap.", flag: "No grade", ...amber } ] },
+      { name: "PLASTERING — EXPECTED BUT ABSENT", items: [
+        { id: "—", desc: "External plaster", figures: "expected ≈ 295 sqm ≈ ₹74,000", note: "Present in comparable BoQs, absent here. The contract's own terms say anything unlisted \"will be charged extra as per actuals\".", flag: "Missing", ...red },
+        { id: "—", desc: "Terrace waterproofing", figures: "expected ≈ ₹80,000", note: "The single most common source of post-handover disputes.", flag: "Missing", ...red } ] },
+      { name: "FLOORING & ELECTRICAL", items: [
+        { id: "7.1", desc: "Vitrified tiles 600×600 \"good quality\"", figures: "152 sqm × ₹1,150 = ₹1,74,800", note: "No brand or model named — enables substitution with cheaper equivalents.", flag: "Vague spec", ...amber },
+        { id: "9.1", desc: "Concealed wiring per point, \"branded wire\"", figures: "68 pt × ₹720 = ₹48,960", note: "\"Branded\" names no brand. Specify make and FR grade.", flag: "Vague spec", ...amber },
+        { id: "9.2", desc: "Modular switches & sockets, \"good make\"", figures: "68 pt × ₹310 = ₹21,080", note: "Specify make and series.", flag: "Vague spec", ...amber } ] }
+    ];
+    const questions = [
+      { n: 1, text: "Confirm the TMT grade for item 4.2 — Fe 500 or Fe 500D per IS 1786 — in writing." },
+      { n: 2, text: "RCC M25 is priced at ₹9,800/cum against a ₹8,033 local benchmark. What is the basis?" },
+      { n: 3, text: "External plaster and terrace waterproofing are absent. In scope, or extra — and at what rate?" },
+      { n: 4, text: "45% is due before slab. Please restructure toward the standard 25%-before-slab pattern." }
+    ];
+    return { cards, groups, questions };
+  }
+}
+</script>
+</body>
+</html>
