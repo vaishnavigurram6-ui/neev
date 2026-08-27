@@ -2,9 +2,9 @@
 
 *Date: 2026-08-27 · Status: awaiting review · Supersedes the UI portions of `docs/Neev_Implementation_Plan.md` §4*
 
-Turn the repo from a single ADK agent package into a three-package application:
-a standalone AI pipeline, a FastAPI backend, and a Next.js frontend built from
-the 16 designed screens in `design_handoff_neev/`.
+Turn the repo from a single ADK agent package into a four-package application:
+a dependency-free core, the AI pipeline, a FastAPI backend, and a Next.js
+frontend built from the screens in `design_handoff_neev/`.
 
 ---
 
@@ -15,7 +15,7 @@ the 16 designed screens in `design_handoff_neev/`.
 | Existing `buildguard/` | **Relocate and rename**, keep working | `adk web`, `golden_run.py`, 28 offline tests survive |
 | Landing | **Straight to `main`** | No PR gate; each wave commits independently |
 | App database | **SQLite via SQLAlchemy** | Zero-setup, seeded from `fixtures/`; swap to Postgres later behind the ORM |
-| Screen scope | **8 demo screens fully built, 8 scaffolded** | Matches the four demo beats |
+| Screen scope | **8 demo screens fully built, 7 scaffolded** | Matches the four demo beats |
 | Auth | **Mocked session, real boundary** | Role cookie + `get_current_user` dependency; OTP drops in later |
 | Pipeline execution | **Async job + SSE progress** | Feeds the Analyzing screen's 5-phase design |
 | Timeline | **Hackathon demo soon** | Every demo path needs an offline fallback |
@@ -50,18 +50,26 @@ because their dependency sets are disjoint — the backend must not carry
 `google-adk` transitively, and the agents package must not carry FastAPI.
 
 ```bash
-# agents
+# agents — ADK pipeline (only venv that carries google-adk)
 cd agents && /opt/homebrew/bin/python3.11 -m venv .venv
-source .venv/bin/activate && pip install -r requirements.txt
+source .venv/bin/activate && pip install -e ../core && pip install -e .
 
-# backend
+# backend — fixture mode needs NO ADK
 cd backend && /opt/homebrew/bin/python3.11 -m venv .venv
-source .venv/bin/activate && pip install -r requirements.txt   # incl. -e ../agents
+source .venv/bin/activate && pip install -e ../core && pip install -e .
+# live mode only, when credits are approved:  pip install -e ../agents
 ```
 
-The backend depends on the agents package as an **editable install** (`-e ../agents`),
-which is what removes every `sys.path` hack currently in `golden_run.py` and
-`test_offline.py`. Both venvs are git-ignored; `.python-version` pins 3.11.
+Each package ships a `pyproject.toml` — without one, `pip install -e` fails
+outright, and the repo currently has none. `neev_core` declares **no
+dependencies at all**; `neev_pipeline` declares the ADK stack; the backend
+declares FastAPI plus `neev_core`, and takes `neev_pipeline` as an optional
+`[live]` extra. That is what makes "the backend does not carry `google-adk`"
+literally true rather than aspirational: the default backend install cannot
+import ADK, so it cannot accidentally make a billed call.
+
+Editable installs also remove the `sys.path` hack in `golden_run.py`. Both venvs
+are git-ignored; `.python-version` pins 3.11.
 
 Frontend uses plain `npm` with a committed `package-lock.json`.
 
@@ -71,17 +79,22 @@ Frontend uses plain `npm` with a committed `package-lock.json`.
 
 ```
 neev/
+├── core/                            # `neev_core` — pure Python, ZERO third-party deps
+│   ├── neev_core/
+│   │   ├── config.py                # thresholds, weights, LTV bands
+│   │   ├── risk.py                  # assess_tranche
+│   │   ├── boq_checks.py            # the 4 pure BoQ checks
+│   │   └── boq_fixtures.py          # moved from scripts/boq_data.py
+│   ├── tests/                       # pure-math tests, no stubs needed
+│   └── pyproject.toml
 ├── agents/                          # AI pipeline — no knowledge of HTTP or DB
 │   ├── neev_pipeline/
 │   │   ├── __init__.py              # `from . import agent` — ADK discovery contract
 │   │   ├── agent.py                 # root_agent: SequentialAgent of 5
-│   │   ├── config.py                # thresholds, weights, LTV bands
-│   │   ├── core/                    # NEW: pure functions, zero external deps
-│   │   │   ├── risk.py              #   assess_tranche
-│   │   │   └── boq_checks.py        #   the 4 pure BoQ checks
-│   │   └── tools/                   # I/O-bearing ADK tools (BigQuery, Gemini)
-│   ├── tests/test_offline.py        # the 28 tests
-│   └── requirements.txt
+│   │   ├── config.py                # re-exports neev_core.config for compatibility
+│   │   └── tools/                   # I/O-bearing ADK tools; wrap neev_core
+│   ├── tests/test_offline.py        # wiring + stubbed-import tests
+│   └── pyproject.toml               # depends on neev_core
 ├── backend/
 │   ├── app/
 │   │   ├── main.py                  # FastAPI app factory
@@ -90,10 +103,10 @@ neev/
 │   │   ├── schemas/                 # Pydantic — the shared contract
 │   │   └── services/
 │   │       ├── pipeline_runner.py   # ADK Runner wrapper (live mode)
-│   │       ├── fixture_runner.py    # recorded replay (fixture mode)
+│   │       ├── fixture_runner.py    # authored replay (fixture mode, default)
 │   │       └── jobs.py              # in-process job registry + SSE broker
 │   ├── tests/
-│   └── requirements.txt
+│   └── pyproject.toml
 ├── frontend/
 │   ├── app/(marketing)/             # landing, login
 │   ├── app/(owner)/                 # onboarding, analyzing, boq, sanction, progress, changes
@@ -103,8 +116,33 @@ neev/
 ├── fixtures/  design_handoff_neev/  docs/  scripts/
 ```
 
-**Dependency rule, strictly one-directional:** `frontend → backend → agents`.
-The agents package never imports backend code.
+**Dependency rule, strictly one-directional:**
+
+```
+frontend → backend → neev_core
+                  ↘ neev_pipeline (optional, live mode only) → neev_core
+```
+
+`neev_core` depends on nothing but the standard library. `neev_pipeline` never
+imports backend code. The backend imports `neev_core` always and `neev_pipeline`
+**only inside the live runner's function body**, so a fixture-mode install needs
+no ADK at all.
+
+**Why `neev_core` is a separate top-level package, not `neev_pipeline/core/`.**
+Python executes a package's `__init__.py` before any submodule, and
+`neev_pipeline/__init__.py` must keep `from . import agent` for ADK discovery.
+So `import neev_pipeline.core.risk` would execute `agent.py` and therefore
+`import google.adk`. Verified against the current code:
+
+```
+$ python3 -c "from buildguard.tools.disbursal_risk_tool import assess_tranche"
+ModuleNotFoundError: No module named 'google'
+```
+
+The failure comes from the package `__init__`, not the tool module. A nested
+`core/` would therefore deliver none of its promised benefit — the backend would
+still need the full ADK stack, and the "no stubs" claim would be false. A sibling
+package is the only layout that actually decouples the math from ADK.
 
 **Naming caution:** the string `buildguard` also names the *GCP project*
 (`buildguard-ai-2026`) and the *BigQuery dataset* (`buildguard_data`). These are
@@ -117,11 +155,24 @@ rename the data layer and break BigQuery. Only the Python package is renamed.
 
 ### 4.1 The move
 
-`buildguard/` → `agents/neev_pipeline/`. The package is internally
-relative-import clean, so only **6 absolute-import lines across 2 files** break:
+`buildguard/` → `agents/neev_pipeline/`, with the pure modules lifted out to
+`core/neev_core/`. The package is internally relative-import clean, so the
+`buildguard.`-prefixed breakage is **6 absolute-import lines across 2 files**:
 five in `tests/test_offline.py` (lines 71, 72, 73, 202, 211) and one in
-`scripts/golden_run.py` (line 31). Path-relative references to `../fixtures/`
-and `../scripts/` also shift and must be repointed at the repo root.
+`scripts/golden_run.py` (line 31).
+
+A **seventh** import breaks without naming `buildguard` at all:
+`tests/test_offline.py:293` does `from scripts.boq_data import …`, which works
+today only because the suite runs from the repo root. Once tests move under
+`agents/`, it fails and takes all seven `TestFixtureBoQs` tests with it — and an
+editable install of `neev_pipeline` does not fix it, because `scripts/` is not
+part of that package. This is why `boq_data.py` moves into `neev_core`.
+
+Path-relative references to `../fixtures/` and `../scripts/`
+(`test_offline.py:221, 223, 288`, `golden_run.py:33`) also shift and must be
+repointed at the repo root. Note the existing suite has no `sys.path` hack — it
+manipulates `sys.modules` to stub the Google libraries; only `golden_run.py:30`
+touches `sys.path`, and the editable installs remove the need for it.
 
 `adk web` then runs from `agents/`, discovering `neev_pipeline.agent.root_agent`.
 `__init__.py` must keep `from . import agent` or discovery breaks.
@@ -136,14 +187,24 @@ FastAPI app would fail at startup with no key. Fix: adopt the lazy `_client()`
 singleton pattern the two BigQuery tools already use. This also lets the offline
 tests shed most of their 50 lines of `sys.modules` stubbing.
 
-**(b) Extract the pure core.** Six functions are pure arithmetic with zero I/O —
-`assess_tranche`, `check_rate_deviation`, `check_steel_rcc_ratio`,
-`check_missing_scope`, `check_payment_schedule`, plus `cumulative_weight` /
-`ltv_default_prior`. Today they sit in files that import `bigquery` and `genai`
-at module level, so they cannot be imported without those packages installed.
-Moving them to `neev_pipeline/core/` lets the backend import and unit-test the
-money math with no GCP, no credentials, and no stubs. The ADK tools become thin
-wrappers that re-export them, so agent behavior is unchanged.
+**(b) Extract the pure core into `neev_core`.** Seven functions are pure
+arithmetic with zero I/O: `assess_tranche`, the four BoQ checks
+(`check_rate_deviation`, `check_steel_rcc_ratio`, `check_missing_scope`,
+`check_payment_schedule`), and `cumulative_weight` / `ltv_default_prior`.
+
+They are unreachable today not because of their own imports —
+`disbursal_risk_tool.py` imports only `..config`, and `config.py` imports only
+`os` — but because reaching them means executing `buildguard/__init__.py`, which
+pulls in ADK. Moving them into the standalone `neev_core` package (§3) is what
+lets the backend import and unit-test the money math with no GCP, no credentials,
+and no stubs. The ADK tools become thin wrappers that re-export them, so agent
+behavior is unchanged.
+
+`scripts/boq_data.py` moves too, becoming `neev_core.boq_fixtures`. It is pure
+data with no imports, and both `tests/test_offline.py:293` and
+`scripts/make_sample_boq.py` import it — an import that survives neither the
+package move nor an editable install of `neev_pipeline`. Making it part of
+`neev_core` fixes both callers permanently.
 
 ### 4.3 Known hazards to handle
 
@@ -155,14 +216,81 @@ wrappers that re-export them, so agent behavior is unchanged.
   them by substring matching and counts flags with `boq.count('"type"')`. The
   backend must JSON-parse and validate each of the five `output_key` values, with
   a repair path for malformed model output.
-- **Two different exposure numbers, both correct.** `assess_tranche` divides by
-  `expected_total_cost` (loan 1001 → **1.03**); `portfolio_hotlist` uses
-  `sanctioned` as a proxy (loan 1001 → **1.29**). The designs show 1.29 on both
-  the Portfolio and Tranche Decision screens. The API must expose these as
-  distinct, separately-labelled fields and never conflate them.
+- **Three exposure formulas are in circulation — see §4.4.** This is the single
+  most dangerous ambiguity in the project and must be settled before any screen
+  is built.
 - **`loan_history` and `metro_city_prices` are not created by any script.**
   `load_bigquery.sh` only verifies they exist. `estimate_construction_cost`
   depends on them. Fixture mode must cover this gap.
+
+---
+
+### 4.4 The golden-case numbers do not agree — decide before building
+
+⚠️ **Open decision. Blocks wave 2. Needs the owner's call.**
+
+Loan 1001 (Ravi) is the demo's spine, and four different number sets for it are
+in circulation. All were recomputed from the code and fixtures:
+
+| Formula | Verified value | Exposure | Cost-to-complete gap | Where it lives |
+|---|---|---|---|---|
+| `assess_tranche` — `expected_cost × pct_complete` | ₹17.50L | **1.03** | **−₹7.50L** | `disbursal_risk_tool.py`, tested |
+| `portfolio_hotlist` — `sanctioned × pct` (proxy) | ₹14.00L | **1.29** | **−₹4.00L** | `portfolio_view.sql`, tested |
+| The designs | ₹13.90L | **1.29** | **−₹5.80L** | Tranche Decision screen |
+| `Neev_Implementation_Plan.md` | — | **1.4** | **−₹4.20L** | Doc only — matches no formula |
+
+The designs use a *third* model: cost-to-complete as "remaining BoQ items ×
+current Kompally rates" (₹15.80L), implying a ₹29.70L total. Neither the Python
+nor the SQL implements that. The Implementation Plan's 1.4 / −₹4.20L is derivable
+from nothing and traces back to a speculative line in `HANDOFF.md:41`.
+
+The BoQ total conflicts too: `RAVI_ITEMS` sums to **₹28,47,930**, while the
+designs *and* the Demo Plan both say **₹32,00,000**. The designs are internally
+consistent around ₹32L (45% before slab = ₹14.40L; GST at 18% = ₹5.76L), so here
+the fixture is the outlier, not the designs.
+
+**Recommendation.** Make the code authoritative for *formulas* and the fixture
+authoritative for *inputs*, then reconcile the fixture upward:
+
+1. Regenerate the Ravi BoQ so it totals **₹32,00,000**, matching the Demo Plan
+   and every design. This is a fixture edit, not a code change, and it makes
+   three of the four sources agree by construction.
+2. Serve **`assess_tranche` (1.03 / −₹7.50L) on the per-loan Tranche Decision
+   screen** and `portfolio_hotlist` (1.29 / −₹4.00L) **only on the portfolio
+   table**, labelled as a screen. `portfolio_view.sql:5-8` demands exactly this
+   — *"this is a SCREEN, not the per-loan verdict"* — so putting the sanction
+   proxy on the verdict screen inverts the code's own stated intent.
+3. Correct `Neev_Implementation_Plan.md`'s 1.4 / −₹4.20L, or mark that document
+   historical.
+
+**Cost of the recommendation:** the demo's headline exposure drops from a
+dramatic 1.29 to 1.03. Still a HOLD, still correct, less punchy. The alternative —
+keeping 1.29 on the per-loan screen — means either re-pricing the fixture so
+`assess_tranche` genuinely returns it (expected cost ≈ ₹27.9L, which contradicts
+the ₹35L "realistic cost" the whole Sanction Check beat rests on) or knowingly
+showing a screen number the pipeline did not produce. The second is exactly the
+"no fake precision" failure the project's own judge-proofing section forbids.
+
+### 4.5 Portfolio rows are invented, not computed
+
+The Portfolio design's ten rows do **not** follow from `draw_schedule.csv`. The
+disbursed amounts and stages are real, but the ratios and gaps were authored.
+Recomputing gives materially different values and three status flips:
+
+| Loan | Design | Computed | Flip |
+|---|---|---|---|
+| 1003 | 1.42, −₹6.90L | **2.40, −₹11.22L** | — |
+| 1004 | 1.35, −₹8.20L | **1.88, −₹17.57L** | — |
+| 1009 | 1.04, INSPECT | **0.97** | → OK |
+| 1010 | 0.96, ON TRACK | **1.01** | → REVIEW |
+| 1006 | 0.98, INSPECT | **1.04** | — |
+
+Only 1001 and 1002 match. Sort order differs too: the SQL orders by gap ascending
+(1004, 1003, 1001…), the design by exposure descending (1003, 1004, 1001…).
+
+**Decision:** the portfolio table renders **computed** values, and the design's
+row figures are treated as placeholder. Ranking follows the SQL. An implementer
+must not "fix" a mismatch against the mockup — the mockup is wrong here.
 
 ---
 
@@ -198,7 +326,7 @@ repo and already consistent with each other:
 
 | Field | Source |
 |---|---|
-| Line items, quantities, rates | `scripts/boq_data.py` — `RAVI_ITEMS` (40), `CLEAN_ITEMS` (41) |
+| Line items, quantities, rates | `scripts/boq_data.py` — `RAVI_ITEMS` (40), `CLEAN_ITEMS` (43) |
 | Flags and their evidence | The four seeded flaws (F1 rate outliers on 2.3/3.1/3.2; F2 missing waterproofing, external plaster, anti-termite; F3 ungraded TMT on 4.2; F4 45% before slab; GST silent) |
 | Benchmark rates | `fixtures/rate_benchmarks.csv` |
 | Loan/tranche context | `fixtures/draw_schedule.csv` (loan 1001 golden, 1002 clean) |
@@ -232,6 +360,25 @@ overwrites the authored fixture with a real captured run in the same schema.
 | `GET` | `/api/loans/{id}/tranches/{n}` | Tranche Decision |
 | `POST` | `/api/loans/{id}/tranches/{n}/decision` | Release / Hold / Escalate |
 | `GET` | `/api/contractors` | Contractor Scorecard |
+
+**The Analyzing screen's five phases are not the five agents.** The handoff README
+claims they "map 1:1 to the ADK agents"; they do not. All five phases in the
+design — reading the document, checking rates, looking for missing scope,
+checking specifications, reviewing the payment schedule — are sub-steps *inside*
+`boq_analyst` alone. So live mode cannot drive this screen by streaming agent
+events; it needs an explicit map from ADK tool-call events to display phases:
+
+| Phase | Advanced by |
+|---|---|
+| 1 Reading the document | `boq_analyst` first response with parsed line items |
+| 2 Checking every rate | first `lookup_benchmark_rate` / `check_rate_deviation` call |
+| 3 Looking for missing scope | `check_missing_scope` call |
+| 4 Checking specifications | `check_steel_rcc_ratio` call |
+| 5 Reviewing payment schedule | `check_payment_schedule` call |
+
+The remaining four agents run after the screen has already navigated away; their
+progress belongs to the screens that consume their output. Fixture mode emits
+this same sequence on a timer.
 
 SSE event shape, matching the Analyzing screen exactly:
 
@@ -299,7 +446,7 @@ Consequences for the build:
   rationale panel) are composed from the same primitives so they look native to
   the system rather than bolted on.
 - **Consistency outranks fidelity to any single mockup.** If matching one file
-  exactly would make it inconsistent with the other fourteen, match the fourteen.
+  exactly would make it inconsistent with the rest, match the rest.
 
 ### 6.2 Shared components (built in wave 0, before any screen)
 
@@ -308,8 +455,9 @@ Consequences for the build:
 (generic `columns` prop), `StickyRail` + `KeyValueCard`, `PageHeader`,
 `Dropzone`, `StageStrip`, `PhotoSlot`, `Logo`, `formatINR`.
 
-The top bar markup is byte-identical across ten files — it was copy-pasted, so
-one component with a `role` prop replaces all of it. `StatusPill` is the most
+The top bar recurs near-identically across ten files, differing only in which
+nav tab carries the active styling — so one component with `role` and `active`
+props replaces all of it. `StatusPill` is the most
 repeated atom in the bundle (10+ files, six different vocabularies).
 
 **Reuse is enforced, not encouraged.** The mockups hardcode hex hundreds of times
@@ -356,7 +504,7 @@ production needs: real upload, and **EXIF geotag + timestamp extraction**, which
 feeds the `visual_inspector` agent and renders as the verdict chips the designs
 already show ("✓ Geotag matches Plot 47", "✓ Timestamp 10 Aug, 11:42").
 
-13 slot ids across 5 screens become `{loanId, tranche, slotKey}`.
+12 slot ids across 4 screens become `{loanId, tranche, slotKey}`.
 
 ### 6.5 Screen scope
 
@@ -401,10 +549,15 @@ Rules that fall out of this:
 - **Revisions are routes, not state.** The designs already treat them that way —
   Revised Contract's "Rev 1" toggle is an `<a href>` back to BoQ Review, so
   `/boq/rev/1` and `/boq/rev/2` are distinct URLs. `/boq` resolves to the latest.
-- **Route groups carry the chrome.** `(marketing)`, `(owner)`, and `(bank)` each
-  own a `layout.tsx` supplying the right top bar, nav, and profile chip, so no
-  screen re-implements it. This is what makes the bank's dark `#111827` console
-  chrome automatic.
+- **Route groups carry the chrome, but not the URL.** `(marketing)`, `(owner)`,
+  and `(bank)` each own a `layout.tsx` supplying the right top bar, nav, and
+  profile chip, so no screen re-implements it — that is what makes the bank's
+  dark `#111827` console chrome automatic. **Parenthesised segments are excluded
+  from the URL**, so the `/owner/…` and `/bank/…` prefixes in the table above
+  require a real directory inside the group:
+  `app/(owner)/owner/loans/[loanId]/boq/page.tsx`. Getting this wrong silently
+  serves `/loans/1001/boq` instead, and two agents would otherwise resolve it two
+  different ways.
 - **Filters and tabs belong in the URL.** BoQ Review's Flagged/All toggle,
   Portfolio's All/Needs-action/On-track filter, and Tranche Decision's
   owner/officer tabs become search params (`?view=flagged`) so a shared link
@@ -520,10 +673,10 @@ These are fragment artifacts rather than genuine ambiguities. Each is decided
 once, recorded here, and applied everywhere by the component kit.
 
 1. **Logo appears in three treatments.** The explorations file marks turn 5a
-   canonical (brick square + house + door + plinth bar); the fifteen screens use a
+   canonical (brick square + house + door + plinth bar); eleven screens use a
    simpler house-only glyph; the bank screens use a white square with a `न`
    character. *Decision: adopt the simple house glyph as `<Logo>` for both roles,
-   recolored per skin — it is what fourteen screens already show, and one mark
+   recolored per skin — it is what eleven of the fifteen screens already show, and one mark
    across both consoles is what makes them read as one product. The 5a
    door-and-plinth variant is kept for brand/marketing use only.*
 2. **Credit-officer rationale copy does not exist.** Tranche Decision designs the
@@ -531,7 +684,7 @@ once, recorded here, and applied everywhere by the component kit.
    it in the bank voice — compact and factual — sourced from the `explainer`
    agent's `officer_view`, citing exposure, verified value, and the evidence list.*
 3. **Bank nav is inconsistent.** "Setup" appears only on Bank Onboarding; the
-   other two bank screens carry blank lines where it was removed. *Decision:
+   other three bank screens carry blank lines where it was removed. *Decision:
    Setup stays in the nav on all bank routes — it owns the thresholds that drive
    every recommendation, so it must remain reachable.*
 4. **Dead and partial links.** Onboarding's "see a sample report" points at
@@ -557,7 +710,7 @@ owns disjoint files.
 
 | Wave | Tasks | Agents | Parallel |
 |---|---|---|---|
-| **0** | Toolchain install · package move + 6 import fixes · lazy genai client · pure-core extraction · Pydantic schemas → TS types · Tailwind theme + 15 shared components | — | No (sequential, foundational) |
+| **0** | Toolchain install · 4-package split with `pyproject.toml`s · package move + 7 import fixes · `boq_data`→`neev_core` · lazy genai client · **golden-number reconciliation (§4.4)** · AA token fixes · Pydantic schemas → TS types · Tailwind theme + shared component kit | — | No (sequential, foundational) |
 | **1** | (a) DB models + seed · (b) pipeline runner + authored fixture + SSE · (c) frontend shell, routing, API client | 3 | Yes |
 | **2** | (a) Landing+Login · (b) Onboarding+Analyzing · (c) BoQ Review · (d) Sanction Check · (e) Portfolio+Tranche · (f) 7 scaffold screens · (g) backend routes | 7 | Yes |
 | **3** | Integration + golden-path E2E · offline test suite green · demo runbook + README rewrite | 2 | Yes |
@@ -570,7 +723,9 @@ and carries the most demo weight — it gets a dedicated agent and the largest b
 
 No wave is complete on "code written". Each ends with commands that ran:
 
-- Wave 0: `python -m tests.test_offline` → 28 pass · `npm run build` → clean
+- Wave 0: all 28 existing tests pass after the split (7 of them, `TestFixtureBoQs`,
+  depend on the `boq_data` → `neev_core` move) · `npm run build` → clean ·
+  `pip install -e` succeeds for all three Python packages
 - Wave 1: backend boots, `/api/portfolio` returns 10 loans, SSE stream observed
 - Wave 2: every route renders; typecheck and build clean
 - Wave 3: golden path passes end-to-end in **fixture mode with no credentials
