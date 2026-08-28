@@ -10,20 +10,36 @@
 // the real <input> so one code path — the input's value — carries the upload.
 import { useRef, useState } from 'react';
 
+/** The id of the real <input> a Dropzone renders.
+ *
+ *  Exported (plan Task 15) so a form that owns the validation can point a label,
+ *  an error message or `element.focus()` at the control without hardcoding the
+ *  same string in two places. */
+export function dropzoneInputId(name: string): string {
+  return `dz-${name}`;
+}
+
 export default function Dropzone({
   name,
   accept,
   label,
   hint,
   multiple = false,
+  describedBy,
+  invalid = false,
 }: {
   name: string;
   accept: string;
   label: string;
   hint: string;
   multiple?: boolean;
+  /** Ids of the elements describing this control — a hint, an error slot. Added
+   *  (plan Task 15) because the onboarding wizard validates the upload and the
+   *  message has to reach the input it belongs to. */
+  describedBy?: string;
+  invalid?: boolean;
 }) {
-  const id = `dz-${name}`;
+  const id = dropzoneInputId(name);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [over, setOver] = useState(false);
   const [picked, setPicked] = useState<string>('');
@@ -74,6 +90,8 @@ export default function Dropzone({
         type="file"
         accept={accept}
         multiple={multiple}
+        aria-describedby={describedBy}
+        aria-invalid={invalid || undefined}
         onChange={(event) => describe(event.target.files)}
         className="mx-auto mt-4 block text-[12.5px] text-sub file:mr-3 file:rounded-pill file:border-0 file:bg-action file:px-4 file:py-2 file:text-[12.5px] file:font-semibold file:text-on-action hover:file:bg-action-hover"
       />
