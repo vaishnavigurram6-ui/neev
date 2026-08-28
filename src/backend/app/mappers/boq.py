@@ -6,7 +6,7 @@ missing-scope group sits third even though it has no priced line items.
 """
 
 from app.db import models
-from app.fixtures.loader import load_pipeline_output
+from app.schemas.pipeline import CostEstimate, PaymentStage
 from app.schemas.views import (
     BoqReviewView,
     FlagGroupView,
@@ -25,10 +25,20 @@ GROUP_ORDER = [
 ]
 
 
-def to_boq_review(loan: models.Loan, revision: models.BoqRevision) -> BoqReviewView:
-    output = load_pipeline_output(loan.id)
-    estimate = output.cost_estimate
+def to_boq_review(
+    loan: models.Loan,
+    revision: models.BoqRevision,
+    estimate: CostEstimate,
+    payment_schedule: list[PaymentStage],
+) -> BoqReviewView:
+    """Pure: every input is passed in, nothing is read from disk.
 
+    The mapper deliberately does NOT load the fixture itself. Doing so would
+    bypass the PipelineRunner seam (spec §5.1a) — in live mode it would serve
+    the authored figures for whichever loan id it was handed, regardless of what
+    the pipeline actually produced. Sourcing `estimate` and `payment_schedule`
+    is the caller's job, because the caller is where mode is already resolved.
+    """
     rate_outliers = sum(1 for f in revision.flags if f.type == "RATE_OUTLIER")
     missing = sum(1 for f in revision.flags if f.type == "MISSING_SCOPE")
     vague = sum(1 for f in revision.flags if f.type == "UNDERSPECIFIED")
@@ -85,7 +95,7 @@ def to_boq_review(loan: models.Loan, revision: models.BoqRevision) -> BoqReviewV
         ],
         payment_schedule=[
             PaymentStageView(label=s.label, pct=s.pct, before_slab=s.before_slab)
-            for s in output.payment_schedule
+            for s in payment_schedule
         ],
         pct_before_slab=revision.payment_pct_before_slab,
         amount_before_slab=amount_before_slab,

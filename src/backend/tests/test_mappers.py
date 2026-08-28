@@ -8,9 +8,18 @@ from sqlalchemy import select
 from app.db import models
 from app.db.seed import seed
 from app.db.session import SessionLocal, init_db
+from app.fixtures.loader import load_pipeline_output
 from app.mappers.boq import to_boq_review
 from app.mappers.portfolio import to_portfolio
 from app.mappers.tranche import to_tranche_decision
+
+
+def _review(loan, revision=None):
+    """to_boq_review is pure; the test plays the caller and sources its inputs."""
+    output = load_pipeline_output(loan.id)
+    return to_boq_review(
+        loan, revision or loan.revisions[-1], output.cost_estimate, output.payment_schedule
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -32,7 +41,7 @@ def test_boq_review_carries_numbers_not_formatted_strings():
     with SessionLocal() as db:
         loan = db.get(models.Loan, "1001")
         revision = loan.revisions[-1]
-        view = to_boq_review(loan, revision)
+        view = _review(loan, revision)
 
     assert view.cards[0].value == 3200000  # a number, not "₹32,00,000"
     for card in view.cards:
@@ -42,7 +51,7 @@ def test_boq_review_carries_numbers_not_formatted_strings():
 def test_flag_groups_follow_the_mockups_order():
     with SessionLocal() as db:
         loan = db.get(models.Loan, "1001")
-        view = to_boq_review(loan, loan.revisions[-1])
+        view = _review(loan)
     assert [g.name for g in view.groups] == [
         "FOUNDATION & RCC",
         "STEEL",
@@ -132,5 +141,5 @@ def test_gst_stated_agrees_with_the_sanction_check_for_the_same_loan():
     # BoQ Review must not report GST as stated.
     with SessionLocal() as db:
         loan = db.get(models.Loan, "1001")
-        view = to_boq_review(loan, loan.revisions[-1])
+        view = _review(loan)
     assert view.gst_stated is False
