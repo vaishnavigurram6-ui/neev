@@ -93,6 +93,7 @@ def to_boq_review(
             QuestionView(number=q.number, text=q.text, status=q.status)
             for q in sorted(loan.questions, key=lambda q: q.number)
         ],
+        boq_total=float(revision.boq_total),
         payment_schedule=[
             PaymentStageView(label=s.label, pct=s.pct, before_slab=s.before_slab)
             for s in payment_schedule
@@ -139,11 +140,20 @@ def _group(flags: list[models.Flag]) -> list[FlagGroupView]:
                 tone=flag.tone,  # type: ignore[arg-type]
             )
         )
-    return [
-        FlagGroupView(name=name, items=buckets[name])
-        for name in GROUP_ORDER
-        if name in buckets
+    # GROUP_ORDER is the mockup's editorial order, not an allow-list. Any group
+    # it does not name -- a live run inventing a new BoQ section -- is appended
+    # rather than dropped. Filtering here silently lost rows while the FLAGS
+    # RAISED card went on counting every flag, so the table header and the card
+    # disagreed with no way to tell from the screen which was wrong.
+    known = [
+        FlagGroupView(name=name, items=buckets[name]) for name in GROUP_ORDER if name in buckets
     ]
+    unknown = [
+        FlagGroupView(name=name, items=items)
+        for name, items in buckets.items()
+        if name not in GROUP_ORDER
+    ]
+    return known + unknown
 
 
 def _missing_scope_desc(flag: models.Flag) -> str:

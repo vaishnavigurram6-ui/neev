@@ -70,6 +70,8 @@ export interface BoqReviewView {
   all_groups: FlagGroupView[];
   questions: QuestionView[];
   payment_schedule: PaymentStageView[];
+  /** The quoted contract total, straight from the API. */
+  boq_total: number;
   pct_before_slab: number;
   amount_before_slab: number;
   gst_stated: boolean;

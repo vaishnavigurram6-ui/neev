@@ -15,13 +15,26 @@ export interface ToneClasses {
   text: string;
   /** Tint background only, for row highlights. */
   bg: string;
+  /** Saturated fill, for bars and meters. A 10px bar in a tint is invisible,
+   *  so anything drawing a shape rather than a surface needs this. */
+  solid: string;
 }
 
 const OWNER: Record<Tone, ToneClasses> = {
-  danger: { pill: 'bg-danger-tint text-danger', text: 'text-danger', bg: 'bg-danger-tint' },
-  warn: { pill: 'bg-warn-tint text-warn', text: 'text-warn', bg: 'bg-warn-tint' },
-  success: { pill: 'bg-success-tint text-success', text: 'text-success', bg: 'bg-success-tint' },
-  neutral: { pill: 'bg-chip text-sub', text: 'text-ink', bg: 'bg-chip' },
+  danger: {
+    pill: 'bg-danger-tint text-danger',
+    text: 'text-danger',
+    bg: 'bg-danger-tint',
+    solid: 'bg-danger',
+  },
+  warn: { pill: 'bg-warn-tint text-warn', text: 'text-warn', bg: 'bg-warn-tint', solid: 'bg-warn' },
+  success: {
+    pill: 'bg-success-tint text-success',
+    text: 'text-success',
+    bg: 'bg-success-tint',
+    solid: 'bg-success',
+  },
+  neutral: { pill: 'bg-chip text-sub', text: 'text-ink', bg: 'bg-chip', solid: 'bg-faint' },
 };
 
 const BANK: Record<Tone, ToneClasses> = {
@@ -29,18 +42,21 @@ const BANK: Record<Tone, ToneClasses> = {
     pill: 'bg-bank-danger-tint text-bank-danger',
     text: 'text-bank-danger',
     bg: 'bg-bank-danger-tint',
+    solid: 'bg-bank-danger',
   },
   warn: {
     pill: 'bg-bank-warn-tint text-bank-warn',
     text: 'text-bank-warn',
     bg: 'bg-bank-warn-tint',
+    solid: 'bg-bank-warn',
   },
   success: {
     pill: 'bg-bank-success-tint text-bank-success',
     text: 'text-bank-success',
     bg: 'bg-bank-success-tint',
+    solid: 'bg-bank-success',
   },
-  neutral: { pill: 'bg-chip text-sub', text: 'text-ink', bg: 'bg-chip' },
+  neutral: { pill: 'bg-chip text-sub', text: 'text-ink', bg: 'bg-chip', solid: 'bg-bank-inactive' },
 };
 
 export function toneClasses(tone: Tone, skin: Skin = 'owner'): ToneClasses {

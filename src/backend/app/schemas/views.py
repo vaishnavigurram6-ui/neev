@@ -67,6 +67,10 @@ class BoqReviewView(BaseModel):
     all_groups: list[FlagGroupView]
     questions: list[QuestionView]
     payment_schedule: list[PaymentStageView]
+    # The quoted contract total. Present so the rail does not have to invert it
+    # out of amount_before_slab / pct_before_slab, which is what the screen was
+    # doing and which divides by zero on a schedule with nothing due before slab.
+    boq_total: float
     pct_before_slab: float
     amount_before_slab: float
     gst_stated: bool

@@ -106,13 +106,13 @@ export function countRows(groups: FlagGroupView[]): number {
  *  in `mappers/boq.py`, so this is that identity read backwards, not an estimate.
  *
  *  `null` unless both halves of the identity are positive: a 0% split says
- *  nothing about the total, and a zero amount before the slab would derive a
- *  zero total and have the GST notice warn about "up to ₹0". Every caller omits
- *  its figure instead. Adding `boq_total` to the view model deletes this. */
+ *  Read straight from the view model's `boq_total`. This used to be inverted
+ *  out of amount_before_slab / pct_before_slab, which divided by zero on a
+ *  schedule with nothing due before the slab; the field was added to the API
+ *  on 2026-08-28 so the derivation could go. A non-positive total returns
+ *  null and every caller omits its figure rather than printing "up to ₹0". */
 export function quotedTotal(view: BoqReviewView): number | null {
-  if (!Number.isFinite(view.pct_before_slab) || view.pct_before_slab <= 0) return null;
-  if (!Number.isFinite(view.amount_before_slab) || view.amount_before_slab <= 0) return null;
-  return view.amount_before_slab / view.pct_before_slab;
+  return Number.isFinite(view.boq_total) && view.boq_total > 0 ? view.boq_total : null;
 }
 
 /** What is due after the slab is cast — the balance of the quoted total. */

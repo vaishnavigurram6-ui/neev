@@ -354,3 +354,33 @@ def test_ways_forward_are_the_loans_own_not_the_golden_cases(client):
     assert "≈ ₹2,40,000" not in labels
     assert not any("3,00,000" in o["desc"] for o in clean)
     assert not any("four questions" in o["desc"] for o in clean)
+
+
+def test_boq_review_exposes_the_quoted_total_directly(client):
+    """The rail needs it twice. It used to be inverted out of
+    amount_before_slab / pct_before_slab, which divides by zero on a schedule
+    with nothing due before the slab."""
+    body = client.get("/api/loans/1001/boq/latest").json()
+    assert body["boq_total"] == 3200000
+
+
+def test_a_flag_in_an_unmapped_group_is_still_rendered(client):
+    """GROUP_ORDER is the mockup's editorial order, not an allow-list.
+
+    Filtering by it silently dropped rows while the FLAGS RAISED card went on
+    counting every flag, so the table and the card disagreed with nothing on
+    screen to say which was right.
+    """
+    from app.db import models
+    from app.db.session import SessionLocal
+    from app.mappers.boq import _group
+
+    with SessionLocal() as db:
+        loan = db.get(models.Loan, "1001")
+        flags = list(loan.revisions[-1].flags)
+        flags[0].group_name = "13. A SECTION THE MOCKUP NEVER NAMED"
+        groups = _group(flags)
+
+    rendered = sum(len(g.items) for g in groups)
+    assert rendered == len(flags), "every flag must appear in some group"
+    assert "13. A SECTION THE MOCKUP NEVER NAMED" in [g.name for g in groups]
