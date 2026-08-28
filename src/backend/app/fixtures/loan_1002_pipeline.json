@@ -1,0 +1,57 @@
+{
+  "boq_findings": {
+    "boq_total": 2480000,
+    "payment_pct_before_slab": 0.25,
+    "line_items": [
+      {"id": "3.1", "section": "3. RCC WORK", "desc": "RCC M25 for columns incl. shuttering & curing, IS 456", "qty": 11.5, "unit": "cum", "rate": 8050, "amount": 92575},
+      {"id": "4.2", "section": "4. STEEL", "desc": "TMT bars Fe 500D per IS 1786, cut bent and placed", "qty": 4600, "unit": "kg", "rate": 71, "amount": 326600},
+      {"id": "6.3", "section": "6. PLASTERING", "desc": "External plaster 15mm CM 1:5, two coats", "qty": 288, "unit": "sqm", "rate": 245, "amount": 70560}
+    ],
+    "flags": []
+  },
+  "payment_schedule": [
+    {"label": "On signing", "pct": 0.1, "before_slab": true},
+    {"label": "At foundation", "pct": 0.15, "before_slab": true},
+    {"label": "At slab", "pct": 0.3, "before_slab": false},
+    {"label": "At brickwork & roof", "pct": 0.3, "before_slab": false},
+    {"label": "On handover", "pct": 0.15, "before_slab": false}
+  ],
+  "cost_estimate": {
+    "expected_total_cost": 2520000,
+    "completed_value_estimate": 3150000,
+    "sanction_gap": -20000,
+    "fair_price_for_quoted_scope": 2505000,
+    "missing_scope_value": 0,
+    "sections": []
+  },
+  "inspection_result": {
+    "stage": "slab",
+    "confidence": "high",
+    "matches_claim": true,
+    "needs_human_review": false,
+    "geotag_match": true,
+    "timestamp_ok": true,
+    "same_angle": true,
+    "evidence_notes": ["Geotag matches the registered plot.", "Slab cast and cured; consistent with the claimed stage."]
+  },
+  "risk_assessment": {
+    "exposure_ratio": 0.97,
+    "exposure_undefined": false,
+    "recommendation": "RELEASE",
+    "pct_complete": 0.5,
+    "verified_value": 1252000,
+    "cost_to_complete": 1240000,
+    "cost_to_complete_gap": 105000,
+    "live_ltv_pct": 48.6,
+    "ltv_default_prior": 0.139,
+    "reasons": [
+      "Disbursed ₹12,14,337 against ₹12,52,000 of verified value in place.",
+      "Exposure 0.97 is within the 1.00 hold threshold.",
+      "Remaining scope is covered by the undrawn balance with ₹1,05,000 to spare."
+    ]
+  },
+  "explanation": {
+    "owner_view": "Everything lines up. Your contract prices the work at local rates, the scope is complete, the grades and brands are named, and only 25% falls due before the slab — which is the pattern to aim for. The slab photos match the claimed stage, and payments are tracking slightly behind the value on site rather than ahead of it. Nothing needs your attention right now.",
+    "officer_view": "RELEASE recommended on tranche 3, loan 1002. Disbursed ₹12,14,337 cumulative against ₹12,52,000 verified value in place. Disbursement exposure 0.97, within the 1.00 threshold. Cost to complete ₹12,40,000 at current rates against a larger undrawn balance, leaving ₹1,05,000 of headroom. Site evidence: geotag matched, high confidence, no human review flag. Zero open BoQ flags; scope complete, grades specified, GST stated, 25% before slab. No contract-side exposure."
+  }
+}

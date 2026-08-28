@@ -1,0 +1,22 @@
+{
+  "phases": [
+    {"name": "Reading the document", "sub": "40 items across 12 sections, payment schedule, terms"},
+    {"name": "Checking every rate against Kompally benchmarks", "sub": "CPWD DSR + 32,963 real listings"},
+    {"name": "Looking for missing scope", "sub": "Comparing against what similar houses always include"},
+    {"name": "Checking specifications and quantities", "sub": "Grades, brands, IS standards, steel-to-concrete ratios"},
+    {"name": "Reviewing the payment schedule and terms", "sub": "How much is demanded before real work exists"}
+  ],
+  "progress": [
+    {"pct": 12, "detail": "item 5 of 40 · section 2, foundation & plinth", "eta_s": 62},
+    {"pct": 38, "detail": "item 17 of 40 · section 6, plastering", "eta_s": 40},
+    {"pct": 61, "detail": "item 25 of 40 · section 8, doors & windows", "eta_s": 24},
+    {"pct": 84, "detail": "item 34 of 40 · section 11, painting", "eta_s": 9},
+    {"pct": 100, "detail": "40 of 40 items checked", "eta_s": 0}
+  ],
+  "findings": [
+    {"after_phase": 1, "flag": "Rate +22%", "tone": "danger", "text": "RCC M25 is priced at ₹9,800/cum — Kompally benchmark is ₹8,033. Appears on 2 items."},
+    {"after_phase": 2, "flag": "Missing", "tone": "danger", "text": "External plaster and terrace waterproofing are absent — about ₹1,54,000 of scope that usually returns as paid extras."},
+    {"after_phase": 3, "flag": "No grade", "tone": "warn", "text": "TMT bars (4,800 kg) name no grade — Fe 415 vs Fe 500 changes how much steel your house needs."},
+    {"after_phase": 4, "flag": "45% before slab", "tone": "warn", "text": "₹14,40,000 falls due before the slab is cast. The standard pattern is 25%."}
+  ]
+}

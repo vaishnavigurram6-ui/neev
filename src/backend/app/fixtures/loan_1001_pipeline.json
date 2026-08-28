@@ -1,0 +1,155 @@
+{
+  "boq_findings": {
+    "boq_total": 3200000,
+    "payment_pct_before_slab": 0.45,
+    "line_items": [
+      {"id": "2.3", "section": "2. FOUNDATION & PLINTH", "desc": "Plinth beam RCC M20 incl. shuttering", "qty": 6.5, "unit": "cum", "rate": 9800, "amount": 63700},
+      {"id": "3.1", "section": "3. RCC WORK", "desc": "RCC M25 for columns incl. shuttering & curing", "qty": 12.0, "unit": "cum", "rate": 9800, "amount": 117600},
+      {"id": "3.2", "section": "3. RCC WORK", "desc": "RCC M25 for roof slab 125mm incl. shuttering", "qty": 22.5, "unit": "cum", "rate": 9800, "amount": 220500},
+      {"id": "4.2", "section": "4. STEEL", "desc": "TMT bars, cut bent and placed incl. wastage", "qty": 4800, "unit": "kg", "rate": 62, "amount": 297600},
+      {"id": "7.1", "section": "7. FLOORING", "desc": "Vitrified tiles 600×600 \"good quality\"", "qty": 152, "unit": "sqm", "rate": 1150, "amount": 174800},
+      {"id": "9.1", "section": "9. ELECTRICAL", "desc": "Concealed wiring per point, \"branded wire\"", "qty": 68, "unit": "pt", "rate": 720, "amount": 48960},
+      {"id": "9.2", "section": "9. ELECTRICAL", "desc": "Modular switches & sockets, \"good make\"", "qty": 68, "unit": "pt", "rate": 310, "amount": 21080}
+    ],
+    "flags": [
+      {
+        "item": "2.3",
+        "type": "RATE_OUTLIER",
+        "label": "Rate +18%",
+        "tone": "danger",
+        "benchmark_rate": 8300,
+        "deviation_pct": 18.0,
+        "evidence": "M20 concrete priced at the M25 rate. Kompally benchmark ₹8,300/cum.",
+        "question": "Item 2.3 is M20 concrete priced at the M25 rate. Could you confirm the grade and the basis for ₹9,800/cum?"
+      },
+      {
+        "item": "3.1",
+        "type": "RATE_OUTLIER",
+        "label": "Rate +22%",
+        "tone": "danger",
+        "benchmark_rate": 8033,
+        "deviation_pct": 22.0,
+        "evidence": "Benchmark ₹8,033/cum — about ₹21,200 excess on this line.",
+        "question": "RCC M25 is priced at ₹9,800/cum against a ₹8,033 local benchmark. What is the basis?"
+      },
+      {
+        "item": "3.2",
+        "type": "RATE_OUTLIER",
+        "label": "Rate +22%",
+        "tone": "danger",
+        "benchmark_rate": 8033,
+        "deviation_pct": 22.0,
+        "evidence": "Benchmark ₹8,033/cum — about ₹39,800 excess on this line.",
+        "question": "RCC M25 is priced at ₹9,800/cum against a ₹8,033 local benchmark. What is the basis?"
+      },
+      {
+        "item": "4.2",
+        "type": "UNDERSPECIFIED",
+        "label": "No grade",
+        "tone": "warn",
+        "evidence": "No grade stated. Fe 415 vs Fe 500 vs Fe 500D changes the tonnage needed for the same strength — and this rate is below market: the classic low-bid trap.",
+        "question": "Confirm the TMT grade for item 4.2 — Fe 500 or Fe 500D per IS 1786 — in writing."
+      },
+      {
+        "item": "—",
+        "type": "MISSING_SCOPE",
+        "label": "Missing",
+        "tone": "danger",
+        "expected_qty": 295,
+        "expected_unit": "sqm",
+        "expected_amount": 74000,
+        "evidence": "Present in comparable BoQs, absent here. The contract's own terms say anything unlisted \"will be charged extra as per actuals\".",
+        "question": "External plaster is absent. In scope, or extra — and at what rate?"
+      },
+      {
+        "item": "—",
+        "type": "MISSING_SCOPE",
+        "label": "Missing",
+        "tone": "danger",
+        "expected_amount": 80000,
+        "evidence": "The single most common source of post-handover disputes.",
+        "question": "Terrace waterproofing is absent. In scope, or extra — and at what rate?"
+      },
+      {
+        "item": "7.1",
+        "type": "UNDERSPECIFIED",
+        "label": "Vague spec",
+        "tone": "warn",
+        "evidence": "No brand or model named — enables substitution with cheaper equivalents.",
+        "question": "Please name the make and model for the vitrified tiles in item 7.1."
+      },
+      {
+        "item": "9.1",
+        "type": "UNDERSPECIFIED",
+        "label": "Vague spec",
+        "tone": "warn",
+        "evidence": "\"Branded\" names no brand. Specify make and FR grade.",
+        "question": "Please name the wire make and FR grade for item 9.1."
+      },
+      {
+        "item": "9.2",
+        "type": "UNDERSPECIFIED",
+        "label": "Vague spec",
+        "tone": "warn",
+        "evidence": "Specify make and series.",
+        "question": "Please name the make and series for the modular switches in item 9.2."
+      }
+    ]
+  },
+  "payment_schedule": [
+    {"label": "On signing", "pct": 0.2, "before_slab": true},
+    {"label": "At foundation", "pct": 0.25, "before_slab": true},
+    {"label": "At slab", "pct": 0.25, "before_slab": false},
+    {"label": "At brickwork & roof", "pct": 0.2, "before_slab": false},
+    {"label": "On handover", "pct": 0.1, "before_slab": false}
+  ],
+  "cost_estimate": {
+    "expected_total_cost": 3500000,
+    "completed_value_estimate": 4100000,
+    "sanction_gap": -700000,
+    "fair_price_for_quoted_scope": 2915000,
+    "missing_scope_value": 154000,
+    "sections": [
+      {"name": "RCC & foundation over-rates negotiated back", "quoted": 475000, "market": 394000, "delta": -81000},
+      {"name": "Missing scope added back (plaster + waterproofing)", "quoted": null, "quoted_note": "—", "market": 154000, "delta": 154000},
+      {"name": "TMT steel at Fe 500 market rate", "quoted": 297600, "market": 349600, "delta": 52000},
+      {"name": "GST provision (12% composite)", "quoted": null, "quoted_note": "not stated", "market": 345000, "delta": 345000},
+      {"name": "Balance of scope at market", "quoted": 2427400, "market": 2257400, "delta": -170000}
+    ]
+  },
+  "inspection_result": {
+    "stage": "slab",
+    "confidence": "high",
+    "matches_claim": true,
+    "needs_human_review": false,
+    "geotag_match": true,
+    "timestamp_ok": true,
+    "same_angle": true,
+    "evidence_notes": [
+      "Geotag matches Plot 47, Kompally.",
+      "Timestamp 10 Aug, 11:42.",
+      "Slab shuttering struck; surface finished. Consistent with the claimed stage.",
+      "Same camera position as the tranche-2 set."
+    ]
+  },
+  "risk_assessment": {
+    "exposure_ratio": 1.29,
+    "exposure_undefined": false,
+    "recommendation": "HOLD",
+    "pct_complete": 0.5,
+    "verified_value": 1390000,
+    "cost_to_complete": 1580000,
+    "cost_to_complete_gap": -580000,
+    "live_ltv_pct": 64.3,
+    "ltv_default_prior": 0.126,
+    "reasons": [
+      "Disbursed ₹18,00,000 against ₹13,90,000 of verified value in place.",
+      "Exposure 1.29 is above the 1.00 hold threshold.",
+      "Remaining scope at current Kompally rates exceeds the undrawn balance by ₹5,80,000."
+    ]
+  },
+  "explanation": {
+    "owner_view": "Your slab photos check out — the stage is real and the geotag matches Plot 47. The problem is the money, not the work. ₹18,00,000 has been paid out against about ₹13,90,000 of value actually standing on site, and finishing the remaining scope at today's Kompally rates would cost roughly ₹15,80,000 — about ₹5,80,000 more than what is left of the loan. That gap is why this tranche is on hold rather than released. The four questions from your contract review are the fastest way to close most of it, and the sanction check page shows three specific routes.",
+    "officer_view": "HOLD recommended on tranche 3, loan 1001. Disbursed ₹18,00,000 cumulative (T1 ₹6,00,000, T2 ₹6,00,000, T3 ₹6,00,000). Verified value in place ₹13,90,000, derived from the slab stage against the BoQ schedule of values. Disbursement exposure 1.29 against a 1.00 hold threshold. Cost to complete ₹15,80,000 at current Kompally rates, leaving a ₹5,80,000 shortfall against the undrawn balance. Site evidence is strong: three photographs, geotag matched to Plot 47, timestamp 10 Aug 11:42, camera position consistent with the tranche-2 set, high confidence, no human review flag. Contract-side exposure is compounding: 9 open BoQ flags including 3 rate outliers on RCC and ₹1,54,000 of scope absent from the signed document. Benchmark source: CPWD DSR 2023 × Hyderabad factor."
+  }
+}
