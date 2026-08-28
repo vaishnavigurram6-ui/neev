@@ -26,6 +26,11 @@ router = APIRouter(prefix="/api", tags=["auth"])
 # mid-walkthrough, short enough that a shared laptop forgets by tomorrow.
 SESSION_MAX_AGE_S = 12 * 60 * 60
 
+# With no OTP and no phone column, a phone number cannot identify a loan, so an
+# owner signing in without one lands on the golden case. This is a demo
+# affordance and disappears the moment real auth resolves phone -> borrower.
+DEMO_OWNER_LOAN_ID = "1001"
+
 
 class LoginRequest(BaseModel):
     role: Role
@@ -63,7 +68,7 @@ def create_session(body: LoginRequest, response: Response, db: DbSession) -> Log
         # An owner signs in against a specific loan — the one the bank's link
         # named. Signing in for a loan that does not exist is a 404, not a
         # session that 404s on every subsequent request.
-        loan_id = body.loan_id or "1001"
+        loan_id = body.loan_id or DEMO_OWNER_LOAN_ID
         loan = db.get(models.Loan, loan_id)
         if loan is None:
             raise HTTPException(
@@ -98,6 +103,8 @@ def me(user: CurrentUser, db: DbSession) -> MeResponse:
     return MeResponse(
         role="owner",
         loan_id=user.loan_id,
-        name=user.name or (loan.borrower_name if loan else "Owner"),
+        # The loan wins over the cookie: the cookie's name is client input and a
+        # forged one must not be echoed back as the borrower's.
+        name=loan.borrower_name if loan else user.name,
         sub=owner_sub(loan),
     )

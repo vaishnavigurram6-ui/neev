@@ -72,6 +72,13 @@ def test_a_bad_phone_is_rejected(client):
     assert response.status_code == 422
 
 
+def test_a_forged_name_in_the_cookie_does_not_become_the_borrowers(client):
+    # The cookie is client input. /api/me answers from the loan record, so a
+    # doctored cookie cannot make the console greet someone else's name.
+    client.cookies.set("neev_session", "owner:1001:Mallory")
+    assert client.get("/api/me").json()["name"] == "Ravi Kumar"
+
+
 def test_an_owner_session_for_an_unknown_loan_is_rejected(client):
     response = client.post("/api/auth/session", json={"role": "owner", "phone": "9999999999", "loan_id": "9999"})
     assert response.status_code == 404
