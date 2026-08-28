@@ -1,0 +1,5 @@
+# Local SQLite database, created by `python -m app.db.seed`. Never committed:
+# it is fully regenerable from app/fixtures/ and fixtures/draw_schedule.csv.
+*.db
+*.db-journal
+.pytest_cache/
