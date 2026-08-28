@@ -71,9 +71,13 @@ async def report_milestone(
     """A borrower reporting progress: a stage, some photos, an optional note.
 
     The photos attach to the tranche currently under review, which is the one
-    whose release they are evidence for. EXIF is read by the visual inspector in
-    live mode; here the verification flags stay null rather than being invented,
-    so no screen can claim a geotag was checked when it was not.
+    whose release they are evidence for.
+
+    Every field this endpoint cannot actually establish is left null: the
+    geotag, timestamp and same-angle flags, which the visual inspector fills in
+    live mode, and `taken_at` — upload time is not capture time, and writing it
+    into an evidence trail as though it were would be the one lie a verification
+    record cannot afford.
     """
     uploaded = [photo for photo in photos if photo.filename]
     if not uploaded:
@@ -90,8 +94,10 @@ async def report_milestone(
                 tranche_id=tranche.id,
                 slot_key=f"{loan.id}-t{tranche.number}-{UPLOAD_SLOT_PREFIX}{index}",
                 caption=note or photo.filename,
+                # No blob store in this phase. The row records that a photo
+                # arrived and under which slot; the bytes are not kept.
                 stored_path=None,
-                taken_at=datetime.now(timezone.utc).replace(tzinfo=None),
+                taken_at=None,
             )
         )
     if stage:
@@ -103,8 +109,9 @@ async def report_milestone(
 def _current_tranche(loan: models.Loan) -> models.Tranche:
     """The tranche a photo is evidence for: the one awaiting a decision.
 
-    Falls back to the highest settled tranche, then to the first — a loan with
-    no tranches at all has nothing to attach evidence to and is a 404.
+    With nothing on hold, the newest tranche in the schedule is the one being
+    worked toward. A loan with no draw schedule at all has nothing to attach
+    evidence to, and is a 404.
     """
     if not loan.tranches:
         raise HTTPException(
