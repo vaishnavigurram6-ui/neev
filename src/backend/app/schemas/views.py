@@ -167,3 +167,87 @@ class TrancheDecisionView(BaseModel):
     photos: list[PhotoView]
     owner_view: str | None
     officer_view: str | None
+
+
+# ---------------------------------------------------------------------------
+# Added by Tasks 12/13, which needed three view models the plan named in its
+# route tables but never defined. They live here rather than in the route layer
+# because this module is the single place presentation shapes are declared, and
+# app/mappers/ stays the only layer that builds them.
+# ---------------------------------------------------------------------------
+
+
+class LoanSummaryView(BaseModel):
+    """The loan itself — what every owner and bank header needs to name it.
+
+    Deliberately not screen-shaped: it carries the loan's own facts, and each
+    screen picks the subset it renders.
+    """
+
+    loan_id: str
+    borrower: str
+    locality: str
+    plot_label: str | None
+    built_up_sqft: int | None
+    sanctioned: float
+    disbursed: float
+    contractor: str | None
+    latest_rev: int | None
+    recommendation: str | None
+    exposure: float | None
+    gap: float | None
+    current_stage: str | None
+    tranche_count: int
+
+
+class ProgressTrancheView(BaseModel):
+    number: int
+    name: str
+    sub: str
+    amount: float
+    status_label: str
+    tone: Tone
+    state: Literal["done", "current", "todo"]
+
+
+class StandingRowView(BaseModel):
+    label: str
+    # A str only ever carries the em dash for an unverified figure, paired with
+    # value_kind "text" — the same convention MathRowView uses.
+    value: float | str
+    value_kind: ValueKind = "money"
+    tone: Tone = "neutral"
+
+
+class BuildProgressView(BaseModel):
+    loan_id: str
+    borrower: str
+    locality: str
+    plot_label: str | None
+    sanctioned: float
+    disbursed: float
+    current_stage: str | None
+    last_verified_on: date | None
+    paused: bool
+    tranches: list[ProgressTrancheView]
+    standing: list[StandingRowView]
+    steps: list[str]
+    # Negative when the sanction will not finish the house at local rates.
+    shortfall: float | None
+
+
+class ContractorRowView(BaseModel):
+    id: str
+    name: str
+    meta: str
+    sites: int
+    flags_per_boq: float | None
+    underspecified_share: float | None
+    overrun_pct: float | None
+    sites_gone_quiet: int
+    tier: str
+    tone: Tone
+
+
+class ContractorScorecardView(BaseModel):
+    rows: list[ContractorRowView]
