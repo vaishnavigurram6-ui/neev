@@ -115,9 +115,18 @@ export default function LoginForm({ initialRole, next }: { initialRole: Role; ne
             <label htmlFor={codeId} className="block text-[12.5px] font-semibold text-sub">
               6-digit code
             </label>
-            <p id={codeHintId} className="mt-1 text-[11.5px] text-faint">
-              Sent to +91 {formatPhone(state.phone)}. Any six digits work in this build — no real
-              SMS is sent.
+            {/* This build sends no SMS -- there is no OTP provider, by design
+                (spec §10). Saying so in faint 11.5px under the label was not
+                enough: the field asks for a code that never arrives, so a first
+                time visitor waits for a message, then goes looking for another
+                way in. It is stated plainly and the field is prefilled, so the
+                honest path is one click rather than a guess. */}
+            <p
+              id={codeHintId}
+              className="mt-2 rounded-[10px] bg-warn-tint px-3 py-2 text-[12px] leading-[1.5] text-warn"
+            >
+              <strong className="font-semibold">No SMS is sent in this build.</strong> Any six
+              digits log you in — the code below is already filled for you.
             </p>
             <input
               ref={codeRef}
@@ -127,6 +136,7 @@ export default function LoginForm({ initialRole, next }: { initialRole: Role; ne
               inputMode="numeric"
               autoComplete="one-time-code"
               maxLength={6}
+              defaultValue="123456"
               placeholder="······"
               aria-describedby={`${codeHintId} ${errorId}`}
               aria-invalid={state.error?.field === 'code' || undefined}
@@ -157,8 +167,8 @@ export default function LoginForm({ initialRole, next }: { initialRole: Role; ne
         >
           {onPhone
             ? pending
-              ? 'Sending OTP…'
-              : 'Send OTP'
+              ? 'Checking…'
+              : 'Continue'
             : pending
               ? 'Logging you in…'
               : 'Log in'}
@@ -202,7 +212,8 @@ export default function LoginForm({ initialRole, next }: { initialRole: Role; ne
             )}
 
             <p className="mt-3 text-center text-[11.5px] leading-[1.5] text-faint">
-              No passwords. Your number is your login.
+              No passwords. Your number is your login — and this build sends no SMS, so any six
+              digits will do on the next step.
             </p>
           </>
         ) : (

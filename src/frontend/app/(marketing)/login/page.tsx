@@ -81,24 +81,25 @@ export default async function LoginPage({
         <div className="m-auto w-[400px] max-w-full">
           <LoginForm initialRole={role} next={next} />
 
-          {/* The prototype sends this to Owner Onboarding, which is gated: an
-              unauthenticated click would bounce off the middleware straight back
-              to this page. Logging in *is* signing up here — there are no
-              passwords and no separate registration — so the link sets onboarding
-              as where this login lands instead of pretending to leave. */}
-          <p className="mt-[18px] text-center text-[13px] text-sub">
-            New here?{' '}
-            <Link
-              href="/login?role=owner&next=%2Fowner%2Fonboarding"
-              className="font-semibold text-action hover:underline"
-            >
-              Start by uploading your contract
-            </Link>
+          {/* The prototype sends this to Owner Onboarding, which is gated, so an
+              unauthenticated click bounces off the middleware straight back here.
+              It used to link to /login itself with onboarding as the destination —
+              which navigates to the page you are already on, looks completely
+              dead, and discards the number you had just typed. Logging in IS
+              signing up here: no passwords, no separate registration. So this
+              says that rather than linking anywhere. */}
+          <p className="mt-[18px] text-center text-[13px] leading-[1.6] text-sub">
+            New here? Just enter your number above — there is nothing to sign up for.
           </p>
+
         </div>
 
+        {/* The prototype's line promises Hindi, Telugu and read-aloud. Neither
+            translation nor text-to-speech is built (spec §10), and the
+            accessibility cluster renders both as "coming soon" -- so stating it
+            as fact here contradicts the product two clicks away. */}
         <p className="text-center text-[11.5px] text-faint">
-          Works in English, हिंदी and తెలుగు · every screen can be read aloud
+          English today · हिंदी, తెలుగు and read-aloud are coming
         </p>
       </div>
     </main>
