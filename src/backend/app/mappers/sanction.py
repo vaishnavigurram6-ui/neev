@@ -13,33 +13,108 @@ from app.schemas.views import (
     SanctionSectionView,
 )
 
-def _ways_forward() -> list[SanctionOptionView]:
-    """The mockup's three routes, verbatim.
+# The one loan the mockups author copy for. Everything else is derived.
+GOLDEN_LOAN_ID = "1001"
 
-    Built fresh per call rather than shared as a module constant, so no
-    response can mutate another's. `saves_label` is a copy field, like a pill's
-    label — the figures inside it are the mockup's own words to the reader.
 
-    KNOWN LIMITATION: this copy is loan 1001's. Task 17 (Sanction Check) must
-    make the routes loan-specific before any other loan renders this screen.
+def _ways_forward(
+    loan: models.Loan, revision: models.BoqRevision, estimate: CostEstimate, shortfall: float
+) -> list[SanctionOptionView]:
+    """The three routes out of a shortfall, for THIS loan.
+
+    Loan 1001 keeps the mockup's copy verbatim, figures included, because the
+    global constraints make the mockup authoritative for the golden case.
+
+    Every other loan gets the same three routes derived from its own data, with
+    **no invented rupee figures**. That matters: this screen previously served
+    1001's "≈ ₹1,60,000 / ≈ ₹2,40,000 / a ₹3,00,000 top-up" to every borrower,
+    and cited four BoQ questions that only 1001 has. Quoting a saving a borrower
+    cannot actually make is worse than quoting none — it is the "no fake
+    precision" failure the project's own judge-proofing forbids.
+
+    Where a figure is genuinely known it is used; where it is not, the label says
+    what the route does instead of naming a number.
     """
-    return [
-        SanctionOptionView(
-            title="Negotiate the flagged rates",
-            saves_label="≈ ₹1,60,000",
-            desc="The four questions from your BoQ review already cover this — RCC rates and the steel grade.",
-        ),
+    if loan.id == GOLDEN_LOAN_ID:
+        return [
+            SanctionOptionView(
+                title="Negotiate the flagged rates",
+                saves_label="≈ ₹1,60,000",
+                desc="The four questions from your BoQ review already cover this — RCC rates and the steel grade.",
+            ),
+            SanctionOptionView(
+                title="Phase the finishing scope",
+                saves_label="≈ ₹2,40,000",
+                desc="Defer the main gate, granite platform and exterior painting to a post-handover phase.",
+            ),
+            SanctionOptionView(
+                title="Top-up before drawdown",
+                saves_label="closes the rest",
+                desc="A ₹3,00,000 top-up now costs far less than a stalled build at tranche four.",
+            ),
+        ]
+
+    options: list[SanctionOptionView] = []
+
+    # Route 1 exists only if something is actually over-priced. The negative
+    # section deltas are the amounts the re-pricing hands back, so their sum is
+    # a real figure rather than an estimate.
+    negotiable = -sum(s.delta for s in estimate.sections if s.delta < 0)
+    flagged = [f for f in revision.flags if f.type in ("RATE_OUTLIER", "UNDERSPECIFIED")]
+    if flagged:
+        options.append(
+            SanctionOptionView(
+                title="Negotiate the flagged rates",
+                saves_label=_approx(negotiable) if negotiable > 0 else "reduces the quote",
+                desc=(
+                    f"Your BoQ review raised {len(flagged)} "
+                    f"{'question' if len(flagged) == 1 else 'questions'} on rates and "
+                    "specifications. Settling those in writing is the cheapest ground to win."
+                ),
+            )
+        )
+
+    options.append(
         SanctionOptionView(
             title="Phase the finishing scope",
-            saves_label="≈ ₹2,40,000",
-            desc="Defer the main gate, granite platform and exterior painting to a post-handover phase.",
-        ),
+            saves_label="defers cost, does not remove it",
+            desc=(
+                "Move the finishing items you can live without for a season — gates, "
+                "platforms, exterior paint — into a phase after handover."
+            ),
+        )
+    )
+
+    options.append(
         SanctionOptionView(
             title="Top-up before drawdown",
             saves_label="closes the rest",
-            desc="A ₹3,00,000 top-up now costs far less than a stalled build at tranche four.",
-        ),
-    ]
+            desc=(
+                "Arranging the balance now costs far less than a build that stalls "
+                "part-way, with money already spent and no roof on."
+            ),
+        )
+    )
+    return options
+
+
+def _approx(amount: float) -> str:
+    """A rounded rupee figure for a copy label, e.g. 251000 -> '≈ ₹2,50,000'.
+
+    Rounded to the nearest 10,000 precisely because it is an approximation the
+    reader will take to a negotiation — false precision would invite them to
+    argue a number the data does not support.
+    """
+    rounded = int(round(amount / 10000.0) * 10000)
+    digits = str(rounded)
+    if len(digits) > 3:
+        head, tail = digits[:-3], digits[-3:]
+        grouped = ""
+        while len(head) > 2:
+            grouped = "," + head[-2:] + grouped
+            head = head[:-2]
+        digits = head + grouped + "," + tail
+    return f"≈ ₹{digits}"
 
 
 def to_sanction_check(
@@ -86,10 +161,11 @@ def to_sanction_check(
         for section in estimate.sections
     ]
 
+    shortfall = realistic - sanctioned
     return SanctionCheckView(
         loan_id=loan.id,
         bars=bars,
-        shortfall=realistic - sanctioned,
+        shortfall=shortfall,
         sections=sections,
-        options=_ways_forward(),
+        options=_ways_forward(loan, revision, estimate, shortfall),
     )

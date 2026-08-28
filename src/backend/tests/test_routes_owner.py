@@ -331,3 +331,26 @@ def test_the_backend_never_imports_the_adk_pipeline():
 
     assert not [name for name in sys.modules if name.startswith("neev_pipeline")]
     assert not [name for name in sys.modules if name == "google" or name.startswith("google.")]
+
+
+def test_ways_forward_are_the_loans_own_not_the_golden_cases(client):
+    """Quoting a saving a borrower cannot make is worse than quoting none.
+
+    This screen used to serve loan 1001's "≈ ₹1,60,000 / ≈ ₹2,40,000 / a
+    ₹3,00,000 top-up" to every borrower, and cite four BoQ questions only 1001
+    has.
+    """
+    golden = client.get("/api/loans/1001/sanction-check").json()["options"]
+    assert [o["saves_label"] for o in golden] == ["≈ ₹1,60,000", "≈ ₹2,40,000", "closes the rest"]
+
+    clean = client.get("/api/loans/1002/sanction-check").json()["options"]
+    labels = [o["saves_label"] for o in clean]
+    titles = [o["title"] for o in clean]
+
+    # Loan 1002's BoQ carries no flags, so there is nothing to negotiate.
+    assert "Negotiate the flagged rates" not in titles
+    # And none of 1001's authored figures may leak onto it.
+    assert "≈ ₹1,60,000" not in labels
+    assert "≈ ₹2,40,000" not in labels
+    assert not any("3,00,000" in o["desc"] for o in clean)
+    assert not any("four questions" in o["desc"] for o in clean)
