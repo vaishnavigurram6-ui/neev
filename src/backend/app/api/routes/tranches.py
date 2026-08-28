@@ -12,7 +12,7 @@ from typing import Literal
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from app.api.deps import AuthorizedLoan, CurrentTranche, DbSession
+from app.api.deps import AuthorizedLoan, CurrentTranche, DbSession, OptionalUser
 from app.db import models
 from app.mappers.tranche import to_tranche_decision
 from app.schemas.views import TrancheDecisionView
@@ -25,7 +25,9 @@ DecisionAction = Literal["RELEASE", "HOLD", "ESCALATE"]
 class DecisionRequest(BaseModel):
     action: DecisionAction
     note: str | None = Field(default=None, max_length=2000)
-    decided_by: str = "credit officer"
+    # No `decided_by`: who decided is taken from the session, never from the
+    # request body. An audit trail a caller can sign with any name it likes is
+    # not an audit trail.
 
 
 class DecisionResponse(BaseModel):
@@ -46,6 +48,7 @@ def decide(
     loan: AuthorizedLoan,
     tranche: CurrentTranche,
     db: DbSession,
+    user: OptionalUser = None,
 ) -> DecisionResponse:
     """Idempotent per tranche: a second POST updates the one row.
 
@@ -63,7 +66,7 @@ def decide(
 
     decision.action = body.action
     decision.note = body.note
-    decision.decided_by = body.decided_by
+    decision.decided_by = user.name if user else "credit officer"
     decision.decided_at = decided_at
     # The whole view the officer was looking at, as JSON. This is what makes the
     # trail auditable later: the figures are frozen at decision time, so a

@@ -33,10 +33,14 @@ BANK_SUB = "Credit officer · Hyderabad"
 
 
 class SessionUser(BaseModel):
+    """Who is calling. No `sub`: the profile chip's second line is derived from
+    the loan, and GET /api/me is the one place that needs it — holding a
+    placeholder here would let a second reader render "Owner" as if it were a
+    real address."""
+
     role: Role
     loan_id: str
     name: str
-    sub: str
 
 
 def get_db() -> Iterator[Session]:
@@ -73,8 +77,8 @@ def _parse_cookie(raw: str | None) -> SessionUser | None:
         return None
     name = unquote(encoded_name)
     if role == "bank":
-        return SessionUser(role="bank", loan_id=loan_id, name=name or BANK_NAME, sub=BANK_SUB)
-    return SessionUser(role="owner", loan_id=loan_id, name=name or "Owner", sub="Owner")
+        return SessionUser(role="bank", loan_id=loan_id, name=name or BANK_NAME)
+    return SessionUser(role="owner", loan_id=loan_id, name=name or "Owner")
 
 
 def get_optional_user(request: Request) -> SessionUser | None:

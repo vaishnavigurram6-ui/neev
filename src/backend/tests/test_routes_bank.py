@@ -134,6 +134,23 @@ def test_the_decision_response_reflects_the_latest_action(client):
     assert again.json()["action"] == "RELEASE"
 
 
+def test_who_decided_comes_from_the_session_not_the_body(client):
+    client.post("/api/auth/session", json={"role": "bank", "phone": "9812345678"})
+    client.post(
+        "/api/loans/1001/tranches/3/decision",
+        json={"action": "HOLD", "decided_by": "Someone Else"},
+    )
+
+    from sqlalchemy import select
+
+    from app.db import models
+    from app.db.session import SessionLocal
+
+    with SessionLocal() as db:
+        decision = db.scalars(select(models.Decision)).one()
+        assert decision.decided_by == "Anita Mehta"
+
+
 def test_an_unknown_action_is_rejected(client):
     response = client.post("/api/loans/1001/tranches/3/decision", json={"action": "YOLO"})
     assert response.status_code == 422
