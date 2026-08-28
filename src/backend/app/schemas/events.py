@@ -39,7 +39,26 @@ class DoneEvent(BaseModel):
     redirect: str
 
 
+class ErrorEvent(BaseModel):
+    """A run that crashed, named as such.
+
+    CONTRACT CHANGE (Task 12). Without this, a crashed analysis published only a
+    DoneEvent and the Analyzing screen redirected as though it had succeeded —
+    the reason was recorded on the job and never reached the client.
+
+    It is additive and never terminal: the stream still ends with DoneEvent, so
+    a consumer that does not know this variant behaves exactly as before. A
+    consumer that does know it can show the failure before following the
+    redirect.
+    """
+
+    type: Literal["error"] = "error"
+    message: str
+    # Where to send the reader anyway, so a failure is never a dead end.
+    redirect: str | None = None
+
+
 PipelineEvent = Annotated[
-    PhaseEvent | FindingEvent | ProgressEvent | DoneEvent,
+    PhaseEvent | FindingEvent | ProgressEvent | ErrorEvent | DoneEvent,
     Field(discriminator="type"),
 ]

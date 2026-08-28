@@ -10,7 +10,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import AsyncIterator, Literal
 
-from app.schemas.events import DoneEvent, PipelineEvent
+from app.schemas.events import DoneEvent, ErrorEvent, PipelineEvent
 from app.services.runner import BoqAnalysisRequest, get_runner
 
 JobStatus = Literal["running", "done", "error"]
@@ -64,17 +64,16 @@ class JobRegistry:
             job.status = "done"
         except Exception as exc:  # noqa: BLE001 - recorded on the job, never raised at the client
             job.error = str(exc)
+            redirect = f"/owner/loans/{job.loan_id}/boq"
+            # Say the run failed, then still terminate the stream. Publishing
+            # ErrorEvent first means a client that understands it can show the
+            # failure; one that does not simply follows the redirect as before.
+            job.publish(ErrorEvent(message=str(exc), redirect=redirect))
             # Publish the terminal event BEFORE flipping status: a subscriber
             # that is caught up returns as soon as status stops being
             # "running", so a status set first would strand it with no
             # DoneEvent and leave the Analyzing screen spinning.
-            #
-            # KNOWN LIMITATION: PipelineEvent has no error variant, so the
-            # client redirects as though the run succeeded. `job.error` holds
-            # the reason; Task 12's GET /api/jobs/{id} should surface it, and
-            # adding an ErrorEvent is a change to the shared event contract
-            # that the frontend consumes, so it is not made here.
-            job.publish(DoneEvent(redirect=f"/owner/loans/{job.loan_id}/boq"))
+            job.publish(DoneEvent(redirect=redirect))
             job.status = "error"
 
     async def stream(self, job_id: str) -> AsyncIterator[PipelineEvent]:
