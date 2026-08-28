@@ -128,6 +128,7 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
         locality=loan.locality,
         tranche_number=tranche.number,
         milestone=tranche.milestone,
+        status=tranche.status,
         request_amount=float(request_amount),
         recommendation=tranche.recommendation or "INSPECT",
         recommendation_tone=RECOMMENDATION_TONE.get(tranche.recommendation or "INSPECT", "warn"),  # type: ignore[arg-type]

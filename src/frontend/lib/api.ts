@@ -71,12 +71,22 @@ export function apiGet<T>(path: string): Promise<T> {
   return request<T>(path);
 }
 
-export function apiPost<T>(path: string, body?: unknown): Promise<T> {
+/** `headers` exists for the one thing a server-to-server call cannot infer: who
+ *  is calling. Reads are open in this phase, but a write that goes into the loan
+ *  file under somebody's name is not — `POST /api/loans/{id}/tranches/{n}/decision`
+ *  answers 401 without a session — so the caller forwards the request's own
+ *  `neev_session` cookie. Added by plan Task 18; no other endpoint needs it yet. */
+export function apiPost<T>(
+  path: string,
+  body?: unknown,
+  headers?: Record<string, string>
+): Promise<T> {
   // `body !== undefined`, not a truthiness test: `false`, `0` and `""` are all
   // valid JSON documents, and dropping them while still sending
   // `content-type: application/json` makes FastAPI answer 422.
   return request<T>(path, {
     method: 'POST',
     body: body !== undefined ? JSON.stringify(body) : undefined,
+    headers,
   });
 }

@@ -158,6 +158,9 @@ export interface TrancheDecisionView {
   locality: string;
   tranche_number: number;
   milestone: string;
+  /** `paid` | `on_hold` | `upcoming`. Only `on_hold` is a draw awaiting a
+   *  decision; the screen must not offer to release one already disbursed. */
+  status: string;
   request_amount: number;
   recommendation: string;
   recommendation_tone: Tone;
