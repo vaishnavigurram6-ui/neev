@@ -78,6 +78,14 @@ Frontend uses plain `npm` with a committed `package-lock.json`.
 
 ## 3. Target structure
 
+> **Amended 2026-08-28:** the three code packages were regrouped under `src/` —
+> `src/agents/`, `src/backend/`, `src/frontend/`. The tree below predates that
+> and shows them at the repo root; everything else about it still holds. The
+> implementation plan
+> (`docs/superpowers/plans/2026-08-28-neev-app-restructure-plan.md`) carries the
+> current paths and is authoritative where the two disagree. `adk web` now runs
+> from `src/agents/`.
+
 ```
 neev/
 ├── agents/                          # AI pipeline — RELOCATED AS-IS, unrefactored

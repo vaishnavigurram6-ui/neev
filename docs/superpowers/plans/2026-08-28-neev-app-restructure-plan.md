@@ -4,7 +4,7 @@
 
 **Goal:** Turn the Neev repo into a three-package application — the relocated ADK pipeline, a FastAPI backend serving pipeline-shaped fixture data, and a Next.js frontend that builds the 15 `design_handoff_neev` screens — without making a single billed Google API call.
 
-**Architecture:** One-directional dependency: `frontend → backend → authored fixtures`. The pipeline (`agents/neev_pipeline/`) stays standalone and driven by `adk web`; the backend never imports it in this phase, which is the strongest possible spend guard. Every seam the live pipeline will later plug into is built now and left unused: a `PipelineRunner` protocol with a mode-keyed factory, an SSE event contract, one mapper layer, and Pydantic schemas that mirror the five ADK `output_key` shapes exactly.
+**Architecture:** One-directional dependency: `frontend → backend → authored fixtures`. The pipeline (`src/agents/neev_pipeline/`) stays standalone and driven by `adk web`; the backend never imports it in this phase, which is the strongest possible spend guard. Every seam the live pipeline will later plug into is built now and left unused: a `PipelineRunner` protocol with a mode-keyed factory, an SSE event contract, one mapper layer, and Pydantic schemas that mirror the five ADK `output_key` shapes exactly.
 
 **Tech Stack:** Python 3.11 · FastAPI · Pydantic v2 · SQLAlchemy 2 · SQLite · Next.js (App Router) · React Server Components · TypeScript · Tailwind CSS v4 · Google ADK (relocated, untouched)
 
@@ -16,20 +16,21 @@
 
 *Last updated 2026-08-28.*
 
-**Two tasks' worth of work is already done and pushed. Start at Task 2.**
+**Start at Task 2.** Task 1 is partly done and the pipeline is already relocated — see the table.
 
 | Done | Commit | Detail |
 |---|---|---|
-| Pipeline relocation (Task 4.1 of the spec) | `bac5e69` | `buildguard/` → `agents/neev_pipeline/`. 7 absolute imports rewritten across `tests/test_offline.py` and `scripts/golden_run.py`; `agents/pyproject.toml` added; `tests/__init__.py` puts `agents/` on `sys.path` for bare clones; `golden_run.py`'s `sys.path` hack retargeted; `adk web` now runs from `agents/`; `requirements.txt` reduced to `-e ./agents`; `.gitignore` covers `.venv/`, `node_modules/`, `.next/`. **All 28 offline tests pass unchanged.** Only the Python package was renamed — the GCP project `buildguard-ai-2026` and BigQuery dataset `buildguard_data` deliberately keep their names. |
+| Pipeline relocation (Task 4.1 of the spec) | `bac5e69` | `buildguard/` → `src/agents/neev_pipeline/`. 7 absolute imports rewritten across `tests/test_offline.py` and `scripts/golden_run.py`; `src/agents/pyproject.toml` added; `tests/__init__.py` puts `src/agents/` on `sys.path` for bare clones; `golden_run.py`'s `sys.path` hack retargeted; `adk web` now runs from `src/agents/`; `requirements.txt` reduced to `-e ./src/agents`; `.gitignore` covers `.venv/`, `node_modules/`, `.next/`. **All 28 offline tests pass unchanged.** Only the Python package was renamed — the GCP project `buildguard-ai-2026` and BigQuery dataset `buildguard_data` deliberately keep their names. |
 | This plan | `a6fb347` | 21 tasks, 3 phases. |
-| **Task 1 — toolchain** | — | Installed and verified on the build machine: **Node v26.7.0**, **npm 11.19.0**, **Python 3.11.16** at `/opt/homebrew/bin/python3.11`. `agents/.venv` exists and `pip install -e agents` succeeds. System Python is still 3.9.6, untouched. Task 1's remaining steps are `.python-version` / `.node-version` / the `CLAUDE.md` note — do those, skip the `brew install`. |
+| Regroup under `src/` | this commit | The three code packages live in `src/agents/`, `src/backend/`, `src/frontend/`. `src/agents/` was moved with `git mv`; `tests/__init__.py`, `scripts/golden_run.py`, `requirements.txt`, `README.md`, `docs/Neev_Setup_Guide.md` and `CLAUDE.md` were all retargeted. 28 tests still pass. `adk web` now runs from `src/agents/`. |
+| **Task 1 — toolchain, partly** | — | Installed and verified on the build machine: **Node v26.7.0**, **npm 11.19.0**, **Python 3.11.16** at `/opt/homebrew/bin/python3.11`. System Python is still 3.9.6, untouched. **Skip Task 1 Step 1** (`brew install`) — already done. **Still to do:** Steps 3–7, i.e. `.python-version`, `.node-version`, creating `src/agents/.venv` and proving the editable install, and the `CLAUDE.md` note. No venv exists yet for either Python package. |
 
-**Not started:** `backend/` and `frontend/` do not exist yet. Nothing in Phase 0 Tasks 2–8, Phase 1, Phase 2, or Phase 3 has been written.
+**Not started:** `src/backend/` and `src/frontend/` do not exist yet. Nothing in Phase 0 Tasks 2–8, Phase 1, Phase 2, or Phase 3 has been written.
 
 ### Execution guidance
 
 - **Phase 0 is sequential.** Contracts before fan-out: the schemas, the runner protocol, and the component kit must exist before any screen work, because parallel agents collide when they invent overlapping interfaces.
-- **The one safe Phase 0 parallelisation is `backend/` (Tasks 2–5) against `frontend/` (Tasks 6–8)** — disjoint file trees, no runtime dependency between them.
+- **The one safe Phase 0 parallelisation is `src/backend/` (Tasks 2–5) against `src/frontend/` (Tasks 6–8)** — disjoint file trees, no runtime dependency between them.
 - **Parallel agents sharing one working tree must not run git commands.** Concurrent `git add` / `git commit` race on `index.lock`. Have each agent skip every "Commit" step and let the coordinating session commit their work afterwards; or give each agent its own worktree and merge the branches, which is clean here because the trees are disjoint.
 - **Do not skip the "run it to verify it fails" steps.** They are what catch a test that passes vacuously.
 
@@ -41,10 +42,10 @@ Every task's requirements implicitly include this section. Violating any line he
 
 - **DRY RUN IS ACTIVE.** No billed Google API call of any kind: no Gemini completions, no Gemini vision, no BigQuery. Not in the app, not in tests, not for a "quick check", not to record a fixture. Never uncomment, restore, export, or read `GOOGLE_API_KEY`. Never set `NEEV_ALLOW_BILLED_CALLS=1`. Never run `adk web`, `scripts/golden_run.py`, `scripts/load_bigquery.sh`, or any `bq` command. See `CLAUDE.md` — if its dry-run section still says ACTIVE, it is active.
 - **Git identity:** every commit is authored as `Vaishnavi Gurram <vaishnavigurram6@gmail.com>`. Already set repo-locally. Verify with `git config user.email` before the first commit. Never touch the global git config.
-- **Python 3.11 per package, in its own venv.** `agents/.venv` and `backend/.venv`. Never install into system Python (3.9.6, too old for `google-adk`). The backend venv must never contain `google-adk`.
+- **Python 3.11 per package, in its own venv.** `src/agents/.venv` and `src/backend/.venv`. Never install into system Python (3.9.6, too old for `google-adk`). The backend venv must never contain `google-adk`.
 - **The backend must not import `neev_pipeline` in this phase.** Not even inside a function body, except in `live_runner.py` where the import is deliberately deferred and never executed.
 - **Only the Python package was renamed.** The GCP project `buildguard-ai-2026` and the BigQuery dataset `buildguard_data` keep those names. Never `sed` `buildguard` repo-wide.
-- **`adk web` must keep working**, run from `agents/`, discovering `neev_pipeline.agent.root_agent`. `agents/neev_pipeline/__init__.py` must keep `from . import agent`.
+- **`adk web` must keep working**, run from `src/agents/`, discovering `neev_pipeline.agent.root_agent`. `src/agents/neev_pipeline/__init__.py` must keep `from . import agent`.
 - **All 28 tests in `tests/test_offline.py` must pass after every task.** Command: `python3 -m tests.test_offline` from the repo root. They need no venv, no credentials, and no network.
 - **Numbers come from the mockups, verbatim** (§4.4). Never recompute, reconcile, or "correct" a figure against the Python or the SQL. Where a mockup shows a figure, that figure is the fixture value.
 - **Fixtures are shaped like the pipeline's real output, never like the screens** (§5.1a). The five `output_key` shapes define the schemas; the mockups' numbers fill those shapes.
@@ -88,60 +89,61 @@ Transcribed from the mockups. These are the only values any task may use for loa
 
 ```
 neev/
-├── agents/                                   # DONE (commit bac5e69)
-│   ├── neev_pipeline/                        # relocated as-is, unrefactored
-│   └── pyproject.toml
-├── backend/
-│   ├── pyproject.toml
-│   ├── app/
-│   │   ├── main.py                           # FastAPI app factory + CORS + router mount
-│   │   ├── core/settings.py                  # Settings, NEEV_MODE, spend fence
-│   │   ├── schemas/
-│   │   │   ├── pipeline.py                   # the five output_key shapes
-│   │   │   ├── events.py                     # SSE event union
-│   │   │   └── views.py                      # view models the screens consume
-│   │   ├── services/
-│   │   │   ├── runner.py                     # PipelineRunner protocol + get_runner()
-│   │   │   ├── fixture_runner.py             # FixtureRunner (this build)
-│   │   │   ├── live_runner.py                # AdkPipelineRunner (never executed)
-│   │   │   └── jobs.py                       # JobRegistry + SSE fan-out
-│   │   ├── mappers/                          # pipeline-shaped -> view model
-│   │   │   ├── boq.py  portfolio.py  tranche.py  sanction.py
-│   │   ├── db/
-│   │   │   ├── models.py  session.py  seed.py
-│   │   ├── api/
-│   │   │   ├── deps.py                       # get_db, get_current_user
-│   │   │   └── routes/
-│   │   │       ├── auth.py  loans.py  boq.py  jobs.py
-│   │   │       ├── portfolio.py  tranches.py  contractors.py
-│   │   └── fixtures/
-│   │       ├── loan_1001_pipeline.json       # pipeline-shaped, mockup numbers
-│   │       ├── loan_1002_pipeline.json
-│   │       ├── portfolio_rows.json           # the design's 10 rows verbatim
-│   │       └── analyzing_script.json         # SSE replay script
-│   └── tests/
-│       ├── conftest.py                       # socket-blocking autouse fixture
-│       ├── test_settings_spend_guard.py
-│       ├── test_fixture_contract.py          # §5.1a seam acceptance test
-│       ├── test_runner_events.py
-│       ├── test_seed.py
-│       └── test_routes.py
-├── frontend/
-│   ├── package.json  tsconfig.json  next.config.ts  eslint.config.mjs
-│   ├── app/
-│   │   ├── layout.tsx  globals.css  not-found.tsx
-│   │   ├── (marketing)/layout.tsx  page.tsx  login/page.tsx
-│   │   ├── (owner)/layout.tsx
-│   │   │   └── owner/onboarding/page.tsx
-│   │   │       loans/[loanId]/{analyzing,boq,sanction,progress,changes}/...
-│   │   └── (bank)/layout.tsx
-│   │       └── bank/{portfolio,contractors,setup}/  loans/[loanId]/tranches/[n]/
-│   ├── components/
-│   │   ├── ui/       # the kit — 16 files, one component each
-│   │   ├── owner/    # owner-only compositions
-│   │   └── bank/     # bank-only compositions
-│   ├── lib/{api.ts,format.ts,tone.ts,session.ts,api-types.ts}
-│   └── middleware.ts
+├── src/                                          # the three code packages
+│   ├── agents/                                   # DONE (commit bac5e69)
+│   │   ├── neev_pipeline/                        # relocated as-is, unrefactored
+│   │   └── pyproject.toml
+│   ├── backend/
+│   │   ├── pyproject.toml
+│   │   ├── app/
+│   │   │   ├── main.py                           # FastAPI app factory + CORS + router mount
+│   │   │   ├── core/settings.py                  # Settings, NEEV_MODE, spend fence
+│   │   │   ├── schemas/
+│   │   │   │   ├── pipeline.py                   # the five output_key shapes
+│   │   │   │   ├── events.py                     # SSE event union
+│   │   │   │   └── views.py                      # view models the screens consume
+│   │   │   ├── services/
+│   │   │   │   ├── runner.py                     # PipelineRunner protocol + get_runner()
+│   │   │   │   ├── fixture_runner.py             # FixtureRunner (this build)
+│   │   │   │   ├── live_runner.py                # AdkPipelineRunner (never executed)
+│   │   │   │   └── jobs.py                       # JobRegistry + SSE fan-out
+│   │   │   ├── mappers/                          # pipeline-shaped -> view model
+│   │   │   │   ├── boq.py  portfolio.py  tranche.py  sanction.py
+│   │   │   ├── db/
+│   │   │   │   ├── models.py  session.py  seed.py
+│   │   │   ├── api/
+│   │   │   │   ├── deps.py                       # get_db, get_current_user
+│   │   │   │   └── routes/
+│   │   │   │       ├── auth.py  loans.py  boq.py  jobs.py
+│   │   │   │       ├── portfolio.py  tranches.py  contractors.py
+│   │   │   └── fixtures/
+│   │   │       ├── loan_1001_pipeline.json       # pipeline-shaped, mockup numbers
+│   │   │       ├── loan_1002_pipeline.json
+│   │   │       ├── portfolio_rows.json           # the design's 10 rows verbatim
+│   │   │       └── analyzing_script.json         # SSE replay script
+│   │   └── tests/
+│   │       ├── conftest.py                       # socket-blocking autouse fixture
+│   │       ├── test_settings_spend_guard.py
+│   │       ├── test_fixture_contract.py          # §5.1a seam acceptance test
+│   │       ├── test_runner_events.py
+│   │       ├── test_seed.py
+│   │       └── test_routes.py
+│   └── frontend/
+│       ├── package.json  tsconfig.json  next.config.ts  eslint.config.mjs
+│       ├── app/
+│       │   ├── layout.tsx  globals.css  not-found.tsx
+│       │   ├── (marketing)/layout.tsx  page.tsx  login/page.tsx
+│       │   ├── (owner)/layout.tsx
+│       │   │   └── owner/onboarding/page.tsx
+│       │   │       loans/[loanId]/{analyzing,boq,sanction,progress,changes}/...
+│       │   └── (bank)/layout.tsx
+│       │       └── bank/{portfolio,contractors,setup}/  loans/[loanId]/tranches/[n]/
+│       ├── components/
+│       │   ├── ui/       # the kit — 16 files, one component each
+│       │   ├── owner/    # owner-only compositions
+│       │   └── bank/     # bank-only compositions
+│       ├── lib/{api.ts,format.ts,tone.ts,session.ts,api-types.ts}
+│       └── middleware.ts
 ├── tests/test_offline.py                     # stays at repo root this phase
 └── fixtures/  design_handoff_neev/  docs/  scripts/
 ```
@@ -197,9 +199,9 @@ Expected: the first three print versions; the fourth still prints 3.9.6. If `pyt
 - [ ] **Step 4: Create the agents venv and prove the editable install works**
 
 ```bash
-/opt/homebrew/bin/python3.11 -m venv agents/.venv
-agents/.venv/bin/pip install -q -e agents
-agents/.venv/bin/python -c "import neev_pipeline, sys; print('neev_pipeline importable on', sys.version.split()[0])"
+/opt/homebrew/bin/python3.11 -m venv src/agents/.venv
+src/agents/.venv/bin/pip install -q -e src/agents
+src/agents/.venv/bin/python -c "import neev_pipeline, sys; print('neev_pipeline importable on', sys.version.split()[0])"
 ```
 
 Expected: prints `neev_pipeline importable on 3.11.x`.
@@ -219,7 +221,7 @@ In the `## Environments` section, append:
 
 ```markdown
 Verified on this machine: Python 3.11 at `/opt/homebrew/bin/python3.11`, Node 20+
-via Homebrew. `agents/.venv` exists and `pip install -e agents` succeeds. The
+via Homebrew. `src/agents/.venv` exists and `pip install -e src/agents` succeeds. The
 backend venv is created in Task 3.
 ```
 
@@ -237,14 +239,14 @@ git commit -m "Task 1: pin toolchain versions; agents venv verified"
 The fence comes first, before any code that could conceivably call out. Everything after this task inherits it.
 
 **Files:**
-- Create: `backend/pyproject.toml`
-- Create: `backend/app/__init__.py`
-- Create: `backend/app/core/__init__.py`
-- Create: `backend/app/core/settings.py`
-- Create: `backend/app/main.py`
-- Create: `backend/tests/__init__.py`
-- Create: `backend/tests/conftest.py`
-- Create: `backend/tests/test_settings_spend_guard.py`
+- Create: `src/backend/pyproject.toml`
+- Create: `src/backend/app/__init__.py`
+- Create: `src/backend/app/core/__init__.py`
+- Create: `src/backend/app/core/settings.py`
+- Create: `src/backend/app/main.py`
+- Create: `src/backend/tests/__init__.py`
+- Create: `src/backend/tests/conftest.py`
+- Create: `src/backend/tests/test_settings_spend_guard.py`
 
 **Interfaces:**
 - Consumes: Python 3.11 from Task 1.
@@ -256,7 +258,7 @@ The fence comes first, before any code that could conceivably call out. Everythi
   - `app.main.create_app() -> FastAPI` and module-level `app = create_app()`.
   - `GET /api/health` → `{"status": "ok", "mode": "fixture"}`.
 
-- [ ] **Step 1: Write `backend/pyproject.toml`**
+- [ ] **Step 1: Write `src/backend/pyproject.toml`**
 
 ```toml
 [build-system]
@@ -292,7 +294,7 @@ testpaths = ["tests"]
 
 - [ ] **Step 2: Write the failing test**
 
-`backend/tests/test_settings_spend_guard.py`:
+`src/backend/tests/test_settings_spend_guard.py`:
 ```python
 """The spend fence. These tests are the reason a NEEV_MODE typo can never
 silently start billing."""
@@ -331,7 +333,7 @@ def test_billed_calls_permitted_only_with_the_explicit_opt_in():
     assert_billed_calls_permitted(settings) is None
 ```
 
-`backend/tests/conftest.py` — the network kill switch:
+`src/backend/tests/conftest.py` — the network kill switch:
 ```python
 """Backend tests never reach the network.
 
@@ -376,13 +378,13 @@ def _force_fixture_mode(monkeypatch):
 - [ ] **Step 3: Create the venv and run the test to verify it fails**
 
 ```bash
-/opt/homebrew/bin/python3.11 -m venv backend/.venv
-backend/.venv/bin/pip install -q -e "backend[dev]"
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_settings_spend_guard.py -q
+/opt/homebrew/bin/python3.11 -m venv src/backend/.venv
+src/backend/.venv/bin/pip install -q -e "src/backend[dev]"
+cd src/backend && .venv/bin/python -m pytest tests/test_settings_spend_guard.py -q
 ```
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.core.settings'`
 
-- [ ] **Step 4: Write `backend/app/core/settings.py`**
+- [ ] **Step 4: Write `src/backend/app/core/settings.py`**
 
 ```python
 """Application settings, and the fence that keeps this build from spending money.
@@ -446,11 +448,11 @@ def assert_billed_calls_permitted(settings: Settings | None = None) -> None:
 - [ ] **Step 5: Run the tests to verify they pass**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/ -q
+cd src/backend && .venv/bin/python -m pytest tests/ -q
 ```
 Expected: 5 passed
 
-- [ ] **Step 6: Write `backend/app/main.py`**
+- [ ] **Step 6: Write `src/backend/app/main.py`**
 
 ```python
 """FastAPI app factory. Routers are mounted here as later tasks add them."""
@@ -486,12 +488,12 @@ def create_app() -> FastAPI:
 app = create_app()
 ```
 
-`backend/app/__init__.py` and `backend/app/core/__init__.py` are empty files.
+`src/backend/app/__init__.py` and `src/backend/app/core/__init__.py` are empty files.
 
 - [ ] **Step 7: Prove the app boots**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -c "
+cd src/backend && .venv/bin/python -c "
 from fastapi.testclient import TestClient
 from app.main import app
 r = TestClient(app).get('/api/health')
@@ -505,7 +507,7 @@ If `TestClient` is unavailable, `pip install -q httpx` into the backend venv —
 - [ ] **Step 8: Commit**
 
 ```bash
-git add backend/
+git add src/backend/
 git commit -m "Task 2: backend skeleton, spend fence, socket-blocked tests"
 ```
 
@@ -513,13 +515,13 @@ git commit -m "Task 2: backend skeleton, spend fence, socket-blocked tests"
 
 ### Task 3: Pipeline-shaped schemas — the contract everything else reads
 
-These schemas mirror the five ADK `output_key` shapes **exactly as the agent instructions specify them** (`agents/neev_pipeline/agent.py`). They are transcribed below from that file; do not invent fields, and do not shape them after the screens.
+These schemas mirror the five ADK `output_key` shapes **exactly as the agent instructions specify them** (`src/agents/neev_pipeline/agent.py`). They are transcribed below from that file; do not invent fields, and do not shape them after the screens.
 
 **Files:**
-- Create: `backend/app/schemas/__init__.py`
-- Create: `backend/app/schemas/pipeline.py`
-- Create: `backend/app/schemas/events.py`
-- Create: `backend/tests/test_schemas.py`
+- Create: `src/backend/app/schemas/__init__.py`
+- Create: `src/backend/app/schemas/pipeline.py`
+- Create: `src/backend/app/schemas/events.py`
+- Create: `src/backend/tests/test_schemas.py`
 
 **Interfaces:**
 - Consumes: nothing from earlier tasks.
@@ -543,7 +545,7 @@ These schemas mirror the five ADK `output_key` shapes **exactly as the agent ins
 
 - [ ] **Step 1: Write the failing test**
 
-`backend/tests/test_schemas.py`:
+`src/backend/tests/test_schemas.py`:
 ```python
 """The schemas are the seam. These tests pin two things the live pipeline will
 depend on: that infinite exposure serialises as JSON-legal null, and that the
@@ -620,16 +622,16 @@ def test_event_union_discriminates_on_type():
 - [ ] **Step 2: Run it to verify it fails**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_schemas.py -q
+cd src/backend && .venv/bin/python -m pytest tests/test_schemas.py -q
 ```
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.schemas'`
 
-- [ ] **Step 3: Write `backend/app/schemas/pipeline.py`**
+- [ ] **Step 3: Write `src/backend/app/schemas/pipeline.py`**
 
 ```python
 """The five ADK output_key shapes, as Pydantic models.
 
-Transcribed from agents/neev_pipeline/agent.py, where each agent's instruction
+Transcribed from src/agents/neev_pipeline/agent.py, where each agent's instruction
 ends with an explicit "Output JSON: {...}" contract:
 
   boq_analyst_agent      -> boq_findings      {line_items, flags, boq_total,
@@ -774,7 +776,7 @@ class PipelineOutput(BaseModel):
 CostEstimate.model_rebuild()
 ```
 
-- [ ] **Step 4: Write `backend/app/schemas/events.py`**
+- [ ] **Step 4: Write `src/backend/app/schemas/events.py`**
 
 ```python
 """The SSE event contract.
@@ -824,19 +826,19 @@ PipelineEvent = Annotated[
 ]
 ```
 
-`backend/app/schemas/__init__.py` is empty.
+`src/backend/app/schemas/__init__.py` is empty.
 
 - [ ] **Step 5: Run the tests to verify they pass**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/ -q
+cd src/backend && .venv/bin/python -m pytest tests/ -q
 ```
 Expected: 8 passed
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add backend/app/schemas backend/tests/test_schemas.py
+git add src/backend/app/schemas src/backend/tests/test_schemas.py
 git commit -m "Task 3: pipeline-shaped Pydantic schemas and the SSE event contract"
 ```
 
@@ -845,10 +847,10 @@ git commit -m "Task 3: pipeline-shaped Pydantic schemas and the SSE event contra
 ### Task 4: `PipelineRunner` protocol, factory, and the never-executed live runner
 
 **Files:**
-- Create: `backend/app/services/__init__.py`
-- Create: `backend/app/services/runner.py`
-- Create: `backend/app/services/live_runner.py`
-- Create: `backend/tests/test_runner_factory.py`
+- Create: `src/backend/app/services/__init__.py`
+- Create: `src/backend/app/services/runner.py`
+- Create: `src/backend/app/services/live_runner.py`
+- Create: `src/backend/tests/test_runner_factory.py`
 
 **Interfaces:**
 - Consumes: `app.core.settings.{get_settings, assert_billed_calls_permitted, BilledCallsNotPermitted}`; `app.schemas.events.PipelineEvent`.
@@ -860,7 +862,7 @@ git commit -m "Task 3: pipeline-shaped Pydantic schemas and the SSE event contra
 
 - [ ] **Step 1: Write the failing test**
 
-`backend/tests/test_runner_factory.py`:
+`src/backend/tests/test_runner_factory.py`:
 ```python
 """The factory is the only place that reads NEEV_MODE. These tests prove that
 fixture mode is what you get by default, and that reaching for live mode without
@@ -898,11 +900,11 @@ def test_live_runner_module_imports_without_the_adk_installed():
 - [ ] **Step 2: Run it to verify it fails**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_runner_factory.py -q
+cd src/backend && .venv/bin/python -m pytest tests/test_runner_factory.py -q
 ```
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.services'`
 
-- [ ] **Step 3: Write `backend/app/services/runner.py`**
+- [ ] **Step 3: Write `src/backend/app/services/runner.py`**
 
 ```python
 """The seam the live pipeline plugs into (spec §5.1a).
@@ -966,7 +968,7 @@ def get_runner(settings: Settings | None = None) -> PipelineRunner:
     return FixtureRunner()
 ```
 
-- [ ] **Step 4: Write `backend/app/services/live_runner.py`**
+- [ ] **Step 4: Write `src/backend/app/services/live_runner.py`**
 
 ```python
 """The live ADK path. Written and type-checked; NEVER EXECUTED in this build.
@@ -1073,13 +1075,13 @@ def _tool_calls(event: object) -> list[str]:
     return names
 ```
 
-`backend/app/services/__init__.py` is empty.
+`src/backend/app/services/__init__.py` is empty.
 
 - [ ] **Step 5: Note that the test needs `FixtureRunner`, built in Task 5**
 
 The factory test imports `app.services.fixture_runner.FixtureRunner`, which does not exist yet. Write the minimal placeholder now so this task's tests pass, then Task 5 replaces its body:
 
-`backend/app/services/fixture_runner.py`:
+`src/backend/app/services/fixture_runner.py`:
 ```python
 """Replays an authored pipeline run. Fully implemented in Task 5."""
 
@@ -1097,14 +1099,14 @@ class FixtureRunner:
 - [ ] **Step 6: Run the tests to verify they pass**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/ -q
+cd src/backend && .venv/bin/python -m pytest tests/ -q
 ```
 Expected: 12 passed
 
 - [ ] **Step 7: Prove the live module is import-safe without the ADK**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -c "
+cd src/backend && .venv/bin/python -c "
 import app.services.live_runner as m
 print('live_runner imports with no google-adk present:', m.AdkPipelineRunner.__name__)
 import importlib.util
@@ -1116,7 +1118,7 @@ Expected: prints the class name, then `google-adk installed in this venv: False`
 - [ ] **Step 8: Commit**
 
 ```bash
-git add backend/app/services backend/tests/test_runner_factory.py
+git add src/backend/app/services src/backend/tests/test_runner_factory.py
 git commit -m "Task 4: PipelineRunner protocol, mode factory, unexercised live runner"
 ```
 
@@ -1127,15 +1129,15 @@ git commit -m "Task 4: PipelineRunner protocol, mode factory, unexercised live r
 This is where the mockups' numbers enter the system — once, in one place, in the pipeline's own shape.
 
 **Files:**
-- Create: `backend/app/fixtures/__init__.py`
-- Create: `backend/app/fixtures/loan_1001_pipeline.json`
-- Create: `backend/app/fixtures/loan_1002_pipeline.json`
-- Create: `backend/app/fixtures/analyzing_script.json`
-- Create: `backend/app/fixtures/loader.py`
-- Modify: `backend/app/services/fixture_runner.py` (replace the Task 4 placeholder)
-- Create: `backend/app/services/jobs.py`
-- Create: `backend/tests/test_fixture_contract.py`
-- Create: `backend/tests/test_runner_events.py`
+- Create: `src/backend/app/fixtures/__init__.py`
+- Create: `src/backend/app/fixtures/loan_1001_pipeline.json`
+- Create: `src/backend/app/fixtures/loan_1002_pipeline.json`
+- Create: `src/backend/app/fixtures/analyzing_script.json`
+- Create: `src/backend/app/fixtures/loader.py`
+- Modify: `src/backend/app/services/fixture_runner.py` (replace the Task 4 placeholder)
+- Create: `src/backend/app/services/jobs.py`
+- Create: `src/backend/tests/test_fixture_contract.py`
+- Create: `src/backend/tests/test_runner_events.py`
 
 **Interfaces:**
 - Consumes: `app.schemas.pipeline.PipelineOutput`, `app.schemas.events.*`, `app.services.runner.BoqAnalysisRequest`.
@@ -1150,7 +1152,7 @@ This is where the mockups' numbers enter the system — once, in one place, in t
 
 - [ ] **Step 1: Write the seam contract test first**
 
-`backend/tests/test_fixture_contract.py` — this is the spec §5.1a acceptance test. It is the single most important test in the backend: it proves today that the fixtures already have the shape live output must have.
+`src/backend/tests/test_fixture_contract.py` — this is the spec §5.1a acceptance test. It is the single most important test in the backend: it proves today that the fixtures already have the shape live output must have.
 
 ```python
 """Spec 5.1a acceptance test.
@@ -1247,11 +1249,11 @@ def test_clean_loan_1002_has_no_flags():
 - [ ] **Step 2: Run it to verify it fails**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_fixture_contract.py -q
+cd src/backend && .venv/bin/python -m pytest tests/test_fixture_contract.py -q
 ```
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.fixtures'`
 
-- [ ] **Step 3: Write `backend/app/fixtures/loan_1001_pipeline.json`**
+- [ ] **Step 3: Write `src/backend/app/fixtures/loan_1001_pipeline.json`**
 
 Every figure below is transcribed from a mockup. Line items, quantities and rates come from `scripts/boq_data.py` (`RAVI_ITEMS`); flag labels, evidence and questions come verbatim from `Neev 1 BoQ Review.dc.html`; the risk block comes from `Neev 3 Tranche Decision.dc.html`; the cost sections come from `Neev 2 Sanction Check.dc.html`.
 
@@ -1413,7 +1415,7 @@ Every figure below is transcribed from a mockup. Line items, quantities and rate
 }
 ```
 
-- [ ] **Step 4: Write `backend/app/fixtures/loan_1002_pipeline.json` — the clean negative case**
+- [ ] **Step 4: Write `src/backend/app/fixtures/loan_1002_pipeline.json` — the clean negative case**
 
 ```json
 {
@@ -1475,7 +1477,7 @@ Every figure below is transcribed from a mockup. Line items, quantities and rate
 }
 ```
 
-- [ ] **Step 5: Write `backend/app/fixtures/analyzing_script.json`**
+- [ ] **Step 5: Write `src/backend/app/fixtures/analyzing_script.json`**
 
 The replay script for the Analyzing screen, transcribed from `Neev 0b Analyzing.dc.html`. Phase names and subtitles are that file's copy verbatim.
 
@@ -1504,7 +1506,7 @@ The replay script for the Analyzing screen, transcribed from `Neev 0b Analyzing.
 }
 ```
 
-- [ ] **Step 6: Write `backend/app/fixtures/loader.py`**
+- [ ] **Step 6: Write `src/backend/app/fixtures/loader.py`**
 
 ```python
 """Loads the authored, pipeline-shaped fixtures.
@@ -1541,18 +1543,18 @@ def load_analyzing_script() -> dict:
     return json.loads((_DIR / "analyzing_script.json").read_text(encoding="utf-8"))
 ```
 
-`backend/app/fixtures/__init__.py` is empty.
+`src/backend/app/fixtures/__init__.py` is empty.
 
 - [ ] **Step 7: Run the contract test to verify it passes**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_fixture_contract.py -q
+cd src/backend && .venv/bin/python -m pytest tests/test_fixture_contract.py -q
 ```
 Expected: 12 passed. If `test_no_fixture_contains_a_preformatted_money_string` fails, a rupee sign leaked outside a prose field — move the figure into a number.
 
 - [ ] **Step 8: Write the runner-events test**
 
-`backend/tests/test_runner_events.py`:
+`src/backend/tests/test_runner_events.py`:
 ```python
 """FixtureRunner emits the same sequence the live runner must emit."""
 
@@ -1602,7 +1604,7 @@ async def test_progress_never_exceeds_100_and_ends_at_100():
     assert pcts == sorted(pcts)
 ```
 
-Add the async plugin to the backend dev extra in `backend/pyproject.toml`:
+Add the async plugin to the backend dev extra in `src/backend/pyproject.toml`:
 ```toml
 dev = ["pytest>=8.3", "pytest-asyncio>=0.24", "httpx>=0.27"]
 ```
@@ -1612,16 +1614,16 @@ and configure it:
 testpaths = ["tests"]
 asyncio_mode = "auto"
 ```
-Then `backend/.venv/bin/pip install -q -e "backend[dev]"` again.
+Then `src/backend/.venv/bin/pip install -q -e "src/backend[dev]"` again.
 
 - [ ] **Step 9: Run it to verify it fails**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_runner_events.py -q
+cd src/backend && .venv/bin/python -m pytest tests/test_runner_events.py -q
 ```
 Expected: FAIL — `TypeError: FixtureRunner() takes no arguments` (the Task 4 placeholder has no `step_delay_s`).
 
-- [ ] **Step 10: Replace `backend/app/services/fixture_runner.py`**
+- [ ] **Step 10: Replace `src/backend/app/services/fixture_runner.py`**
 
 ```python
 """Replays the authored pipeline run on a timer.
@@ -1677,11 +1679,11 @@ class FixtureRunner:
 - [ ] **Step 11: Run to verify it passes**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/ -q
+cd src/backend && .venv/bin/python -m pytest tests/ -q
 ```
 Expected: all pass (≈20 tests)
 
-- [ ] **Step 12: Write `backend/app/services/jobs.py`**
+- [ ] **Step 12: Write `src/backend/app/services/jobs.py`**
 
 ```python
 """In-process job registry and SSE fan-out.
@@ -1781,7 +1783,7 @@ registry = JobRegistry()
 - [ ] **Step 13: Commit**
 
 ```bash
-git add backend/
+git add src/backend/
 git commit -m "Task 5: authored pipeline-shaped fixtures, FixtureRunner, SSE job registry"
 ```
 
@@ -1790,14 +1792,14 @@ git commit -m "Task 5: authored pipeline-shaped fixtures, FixtureRunner, SSE job
 ### Task 6: Frontend scaffold, the AA-corrected theme, and the no-raw-hex lint rule
 
 **Files:**
-- Create: `frontend/` (via `create-next-app`)
-- Modify: `frontend/app/globals.css` — the whole token system
-- Modify: `frontend/app/layout.tsx` — fonts, metadata, theme bootstrap
-- Create: `frontend/eslint.config.mjs` additions — the raw-hex ban
-- Create: `frontend/lib/format.ts`
-- Create: `frontend/lib/tone.ts`
-- Create: `frontend/scripts/check-no-raw-hex.mjs`
-- Modify: `frontend/package.json` — scripts
+- Create: `src/frontend/` (via `create-next-app`)
+- Modify: `src/frontend/app/globals.css` — the whole token system
+- Modify: `src/frontend/app/layout.tsx` — fonts, metadata, theme bootstrap
+- Create: `src/frontend/eslint.config.mjs` additions — the raw-hex ban
+- Create: `src/frontend/lib/format.ts`
+- Create: `src/frontend/lib/tone.ts`
+- Create: `src/frontend/scripts/check-no-raw-hex.mjs`
+- Modify: `src/frontend/package.json` — scripts
 
 **Interfaces:**
 - Consumes: Node from Task 1.
@@ -1811,20 +1813,20 @@ git commit -m "Task 5: authored pipeline-shaped fixtures, FixtureRunner, SSE job
 
 ```bash
 cd /Users/mohithkumar/Documents/Neev/neev
-npx --yes create-next-app@latest frontend \
+npx --yes create-next-app@latest src/frontend \
   --typescript --tailwind --eslint --app --src-dir=false \
   --import-alias "@/*" --use-npm --no-turbopack --yes
 ```
 
 Then verify it builds before changing anything:
 ```bash
-cd frontend && npm run build
+cd src/frontend && npm run build
 ```
 Expected: `Compiled successfully`. If this fails, stop — nothing downstream is verifiable until it passes.
 
 - [ ] **Step 2: Write the failing check — the raw-hex guard**
 
-`frontend/scripts/check-no-raw-hex.mjs`:
+`src/frontend/scripts/check-no-raw-hex.mjs`:
 ```js
 // Fails the build on a raw #rrggbb outside the theme file.
 //
@@ -1876,7 +1878,7 @@ if (offenders.length) {
 console.log('No raw hex outside the theme file.');
 ```
 
-Add to `frontend/package.json` scripts:
+Add to `src/frontend/package.json` scripts:
 ```json
 {
   "scripts": {
@@ -1894,11 +1896,11 @@ Add to `frontend/package.json` scripts:
 - [ ] **Step 3: Run the check to see it fail against the scaffold**
 
 ```bash
-cd frontend && npm run check:hex
+cd src/frontend && npm run check:hex
 ```
 Expected: FAIL, listing whatever hex `create-next-app` left in `app/page.tsx` / `app/globals.css`. That failure is the check working.
 
-- [ ] **Step 4: Write `frontend/app/globals.css` — the single source of colour truth**
+- [ ] **Step 4: Write `src/frontend/app/globals.css` — the single source of colour truth**
 
 Three tokens are darkened from the handoff table because they fail WCAG AA as specified. Measured ratios are in the comments; do not restore the originals.
 
@@ -2080,7 +2082,7 @@ a {
 }
 ```
 
-- [ ] **Step 5: Write `frontend/lib/format.ts`**
+- [ ] **Step 5: Write `src/frontend/lib/format.ts`**
 
 ```ts
 // The one and only money formatter. No screen stores or emits a pre-formatted
@@ -2140,7 +2142,7 @@ export function formatDelta(rupees: number): string {
 }
 ```
 
-- [ ] **Step 6: Write `frontend/lib/tone.ts`**
+- [ ] **Step 6: Write `src/frontend/lib/tone.ts`**
 
 ```ts
 // One status vocabulary for the whole product.
@@ -2209,7 +2211,7 @@ export function recommendationTone(
 }
 ```
 
-- [ ] **Step 7: Write `frontend/app/layout.tsx`**
+- [ ] **Step 7: Write `src/frontend/app/layout.tsx`**
 
 ```tsx
 import type { Metadata } from 'next';
@@ -2268,7 +2270,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - [ ] **Step 8: Delete the scaffold's demo page and run every check**
 
 ```bash
-cd frontend
+cd src/frontend
 rm -f app/page.tsx
 cat > app/page.tsx <<'EOF'
 export default function Placeholder() {
@@ -2284,7 +2286,7 @@ If `check:hex` still fails, it is pointing at real leftovers from the scaffold �
 - [ ] **Step 9: Commit**
 
 ```bash
-git add frontend/ && git commit -m "Task 6: Next.js scaffold, AA-corrected theme tokens, no-raw-hex guard"
+git add src/frontend/ && git commit -m "Task 6: Next.js scaffold, AA-corrected theme tokens, no-raw-hex guard"
 ```
 
 ---
@@ -2294,13 +2296,13 @@ git add frontend/ && git commit -m "Task 6: Next.js scaffold, AA-corrected theme
 Every screen in Phase 2 composes these. A screen may lay out kit components; it may **not** define its own pill, card, table, or bar. Needing a new variant means adding a prop here, in the kit's own file, so every other screen inherits it.
 
 **Files:**
-- Create: `frontend/components/ui/Logo.tsx`
-- Create: `frontend/components/ui/StatusPill.tsx`
-- Create: `frontend/components/ui/StatCard.tsx`
-- Create: `frontend/components/ui/Button.tsx`
-- Create: `frontend/components/ui/SegmentedToggle.tsx`
-- Create: `frontend/components/ui/Card.tsx`
-- Create: `frontend/components/ui/Figure.tsx`
+- Create: `src/frontend/components/ui/Logo.tsx`
+- Create: `src/frontend/components/ui/StatusPill.tsx`
+- Create: `src/frontend/components/ui/StatCard.tsx`
+- Create: `src/frontend/components/ui/Button.tsx`
+- Create: `src/frontend/components/ui/SegmentedToggle.tsx`
+- Create: `src/frontend/components/ui/Card.tsx`
+- Create: `src/frontend/components/ui/Figure.tsx`
 
 **Interfaces:**
 - Consumes: `lib/tone.ts` (`Tone`, `Skin`, `toneClasses`), `lib/format.ts`.
@@ -2611,14 +2613,14 @@ export default function SegmentedToggle({
 - [ ] **Step 6: Verify**
 
 ```bash
-cd frontend && npm run verify
+cd src/frontend && npm run verify
 ```
 Expected: all four checks clean. `check:hex` in particular must stay green — if a component needed a colour the tokens do not carry, add the token to `globals.css`.
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add frontend/components frontend/lib && git commit -m "Task 7: component kit atoms — Logo, StatusPill, StatCard, Button, SegmentedToggle, Card, Figure"
+git add src/frontend/components src/frontend/lib && git commit -m "Task 7: component kit atoms — Logo, StatusPill, StatCard, Button, SegmentedToggle, Card, Figure"
 ```
 
 ---
@@ -2626,22 +2628,22 @@ git add frontend/components frontend/lib && git commit -m "Task 7: component kit
 ### Task 8: Component kit, part 2 — chrome, tables, and inputs
 
 **Files:**
-- Create: `frontend/components/ui/TopBar.tsx`
-- Create: `frontend/components/ui/NavTabs.tsx`
-- Create: `frontend/components/ui/ProfileChip.tsx`
-- Create: `frontend/components/ui/AccessibilityCluster.tsx`
-- Create: `frontend/components/ui/ThemeToggle.tsx`
-- Create: `frontend/components/ui/PageHeader.tsx`
-- Create: `frontend/components/ui/CardTable.tsx`
-- Create: `frontend/components/ui/StickyRail.tsx`
-- Create: `frontend/components/ui/KeyValueCard.tsx`
-- Create: `frontend/components/ui/Dropzone.tsx`
-- Create: `frontend/components/ui/StageStrip.tsx`
-- Create: `frontend/components/ui/PhotoSlot.tsx`
-- Create: `frontend/components/ui/Skeleton.tsx`
-- Create: `frontend/components/ui/EmptyState.tsx`
-- Create: `frontend/components/ui/ErrorState.tsx`
-- Create: `frontend/lib/nav.ts`
+- Create: `src/frontend/components/ui/TopBar.tsx`
+- Create: `src/frontend/components/ui/NavTabs.tsx`
+- Create: `src/frontend/components/ui/ProfileChip.tsx`
+- Create: `src/frontend/components/ui/AccessibilityCluster.tsx`
+- Create: `src/frontend/components/ui/ThemeToggle.tsx`
+- Create: `src/frontend/components/ui/PageHeader.tsx`
+- Create: `src/frontend/components/ui/CardTable.tsx`
+- Create: `src/frontend/components/ui/StickyRail.tsx`
+- Create: `src/frontend/components/ui/KeyValueCard.tsx`
+- Create: `src/frontend/components/ui/Dropzone.tsx`
+- Create: `src/frontend/components/ui/StageStrip.tsx`
+- Create: `src/frontend/components/ui/PhotoSlot.tsx`
+- Create: `src/frontend/components/ui/Skeleton.tsx`
+- Create: `src/frontend/components/ui/EmptyState.tsx`
+- Create: `src/frontend/components/ui/ErrorState.tsx`
+- Create: `src/frontend/lib/nav.ts`
 
 **Interfaces:**
 - Consumes: Task 7 atoms; `lib/tone.ts`; `lib/format.ts`.
@@ -3384,22 +3386,22 @@ export default function ErrorState({
 - [ ] **Step 8: Verify the whole kit**
 
 ```bash
-cd frontend && npm run verify
+cd src/frontend && npm run verify
 ```
 Expected: typecheck clean · lint clean · no raw hex · build succeeds.
 
 - [ ] **Step 9: Commit**
 
 ```bash
-git add frontend/ && git commit -m "Task 8: component kit chrome, tables, inputs, and the four screen states"
+git add src/frontend/ && git commit -m "Task 8: component kit chrome, tables, inputs, and the four screen states"
 ```
 
 **Phase 0 gate — all three must pass before any Phase 1 work starts:**
 
 ```bash
 python3 -m tests.test_offline                                  # 28 tests, OK
-cd backend && ../backend/.venv/bin/python -m pytest tests/ -q  # all pass
-cd frontend && npm run verify                                  # all four checks clean
+cd src/backend && .venv/bin/python -m pytest tests/ -q  # all pass
+cd src/frontend && npm run verify                                  # all four checks clean
 ```
 
 ---
@@ -3413,12 +3415,12 @@ These three tasks touch disjoint files and may run in parallel. None of them dep
 ### Task 9: SQLite data model and an idempotent seed
 
 **Files:**
-- Create: `backend/app/db/__init__.py`
-- Create: `backend/app/db/models.py`
-- Create: `backend/app/db/session.py`
-- Create: `backend/app/db/seed.py`
-- Create: `backend/app/fixtures/portfolio_rows.json`
-- Create: `backend/tests/test_seed.py`
+- Create: `src/backend/app/db/__init__.py`
+- Create: `src/backend/app/db/models.py`
+- Create: `src/backend/app/db/session.py`
+- Create: `src/backend/app/db/seed.py`
+- Create: `src/backend/app/fixtures/portfolio_rows.json`
+- Create: `src/backend/tests/test_seed.py`
 
 **Interfaces:**
 - Consumes: `app.core.settings.get_settings`, `app.fixtures.loader.load_pipeline_output`.
@@ -3430,7 +3432,7 @@ These three tasks touch disjoint files and may run in parallel. None of them dep
 
 **Persisted rows are pipeline-shaped, not screen-shaped** (spec §5.1a seam 4). `Flag` stores `evidence`, `question`, `benchmark_rate`, `deviation_pct`; `Tranche` stores `confidence` and `needs_human_review`. Fields the mockups never display are stored anyway, nullable, so a real run populates them without a migration.
 
-- [ ] **Step 1: Write `backend/app/fixtures/portfolio_rows.json`**
+- [ ] **Step 1: Write `src/backend/app/fixtures/portfolio_rows.json`**
 
 The design's ten rows, verbatim (spec §4.5). Recomputing them from `draw_schedule.csv` gives materially different values and flips three statuses — that is recorded in the spec and deliberately not done here. Money is stored as integers; the `₹` never appears.
 
@@ -3453,7 +3455,7 @@ A `gap` of `null` means the loan is closed — the design renders "closed" in th
 
 - [ ] **Step 2: Write the failing test**
 
-`backend/tests/test_seed.py`:
+`src/backend/tests/test_seed.py`:
 ```python
 """The seeded book must match the screens exactly, and seeding twice must not
 double the rows."""
@@ -3531,11 +3533,11 @@ def test_closed_loans_have_a_null_gap_rather_than_zero():
 - [ ] **Step 3: Run it to verify it fails**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_seed.py -q
+cd src/backend && .venv/bin/python -m pytest tests/test_seed.py -q
 ```
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.db'`
 
-- [ ] **Step 4: Write `backend/app/db/session.py`**
+- [ ] **Step 4: Write `src/backend/app/db/session.py`**
 
 ```python
 """Engine and session factory.
@@ -3580,7 +3582,7 @@ def get_session() -> Iterator[Session]:
         yield db
 ```
 
-- [ ] **Step 5: Write `backend/app/db/models.py`**
+- [ ] **Step 5: Write `src/backend/app/db/models.py`**
 
 ```python
 """The application's own state.
@@ -3814,7 +3816,7 @@ class Decision(Base):
     tranche: Mapped[Tranche] = relationship(back_populates="decision")
 ```
 
-- [ ] **Step 6: Write `backend/app/db/seed.py`**
+- [ ] **Step 6: Write `src/backend/app/db/seed.py`**
 
 ```python
 """Idempotent seed.
@@ -3841,7 +3843,7 @@ from app.db import models
 from app.db.session import SessionLocal, init_db
 from app.fixtures.loader import available_loan_ids, load_pipeline_output
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = Path(__file__).resolve().parents[4]
 DRAW_SCHEDULE = REPO_ROOT / "fixtures" / "draw_schedule.csv"
 PORTFOLIO_ROWS = Path(__file__).resolve().parents[1] / "fixtures" / "portfolio_rows.json"
 
@@ -4111,26 +4113,26 @@ if __name__ == "__main__":
         print(f"{table:16} {count}")
 ```
 
-`backend/app/db/__init__.py` is empty.
+`src/backend/app/db/__init__.py` is empty.
 
 - [ ] **Step 7: Run the tests to verify they pass**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_seed.py -q
+cd src/backend && .venv/bin/python -m pytest tests/test_seed.py -q
 ```
 Expected: 5 passed
 
 - [ ] **Step 8: Seed the real database and eyeball the counts**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m app.db.seed --reset
+cd src/backend && .venv/bin/python -m app.db.seed --reset
 ```
 Expected: `loans 10`, `tranches 40`, `flags 9`, `questions 4`, `contractors 3`, `change_orders 2`, `photos 3`.
 
 - [ ] **Step 9: Commit**
 
 ```bash
-git add backend/ && git commit -m "Task 9: SQLAlchemy models and an idempotent, mockup-faithful seed"
+git add src/backend/ && git commit -m "Task 9: SQLAlchemy models and an idempotent, mockup-faithful seed"
 ```
 
 ---
@@ -4140,13 +4142,13 @@ git add backend/ && git commit -m "Task 9: SQLAlchemy models and an idempotent, 
 The **only** place in the codebase that knows about presentation. Today it maps fixture → view model; later it maps live → view model through the identical function, because both inputs have the same shape (spec §5.1a seam 3).
 
 **Files:**
-- Create: `backend/app/schemas/views.py`
-- Create: `backend/app/mappers/__init__.py`
-- Create: `backend/app/mappers/boq.py`
-- Create: `backend/app/mappers/sanction.py`
-- Create: `backend/app/mappers/portfolio.py`
-- Create: `backend/app/mappers/tranche.py`
-- Create: `backend/tests/test_mappers.py`
+- Create: `src/backend/app/schemas/views.py`
+- Create: `src/backend/app/mappers/__init__.py`
+- Create: `src/backend/app/mappers/boq.py`
+- Create: `src/backend/app/mappers/sanction.py`
+- Create: `src/backend/app/mappers/portfolio.py`
+- Create: `src/backend/app/mappers/tranche.py`
+- Create: `src/backend/tests/test_mappers.py`
 
 **Interfaces:**
 - Consumes: `app.db.models`, `app.schemas.pipeline.*`.
@@ -4170,7 +4172,7 @@ The **only** place in the codebase that knows about presentation. Today it maps 
 
 - [ ] **Step 1: Write the failing test**
 
-`backend/tests/test_mappers.py`:
+`src/backend/tests/test_mappers.py`:
 ```python
 """Mappers are the only presentation-aware layer. These tests pin the two
 properties that keep them from leaking: no formatted money, and grouping/order
@@ -4255,11 +4257,11 @@ def test_closed_loans_render_as_text_not_a_zero_gap():
 - [ ] **Step 2: Run it to verify it fails**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_mappers.py -q
+cd src/backend && .venv/bin/python -m pytest tests/test_mappers.py -q
 ```
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.mappers'`
 
-- [ ] **Step 3: Write `backend/app/schemas/views.py`**
+- [ ] **Step 3: Write `src/backend/app/schemas/views.py`**
 
 ```python
 """View models the screens consume.
@@ -4436,7 +4438,7 @@ class TrancheDecisionView(BaseModel):
 - [ ] **Step 4: Write the four mappers**
 
 ```python
-# backend/app/mappers/boq.py
+# src/backend/app/mappers/boq.py
 """BoQ Review's view model.
 
 Stat-card copy is the mockup's, verbatim. Group order is the mockup's, held in
@@ -4588,7 +4590,7 @@ def _indian_group(head: str) -> str:
 ```
 
 ```python
-# backend/app/mappers/sanction.py
+# src/backend/app/mappers/sanction.py
 """Sanction Check's three comparison bars, gap table, and ways forward.
 
 Bar widths are a percentage of the largest bar, so the design's 91% / 100% / 80%
@@ -4664,7 +4666,7 @@ def to_sanction_check(
 ```
 
 ```python
-# backend/app/mappers/portfolio.py
+# src/backend/app/mappers/portfolio.py
 """Portfolio Hotlist.
 
 Row order is the design's exposure-descending order, preserved via
@@ -4747,7 +4749,7 @@ def _compact(rupees: int) -> str:
 ```
 
 ```python
-# backend/app/mappers/tranche.py
+# src/backend/app/mappers/tranche.py
 """Tranche Decision — the "math in one line each" table and the evidence grid.
 
 Each math row carries the calculation as text and the result as a number, so the
@@ -4874,19 +4876,19 @@ def _chips(photo: models.Photo) -> list[EvidenceChipView]:
     return chips
 ```
 
-`backend/app/mappers/__init__.py` is empty.
+`src/backend/app/mappers/__init__.py` is empty.
 
 - [ ] **Step 5: Run the tests to verify they pass**
 
 ```bash
-cd backend && ../backend/.venv/bin/python -m pytest tests/test_mappers.py -q
+cd src/backend && .venv/bin/python -m pytest tests/test_mappers.py -q
 ```
 Expected: 5 passed. If `_money` produces malformed grouping, simplify it — the helper only feeds prose `sub` lines, so correctness there matters more than cleverness.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add backend/ && git commit -m "Task 10: view schemas and the single presentation-aware mapper layer"
+git add src/backend/ && git commit -m "Task 10: view schemas and the single presentation-aware mapper layer"
 ```
 
 ---
@@ -4894,15 +4896,15 @@ git add backend/ && git commit -m "Task 10: view schemas and the single presenta
 ### Task 11: Frontend shell — route groups, layouts, middleware, API client
 
 **Files:**
-- Create: `frontend/lib/session.ts`, `frontend/lib/api.ts`, `frontend/lib/api-types.ts`
-- Create: `frontend/middleware.ts`
-- Create: `frontend/app/(marketing)/layout.tsx`
-- Create: `frontend/app/(owner)/layout.tsx`
-- Create: `frontend/app/(bank)/layout.tsx`
-- Create: `frontend/app/not-found.tsx`
+- Create: `src/frontend/lib/session.ts`, `src/frontend/lib/api.ts`, `src/frontend/lib/api-types.ts`
+- Create: `src/frontend/middleware.ts`
+- Create: `src/frontend/app/(marketing)/layout.tsx`
+- Create: `src/frontend/app/(owner)/layout.tsx`
+- Create: `src/frontend/app/(bank)/layout.tsx`
+- Create: `src/frontend/app/not-found.tsx`
 - Create, for every dynamic route: `loading.tsx`, `error.tsx`, `not-found.tsx`
-- Create: `frontend/.env.local.example`
-- Create: `backend/scripts/export_openapi.py`
+- Create: `src/frontend/.env.local.example`
+- Create: `src/backend/scripts/export_openapi.py`
 
 **Interfaces:**
 - Consumes: the kit from Tasks 7–8; `lib/nav.ts`.
@@ -4917,7 +4919,7 @@ git add backend/ && git commit -m "Task 10: view schemas and the single presenta
 - [ ] **Step 1: The exact directory tree to create**
 
 ```
-frontend/app/
+src/frontend/app/
 ├── not-found.tsx
 ├── (marketing)/
 │   ├── layout.tsx
@@ -5153,7 +5155,7 @@ Copy the same three files into `app/(bank)/bank/loans/[loanId]/tranches/[n]/`, w
 
 - [ ] **Step 6: Generate the TypeScript types from the backend's OpenAPI schema**
 
-`backend/scripts/export_openapi.py`:
+`src/backend/scripts/export_openapi.py`:
 ```python
 """Writes the OpenAPI schema to disk so the frontend can generate types from it.
 Makes no network call — it introspects the app object directly."""
@@ -5168,7 +5170,7 @@ out.write_text(json.dumps(app.openapi(), indent=2), encoding="utf-8")
 print(f"wrote {out}")
 ```
 
-Add to `frontend/package.json`:
+Add to `src/frontend/package.json`:
 ```json
 {
   "scripts": {
@@ -5179,7 +5181,7 @@ Add to `frontend/package.json`:
 
 Run it, and commit both `openapi.json` and `lib/api-types.ts`. Regenerate whenever a schema changes — a drifted type is how the two halves silently disagree.
 
-- [ ] **Step 7: Write `frontend/.env.local.example`**
+- [ ] **Step 7: Write `src/frontend/.env.local.example`**
 
 ```
 # The backend. Never points at a Google service.
@@ -5189,30 +5191,30 @@ NEEV_API_BASE=http://127.0.0.1:8000
 - [ ] **Step 8: Verify**
 
 ```bash
-cd frontend && npm run verify
+cd src/frontend && npm run verify
 ```
 Expected: all four checks clean. Every route file created in this task may render a one-line placeholder — screens arrive in Phase 2 — but each must typecheck and build.
 
 - [ ] **Step 9: Commit**
 
 ```bash
-git add frontend/ backend/scripts/ && git commit -m "Task 11: route groups, role middleware, API client, generated types, four screen states"
+git add src/frontend/ src/backend/scripts/ && git commit -m "Task 11: route groups, role middleware, API client, generated types, four screen states"
 ```
 
 **Phase 1 gate:**
 
 ```bash
 python3 -m tests.test_offline                                   # 28, OK
-cd backend && ../backend/.venv/bin/python -m pytest tests/ -q   # all pass
-cd backend && ../backend/.venv/bin/python -m app.db.seed --reset
-cd frontend && npm run verify                                   # clean
+cd src/backend && .venv/bin/python -m pytest tests/ -q   # all pass
+cd src/backend && .venv/bin/python -m app.db.seed --reset
+cd src/frontend && npm run verify                                   # clean
 ```
 
 ---
 
 ## Phase 2 — Routes and screens
 
-Seven tasks over disjoint files. Tasks 12–13 own `backend/app/api/`; Tasks 14–19 each own their own route directories and may add to `components/owner/` or `components/bank/` but **never** to `components/ui/` — the kit is frozen after Phase 0 except by an explicit, reviewed extension.
+Seven tasks over disjoint files. Tasks 12–13 own `src/backend/app/api/`; Tasks 14–19 each own their own route directories and may add to `components/owner/` or `components/bank/` but **never** to `components/ui/` — the kit is frozen after Phase 0 except by an explicit, reviewed extension.
 
 Every screen task follows the same shape, so it is stated once here rather than repeated:
 
@@ -5228,7 +5230,7 @@ Every screen task follows the same shape, so it is stated once here rather than 
 
 ### Task 12: Backend routes — auth, loans, BoQ, and the SSE stream
 
-**Files:** `backend/app/api/deps.py`, `backend/app/api/routes/{auth,loans,boq,jobs}.py`, `backend/app/main.py` (mount), `backend/tests/test_routes_owner.py`
+**Files:** `src/backend/app/api/deps.py`, `src/backend/app/api/routes/{auth,loans,boq,jobs}.py`, `src/backend/app/main.py` (mount), `src/backend/tests/test_routes_owner.py`
 
 **Interfaces produced:**
 
@@ -5273,7 +5275,7 @@ async def events(job_id: str):
 
 ### Task 13: Backend routes — portfolio, tranches, decisions, contractors
 
-**Files:** `backend/app/api/routes/{portfolio,tranches,contractors}.py`, `backend/tests/test_routes_bank.py`
+**Files:** `src/backend/app/api/routes/{portfolio,tranches,contractors}.py`, `src/backend/tests/test_routes_bank.py`
 
 | Method | Path | Returns |
 |---|---|---|
@@ -5362,7 +5364,7 @@ Consistency outranks fidelity here: these are the screens most likely to drift, 
 
 ### Task 20: Golden-path integration, run in fixture mode with no credentials
 
-**Files:** `backend/tests/test_golden_path.py`, `scripts/dev.sh`, `scripts/record_golden_run.py` (written, never run)
+**Files:** `src/backend/tests/test_golden_path.py`, `scripts/dev.sh`, `scripts/record_golden_run.py` (written, never run)
 
 - [ ] One test walks the whole demo: seed → `POST /api/auth/session` as owner → `POST /api/loans/1001/boq` → consume the SSE stream to `done` → `GET /boq/latest` (9 flags, total 3200000) → `GET /sanction-check` (shortfall 700000) → switch to a bank session → `GET /api/portfolio` (10 rows, 1003 first) → `GET /api/loans/1001/tranches/3` (exposure 1.29, HOLD) → `POST …/decision {action: "HOLD"}` → assert the `Decision` row and its `evidence_snapshot` exist.
 - [ ] It runs with the socket-blocking fixture active and `NEEV_MODE` unset. Assert explicitly that `google.adk` is not importable in the backend venv — the strongest available proof that no billed path can execute.
@@ -5389,7 +5391,7 @@ Checked against the spec, section by section.
 
 **Two things this plan changes from the spec as written:**
 
-1. **`tests/__init__.py` now puts `agents/` on `sys.path`.** The spec assumed the editable install alone would resolve `neev_pipeline`, but the suite must also run on a bare clone with no venv — which is how the 28 tests stayed green through the migration on system Python 3.9. It is a no-op once `pip install -e agents` has run.
+1. **`tests/__init__.py` now puts `src/agents/` on `sys.path`.** The spec assumed the editable install alone would resolve `neev_pipeline`, but the suite must also run on a bare clone with no venv — which is how the 28 tests stayed green through the migration on system Python 3.9. It is a no-op once `pip install -e src/agents` has run.
 2. **`NavTabs` resolves its own active state from `usePathname()`** rather than taking `activeHref` from the layout. A group layout cannot know which child route rendered, so the prop could never be filled correctly. Task 11 Step 4 carries the correction; Task 8's version is written with the prop and must be updated there.
 
 **One risk this plan does not remove:** the live path ships unexercised. That is the accepted trade-off of the dry run, and the §5.1a contract test is the mitigation — it proves the *shape* is right even though the calls never happen. The first live run will still surface real integration bugs, and should be budgeted for.

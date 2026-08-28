@@ -1,7 +1,7 @@
-# Neev — the agent pipeline's dependencies now live in agents/pyproject.toml.
+# Neev — the agent pipeline's dependencies now live in src/agents/pyproject.toml.
 # This file is kept so `pip install -r requirements.txt` still works from the
 # repo root; it performs an editable install of the agents package.
 #
-# The backend has its own, disjoint dependency set in backend/pyproject.toml —
+# The backend has its own, disjoint dependency set in src/backend/pyproject.toml —
 # it deliberately does NOT carry google-adk.
--e ./agents
+-e ./src/agents

@@ -48,7 +48,7 @@ cp .env.example .env    # then edit .env
 - `GOOGLE_CLOUD_PROJECT` — your GCP project id.
 
 All other knobs (dataset name, model, thresholds, milestone weights) live in
-`agents/neev_pipeline/config.py` with comments explaining each one. Default project id
+`src/agents/neev_pipeline/config.py` with comments explaining each one. Default project id
 is `buildguard-ai-2026`; the env var overrides it.
 
 ## 4. Load the data layer
@@ -89,11 +89,11 @@ cross-validation of both BoQ fixtures against the benchmark table.
 
 ## 6. Run it
 
-From the repo's **`agents/`** directory (ADK discovers agent packages in the
+From the repo's **`src/agents/`** directory (ADK discovers agent packages in the
 directory it is run from):
 
 ```bash
-cd agents
+cd src/agents
 adk web --allow_origins 'regex:https://.*\.cloudshell\.dev'
 ```
 
@@ -127,9 +127,9 @@ photos of a slab-stage site, plus one deliberately blurry shot.
 
 | Path | What it is |
 |---|---|
-| `buildguard/agent.py` | The 5-agent SequentialAgent pipeline |
-| `buildguard/config.py` | Every constant the math depends on, documented |
-| `buildguard/tools/` | Grounding tools — BigQuery lookups + pure arithmetic |
+| `src/agents/neev_pipeline/agent.py` | The 5-agent SequentialAgent pipeline |
+| `src/agents/neev_pipeline/config.py` | Every constant the math depends on, documented |
+| `src/agents/neev_pipeline/tools/` | Grounding tools — BigQuery lookups + pure arithmetic |
 | `fixtures/` | Demo BoQs (seeded + clean), benchmarks, draw schedule |
 | `scripts/boq_data.py` | BoQ fixture data — edit seeded flaws here |
 | `scripts/make_sample_boq.py` | `--all` regenerates both BoQ PDFs |
@@ -161,8 +161,8 @@ photos of a slab-stage site, plus one deliberately blurry shot.
 
 ## Troubleshooting
 
-- **`neev_pipeline` not listed in adk web** — run from `agents/`;
-  `agents/neev_pipeline/__init__.py` must contain `from . import agent`.
+- **`neev_pipeline` not listed in adk web** — run from `src/agents/`;
+  `src/agents/neev_pipeline/__init__.py` must contain `from . import agent`.
 - **`403` / `Could not determine credentials`** — `gcloud auth
   application-default login`, and check `GOOGLE_CLOUD_PROJECT`.
 - **`Not found: Dataset ... buildguard_data`** — step 4 didn't run against

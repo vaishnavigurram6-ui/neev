@@ -27,9 +27,11 @@ import sys
 
 from google.genai import types
 
-# No-op once `pip install -e agents` has been run; kept so the script also
+# No-op once `pip install -e src/agents` has been run; kept so the script also
 # works from a bare checkout.
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agents"))
+sys.path.insert(
+    0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src", "agents")
+)
 from neev_pipeline.agent import root_agent  # noqa: E402
 
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fixtures")

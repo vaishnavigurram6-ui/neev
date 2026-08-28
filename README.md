@@ -21,10 +21,10 @@ BoQ pdf + photos + loan context
 
 ## Layout
 
-- `agents/neev_pipeline/` — the agent package (run `adk web` from `agents/`; it
+- `src/agents/neev_pipeline/` — the agent package (run `adk web` from `src/agents/`; it
   discovers `neev_pipeline.agent.root_agent`)
-- `agents/neev_pipeline/tools/` — grounding tools; all thresholds live in
-  `agents/neev_pipeline/config.py`
+- `src/agents/neev_pipeline/tools/` — grounding tools; all thresholds live in
+  `src/agents/neev_pipeline/config.py`
 - `fixtures/` — `sample_boq.pdf` (Ravi golden case: 40 items, 4 seeded flaws),
   `clean_boq.pdf` (negative test: benchmark-aligned, full scope, GST stated),
   `rate_benchmarks.csv` (30 CPWD-DSR-derived rates — see `verified` column),
@@ -40,11 +40,11 @@ BoQ pdf + photos + loan context
 ## Run (Cloud Shell)
 
 ```bash
-python3.11 -m venv agents/.venv && source agents/.venv/bin/activate
-pip install -e agents
+python3.11 -m venv src/agents/.venv && source src/agents/.venv/bin/activate
+pip install -e src/agents
 cp .env.example .env        # fill in GOOGLE_API_KEY
 bash scripts/load_bigquery.sh
-cd agents && adk web --allow_origins 'regex:https://.*\.cloudshell\.dev'
+cd src/agents && adk web --allow_origins 'regex:https://.*\.cloudshell\.dev'
 ```
 
 Then run the three demo-proof cases in one command (after putting 2–3 site

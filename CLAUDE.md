@@ -46,14 +46,16 @@ committing. Never modify the global git config.
 
 ## Environments
 
-Python 3.11 per package, each in its own venv (`agents/.venv`, `backend/.venv`) —
+Python 3.11 per package, each in its own venv (`src/agents/.venv`,
+`src/backend/.venv`) —
 never install into system Python, which is 3.9.6 and too old for `google-adk`.
 Frontend uses `npm`.
 
 ## Where things are
 
-- `agents/neev_pipeline/` — the ADK pipeline (was `buildguard/`). `adk web` runs
-  from `agents/` and discovers `neev_pipeline.agent.root_agent`. The GCP project
+- `src/` — the three code packages: `src/agents/` (ADK pipeline, was
+  `buildguard/`), `src/backend/` (FastAPI), `src/frontend/` (Next.js).
+  `adk web` runs from `src/agents/` and discovers `neev_pipeline.agent.root_agent`. The GCP project
   `buildguard-ai-2026` and BigQuery dataset `buildguard_data` keep those names —
   only the Python package was renamed.
 - `docs/superpowers/specs/` — design specs; the current one is
