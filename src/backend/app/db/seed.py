@@ -223,7 +223,10 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
             current.verified_value = int(risk.verified_value)
             current.exposure_ratio = risk.exposure_ratio
             current.exposure_undefined = risk.exposure_undefined
-            current.cost_to_complete = int(risk.cost_to_complete) if risk.cost_to_complete else None
+            # `is not None`, not truthiness: a genuine 0 is a real figure.
+            current.cost_to_complete = (
+                int(risk.cost_to_complete) if risk.cost_to_complete is not None else None
+            )
             current.cost_to_complete_gap = int(risk.cost_to_complete_gap)
             current.recommendation = risk.recommendation
             current.owner_view = output.explanation.owner_view

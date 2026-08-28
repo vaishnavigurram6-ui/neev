@@ -29,6 +29,9 @@ SessionLocal: sessionmaker[Session] = sessionmaker(
 def reconfigure() -> None:
     """(Re)build the engine from current settings and re-bind SessionLocal."""
     global engine
+    if engine is not None:
+        # Release the old pool; tests call this once per test.
+        engine.dispose()
     url = get_settings().database_url
     connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
     engine = create_engine(url, connect_args=connect_args, future=True)

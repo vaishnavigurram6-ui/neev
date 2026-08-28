@@ -69,7 +69,11 @@ class AdkPipelineRunner:
             ],
         )
 
-        emitted: set[int] = set()
+        # Started and finished are tracked separately. Conflating them marks a
+        # phase finished the moment it starts, which leaves the last phase
+        # spinning forever and double-sends "done" for another.
+        started: set[int] = {0}
+        finished: set[int] = set()
         yield PhaseEvent(index=0, status="running", name=PHASE_NAMES[0])
 
         async for event in runner.run_async(
@@ -77,14 +81,23 @@ class AdkPipelineRunner:
         ):
             for call in _tool_calls(event):
                 phase = TOOL_TO_PHASE.get(call)
-                if phase is None or phase in emitted:
+                if phase is None or phase in started:
                     continue
-                emitted.add(phase)
-                yield PhaseEvent(index=phase - 1, status="done", name=PHASE_NAMES[phase - 1])
+                # Reaching phase N means every earlier phase is finished — the
+                # tools fire in pipeline order. Closing them all here also
+                # covers a phase whose tool never fired (a clean BoQ skips
+                # check_missing_scope, for instance).
+                for index in range(phase):
+                    if index not in finished:
+                        finished.add(index)
+                        yield PhaseEvent(index=index, status="done", name=PHASE_NAMES[index])
+                started.add(phase)
                 yield PhaseEvent(index=phase, status="running", name=PHASE_NAMES[phase])
 
+        # Settle every phase still open, the last one included.
         for index in range(len(PHASE_NAMES)):
-            if index not in emitted:
+            if index not in finished:
+                finished.add(index)
                 yield PhaseEvent(index=index, status="done", name=PHASE_NAMES[index])
 
         yield DoneEvent(redirect=f"/owner/loans/{req.loan_id}/boq")

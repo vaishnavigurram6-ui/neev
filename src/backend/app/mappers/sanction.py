@@ -13,23 +13,33 @@ from app.schemas.views import (
     SanctionSectionView,
 )
 
-OPTIONS = [
-    SanctionOptionView(
-        title="Negotiate the flagged rates",
-        saves_label="≈ ₹1,60,000",
-        desc="The four questions from your BoQ review already cover this — RCC rates and the steel grade.",
-    ),
-    SanctionOptionView(
-        title="Phase the finishing scope",
-        saves_label="≈ ₹2,40,000",
-        desc="Defer the main gate, granite platform and exterior painting to a post-handover phase.",
-    ),
-    SanctionOptionView(
-        title="Top-up before drawdown",
-        saves_label="closes the rest",
-        desc="A ₹3,00,000 top-up now costs far less than a stalled build at tranche four.",
-    ),
-]
+def _ways_forward() -> list[SanctionOptionView]:
+    """The mockup's three routes, verbatim.
+
+    Built fresh per call rather than shared as a module constant, so no
+    response can mutate another's. `saves_label` is a copy field, like a pill's
+    label — the figures inside it are the mockup's own words to the reader.
+
+    KNOWN LIMITATION: this copy is loan 1001's. Task 17 (Sanction Check) must
+    make the routes loan-specific before any other loan renders this screen.
+    """
+    return [
+        SanctionOptionView(
+            title="Negotiate the flagged rates",
+            saves_label="≈ ₹1,60,000",
+            desc="The four questions from your BoQ review already cover this — RCC rates and the steel grade.",
+        ),
+        SanctionOptionView(
+            title="Phase the finishing scope",
+            saves_label="≈ ₹2,40,000",
+            desc="Defer the main gate, granite platform and exterior painting to a post-handover phase.",
+        ),
+        SanctionOptionView(
+            title="Top-up before drawdown",
+            saves_label="closes the rest",
+            desc="A ₹3,00,000 top-up now costs far less than a stalled build at tranche four.",
+        ),
+    ]
 
 
 def to_sanction_check(
@@ -81,5 +91,5 @@ def to_sanction_check(
         bars=bars,
         shortfall=realistic - sanctioned,
         sections=sections,
-        options=OPTIONS,
+        options=_ways_forward(),
     )

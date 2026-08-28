@@ -89,7 +89,21 @@ def to_boq_review(loan: models.Loan, revision: models.BoqRevision) -> BoqReviewV
         ],
         pct_before_slab=revision.payment_pct_before_slab,
         amount_before_slab=amount_before_slab,
-        gst_stated=not any(f.type == "GST_SILENT" for f in revision.flags),
+        gst_stated=_gst_stated(estimate),
+    )
+
+
+def _gst_stated(estimate) -> bool:
+    """Whether the quote priced GST at all.
+
+    Derived from the cost estimate, not from a GST_SILENT flag: loan 1001's
+    flag list is frozen at the mockup's nine and contains no GST flag, yet its
+    Sanction Check adds an unpriced "GST provision" section. Reading the flag
+    would make the two screens contradict each other on the flagship loan.
+    """
+    return not any(
+        "GST" in section.name.upper() and section.quoted is None
+        for section in estimate.sections
     )
 
 

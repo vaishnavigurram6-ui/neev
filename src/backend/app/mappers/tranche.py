@@ -31,8 +31,15 @@ RECOMMENDATION_TONE = {
 
 
 def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDecisionView:
-    paid = [t for t in loan.tranches if t.status == "paid"]
-    request_amount = tranche.disbursed_cum - (paid[-1].disbursed_cum if paid else 0)
+    # Only tranches settled BEFORE this one. The tranche being rendered must be
+    # excluded: when it is itself already paid it would otherwise be its own
+    # predecessor, making request_amount 0 and printing "T3 + T3" in the math.
+    prior_paid = [
+        t for t in loan.tranches if t.status == "paid" and t.number < tranche.number
+    ]
+    request_amount = tranche.disbursed_cum - (
+        prior_paid[-1].disbursed_cum if prior_paid else 0
+    )
 
     stages: list[StageView] = []
     for name in STAGE_ORDER:
@@ -48,7 +55,8 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
             state, sub = "todo", "not started"
         stages.append(StageView(name=STAGE_LABEL[name], sub=sub, state=state))
 
-    disbursed_calc = " + ".join(f"T{t.number}" for t in paid + [tranche])
+    disbursed_calc = " + ".join(f"T{t.number}" for t in prior_paid + [tranche])
+    gap = tranche.cost_to_complete_gap
     math = [
         MathRowView(
             label="Disbursed so far",
@@ -59,28 +67,36 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
         MathRowView(
             label="Verified value in place",
             calc="stage × BoQ schedule of values",
-            result=float(tranche.verified_value or 0),
-            result_kind="money",
+            result=_number_or_dash(tranche.verified_value),
+            result_kind=_kind(tranche.verified_value, "money"),
         ),
         MathRowView(
             label="Disbursement exposure",
             calc=f"{tranche.disbursed_cum} ÷ {tranche.verified_value or 0}",
-            result=tranche.exposure_ratio if tranche.exposure_ratio is not None else "—",
-            result_kind="ratio" if tranche.exposure_ratio is not None else "text",
-            tone="danger" if (tranche.exposure_ratio or 0) > 1.0 else "success",
+            result=_number_or_dash(tranche.exposure_ratio),
+            result_kind=_kind(tranche.exposure_ratio, "ratio"),
+            # An undefined ratio means there is no verified value in place at
+            # all — the worst case, and never something to render as a pass.
+            tone=(
+                "danger"
+                if tranche.exposure_ratio is None or tranche.exposure_ratio > 1.0
+                else "success"
+            ),
         ),
         MathRowView(
             label="Cost to complete",
             calc=f"remaining BoQ items × current {loan.locality} rates",
-            result=float(tranche.cost_to_complete or 0),
-            result_kind="money",
+            result=_number_or_dash(tranche.cost_to_complete),
+            result_kind=_kind(tranche.cost_to_complete, "money"),
         ),
         MathRowView(
             label="Cost-to-complete gap",
             calc=f"({loan.sanctioned} − {tranche.disbursed_cum}) − {tranche.cost_to_complete or 0}",
-            result=float(tranche.cost_to_complete_gap or 0),
-            result_kind="money",
-            tone="danger" if (tranche.cost_to_complete_gap or 0) < 0 else "success",
+            result=_number_or_dash(gap),
+            result_kind=_kind(gap, "money"),
+            # A gap of None is a closed loan: no shortfall to report, but not a
+            # pass either. Only a real, non-negative figure earns "success".
+            tone="neutral" if gap is None else ("danger" if gap < 0 else "success"),
         ),
     ]
 
@@ -108,6 +124,15 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
         owner_view=tranche.owner_view,
         officer_view=tranche.officer_view,
     )
+
+
+def _number_or_dash(value: float | int | None) -> float | str:
+    """A missing figure renders as an em dash, never as a misleading 0."""
+    return "—" if value is None else float(value)
+
+
+def _kind(value: float | int | None, kind: str) -> str:
+    return "text" if value is None else kind
 
 
 def _chips(photo: models.Photo) -> list[EvidenceChipView]:

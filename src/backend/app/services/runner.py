@@ -32,7 +32,11 @@ class BoqAnalysisRequest(BaseModel):
 
 @runtime_checkable
 class PipelineRunner(Protocol):
-    async def run(self, req: BoqAnalysisRequest) -> AsyncIterator[PipelineEvent]:
+    # Declared `def`, not `async def`: both implementations are async
+    # generators, whose type is a plain callable returning an AsyncIterator.
+    # `async def run(...) -> AsyncIterator[...]` describes a coroutine that
+    # returns an iterator instead, which neither runner satisfies.
+    def run(self, req: BoqAnalysisRequest) -> AsyncIterator[PipelineEvent]:
         """Yield progress events as the analysis proceeds, ending with DoneEvent."""
         ...
 

@@ -11,8 +11,21 @@ link and points the other nine at "#" (spec 7.4).
 from app.db import models
 from app.schemas.views import PortfolioRowView, PortfolioView, StatCardView
 
-ACTION_LABEL = {"HOLD": "HOLD", "INSPECT": "INSPECT", "RELEASE": "ON TRACK"}
-ACTION_TONE = {"HOLD": "danger", "INSPECT": "warn", "RELEASE": "success"}
+# Every RiskAssessment.recommendation value has an entry, ESCALATE included.
+# An unrecognised value shows itself and reads amber — never green, because a
+# recommendation the table does not understand is not evidence of "on track".
+ACTION_LABEL = {
+    "HOLD": "HOLD",
+    "INSPECT": "INSPECT",
+    "ESCALATE": "ESCALATE",
+    "RELEASE": "ON TRACK",
+}
+ACTION_TONE = {
+    "HOLD": "danger",
+    "INSPECT": "warn",
+    "ESCALATE": "danger",
+    "RELEASE": "success",
+}
 
 
 def to_portfolio(loans: list[models.Loan]) -> PortfolioView:
@@ -72,14 +85,23 @@ def to_portfolio(loans: list[models.Loan]) -> PortfolioView:
                 else None
             ),
             gap_note=None if loan.cost_to_complete_gap is not None else "closed",
-            action_label=ACTION_LABEL.get(loan.recommendation or "RELEASE", "ON TRACK"),
-            tone=ACTION_TONE.get(loan.recommendation or "RELEASE", "success"),  # type: ignore[arg-type]
+            action_label=_action_label(loan.recommendation),
+            tone=_action_tone(loan.recommendation),  # type: ignore[arg-type]
             href=f"/bank/loans/{loan.id}/tranches/{_latest_tranche(loan)}",
         )
         for loan in ordered
     ]
 
     return PortfolioView(cards=cards, rows=rows)
+
+
+def _action_label(recommendation: str | None) -> str:
+    key = recommendation or "RELEASE"
+    return ACTION_LABEL.get(key, key)
+
+
+def _action_tone(recommendation: str | None) -> str:
+    return ACTION_TONE.get(recommendation or "RELEASE", "warn")
 
 
 def _latest_tranche(loan: models.Loan) -> int:
