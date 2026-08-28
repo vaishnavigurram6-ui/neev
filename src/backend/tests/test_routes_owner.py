@@ -187,12 +187,12 @@ def test_progress_reports_the_payment_ladder_and_where_you_stand(client):
     body = client.get("/api/loans/1001/progress").json()
     assert body["sanctioned"] == 2800000
     assert body["disbursed"] == 1800000
-    # The draw schedule gives loan 1001 three tranches, with T3 held pending
-    # the decision the bank console is looking at. The mockup's five-row ladder
-    # is illustrative; the seeded schedule is the data.
-    assert [t["number"] for t in body["tranches"]] == [1, 2, 3]
-    assert [t["status_label"] for t in body["tranches"]] == ["Paid", "Paid", "On hold"]
-    assert [t["amount"] for t in body["tranches"]] == [600000, 600000, 600000]
+    # Loan 1001's ladder: T1-T3 paid, T4 held pending the decision the bank
+    # console is looking at. The mockup's five-row ladder is illustrative; the
+    # seeded schedule is the data.
+    assert [t["number"] for t in body["tranches"]] == [1, 2, 3, 4]
+    assert [t["status_label"] for t in body["tranches"]] == ["Paid", "Paid", "Paid", "On hold"]
+    assert [t["amount"] for t in body["tranches"]] == [600000, 600000, 600000, 440000]
     assert body["tranches"][2]["name"] == "Roof slab"
     assert body["paused"] is True
     assert body["current_stage"] == "slab"
@@ -228,11 +228,12 @@ def test_reporting_a_milestone_stores_the_photos(client):
     response = client.post("/api/loans/1001/milestones", files=files, data={"stage": "slab"})
     assert response.status_code == 200, response.text
     body = response.json()
-    assert body["tranche"] == 3
+    # Photos are filed against the tranche awaiting a decision, which is T4.
+    assert body["tranche"] == 4
     assert body["photos"] == 2
 
-    photos = client.get("/api/loans/1001/tranches/3").json()["photos"]
-    assert len([p for p in photos if p["slot_key"].startswith("1001-t3-upload")]) == 2
+    photos = client.get("/api/loans/1001/tranches/4").json()["photos"]
+    assert len([p for p in photos if p["slot_key"].startswith("1001-t4-upload")]) == 2
 
 
 def test_reporting_a_milestone_needs_at_least_one_photo(client):

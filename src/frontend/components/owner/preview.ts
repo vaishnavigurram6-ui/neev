@@ -317,11 +317,16 @@ function changeOrderState(status: string): ChangeOrderState {
  *  it: the diff list, its deltas and its three totals are the mockup's own,
  *  verbatim.
  *
- *  Note the mockup does not reconcile with itself — its nine per-fix deltas sum
- *  to +₹1,76,000 while its rail states +₹1,60,000 on the cover page (and a
- *  ₹33,60,000 total against ₹32,00,000). Both figures are carried as authored:
- *  the plan's global constraints say numbers come from the mockups verbatim and
- *  are never recomputed or reconciled. Flagged for whoever owns the fixtures. */
+ *  The mockup does not reconcile with itself: its nine per-fix deltas sum to
+ *  +₹1,76,000 while its rail states +₹1,60,000 on the cover page.
+ *
+ *  RESOLVED (owner, 2026-08-28): the rail's ₹1,60,000 is authoritative, because
+ *  it is corroborated by a second screen — Sanction Check independently offers
+ *  "Negotiate the flagged rates ≈ ₹1,60,000" for the same set of fixes. The nine
+ *  per-fix rows are the outlier, so they are shown as the itemised story without
+ *  being presented as a sum, and `coverPageDelta` is the figure the screen
+ *  totals. No number is recomputed; one of the mockup's two is chosen over the
+ *  other, with a reason. */
 const REV2: PreviewRevision = {
   rev: 2,
   receivedOn: '2026-08-19',

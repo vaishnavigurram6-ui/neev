@@ -37,9 +37,16 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
     prior_paid = [
         t for t in loan.tranches if t.status == "paid" and t.number < tranche.number
     ]
-    request_amount = tranche.disbursed_cum - (
-        prior_paid[-1].disbursed_cum if prior_paid else 0
-    )
+    # What has actually left the bank, which is NOT this tranche's cumulative:
+    # for a tranche awaiting a decision, disbursed_cum is the figure being asked
+    # for. Reading it as "disbursed so far" overstated the exposure numerator and
+    # silently inflated every row derived from it.
+    drawn_to_date = prior_paid[-1].disbursed_cum if prior_paid else 0
+    request_amount = tranche.disbursed_cum - drawn_to_date
+    # A tranche already paid has itself in the denominator of nothing: its own
+    # cumulative IS the drawn figure.
+    if tranche.status == "paid":
+        drawn_to_date = tranche.disbursed_cum
 
     stages: list[StageView] = []
     for name in STAGE_ORDER:
@@ -50,18 +57,28 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
         if matching.status == "paid":
             state, sub = "done", f"verified T{matching.number}"
         elif matching.number == tranche.number:
-            state, sub = "current", "read from photos"
+            # "read from photos" only if the photographs actually show THIS
+            # stage. On loan 1001 they show the slab while the money being asked
+            # for is the brickwork draw, so claiming the brickwork was read from
+            # photos would be a false evidence claim on a decision screen.
+            state = "current"
+            sub = (
+                "read from photos"
+                if matching.observed_stage == matching.milestone
+                else "requested, not yet verified"
+            )
         else:
             state, sub = "todo", "not started"
         stages.append(StageView(name=STAGE_LABEL[name], sub=sub, state=state))
 
-    disbursed_calc = " + ".join(f"T{t.number}" for t in prior_paid + [tranche])
+    drawn_tranches = prior_paid + ([tranche] if tranche.status == "paid" else [])
+    disbursed_calc = " + ".join(f"T{t.number}" for t in drawn_tranches) or "nothing drawn yet"
     gap = tranche.cost_to_complete_gap
     math = [
         MathRowView(
             label="Disbursed so far",
             calc=disbursed_calc,
-            result=float(tranche.disbursed_cum),
+            result=float(drawn_to_date),
             result_kind="money",
         ),
         MathRowView(
@@ -72,7 +89,7 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
         ),
         MathRowView(
             label="Disbursement exposure",
-            calc=f"{tranche.disbursed_cum} ÷ {tranche.verified_value or 0}",
+            calc=f"{drawn_to_date} ÷ {tranche.verified_value or 0}",
             result=_number_or_dash(tranche.exposure_ratio),
             result_kind=_kind(tranche.exposure_ratio, "ratio"),
             # An undefined ratio means there is no verified value in place at
@@ -91,7 +108,7 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
         ),
         MathRowView(
             label="Cost-to-complete gap",
-            calc=f"({loan.sanctioned} − {tranche.disbursed_cum}) − {tranche.cost_to_complete or 0}",
+            calc=f"({loan.sanctioned} − {drawn_to_date}) − {tranche.cost_to_complete or 0}",
             result=_number_or_dash(gap),
             result_kind=_kind(gap, "money"),
             # A gap of None is a closed loan: no shortfall to report, but not a

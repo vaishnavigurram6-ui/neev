@@ -65,10 +65,13 @@ def test_portfolio_money_is_numeric(client):
 
 
 def test_the_golden_tranche_reports_the_mockups_figures(client):
-    body = client.get("/api/loans/1001/tranches/3").json()
+    # The decision is pending on T4, not T3. T1-T3 are paid, which is the only
+    # reading under which 18,00,000 disbursed adds up -- and it is what the
+    # mockup's own gap row assumes: "(28,00,000 - 18,00,000) - 15,80,000".
+    body = client.get("/api/loans/1001/tranches/4").json()
     assert body["borrower"] == "Ravi Kumar"
-    assert body["tranche_number"] == 3
-    assert body["request_amount"] == 600000
+    assert body["tranche_number"] == 4
+    assert body["request_amount"] == 440000  # 0.80 x 28,00,000 - 18,00,000
     assert body["exposure"] == 1.29
     assert body["recommendation"] == "HOLD"
     assert body["recommendation_tone"] == "danger"
@@ -230,3 +233,13 @@ def test_a_lender_reads_all_three(client):
     assert client.get("/api/portfolio").status_code == 200
     assert client.get("/api/contractors").status_code == 200
     assert client.get("/api/loans/1001/tranches/3").status_code == 200
+
+
+def test_the_slab_tranche_is_paid_and_carries_no_pending_decision(client):
+    """The contradiction this replaced: T3 was marked on_hold while the frozen
+    figures counted its 6,00,000 as disbursed. Money cannot be both."""
+    body = client.get("/api/loans/1001/tranches/3").json()
+    assert body["tranche_number"] == 3
+    assert body["exposure"] is None, "the risk assessment belongs to the pending tranche"
+    math = {row["label"]: row["result"] for row in body["math"]}
+    assert math["Disbursed so far"] == 1800000, "T3's own cumulative is the drawn figure"

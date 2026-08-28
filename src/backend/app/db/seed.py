@@ -47,7 +47,42 @@ PLOT_LABELS = {"1001": "Plot 47, Kompally"}
 BUILT_UP = {"1001": 1800, "1002": 1650}
 
 # Tranche status for the golden case: T1/T2 paid, T3 held pending this decision.
-TRANCHE_STATUS_1001 = {1: "paid", 2: "paid", 3: "on_hold"}
+# Loan 1001's ledger. T1-T3 are PAID and the tranche under decision is T4.
+#
+# This resolves a contradiction in the source data: the frozen figures, the
+# Tranche Decision mockup and the fixture's own officer_view all put
+# 18,00,000 disbursed (3 x 6,00,000), which only adds up if T3 has gone out —
+# yet the tranche was also marked on_hold. Money cannot be both disbursed and
+# withheld. The mockup's own arithmetic settles it: its gap row reads
+# "(28,00,000 - 18,00,000) - 15,80,000", treating 18,00,000 as already drawn.
+#
+# So the decision on screen is the NEXT draw, and every frozen figure survives:
+# disbursed 18,00,000, verified value in place 13,90,000, exposure 1.29,
+# cost-to-complete gap -5,80,000, recommendation HOLD.
+TRANCHE_STATUS_1001 = {1: "paid", 2: "paid", 3: "paid", 4: "on_hold"}
+
+# The tranche under decision. draw_schedule.csv stops at T3 for loan 1001, and
+# that CSV is read directly by tests/test_offline.py — so the pending request is
+# added here, in the seed, rather than by editing the fixture out from under
+# those 28 tests.
+#
+# 0.80 cumulative x 28,00,000 sanctioned = 22,40,000, so the request itself is
+# 4,40,000. observed_stage stays "slab": the photographs verify the slab, which
+# is what inspection_result reports, while the money being asked for is the
+# brickwork-and-roof draw.
+PENDING_TRANCHE_1001 = {
+    "number": 4,
+    "milestone": "brickwork_roof",
+    "planned_cum_pct": 0.80,
+    "disbursed_cum": 2240000,
+    "inspection_date": date(2026, 8, 10),
+    "observed_stage": "slab",
+}
+
+# Which tranche carries the pipeline's risk assessment, per loan: the one a
+# decision is pending on.
+RISK_TRANCHE = {"1001": 4}
+DEFAULT_RISK_TRANCHE = 3
 
 
 def _tables_in_delete_order() -> list:
@@ -78,7 +113,9 @@ def seed(reset: bool = False) -> dict[str, int]:
 
         for rank, row in enumerate(rows):
             loan_id = row["loan_id"]
-            tranches = schedule[loan_id]
+            tranches = list(schedule[loan_id])
+            if loan_id == "1001":
+                tranches.append(PENDING_TRANCHE_1001)
             db.add(
                 models.Loan(
                     id=loan_id,
@@ -215,9 +252,12 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
     risk = output.risk_assessment
     inspection = output.inspection_result
     if risk is not None:
+        risk_tranche_no = RISK_TRANCHE.get(loan_id, DEFAULT_RISK_TRANCHE)
         current = db.scalar(
-            select(models.Tranche)
-            .where(models.Tranche.loan_id == loan_id, models.Tranche.number == 3)
+            select(models.Tranche).where(
+                models.Tranche.loan_id == loan_id,
+                models.Tranche.number == risk_tranche_no,
+            )
         )
         if current is not None:
             current.verified_value = int(risk.verified_value)
