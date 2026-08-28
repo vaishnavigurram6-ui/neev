@@ -68,12 +68,12 @@ export default async function UploadRevisionPage({
 
   const header = (
     <PageHeader
+      status={<StatusPill tone="neutral" label="Preview" />}
       eyebrow={COPY.eyebrow}
       title={COPY.title}
       sub={COPY.sub}
       actions={
         <>
-          <StatusPill tone="neutral" label="Preview" />
           <Button href={`/owner/loans/${loanId}/boq`}>Back to my contract</Button>
         </>
       }
@@ -126,8 +126,7 @@ export default async function UploadRevisionPage({
                   type="submit"
                   variant="primary"
                   disabled
-                  title={COPY.submitWhy}
-                  aria-describedby="recheck-why"
+                  reason={COPY.submitWhy}
                 >
                   {COPY.submit}
                 </Button>

@@ -28,6 +28,7 @@ export default function SendQuestionsForm({
     sending: string;
     sentOne: string;
     sentMany: string;
+    sendNote: string;
     withContractor: string;
   };
 }) {
@@ -63,6 +64,7 @@ export default function SendQuestionsForm({
       >
         {state.status === 'error' ? state.message : confirmation}
       </p>
+      <p className="mt-2 text-[11px] leading-[1.45] text-faint">{copy.sendNote}</p>
     </form>
   );
 }

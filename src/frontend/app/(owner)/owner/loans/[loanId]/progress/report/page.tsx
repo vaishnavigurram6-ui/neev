@@ -82,6 +82,7 @@ export default async function UpdateProgressPage({
 
   const header = (
     <PageHeader
+      status={<StatusPill tone="neutral" label="Preview" />}
       eyebrow={COPY.eyebrow}
       title={milestone ? `${milestone.label}${COPY.titleTail}` : 'Report a milestone'}
       sub={
@@ -91,7 +92,6 @@ export default async function UpdateProgressPage({
       }
       actions={
         <>
-          <StatusPill tone="neutral" label="Preview" />
           <Button href={`/owner/loans/${loanId}/progress`}>{COPY.back}</Button>
         </>
       }
@@ -211,8 +211,7 @@ export default async function UpdateProgressPage({
                 type="submit"
                 variant="primary"
                 disabled
-                title={COPY.submitWhy}
-                aria-describedby="submit-why"
+                reason={COPY.submitWhy}
               >
                 {COPY.submit}
               </Button>

@@ -5,6 +5,7 @@ export default function PageHeader({
   title,
   sub,
   actions,
+  status,
 }: {
   /** Text, or a fragment where one word of it is a link — the Tranche Decision
    *  breadcrumb is "PORTFOLIO · LOAN 1001 — RAVI KUMAR · TRANCHE 4" with the
@@ -14,12 +15,19 @@ export default function PageHeader({
   title: string;
   sub?: string;
   actions?: React.ReactNode;
+  /** A status marker for the page itself — the "Preview" pill on a scaffolded
+   *  screen. It belongs beside the eyebrow, not in `actions`: a pill sitting in
+   *  a row of buttons reads as one, and people click it. */
+  status?: React.ReactNode;
 }) {
   return (
     <div className="flex items-end justify-between gap-5">
       <div>
-        <div className="text-[12px] font-semibold uppercase tracking-[0.08em] text-faint">
-          {eyebrow}
+        <div className="flex items-center gap-[10px]">
+          <div className="text-[12px] font-semibold uppercase tracking-[0.08em] text-faint">
+            {eyebrow}
+          </div>
+          {status}
         </div>
         <h1 className="mt-2 font-display text-[28px] font-bold tracking-[-0.02em] text-ink">
           {title}

@@ -117,7 +117,7 @@ export default async function BuildProgressPage({
             } · last verified ${formatDay(loan.lastVerifiedOn)}`
           : undefined
       }
-      actions={<StatusPill tone="neutral" label="Preview" />}
+      status={<StatusPill tone="neutral" label="Preview" />}
     />
   );
 

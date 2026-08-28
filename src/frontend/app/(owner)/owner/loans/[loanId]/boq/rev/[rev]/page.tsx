@@ -117,6 +117,7 @@ export default async function RevisedContractPage({
 
   const header = (
     <PageHeader
+      status={<StatusPill tone="neutral" label="Preview" />}
       eyebrow={`BEFORE SIGNING · REVISION ${rev}`}
       title={revision ? COPY.title : COPY.noDiffTitle}
       sub={
@@ -128,7 +129,6 @@ export default async function RevisedContractPage({
       }
       actions={
         <>
-          <StatusPill tone="neutral" label="Preview" />
           <nav
             aria-label="Contract revisions"
             className="inline-flex flex-none items-center gap-1 rounded-pill bg-chip p-1"
@@ -255,7 +255,7 @@ export default async function RevisedContractPage({
             <div className="mt-[16px]">
               <Button
                 disabled
-                title={COPY.downloadWhy}
+                reason={COPY.downloadWhy}
                 aria-describedby="download-why"
                 className="w-full"
               >

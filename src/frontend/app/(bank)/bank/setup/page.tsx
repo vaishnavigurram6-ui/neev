@@ -78,7 +78,7 @@ export default function BankSetupPage() {
         eyebrow={COPY.eyebrow}
         title={COPY.title}
         sub={COPY.sub}
-        actions={<StatusPill tone="neutral" label="Preview" skin="bank" />}
+        status={<StatusPill tone="neutral" label="Preview" skin="bank" />}
       />
 
       <div className="grid grid-cols-3 gap-[14px]">
@@ -106,7 +106,7 @@ export default function BankSetupPage() {
             <Button
               skin="bank"
               disabled
-              title={COPY.losWhy}
+              reason={COPY.losWhy}
               aria-describedby="los-why"
               className="w-full"
             >
@@ -128,7 +128,7 @@ export default function BankSetupPage() {
             <Button
               skin="bank"
               disabled
-              title={COPY.singleWhy}
+              reason={COPY.singleWhy}
               aria-describedby="single-why"
               className="w-full"
             >
@@ -161,8 +161,7 @@ export default function BankSetupPage() {
             <Button
               skin="bank"
               disabled
-              title={COPY.inviteWhy}
-              aria-describedby="invite-why"
+              reason={COPY.inviteWhy}
             >
               {`${COPY.inviteCtaLead}${SETUP.loanCount}`}
             </Button>
@@ -250,8 +249,7 @@ export default function BankSetupPage() {
                 skin="bank"
                 type="submit"
                 disabled
-                title={COPY.saveWhy}
-                aria-describedby="save-why"
+                reason={COPY.saveWhy}
               >
                 {COPY.save}
               </Button>

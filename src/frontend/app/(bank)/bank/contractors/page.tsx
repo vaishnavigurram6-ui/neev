@@ -115,12 +115,12 @@ export default function ContractorScorecardPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
+      status={<StatusPill tone="neutral" label="Preview" skin="bank" />}
         eyebrow={COPY.eyebrow}
         title={COPY.title}
         sub={COPY.sub}
         actions={
           <>
-            <StatusPill tone="neutral" label="Preview" skin="bank" />
             <span className="tnum self-center text-[11.5px] text-faint">{COPY.note}</span>
           </>
         }

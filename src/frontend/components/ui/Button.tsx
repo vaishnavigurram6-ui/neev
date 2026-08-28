@@ -29,6 +29,14 @@ interface Common {
   skin?: Skin;
   className?: string;
   children?: React.ReactNode;
+  /** Why this control cannot be used. Renders as VISIBLE text beneath the
+   *  button and is wired to it with aria-describedby.
+   *
+   *  A disabled button is removed from the tab order and its `title` never
+   *  appears for a mouse user, so a title-only explanation reaches nobody: the
+   *  control simply does nothing when clicked, with no reason given. Anything
+   *  disabled in this product says why, out loud. */
+  reason?: string;
 }
 
 type LinkProps = Common &
@@ -41,9 +49,18 @@ function classesFor(variant: Variant = 'outline', skin: Skin = 'owner', classNam
   return `inline-flex items-center justify-center gap-2 px-4 py-[10px] text-[13.5px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${SHAPE[skin]} ${VARIANT[variant]} ${className}`;
 }
 
+/** A stable id from the text itself: no hook, so this stays usable in a server
+ *  component, and identical for the same explanation on every render. */
+function reasonId(reason: string): string {
+  let hash = 0;
+  for (let i = 0; i < reason.length; i += 1) hash = (hash * 31 + reason.charCodeAt(i)) | 0;
+  return `why-${Math.abs(hash).toString(36)}`;
+}
+
 export default function Button(props: LinkProps | ButtonProps) {
   if (props.href !== undefined) {
-    const { href, variant, skin, className, children, ...rest } = props;
+    const { href, variant, skin, className, children, reason, ...rest } = props;
+    void reason; // a link that goes somewhere has nothing to explain
     return (
       <Link href={href} className={classesFor(variant, skin, className)} {...rest}>
         {children}
@@ -51,10 +68,26 @@ export default function Button(props: LinkProps | ButtonProps) {
     );
   }
 
-  const { variant, skin, className, children, ...rest } = props;
-  return (
-    <button type="button" className={classesFor(variant, skin, className)} {...rest}>
+  const { variant, skin, className, children, reason, ...rest } = props;
+  const button = (
+    <button
+      type="button"
+      className={classesFor(variant, skin, className)}
+      aria-describedby={reason ? reasonId(reason) : undefined}
+      {...rest}
+    >
       {children}
     </button>
+  );
+
+  if (!reason) return button;
+
+  return (
+    <span className="flex flex-col items-start gap-[6px]">
+      {button}
+      <span id={reasonId(reason)} className="max-w-[210px] text-[11px] leading-[1.45] text-faint">
+        {reason}
+      </span>
+    </span>
   );
 }

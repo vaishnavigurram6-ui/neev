@@ -98,18 +98,15 @@ export default async function ChangeOrdersPage({
 
   const header = (
     <PageHeader
+      status={<StatusPill tone="neutral" label="Preview" />}
       eyebrow={COPY.eyebrow}
       title={COPY.title}
       sub={COPY.sub}
       actions={
         <>
-          <StatusPill tone="neutral" label="Preview" />
-          <Button disabled title={COPY.logWhy} aria-describedby="log-change-why">
+          <Button disabled reason={COPY.logWhy} aria-describedby="log-change-why">
             {COPY.log}
           </Button>
-          <p id="log-change-why" className="sr-only">
-            {COPY.logWhy}
-          </p>
         </>
       }
     />
@@ -198,15 +195,15 @@ export default async function ChangeOrdersPage({
                     <Button
                       variant="primary"
                       disabled
-                      title={COPY.actionWhy}
+                      reason={COPY.actionWhy}
                       aria-describedby={`${order.id}-why`}
                     >
                       {COPY.counter}
                     </Button>
-                    <Button disabled title={COPY.actionWhy} aria-describedby={`${order.id}-why`}>
+                    <Button disabled reason={COPY.actionWhy} aria-describedby={`${order.id}-why`}>
                       {COPY.accept}
                     </Button>
-                    <Button disabled title={COPY.actionWhy} aria-describedby={`${order.id}-why`}>
+                    <Button disabled reason={COPY.actionWhy} aria-describedby={`${order.id}-why`}>
                       {COPY.decline}
                     </Button>
                   </div>

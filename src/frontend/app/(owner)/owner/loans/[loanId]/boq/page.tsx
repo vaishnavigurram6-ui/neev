@@ -78,12 +78,18 @@ const COPY = {
   markedUpPdf: 'Marked-up PDF',
   pdfWhy: 'A marked-up PDF of your BoQ is out of scope for this build (spec §10).',
   uploadRevised: 'Upload revised BoQ',
-  send: 'Send {n} questions',
-  sendAgain: 'Send the questions again',
-  sending: 'Sending…',
-  sentOne: '1 question is now with',
-  sentMany: '{n} questions are now with',
+  // Neev does not message the contractor: WhatsApp sending is out of scope
+  // (spec §10). The button records that these questions are ready and marks them
+  // sent on the loan file; the owner copies the text and sends it themselves.
+  // The old copy said "{n} questions are now with Sri Sai Constructions", which
+  // claimed a delivery that never happened.
+  send: 'Mark {n} questions as sent',
+  sendAgain: 'Mark as sent again',
+  sending: 'Saving…',
+  sentOne: '1 question logged on your file, ready to send to',
+  sentMany: '{n} questions logged on your file, ready to send to',
   withContractor: 'your contractor',
+  sendNote: 'Neev does not message anyone for you — copy the text below and send it yourself.',
 
   attention: '{flagged} of {total} items need your attention',
   toggleLabel: 'Which BoQ lines to show',
@@ -292,6 +298,7 @@ export default async function BoqReviewPage({
                   sending: COPY.sending,
                   sentOne: COPY.sentOne,
                   sentMany: COPY.sentMany,
+                  sendNote: COPY.sendNote,
                   withContractor: COPY.withContractor,
                 }}
               />
