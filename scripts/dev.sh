@@ -17,6 +17,36 @@ ROOT="$PWD"
 BE_PORT="${BE_PORT:-8000}"
 FE_PORT="${FE_PORT:-3000}"
 
+# Refuse to start on an occupied port rather than serving a frontend that points
+# at someone else's process. This is not hypothetical: a VS Code helper listens
+# on 127.0.0.1:8000 on this machine, so uvicorn lost the port silently and every
+# screen failed with "could not reach the backend" -- which reads like a bug in
+# the app rather than a port clash.
+port_owner() { lsof -nP -iTCP:"$1" -sTCP:LISTEN -t 2>/dev/null | head -1; }
+
+first_free_port() {
+  local port="$1"
+  while [ -n "$(port_owner "$port")" ]; do port=$((port + 1)); done
+  echo "$port"
+}
+
+if [ -n "$(port_owner "$BE_PORT")" ]; then
+  owner_pid="$(port_owner "$BE_PORT")"
+  owner_cmd="$(ps -p "$owner_pid" -o comm= 2>/dev/null || echo unknown)"
+  suggested="$(first_free_port "$BE_PORT")"
+  echo "Port $BE_PORT is already taken by PID $owner_pid ($owner_cmd)."
+  echo "Using $suggested for the backend instead."
+  BE_PORT="$suggested"
+fi
+
+if [ -n "$(port_owner "$FE_PORT")" ]; then
+  owner_pid="$(port_owner "$FE_PORT")"
+  echo "Port $FE_PORT is already taken by PID $owner_pid."
+  echo "Stop it first (kill $owner_pid), or set FE_PORT. Next refuses a second"
+  echo "dev server for the same project, so this cannot be worked around."
+  exit 1
+fi
+
 if [ ! -x "src/backend/.venv/bin/python" ]; then
   echo "Creating the backend venv (Python 3.11)..."
   "${PYTHON311:-/opt/homebrew/bin/python3.11}" -m venv src/backend/.venv
@@ -40,7 +70,19 @@ echo "Starting backend on :$BE_PORT (NEEV_MODE=fixture)..."
 echo "Starting frontend on :$FE_PORT..."
 (cd "$ROOT/src/frontend" && NEEV_API_BASE="http://127.0.0.1:$BE_PORT" npm run dev -- --port "$FE_PORT") &
 
-sleep 6
+for _ in $(seq 1 30); do
+  curl -fsS "http://127.0.0.1:$BE_PORT/api/health" >/dev/null 2>&1 && break
+  sleep 1
+done
+
+if ! curl -fsS "http://127.0.0.1:$BE_PORT/api/health" >/dev/null 2>&1; then
+  echo
+  echo "The backend is not answering on :$BE_PORT. The frontend would load but"
+  echo "every screen would fail with \"could not reach the backend\". Stopping."
+  exit 1
+fi
+
+echo "Backend healthy: $(curl -fsS "http://127.0.0.1:$BE_PORT/api/health")"
 cat <<EOF
 
   Neev is up. The four demo beats, in order:
