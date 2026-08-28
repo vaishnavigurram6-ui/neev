@@ -7,23 +7,51 @@
 //
 // An <ol> because the stages are ordered: 0 before signing through 3 on every
 // change. The numerals are mono, per the handoff's rule that every number is.
-import { JOURNEY_STAGES } from './journey';
+//
+// EXTENDED (plan Task 15): a third `cards` treatment and an optional `stages`
+// override. `Neev 0 Owner Onboarding.dc.html` draws the same four stages under
+// "HOW NEEV STAYS WITH YOU" as a four-card grid with its own, longer copy. That
+// is one strip with three layouts, not two components — forking it would leave
+// the product with two lists of the same four stages that could drift apart.
+import Card from '@/components/ui/Card';
+import { JOURNEY_STAGES, type JourneyStage } from './journey';
 
 export default function JourneyStages({
   layout,
   label,
+  stages = JOURNEY_STAGES,
   className = '',
 }: {
-  /** `rows` is the Login left-panel treatment; `grid` is the Landing band. */
-  layout: 'rows' | 'grid';
+  /** `rows` is the Login left-panel treatment, `grid` the Landing band, `cards`
+   *  the Onboarding block. */
+  layout: 'rows' | 'grid' | 'cards';
   /** Invisible group name. The prototypes give the strip no visible heading. */
   label: string;
+  /** Defaults to the Login prototype's wording. Onboarding passes its own, which
+   *  is the same four stages said at greater length. */
+  stages?: JourneyStage[];
   className?: string;
 }) {
+  if (layout === 'cards') {
+    return (
+      <ol aria-label={label} className={`grid grid-cols-4 gap-3 ${className}`}>
+        {stages.map((stage) => (
+          <li key={stage.n}>
+            <Card className="h-full p-[18px]">
+              <div className="tnum text-[11px] text-faint">{`STAGE ${stage.n}`}</div>
+              <div className="mt-2 text-[13.5px] font-bold text-ink">{stage.name}</div>
+              <div className="mt-[5px] text-[12px] leading-[1.55] text-sub">{stage.desc}</div>
+            </Card>
+          </li>
+        ))}
+      </ol>
+    );
+  }
+
   if (layout === 'rows') {
     return (
       <ol aria-label={label} className={`flex flex-col ${className}`}>
-        {JOURNEY_STAGES.map((stage) => (
+        {stages.map((stage) => (
           <li
             key={stage.n}
             className="flex items-baseline gap-[14px] border-b border-line py-[11px]"
@@ -41,7 +69,7 @@ export default function JourneyStages({
 
   return (
     <ol aria-label={label} className={`grid grid-cols-4 gap-8 ${className}`}>
-      {JOURNEY_STAGES.map((stage) => (
+      {stages.map((stage) => (
         <li key={stage.n} className="flex items-baseline gap-3">
           <span className="tnum flex-none text-[11px] font-semibold text-action">{stage.n}</span>
           <div>
