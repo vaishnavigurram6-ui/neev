@@ -12,10 +12,18 @@ export function middleware(request: NextRequest) {
   if (!needsOwner && !needsBank) return NextResponse.next();
 
   const raw = request.cookies.get(SESSION_COOKIE)?.value;
-  const role = raw?.split(':')[0];
+  const [role, sessionLoanId] = raw?.split(':') ?? [];
 
   const wrongRole = (needsOwner && role !== 'owner') || (needsBank && role !== 'bank');
-  if (!raw || wrongRole) {
+
+  // Role alone is not authorization. Without this, an owner signed in for loan
+  // 1001 could read /owner/loans/1002/boq — the role prefix matches and the
+  // layout only re-checks the role. A bank officer legitimately reads any loan
+  // in the book, so the check is owner-side only.
+  const loanInPath = /^\/owner\/loans\/([^/]+)/.exec(pathname)?.[1];
+  const wrongLoan = needsOwner && loanInPath !== undefined && loanInPath !== sessionLoanId;
+
+  if (!raw || wrongRole || wrongLoan) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.search = `?next=${encodeURIComponent(pathname + search)}`;

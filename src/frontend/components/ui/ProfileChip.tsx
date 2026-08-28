@@ -9,9 +9,9 @@ export default function ProfileChip({
   sub: string;
   skin: Skin;
 }) {
-  const nameClass = skin === 'bank' ? 'text-card' : 'text-ink';
+  const nameClass = skin === 'bank' ? 'text-bank-surface' : 'text-ink';
   const subClass = skin === 'bank' ? 'text-bank-inactive' : 'text-faint';
-  const avatar = skin === 'bank' ? 'bg-bank-accent text-card' : 'bg-ink text-card';
+  const avatar = skin === 'bank' ? 'bg-bank-accent text-bank-surface' : 'bg-ink text-card';
   const initials = name
     .split(/\s+/)
     .slice(0, 2)

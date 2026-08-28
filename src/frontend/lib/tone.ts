@@ -47,10 +47,16 @@ export function toneClasses(tone: Tone, skin: Skin = 'owner'): ToneClasses {
   return (skin === 'bank' ? BANK : OWNER)[tone];
 }
 
-/** Maps a pipeline recommendation to a tone and the label the designs show. */
-export function recommendationTone(
-  recommendation: 'RELEASE' | 'HOLD' | 'ESCALATE' | 'INSPECT'
-): { tone: Tone; label: string } {
+/** Maps a pipeline recommendation to a tone and the label the designs show.
+ *
+ *  The parameter is `string`, not the four-member union, because the value that
+ *  actually reaches here is `TrancheDecisionView.recommendation` — unvalidated
+ *  backend data. With an exhaustive switch and no default, anything the pipeline
+ *  adds or renames would return `undefined` and destructuring it at the call
+ *  site would throw, taking the whole tranche screen to its error boundary. A
+ *  neutral pill carrying the raw label degrades instead: still readable, still
+ *  labelled, never a crash. */
+export function recommendationTone(recommendation: string): { tone: Tone; label: string } {
   switch (recommendation) {
     case 'HOLD':
       return { tone: 'danger', label: 'HOLD' };
@@ -60,5 +66,7 @@ export function recommendationTone(
       return { tone: 'warn', label: 'INSPECT' };
     case 'RELEASE':
       return { tone: 'success', label: 'ON TRACK' };
+    default:
+      return { tone: 'neutral', label: recommendation };
   }
 }

@@ -32,9 +32,19 @@ export default function PhotoSlot({
   // Object URLs are revoked when replaced and on unmount; otherwise every
   // re-pick leaks the previous blob for the life of the document.
   const previewRef = useRef<string | null>(null);
+  // Downscaling is async and its duration depends on the photo, so two quick
+  // picks can resolve out of order. Without this counter the slower first pick
+  // would land last: it would revoke the URL currently on screen and then set
+  // its own older photo as the preview while the parent had already been handed
+  // the newer file. On a screen whose entire purpose is tying a milestone to the
+  // right site photo, the preview and the queued upload must never disagree.
+  const generation = useRef(0);
 
   useEffect(
     () => () => {
+      // Bump so an in-flight downscale that resolves after unmount bails out
+      // rather than creating an object URL nothing will ever revoke.
+      generation.current += 1;
       if (previewRef.current) URL.revokeObjectURL(previewRef.current);
     },
     []
@@ -42,14 +52,20 @@ export default function PhotoSlot({
 
   const handle = async (file: File | undefined) => {
     if (!file) return;
+    const mine = (generation.current += 1);
     setStatus(`Preparing ${file.name}…`);
     const downscaled = await downscale(file);
+
+    if (mine !== generation.current) return; // superseded, or unmounted
+
     if (previewRef.current) URL.revokeObjectURL(previewRef.current);
     const url = URL.createObjectURL(downscaled);
     previewRef.current = url;
     setPreview(url);
     setStatus(`${file.name} ready to upload`);
-    onFile?.(new File([downscaled], file.name, { type: downscaled.type }));
+    onFile?.(new File([downscaled], uploadName(file.name, downscaled.type), {
+      type: downscaled.type,
+    }));
   };
 
   return (
@@ -96,6 +112,15 @@ export default function PhotoSlot({
       )}
     </div>
   );
+}
+
+/** Keep the filename honest about what the bytes are. `downscale()` re-encodes
+ *  to JPEG, so a downscaled `site.png` must not be uploaded as `site.png` —
+ *  extension-based validation or an extension-derived storage key on the backend
+ *  would reject it, or store a `.png` that is really a JPEG. */
+function uploadName(original: string, type: string): string {
+  if (type !== 'image/jpeg') return original;
+  return original.replace(/\.[^./\\]+$/, '') + '.jpg';
 }
 
 /** Downscale to MAX_EDGE before upload — the one behaviour worth keeping from

@@ -26,8 +26,8 @@ export default function NavTabs({ items, skin }: { items: NavItem[]; skin: Skin 
         const classes =
           skin === 'bank'
             ? active
-              ? 'bg-card text-bank-bar'
-              : 'text-bank-inactive hover:text-card'
+              ? 'bg-bank-surface text-bank-bar'
+              : 'text-bank-inactive hover:text-bank-surface'
             : active
               ? 'bg-ink text-card'
               : 'text-sub hover:bg-chip hover:text-ink';

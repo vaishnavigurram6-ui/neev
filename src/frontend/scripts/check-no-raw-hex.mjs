@@ -12,7 +12,11 @@ const ROOT = process.cwd();
 const ALLOWED = new Set(['app/globals.css']);
 const EXTS = ['.ts', '.tsx', '.css', '.mjs'];
 const SKIP_DIRS = new Set(['node_modules', '.next', 'out', '.git']);
-const HEX = /#[0-9a-fA-F]{3,8}\b/g;
+// Colour-shaped lengths only (3, 4, 6, 8), with a negative lookahead instead of
+// \b. `\b` after {3,8} lets a 9+ hex-character token slip through unmatched,
+// and {3,8} on its own flags any URL fragment or id spelled in hex letters —
+// `href="/help#faded"` is not a colour.
+const HEX = /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3})(?![0-9a-fA-F])/g;
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {

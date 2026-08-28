@@ -12,9 +12,9 @@ export default function Logo({
   skin?: Skin;
   withWordmark?: boolean;
 }) {
-  const squareClass = skin === 'bank' ? 'bg-card' : 'bg-brick';
+  const squareClass = skin === 'bank' ? 'bg-bank-surface' : 'bg-brick';
   const glyphClass = skin === 'bank' ? 'fill-bank-bar' : 'fill-card';
-  const wordClass = skin === 'bank' ? 'text-card' : 'text-ink';
+  const wordClass = skin === 'bank' ? 'text-bank-surface' : 'text-ink';
 
   return (
     <span className="flex items-center gap-[9px]">

@@ -42,10 +42,12 @@ export function formatRatio(value: number | null | undefined): string {
   return value.toFixed(2);
 }
 
-/** Quantities keep their natural precision: 22.5 -> "22.5", 4800 -> "4,800". */
+/** Quantities keep their natural precision: 22.5 -> "22.5", 4800 -> "4,800".
+ *  Both branches group, so a BoQ quantity column cannot show "12,345" in one row
+ *  and "12345.5" in the next. */
 export function formatQty(value: number): string {
   if (!Number.isFinite(value)) return '—';
-  return Number.isInteger(value) ? value.toLocaleString('en-IN') : value.toString();
+  return value.toLocaleString('en-IN', { maximumFractionDigits: 3 });
 }
 
 /** Signed rupee delta, for diff and change-order rows: 154000 -> "+₹1,54,000". */

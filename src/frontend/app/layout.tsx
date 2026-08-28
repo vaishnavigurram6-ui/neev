@@ -38,10 +38,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         {/* Applies the saved theme before first paint so the page never flashes
-            the wrong palette. Falls back to the OS preference. */}
+            the wrong palette. Falls back to the OS preference.
+
+            The storage read has its own try/catch: where site data is blocked,
+            getItem throws, and a single try around the whole thing would swallow
+            it before matchMedia ran — leaving data-theme unset and pinning those
+            viewers to the light palette however their OS is set. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('neev-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+            __html: `(function(){var t=null;try{t=localStorage.getItem('neev-theme');}catch(e){}if(t!=='dark'&&t!=='light'){try{t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}catch(e){t='light';}}try{document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
           }}
         />
       </head>

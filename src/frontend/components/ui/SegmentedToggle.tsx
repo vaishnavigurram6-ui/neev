@@ -46,10 +46,17 @@ export default function SegmentedToggle({
 
   const radius = skin === 'bank' ? 'rounded-bank' : 'rounded-pill';
 
+  // Roving tabindex needs exactly one tabbable option. A shared link carrying a
+  // stale or unknown `?param=` value matches nothing, and without this fallback
+  // every option would be tabIndex -1 — the control would be unreachable by
+  // keyboard precisely in the case this URL-driven design makes routine.
+  const selectedIndex = options.findIndex((option) => option.value === value);
+  const tabbableIndex = selectedIndex === -1 ? 0 : selectedIndex;
+
   return (
     <div role="tablist" aria-label={label} className={`inline-flex gap-1 bg-chip p-1 ${radius}`}>
       {options.map((option, index) => {
-        const selected = option.value === value;
+        const selected = index === selectedIndex;
         return (
           <Link
             key={option.value}
@@ -59,7 +66,7 @@ export default function SegmentedToggle({
             href={hrefFor(option.value)}
             role="tab"
             aria-selected={selected}
-            tabIndex={selected ? 0 : -1}
+            tabIndex={index === tabbableIndex ? 0 : -1}
             onKeyDown={(event) => onKeyDown(event, index)}
             scroll={false}
             className={`px-[13px] py-[6px] text-[12.5px] font-semibold transition-colors ${radius} ${

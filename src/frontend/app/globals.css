@@ -36,9 +36,13 @@
   --sub: #6d665e;
   --faint: #77716a;
 
-  /* actions */
+  /* actions. --on-action is the label colour on a filled action surface; it is
+     its own token because `--card` cannot serve in both themes — in dark,
+     --card #2e251d on --action #4c9367 measures 4.06:1 and fails AA at the
+     13.5px semibold the buttons use. */
   --action: #3d7a52;
   --action-hover: #336847;
+  --on-action: #ffffff; /* on --action = 5.12:1 */
 
   /* tones */
   --success: #2f6647;
@@ -51,9 +55,14 @@
   /* brand — logo only, never text */
   --brick: #e07856;
 
-  /* bank console chrome */
+  /* bank console chrome.
+     --bank-surface is the light chrome colour that sits ON the dark ink bar
+     (active tab, logo square, wordmark, avatar text). It is deliberately NOT
+     --card: the bar stays dark ink in both themes to signal console context, so
+     anything drawn on it must stay light in both themes too. */
   --bank-bar: #111827;
   --bank-ink: #111827;
+  --bank-surface: #ffffff;
   --bank-inactive: #9ca3af;
   --bank-accent: #2d5bff;
   --bank-danger: #b42318;
@@ -81,12 +90,26 @@
   --faint: #9d8d7b;
   --action: #4c9367;
   --action-hover: #5aa878;
+  --on-action: #10231a; /* on --action #4c9367 = 4.51:1; white would be 3.66:1 */
   --success: #7cc79a;
   --success-tint: #26382c;
   --danger: #e9a184;
   --danger-tint: #3b2a22;
   --warn: #d4bb96;
   --warn-tint: #362e22;
+
+  /* The bank tone tints are near-white by design, which reads as a light band
+     under dark-mode --ink. The dark owner tints serve the same roles. --bank-bar,
+     --bank-inactive and --bank-surface are NOT overridden: the ink bar and the
+     light chrome on it are theme-independent. */
+  --bank-danger: #e9a184;
+  --bank-danger-tint: #3b2a22;
+  --bank-warn: #d4bb96;
+  --bank-warn-tint: #362e22;
+  --bank-success: #7cc79a;
+  --bank-success-tint: #26382c;
+  --bank-row-flagged: #33241e;
+  --bank-accent: #6f8cff;
 }
 
 @theme inline {
@@ -102,6 +125,7 @@
   --color-faint: var(--faint);
   --color-action: var(--action);
   --color-action-hover: var(--action-hover);
+  --color-on-action: var(--on-action);
   --color-success: var(--success);
   --color-success-tint: var(--success-tint);
   --color-danger: var(--danger);
@@ -110,6 +134,7 @@
   --color-warn-tint: var(--warn-tint);
   --color-brick: var(--brick);
   --color-bank-bar: var(--bank-bar);
+  --color-bank-surface: var(--bank-surface);
   --color-bank-inactive: var(--bank-inactive);
   --color-bank-accent: var(--bank-accent);
   --color-bank-danger: var(--bank-danger);
@@ -131,41 +156,55 @@
   --shadow-card: 0 1px 2px rgb(20 15 10 / 0.05);
 }
 
-html {
-  color-scheme: light;
-}
-html[data-theme="dark"] {
-  color-scheme: dark;
-}
+/*
+  Element defaults belong in @layer base, NOT unlayered.
+  Unlayered declarations beat every cascade layer, so an unlayered
+  `a { color: inherit }` would defeat text-* utilities on every link — which is
+  most of the chrome: the bank nav's `text-bank-inactive`, a primary
+  `<Button href>`'s `text-on-action`, CardTable's `hover:text-action`. Inside
+  base it sits after Tailwind's preflight and still loses to utilities, which is
+  what we want.
+*/
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
 
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  /* Laptop-only target: 1280-1920px. Below 1280 degrades gracefully; the page
-     body must never scroll horizontally. */
-  min-width: 0;
-  overflow-x: hidden;
-}
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    /* Laptop-only target: 1280-1920px. Below 1280 degrades gracefully; the page
+       body must never scroll horizontally. */
+    min-width: 0;
+    overflow-x: hidden;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-/* Every interactive element gets a visible focus ring. The prototypes have no
-   real controls at all, so nothing about focus can be ported — it is added. */
-:where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-  border-radius: 4px;
+  /* Every interactive element gets a visible focus ring. The prototypes have no
+     real controls at all, so nothing about focus can be ported — it is added.
+     Only outline properties belong here: setting border-radius would flatten a
+     22px pill button to 4px for as long as it holds focus. */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
 }
 
 /* Numbers, ids and ratios are always mono — a hard rule from the handoff. */
-.tnum {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
+@layer utilities {
+  .tnum {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 @keyframes nv-pulse {
