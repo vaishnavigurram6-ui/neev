@@ -199,6 +199,16 @@ def test_progress_reports_the_payment_ladder_and_where_you_stand(client):
     assert len(body["steps"]) == 3
 
 
+def test_an_unverified_site_reads_as_unknown_not_as_zero(client):
+    # Loan 1005 has no assessed tranche. "₹0 standing on site" would be a false
+    # statement to a borrower who has already paid a tranche; an em dash is the
+    # honest one, and value_kind says so.
+    standing = client.get("/api/loans/1005/progress").json()["standing"]
+    unverified = next(row for row in standing if row["label"] == "Work standing on site")
+    assert unverified["value"] == "—"
+    assert unverified["value_kind"] == "text"
+
+
 def test_progress_for_an_unknown_loan_is_404(client):
     assert client.get("/api/loans/9999/progress").status_code == 404
 

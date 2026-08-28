@@ -212,7 +212,9 @@ class ProgressTrancheView(BaseModel):
 
 class StandingRowView(BaseModel):
     label: str
-    value: float
+    # A str only ever carries the em dash for an unverified figure, paired with
+    # value_kind "text" — the same convention MathRowView uses.
+    value: float | str
     value_kind: ValueKind = "money"
     tone: Tone = "neutral"
 

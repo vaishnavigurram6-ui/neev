@@ -97,24 +97,23 @@ def to_build_progress(loan: models.Loan) -> BuildProgressView:
         default=None,
     )
 
+    verified = assessed.verified_value if assessed else None
+    to_finish = assessed.cost_to_complete if assessed else None
     standing = [
-        StandingRowView(label="Paid to your contractor", value=float(loan.disbursed)),
-        StandingRowView(
-            label="Work standing on site",
-            value=float(assessed.verified_value) if assessed else 0.0,
-            tone="danger" if _behind(loan, assessed) else "neutral",
+        _row("Paid to your contractor", loan.disbursed),
+        # A site nobody has verified yet is unknown, not worth zero. Rendering
+        # "₹0 standing on site" to a borrower who has just paid a tranche would
+        # be a false statement rather than a missing one.
+        _row(
+            "Work standing on site",
+            verified,
+            tone="danger" if verified is not None and verified < loan.disbursed else "neutral",
         ),
-        StandingRowView(
-            label="Left in your sanction", value=float(loan.sanctioned - loan.disbursed)
-        ),
-        StandingRowView(
-            label="Needed to finish",
-            value=(
-                float(assessed.cost_to_complete)
-                if assessed is not None and assessed.cost_to_complete is not None
-                else 0.0
-            ),
-            tone="danger" if _short(loan, assessed) else "neutral",
+        _row("Left in your sanction", loan.sanctioned - loan.disbursed),
+        _row(
+            "Needed to finish",
+            to_finish,
+            tone="danger" if _short(assessed) else "neutral",
         ),
     ]
 
@@ -151,10 +150,14 @@ def _sub(tranche: models.Tranche) -> str:
     return "Upcoming"
 
 
-def _behind(loan: models.Loan, assessed: models.Tranche | None) -> bool:
-    return bool(assessed and assessed.verified_value is not None and assessed.verified_value < loan.disbursed)
+def _row(label: str, value: float | int | None, tone: str = "neutral") -> StandingRowView:
+    """A missing figure renders as an em dash, the same convention the tranche
+    mapper uses — `value_kind` "text" tells the frontend not to format it."""
+    if value is None:
+        return StandingRowView(label=label, value="—", value_kind="text", tone=tone)  # type: ignore[arg-type]
+    return StandingRowView(label=label, value=float(value), value_kind="money", tone=tone)  # type: ignore[arg-type]
 
 
-def _short(loan: models.Loan, assessed: models.Tranche | None) -> bool:
+def _short(assessed: models.Tranche | None) -> bool:
     gap = assessed.cost_to_complete_gap if assessed else None
     return gap is not None and gap < 0
