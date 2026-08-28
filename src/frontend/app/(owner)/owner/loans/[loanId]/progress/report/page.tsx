@@ -36,10 +36,6 @@ const COPY = {
   stepOneLegend: 'Which milestone is complete?',
   stepTwoTitle: "2 · Add today's photos",
   stepTwoAsideTail: ' needed · same spots as last time',
-  slotWide: 'Wide shot from the gate',
-  slotWork: 'The new work, close up',
-  slotAngle: 'Same angle as last month',
-  slotGuidance: 'Same spot every time — it is what makes the check instant.',
   checkLocation: 'Location check runs on submit',
   checkTimestamp: 'Timestamp check runs on submit',
   checkAngle: 'Same-angle check runs on submit',
@@ -111,12 +107,6 @@ export default async function UpdateProgressPage({
     );
   }
 
-  const photoSlots = [
-    { key: 'wide', label: COPY.slotWide },
-    { key: 'work', label: COPY.slotWork },
-    { key: 'angle', label: COPY.slotAngle },
-  ];
-
   return (
     <div className="flex flex-col gap-5">
       {header}
@@ -160,15 +150,15 @@ export default async function UpdateProgressPage({
 
           <Panel
             title={COPY.stepTwoTitle}
-            aside={`${photoSlots.length}${COPY.stepTwoAsideTail}`}
+            aside={`${loan.photoSlots.length}${COPY.stepTwoAsideTail}`}
           >
             <div className="grid grid-cols-3 gap-[10px]">
-              {photoSlots.map((slot) => (
+              {loan.photoSlots.map((slot) => (
                 <PhotoSlot
-                  key={slot.key}
-                  slotKey={`${loanId}-${milestone.key}-${slot.key}`}
+                  key={slot.slotKey}
+                  slotKey={slot.slotKey}
                   label={slot.label}
-                  guidance={COPY.slotGuidance}
+                  guidance={slot.guidance}
                 />
               ))}
             </div>
@@ -210,8 +200,20 @@ export default async function UpdateProgressPage({
               placeholder={COPY.notesPlaceholder}
               className="w-full rounded-[10px] border border-input-border bg-bg px-4 py-3 text-[13px] text-ink placeholder:text-faint"
             />
-            <div className="mt-[16px] flex justify-end">
-              <Button type="submit" variant="primary" disabled title={COPY.submitWhy}>
+            <div className="mt-[16px] flex items-center justify-end gap-3">
+              {/* The reason a control is inert has to be readable without a
+                  mouse: a disabled button is out of the tab order and `title`
+                  alone reaches nobody using a keyboard or a screen reader. */}
+              <p id="submit-why" className="text-[11.5px] text-faint">
+                {COPY.submitWhy}
+              </p>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled
+                title={COPY.submitWhy}
+                aria-describedby="submit-why"
+              >
                 {COPY.submit}
               </Button>
             </div>

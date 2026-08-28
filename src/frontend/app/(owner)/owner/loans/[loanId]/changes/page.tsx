@@ -44,6 +44,8 @@ const COPY = {
   overLead: "That's ",
   overTailOne: ' over your sanction. Counter the pending change before accepting.',
   overTailMany: ' over your sanction. Counter the pending changes before accepting.',
+  overTailNone:
+    ' over your sanction on the changes already accepted. Talk to your lender before the next one.',
   withinTail: ' inside your sanction, even if every pending change is accepted as proposed.',
   whyTitle: 'Why this page matters',
   whyBody:
@@ -102,9 +104,12 @@ export default async function ChangeOrdersPage({
       actions={
         <>
           <StatusPill tone="neutral" label="Preview" />
-          <Button disabled title={COPY.logWhy}>
+          <Button disabled title={COPY.logWhy} aria-describedby="log-change-why">
             {COPY.log}
           </Button>
+          <p id="log-change-why" className="sr-only">
+            {COPY.logWhy}
+          </p>
         </>
       }
     />
@@ -119,14 +124,25 @@ export default async function ChangeOrdersPage({
     );
   }
 
-  const pending = loan.changeOrders.filter((order) => order.pending);
-  const settled = loan.changeOrders.filter((order) => !order.pending);
+  // Three states, not two. A declined change is settled but adds nothing to the
+  // contract, so it must not be counted with the accepted ones.
+  const pending = loan.changeOrders.filter((order) => order.state === 'pending');
+  const accepted = loan.changeOrders.filter((order) => order.state === 'accepted');
   const sum = (orders: typeof loan.changeOrders) =>
     orders.reduce((total, order) => total + order.delta, 0);
   const pendingTotal = sum(pending);
-  const settledTotal = sum(settled);
-  const ifAccepted = loan.boqTotal + settledTotal + pendingTotal;
+  const acceptedTotal = sum(accepted);
+  const ifAccepted = loan.boqTotal + acceptedTotal + pendingTotal;
   const overSanction = ifAccepted - loan.sanctioned;
+  const overTone = overSanction > 0 ? 'danger' : 'success';
+  const overTail =
+    overSanction <= 0
+      ? COPY.withinTail
+      : pending.length === 0
+        ? COPY.overTailNone
+        : pending.length === 1
+          ? COPY.overTailOne
+          : COPY.overTailMany;
 
   return (
     <div className="flex flex-col gap-5">
@@ -176,17 +192,27 @@ export default async function ChangeOrdersPage({
                 <CalloutBanner tone={order.tone} lead={COPY.readLead} body={order.neevsRead} />
               </div>
 
-              {order.pending && (
-                <div className="mt-[14px] flex gap-2">
-                  <Button variant="primary" disabled title={COPY.actionWhy}>
-                    {COPY.counter}
-                  </Button>
-                  <Button disabled title={COPY.actionWhy}>
-                    {COPY.accept}
-                  </Button>
-                  <Button disabled title={COPY.actionWhy}>
-                    {COPY.decline}
-                  </Button>
+              {order.state === 'pending' && (
+                <div className="mt-[14px]">
+                  <div className="flex gap-2">
+                    <Button
+                      variant="primary"
+                      disabled
+                      title={COPY.actionWhy}
+                      aria-describedby={`${order.id}-why`}
+                    >
+                      {COPY.counter}
+                    </Button>
+                    <Button disabled title={COPY.actionWhy} aria-describedby={`${order.id}-why`}>
+                      {COPY.accept}
+                    </Button>
+                    <Button disabled title={COPY.actionWhy} aria-describedby={`${order.id}-why`}>
+                      {COPY.decline}
+                    </Button>
+                  </div>
+                  <p id={`${order.id}-why`} className="mt-[8px] text-[11.5px] text-faint">
+                    {COPY.actionWhy}
+                  </p>
                 </div>
               )}
             </Card>
@@ -202,8 +228,8 @@ export default async function ChangeOrdersPage({
                 value: <Figure value={formatINR(loan.boqTotal)} />,
               },
               {
-                label: `${COPY.acceptedLabel} (${settled.length})`,
-                value: <Figure value={formatDelta(settledTotal)} />,
+                label: `${COPY.acceptedLabel} (${accepted.length})`,
+                value: <Figure value={formatDelta(acceptedTotal)} />,
               },
               {
                 label: `${COPY.pendingLabel} (${pending.length})`,
@@ -216,16 +242,12 @@ export default async function ChangeOrdersPage({
                   <span className="text-[13px] font-semibold text-ink">
                     {COPY.ifAcceptedLabel}
                   </span>
-                  <Figure value={formatINR(ifAccepted)} tone="danger" size="lg" />
+                  <Figure value={formatINR(ifAccepted)} tone={overTone} size="lg" />
                 </div>
                 <p className="mt-[10px] text-[12px] leading-[1.6] text-faint">
                   {COPY.overLead}
-                  <Figure value={formatINR(Math.abs(overSanction))} size="sm" tone={overSanction > 0 ? 'danger' : 'success'} />
-                  {overSanction > 0
-                    ? pending.length === 1
-                      ? COPY.overTailOne
-                      : COPY.overTailMany
-                    : COPY.withinTail}
+                  <Figure value={formatINR(Math.abs(overSanction))} size="sm" tone={overTone} />
+                  {overTail}
                 </p>
               </>
             }

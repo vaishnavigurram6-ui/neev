@@ -39,9 +39,6 @@ const COPY = {
   photosCta: 'Report a milestone →',
   photosNote:
     'Take photos from the same spots each month — it speeds up verification and releases.',
-  slotOne: 'Add photo — front angle',
-  slotTwo: 'Add photo — slab',
-  slotThree: 'Add photo — inside',
   evidenceTitle: 'What your last verified set showed',
   standingTitle: 'Where you stand',
   paidLabel: 'Paid to your contractor',
@@ -50,6 +47,8 @@ const COPY = {
   neededLabel: 'Needed to finish',
   shortLead: "At today's rates you'd be ",
   shortTail: ' short of a finished house. Fixable now — much harder at the roof.',
+  surplusLead: "At today's rates you'd have ",
+  surplusTail: ' left over once the house is finished.',
   weekTitle: 'What to do this week',
   stepOne:
     'Send the 4 written questions from your contract review — they cover the over-priced RCC and the missing waterproofing.',
@@ -75,13 +74,20 @@ const TRANCHE_COLUMNS: Column<PreviewTranche>[] = [
     key: 'amount',
     header: 'Amount',
     align: 'right',
-    width: '150px',
+    width: '140px',
     render: (row) => (
       <Figure
         value={formatINR(row.amount)}
         tone={row.status === 'on_hold' ? 'danger' : 'neutral'}
       />
     ),
+  },
+  {
+    key: 'drawn',
+    header: 'Drawn to date',
+    align: 'right',
+    width: '140px',
+    render: (row) => <Figure value={formatINR(row.drawnToDate)} size="sm" />,
   },
   {
     key: 'status',
@@ -106,11 +112,9 @@ export default async function BuildProgressPage({
       title={COPY.title}
       sub={
         loan
-          ? `${formatINR(loan.disbursed)} of ${formatINR(
-              loan.sanctioned
-            )} drawn · ${loan.currentMilestone.label.toLowerCase()} cast · last verified ${formatDay(
-              loan.lastVerifiedOn
-            )}`
+          ? `${formatINR(loan.disbursed)} of ${formatINR(loan.sanctioned)} drawn${
+              loan.currentMilestone ? ` · ${loan.currentMilestone.label.toLowerCase()} cast` : ''
+            } · last verified ${formatDay(loan.lastVerifiedOn)}`
           : undefined
       }
       actions={<StatusPill tone="neutral" label="Preview" />}
@@ -129,6 +133,9 @@ export default async function BuildProgressPage({
   const sanctionHref = `/owner/loans/${loanId}/sanction`;
   const undrawn = loan.sanctioned - loan.disbursed;
   const paused = loan.tranches.some((tranche) => tranche.status === 'on_hold');
+  // `cost_to_complete_gap` is signed: negative is a shortfall, positive is room
+  // to spare. The clean case must not be told it is short.
+  const short = loan.costToCompleteGap < 0;
 
   return (
     <div className="flex flex-col gap-5">
@@ -154,7 +161,7 @@ export default async function BuildProgressPage({
             <CardTable
               columns={TRANCHE_COLUMNS}
               rows={loan.tranches}
-              caption="Every tranche on this loan: the milestone it pays for, the amount, and whether it has been released."
+              caption="Every tranche on this loan: the milestone it pays for, the amount, the cumulative total drawn after it, and whether it has been released."
               emptyMessage="No tranches have been scheduled on this loan yet."
             />
           </div>
@@ -172,9 +179,14 @@ export default async function BuildProgressPage({
             footer={COPY.photosNote}
           >
             <div className="grid grid-cols-3 gap-[10px]">
-              <PhotoSlot slotKey={`${loanId}-month-front`} label={COPY.slotOne} />
-              <PhotoSlot slotKey={`${loanId}-month-slab`} label={COPY.slotTwo} />
-              <PhotoSlot slotKey={`${loanId}-month-inside`} label={COPY.slotThree} />
+              {loan.photoSlots.map((slot) => (
+                <PhotoSlot
+                  key={slot.slotKey}
+                  slotKey={slot.slotKey}
+                  label={slot.label}
+                  guidance={slot.guidance}
+                />
+              ))}
             </div>
 
             <div className="mt-[18px] border-t border-line pt-[14px]">
@@ -211,9 +223,12 @@ export default async function BuildProgressPage({
             ]}
             footer={
               <p className="text-[12.5px] leading-[1.6] text-sub">
-                {COPY.shortLead}
-                <Figure value={formatINR(Math.abs(loan.costToCompleteGap))} tone="danger" />
-                {COPY.shortTail}
+                {short ? COPY.shortLead : COPY.surplusLead}
+                <Figure
+                  value={formatINR(Math.abs(loan.costToCompleteGap))}
+                  tone={short ? 'danger' : 'success'}
+                />
+                {short ? COPY.shortTail : COPY.surplusTail}
               </p>
             }
           />

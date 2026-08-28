@@ -87,13 +87,18 @@ export default async function RevisedContractPage({
   params: Promise<{ loanId: string; rev: string }>;
 }) {
   const { loanId, rev: revParam } = await params;
+  // `parseInt` stops at the first non-digit, so "2abc" would otherwise render
+  // revision 2 under a URL that does not name it.
   const rev = Number.parseInt(revParam, 10);
-  if (!Number.isInteger(rev) || rev < 1) notFound();
+  if (!Number.isInteger(rev) || rev < 1 || String(rev) !== revParam) notFound();
 
   const loan = previewLoan(loanId);
   if (!loan) notFound();
 
   const revision = previewRevision(loan, rev);
+  // A revision this loan does not have is a 404, not the first revision's copy
+  // under someone else's number.
+  if (!revision && rev !== loan.rev) notFound();
   const boqHref = `/owner/loans/${loanId}/boq`;
   const sanctionHref = `/owner/loans/${loanId}/sanction`;
 
@@ -248,9 +253,17 @@ export default async function RevisedContractPage({
               ]}
             />
             <div className="mt-[16px]">
-              <Button disabled title={COPY.downloadWhy} className="w-full">
+              <Button
+                disabled
+                title={COPY.downloadWhy}
+                aria-describedby="download-why"
+                className="w-full"
+              >
                 {COPY.download}
               </Button>
+              <p id="download-why" className="mt-[8px] text-[11.5px] text-faint">
+                {COPY.downloadWhy}
+              </p>
             </div>
           </Panel>
         </StickyRail>

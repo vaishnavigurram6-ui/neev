@@ -41,6 +41,10 @@ export interface PreviewTranche {
   label: string;
   sub: string;
   amount: number;
+  /** Cumulative drawn after this tranche — `disbursed_cum` in the draw schedule.
+   *  Carried so the ledger ties out against the loan's `disbursed` headline
+   *  instead of asking the reader to add the rows up. */
+  drawnToDate: number;
   status: TrancheStatus;
   statusLabel: string;
   tone: Tone;
@@ -53,12 +57,20 @@ export interface PreviewMilestone {
   state: 'done' | 'current' | 'todo';
 }
 
+export interface PreviewPhotoSlot {
+  slotKey: string;
+  label: string;
+  guidance: string;
+}
+
 export interface PreviewQuestion {
   number: number;
   text: string;
   statusLabel: string;
   tone: Tone;
 }
+
+export type ChangeOrderState = 'pending' | 'accepted' | 'declined';
 
 export interface PreviewChangeOrder {
   id: string;
@@ -70,7 +82,9 @@ export interface PreviewChangeOrder {
   delta: number;
   neevsRead: string;
   statusLabel: string;
-  pending: boolean;
+  /** Three states, not two: a declined change is settled but adds nothing to
+   *  the contract, so `!pending` is never a safe stand-in for "accepted". */
+  state: ChangeOrderState;
   tone: Tone;
 }
 
@@ -116,8 +130,10 @@ export interface PreviewLoan {
   lastVerifiedOn: string;
   tranches: PreviewTranche[];
   milestones: PreviewMilestone[];
-  /** The milestone the owner would report next. */
-  currentMilestone: PreviewMilestone;
+  /** The milestone the owner would report next, or null on a fully drawn loan —
+   *  there is then nothing to report, and the report screen says so rather than
+   *  pre-checking a disabled radio. */
+  currentMilestone: PreviewMilestone | null;
   /** What verifying that milestone releases. */
   nextRelease: number;
   /** Captions on the last verified photo set, from the pipeline's evidence notes. */
@@ -126,6 +142,9 @@ export interface PreviewLoan {
   changeOrders: PreviewChangeOrder[];
   /** Steel quantity on BoQ item 4.2 — the bill cross-check example. */
   steelQtyKg: number;
+  /** The month's photo slots. One scheme, shared by both progress screens, so a
+   *  photo uploaded from either lands in the same slot. */
+  photoSlots: PreviewPhotoSlot[];
   revisions: PreviewRevision[];
 }
 
@@ -187,6 +206,7 @@ function tranches1001(): PreviewTranche[] {
       label,
       sub: trancheSub(row.status, row.inspectionDate),
       amount,
+      drawnToDate: row.disbursedCum,
       status: row.status,
       statusLabel: STATUS_LABEL[row.status],
       tone: STATUS_TONE[row.status],
@@ -283,14 +303,25 @@ const CHANGE_ORDERS_1001: {
   },
 ];
 
-const CHANGE_ORDER_STATUS: Record<string, { label: string; pending: boolean }> = {
-  pending: { label: 'Awaiting your reply', pending: true },
-  accepted: { label: 'Accepted', pending: false },
-  declined: { label: 'Declined', pending: false },
+const CHANGE_ORDER_STATUS: Record<ChangeOrderState, { label: string }> = {
+  pending: { label: 'Awaiting your reply' },
+  accepted: { label: 'Accepted' },
+  declined: { label: 'Declined' },
 };
 
-/** Revision 2. The only block on this page with no fixture behind it: the diff
- *  list, its deltas and its three totals are the mockup's own, verbatim. */
+function changeOrderState(status: string): ChangeOrderState {
+  return status === 'accepted' || status === 'declined' ? status : 'pending';
+}
+
+/** Revision 2. The only block on any of these screens with no fixture behind
+ *  it: the diff list, its deltas and its three totals are the mockup's own,
+ *  verbatim.
+ *
+ *  Note the mockup does not reconcile with itself — its nine per-fix deltas sum
+ *  to +₹1,76,000 while its rail states +₹1,60,000 on the cover page (and a
+ *  ₹33,60,000 total against ₹32,00,000). Both figures are carried as authored:
+ *  the plan's global constraints say numbers come from the mockups verbatim and
+ *  are never recomputed or reconciled. Flagged for whoever owns the fixtures. */
 const REV2: PreviewRevision = {
   rev: 2,
   receivedOn: '2026-08-19',
@@ -378,10 +409,25 @@ const REV2: PreviewRevision = {
   ],
 };
 
+/** The three shots a milestone needs, keyed the way the seed keys its photo
+ *  rows: `{loanId}-{milestone}-{slot}`. Both progress screens read this, so the
+ *  "wide shot from the gate" is one slot and not two. */
+function photoSlots(loanId: string, milestoneKey: string): PreviewPhotoSlot[] {
+  return [
+    { slot: 'wide', label: 'Wide shot from the gate' },
+    { slot: 'work', label: 'The new work, close up' },
+    { slot: 'angle', label: 'Same angle as last month' },
+  ].map((entry) => ({
+    slotKey: `${loanId}-${milestoneKey}-${entry.slot}`,
+    label: entry.label,
+    guidance: 'Same spot every time — it is what makes the check instant.',
+  }));
+}
+
 function loan1001(): PreviewLoan {
   const tranches = tranches1001();
   const milestones = milestones1001();
-  const current = milestones.find((milestone) => milestone.state === 'current') ?? milestones[0];
+  const current = milestones.find((milestone) => milestone.state === 'current') ?? null;
   const currentTranche = tranches.find((tranche) => tranche.status !== 'paid');
 
   return {
@@ -420,7 +466,7 @@ function loan1001(): PreviewLoan {
       };
     }),
     changeOrders: CHANGE_ORDERS_1001.map((order, index) => {
-      const status = CHANGE_ORDER_STATUS[order.status] ?? CHANGE_ORDER_STATUS.pending;
+      const state = changeOrderState(order.status);
       return {
         id: `CO-${index + 1}`,
         title: order.title,
@@ -430,12 +476,13 @@ function loan1001(): PreviewLoan {
         proposedAmount: order.proposedAmount,
         delta: order.proposedAmount - order.signedAmount,
         neevsRead: order.neevsRead,
-        statusLabel: status.label,
-        pending: status.pending,
+        statusLabel: CHANGE_ORDER_STATUS[state].label,
+        state,
         tone: order.tone,
       };
     }),
     steelQtyKg: 4800,
+    photoSlots: photoSlots('1001', current?.key ?? 'unscheduled'),
     revisions: [REV2],
   };
 }

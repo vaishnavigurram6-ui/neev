@@ -116,8 +116,19 @@ export default async function UploadRevisionPage({
                   {COPY.next}
                 </Link>
               </div>
-              <div className="flex justify-end">
-                <Button type="submit" variant="primary" disabled title={COPY.submitWhy}>
+              <div className="flex items-center justify-end gap-3">
+                {/* A disabled button is out of the tab order and its `title` is
+                    not reliably announced, so the reason is visible text too. */}
+                <p id="recheck-why" className="text-[11.5px] text-faint">
+                  {COPY.submitWhy}
+                </p>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled
+                  title={COPY.submitWhy}
+                  aria-describedby="recheck-why"
+                >
                   {COPY.submit}
                 </Button>
               </div>

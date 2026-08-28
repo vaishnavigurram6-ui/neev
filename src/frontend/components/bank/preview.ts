@@ -34,7 +34,8 @@ export interface ContractorRow {
   };
 }
 
-/** Above `danger`, it is a warn; above `warn`, a success. One band per metric. */
+/** At or above `danger` reads danger; at or above `warn` reads warn; below both
+ *  reads success. One band per metric, so no component takes a colour prop. */
 function band(value: number, danger: number, warn: number): Tone {
   if (value >= danger) return 'danger';
   if (value >= warn) return 'warn';
@@ -91,7 +92,8 @@ export function contractorScorecard(): ContractorRow[] {
         flags: band(row.flagsPerBoq, 5, 2),
         underspecified: band(row.underspecifiedShare, 0.25, 0.1),
         overrun: band(row.overrunPct, 0.15, 0.05),
-        quiet: band(row.sitesGoneQuiet, 1, 1),
+        // One quiet site is a warning; two or more is the mockup's red.
+        quiet: band(row.sitesGoneQuiet, 2, 1),
       },
     }))
     .sort((a, b) => b.flagsPerBoq - a.flagsPerBoq);

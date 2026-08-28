@@ -28,7 +28,7 @@ const COPY = {
     'One CSV or Excel — loan IDs, sanctions, tranches, milestones. We map the columns automatically.',
   uploadLabel: 'Upload CSV / XLSX',
   uploadHint: 'Drop the draw schedule here, or choose a file.',
-  uploadedTail: ' loans detected · columns mapped',
+  uploadedTail: ' loans on the book · columns mapped on upload',
 
   losTitle: 'Connect your LOS / core banking',
   losBody:
@@ -103,10 +103,21 @@ export default function BankSetupPage() {
           <h2 className="text-[15px] font-bold text-ink">{COPY.losTitle}</h2>
           <p className="text-[12.5px] leading-[1.6] text-sub">{COPY.losBody}</p>
           <div className="mt-auto flex flex-col gap-[10px] pt-[6px]">
-            <Button skin="bank" disabled title={COPY.losWhy} className="w-full">
+            <Button
+              skin="bank"
+              disabled
+              title={COPY.losWhy}
+              aria-describedby="los-why"
+              className="w-full"
+            >
               {COPY.losCta}
             </Button>
             <p className="text-[11px] text-faint">{COPY.losNote}</p>
+            {/* Disabled controls are out of the tab order and `title` is not
+                reliably announced, so every reason is on the page as text. */}
+            <p id="los-why" className="text-[11px] text-faint">
+              {COPY.losWhy}
+            </p>
           </div>
         </Card>
 
@@ -114,10 +125,19 @@ export default function BankSetupPage() {
           <h2 className="text-[15px] font-bold text-ink">{COPY.singleTitle}</h2>
           <p className="text-[12.5px] leading-[1.6] text-sub">{COPY.singleBody}</p>
           <div className="mt-auto flex flex-col gap-[10px] pt-[6px]">
-            <Button skin="bank" disabled title={COPY.singleWhy} className="w-full">
+            <Button
+              skin="bank"
+              disabled
+              title={COPY.singleWhy}
+              aria-describedby="single-why"
+              className="w-full"
+            >
               {COPY.singleCta}
             </Button>
             <p className="text-[11px] text-faint">{COPY.singleNote}</p>
+            <p id="single-why" className="text-[11px] text-faint">
+              {COPY.singleWhy}
+            </p>
           </div>
         </Card>
       </div>
@@ -138,10 +158,18 @@ export default function BankSetupPage() {
             <span className="tnum flex-1 rounded-bank bg-chip px-[14px] py-[10px] text-[12px] text-sub">
               {inviteLink}
             </span>
-            <Button skin="bank" disabled title={COPY.inviteWhy}>
+            <Button
+              skin="bank"
+              disabled
+              title={COPY.inviteWhy}
+              aria-describedby="invite-why"
+            >
               {`${COPY.inviteCtaLead}${SETUP.loanCount}`}
             </Button>
           </div>
+          <p id="invite-why" className="mt-[8px] text-[11px] text-faint">
+            {COPY.inviteWhy}
+          </p>
         </Card>
 
         <Card skin="bank" className="p-[22px]">
@@ -214,8 +242,17 @@ export default function BankSetupPage() {
 
             <p className="text-[11.5px] leading-[1.6] text-faint">{COPY.thresholdsNote}</p>
 
-            <div className="flex justify-end">
-              <Button skin="bank" type="submit" disabled title={COPY.saveWhy}>
+            <div className="flex items-center justify-end gap-3">
+              <p id="save-why" className="text-[11px] text-faint">
+                {COPY.saveWhy}
+              </p>
+              <Button
+                skin="bank"
+                type="submit"
+                disabled
+                title={COPY.saveWhy}
+                aria-describedby="save-why"
+              >
                 {COPY.save}
               </Button>
             </div>
