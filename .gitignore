@@ -24,3 +24,6 @@ demo_assets/
 
 # Local scratch, not part of the project
 _to_delete/
+
+# Batch agent worktrees — branches live on the remote, these are scratch
+.claude/worktrees/
