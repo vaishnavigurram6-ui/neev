@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/*
+  Neev theme. THE ONLY FILE IN THE APP THAT MAY CONTAIN A HEX COLOUR.
+
+  Lifted from Neev Landing.dc.html's custom-property block (the only prototype
+  with a working dark mode) plus the handoff README's token table. The other 15
+  prototypes hardcode hex inline; that does not survive the port.
+
+  Three tokens are darkened from the handoff values because they fail WCAG 2.1
+  AA at the sizes the designs use them. Measured with the standard relative
+  luminance formula:
+
+    --faint : #9b938a on #faf9f7 = 2.88:1  -> #77716a = 4.58:1
+    --danger: #b4552e on #f9ece5 = 4.24:1  -> #ad522c = 4.52:1
+    --warn  : #8a6d4f on #f4efe6 = 4.19:1  -> #83684b = 4.53:1
+
+  The danger and warn pairs are the flag pills — the most repeated element in
+  the bundle — set at 11px, which is normal text needing 4.5:1, not large text
+  needing 3:1. Everything else measured clean: sub 5.38, action 5.12,
+  success 6.00, ink 14.22, bank-inactive 6.99.
+*/
+
+:root {
+  /* surfaces */
+  --bg: #faf9f7;
+  --card: #ffffff;
+  --line: #ece9e4;
+  --chip: #f2f0ec;
+  --rowline: #f5f3f0;
+  --hover: #f7f6f4;
+  --input-border: #dcd7d0;
+
+  /* text */
+  --ink: #2b2622;
+  --sub: #6d665e;
+  --faint: #77716a;
+
+  /* actions */
+  --action: #3d7a52;
+  --action-hover: #336847;
+
+  /* tones */
+  --success: #2f6647;
+  --success-tint: #eaf4ee;
+  --danger: #ad522c;
+  --danger-tint: #f9ece5;
+  --warn: #83684b;
+  --warn-tint: #f4efe6;
+
+  /* brand — logo only, never text */
+  --brick: #e07856;
+
+  /* bank console chrome */
+  --bank-bar: #111827;
+  --bank-ink: #111827;
+  --bank-inactive: #9ca3af;
+  --bank-accent: #2d5bff;
+  --bank-danger: #b42318;
+  --bank-danger-tint: #fef3f2;
+  --bank-warn: #b54708;
+  --bank-warn-tint: #fffaeb;
+  --bank-success: #067647;
+  --bank-success-tint: #ecfdf3;
+  --bank-row-flagged: #fffbfa;
+
+  /* focus ring — visible on every interactive element */
+  --focus: #3d7a52;
+}
+
+[data-theme="dark"] {
+  --bg: #241c15;
+  --card: #2e251d;
+  --line: #3f342a;
+  --chip: #332a21;
+  --rowline: #362c23;
+  --hover: #362c23;
+  --input-border: #4a3c30;
+  --ink: #f3e9dc;
+  --sub: #b8a794;
+  --faint: #9d8d7b;
+  --action: #4c9367;
+  --action-hover: #5aa878;
+  --success: #7cc79a;
+  --success-tint: #26382c;
+  --danger: #e9a184;
+  --danger-tint: #3b2a22;
+  --warn: #d4bb96;
+  --warn-tint: #362e22;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-chip: var(--chip);
+  --color-rowline: var(--rowline);
+  --color-hover: var(--hover);
+  --color-input-border: var(--input-border);
+  --color-ink: var(--ink);
+  --color-sub: var(--sub);
+  --color-faint: var(--faint);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+  --color-success: var(--success);
+  --color-success-tint: var(--success-tint);
+  --color-danger: var(--danger);
+  --color-danger-tint: var(--danger-tint);
+  --color-warn: var(--warn);
+  --color-warn-tint: var(--warn-tint);
+  --color-brick: var(--brick);
+  --color-bank-bar: var(--bank-bar);
+  --color-bank-inactive: var(--bank-inactive);
+  --color-bank-accent: var(--bank-accent);
+  --color-bank-danger: var(--bank-danger);
+  --color-bank-danger-tint: var(--bank-danger-tint);
+  --color-bank-warn: var(--bank-warn);
+  --color-bank-warn-tint: var(--bank-warn-tint);
+  --color-bank-success: var(--bank-success);
+  --color-bank-success-tint: var(--bank-success-tint);
+  --color-bank-row-flagged: var(--bank-row-flagged);
+
+  --font-display: var(--font-baloo), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --radius-card: 15px;
+  --radius-pill: 22px;
+  --radius-bank: 10px;
+
+  --shadow-card: 0 1px 2px rgb(20 15 10 / 0.05);
+}
+
+html {
+  color-scheme: light;
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* Laptop-only target: 1280-1920px. Below 1280 degrades gracefully; the page
+     body must never scroll horizontally. */
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Every interactive element gets a visible focus ring. The prototypes have no
+   real controls at all, so nothing about focus can be ported — it is added. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Numbers, ids and ratios are always mono — a hard rule from the handoff. */
+.tnum {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes nv-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
