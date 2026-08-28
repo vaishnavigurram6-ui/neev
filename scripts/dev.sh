@@ -58,6 +58,20 @@ if [ ! -d "src/frontend/node_modules" ]; then
   (cd src/frontend && npm install)
 fi
 
+# Pin the backend port where Next will find it however the frontend is started.
+# NEEV_API_BASE passed inline only survives when the frontend is launched by this
+# script; start it by hand -- or let this script's env not propagate -- and
+# lib/api.ts silently falls back to its hardcoded :8000 default, which is how a
+# frontend ends up calling a port it does not own. .env.local is read by Next
+# automatically, so `npm run dev` on its own now points at the right backend too.
+ENV_LOCAL="src/frontend/.env.local"
+{
+  echo "# Written by scripts/dev.sh -- do not edit by hand."
+  echo "# The backend port this script chose. Regenerated on every run."
+  echo "NEEV_API_BASE=http://127.0.0.1:$BE_PORT"
+} > "$ENV_LOCAL"
+echo "Wrote $ENV_LOCAL -> http://127.0.0.1:$BE_PORT"
+
 echo "Seeding the database..."
 (cd src/backend && .venv/bin/python -m app.db.seed --reset)
 
