@@ -12,6 +12,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+from app.api.deps import OptionalUser
 from app.schemas.events import DoneEvent
 from app.services.jobs import registry
 
@@ -47,14 +48,18 @@ def job_status(job_id: str) -> JobStatusResponse:
 
 
 @router.get("/{job_id}/events")
-async def job_events(job_id: str) -> StreamingResponse:
+async def job_events(job_id: str, user: OptionalUser = None) -> StreamingResponse:
+    # Where an unknown job sends the reader. Role-aware, so a lender whose tab
+    # reloads after a restart is not dropped into the borrower onboarding flow.
+    fallback_redirect = "/bank/portfolio" if user and user.role == "bank" else "/owner/onboarding"
+
     async def generate() -> AsyncIterator[str]:
         try:
             async for event in registry.stream(job_id):
                 yield f"data: {event.model_dump_json()}\n\n"
         except KeyError:
             # Unknown job. Send the reader somewhere real and close.
-            fallback = DoneEvent(redirect="/owner/onboarding")
+            fallback = DoneEvent(redirect=fallback_redirect)
             yield f"data: {fallback.model_dump_json()}\n\n"
 
     return StreamingResponse(generate(), media_type="text/event-stream", headers=SSE_HEADERS)

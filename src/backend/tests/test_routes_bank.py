@@ -7,6 +7,15 @@ double-clicking "Hold" must not write two entries into the loan file.
 
 # `client` and `seeded_db` come from tests/conftest.py.
 
+BANK_LOGIN = {"role": "bank", "phone": "9812345678"}
+OWNER_LOGIN = {"role": "owner", "phone": "9999999999", "loan_id": "1001"}
+
+
+def _as_officer(client):
+    """Deciding a tranche needs a real lender session; reading does not."""
+    assert client.post("/api/auth/session", json=BANK_LOGIN).status_code == 200
+
+
 DESIGN_ORDER = ["1003", "1004", "1001", "1009", "1006", "1010", "1002", "1007", "1008", "1005"]
 
 
@@ -84,6 +93,7 @@ def test_a_tranche_on_an_unknown_loan_is_404(client):
 
 
 def test_a_decision_persists_with_its_evidence_snapshot(client):
+    _as_officer(client)
     response = client.post(
         "/api/loans/1001/tranches/3/decision",
         json={"action": "HOLD", "note": "Re-scope first."},
@@ -107,6 +117,7 @@ def test_a_decision_persists_with_its_evidence_snapshot(client):
 
 
 def test_a_second_decision_updates_rather_than_duplicating(client):
+    _as_officer(client)
     client.post("/api/loans/1001/tranches/3/decision", json={"action": "HOLD"})
     second = client.post(
         "/api/loans/1001/tranches/3/decision",
@@ -128,6 +139,7 @@ def test_a_second_decision_updates_rather_than_duplicating(client):
 
 
 def test_the_decision_response_reflects_the_latest_action(client):
+    _as_officer(client)
     first = client.post("/api/loans/1001/tranches/3/decision", json={"action": "HOLD"})
     again = client.post("/api/loans/1001/tranches/3/decision", json={"action": "RELEASE"})
     assert first.json()["action"] == "HOLD"
@@ -135,7 +147,7 @@ def test_the_decision_response_reflects_the_latest_action(client):
 
 
 def test_who_decided_comes_from_the_session_not_the_body(client):
-    client.post("/api/auth/session", json={"role": "bank", "phone": "9812345678"})
+    _as_officer(client)
     client.post(
         "/api/loans/1001/tranches/3/decision",
         json={"action": "HOLD", "decided_by": "Someone Else"},
@@ -152,11 +164,13 @@ def test_who_decided_comes_from_the_session_not_the_body(client):
 
 
 def test_an_unknown_action_is_rejected(client):
+    _as_officer(client)
     response = client.post("/api/loans/1001/tranches/3/decision", json={"action": "YOLO"})
     assert response.status_code == 422
 
 
 def test_a_decision_on_an_unknown_tranche_is_404(client):
+    _as_officer(client)
     response = client.post("/api/loans/1001/tranches/99/decision", json={"action": "HOLD"})
     assert response.status_code == 404
 
@@ -176,3 +190,43 @@ def test_contractors_returns_the_scorecard(client):
     assert "Kompally" in watch["meta"]
     # Worst tier first: the screen exists to surface the risky builders.
     assert [row["tier"] for row in body["rows"]] == ["WATCH", "REVIEW", "RELIABLE"]
+
+
+# ---------------------------------------------------------------- the boundary
+
+
+def test_deciding_a_tranche_needs_a_session(client):
+    # A decision goes into the loan file under somebody's name. Without a
+    # session there is nobody to attribute it to.
+    response = client.post("/api/loans/1001/tranches/3/decision", json={"action": "HOLD"})
+    assert response.status_code == 401
+
+
+def test_a_borrower_cannot_decide_their_own_tranche(client):
+    client.post("/api/auth/session", json=OWNER_LOGIN)
+    response = client.post("/api/loans/1001/tranches/3/decision", json={"action": "RELEASE"})
+    assert response.status_code == 403
+
+    from sqlalchemy import func, select
+
+    from app.db import models
+    from app.db.session import SessionLocal
+
+    with SessionLocal() as db:
+        assert db.scalar(select(func.count()).select_from(models.Decision)) == 0
+
+
+def test_a_borrower_cannot_read_the_whole_book(client):
+    # The hotlist names every borrower in the book, so one borrower's session
+    # reading it would undo the owner/loan boundary a loan at a time.
+    client.post("/api/auth/session", json=OWNER_LOGIN)
+    assert client.get("/api/portfolio").status_code == 403
+    assert client.get("/api/contractors").status_code == 403
+    assert client.get("/api/loans/1001/tranches/3").status_code == 403
+
+
+def test_a_lender_reads_all_three(client):
+    _as_officer(client)
+    assert client.get("/api/portfolio").status_code == 200
+    assert client.get("/api/contractors").status_code == 200
+    assert client.get("/api/loans/1001/tranches/3").status_code == 200

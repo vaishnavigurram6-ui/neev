@@ -6,6 +6,7 @@ Progress screen renders and the Update Progress screen reads for its stage list.
 """
 
 from datetime import datetime, timezone
+from uuid import uuid4
 
 from fastapi import APIRouter, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel
@@ -87,12 +88,15 @@ async def report_milestone(
         )
 
     tranche = _current_tranche(loan)
-    existing = sum(1 for p in tranche.photos if UPLOAD_SLOT_PREFIX in p.slot_key)
-    for index, photo in enumerate(uploaded, start=existing + 1):
+    for photo in uploaded:
         db.add(
             models.Photo(
                 tranche_id=tranche.id,
-                slot_key=f"{loan.id}-t{tranche.number}-{UPLOAD_SLOT_PREFIX}{index}",
+                # A random suffix rather than a running count: `slot_key` has no
+                # unique constraint, and a count-derived index repeats itself
+                # after a photo row is deleted or when two reports interleave,
+                # which hands any slot-keyed list duplicate keys.
+                slot_key=f"{loan.id}-t{tranche.number}-{UPLOAD_SLOT_PREFIX}-{uuid4().hex[:8]}",
                 caption=note or photo.filename,
                 # No blob store in this phase. The row records that a photo
                 # arrived and under which slot; the bytes are not kept.
@@ -107,11 +111,14 @@ async def report_milestone(
 
 
 def _current_tranche(loan: models.Loan) -> models.Tranche:
-    """The tranche a photo is evidence for: the one awaiting a decision.
+    """The tranche a photo is evidence for.
 
-    With nothing on hold, the newest tranche in the schedule is the one being
-    worked toward. A loan with no draw schedule at all has nothing to attach
-    evidence to, and is a 404.
+    A tranche on hold is waiting on exactly this evidence, so it wins. Failing
+    that it is the NEXT unpaid milestone, not the last one in the schedule — a
+    borrower reporting foundation progress on a five-stage schedule must not
+    have their photos filed against `finishing`. A fully paid loan falls back to
+    its final tranche, and a loan with no draw schedule at all has nothing to
+    attach evidence to and is a 404.
     """
     if not loan.tranches:
         raise HTTPException(
@@ -120,5 +127,8 @@ def _current_tranche(loan: models.Loan) -> models.Tranche:
         )
     held = [t for t in loan.tranches if t.status == "on_hold"]
     if held:
-        return max(held, key=lambda t: t.number)
+        return min(held, key=lambda t: t.number)
+    upcoming = [t for t in loan.tranches if t.status != "paid"]
+    if upcoming:
+        return min(upcoming, key=lambda t: t.number)
     return max(loan.tranches, key=lambda t: t.number)

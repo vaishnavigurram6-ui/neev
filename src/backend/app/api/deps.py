@@ -7,6 +7,16 @@ dropping in genuine auth later means replacing `_parse_cookie` and nothing else.
 The cookie's wire format is `role:loan_id:percent-encoded-name`, which is what
 `src/frontend/lib/session.ts` and `src/frontend/proxy.ts` already parse. Any
 change here is a change there.
+
+TO RECONCILE (frontend side, Task 14): the two readers derive different text
+from the same cookie. `readSession()` renders the officer's sub-line as
+"Credit officer · Retail assets" and defaults an unnamed owner to "Ravi Kumar";
+this module uses the Contractor Scorecard mockup's "Credit officer · Hyderabad"
+and defaults to "Owner". The mockups are authoritative on copy, so the frontend
+is the side to change. `decodeURIComponent` also throws on a lone "%" where
+Python's `unquote` does not, so a mangled cookie is a session here and no
+session there — harmless while the two agree on role and loan id, but the
+divergence is worth closing when the cookie stops being a mock.
 """
 
 from typing import Annotated, Iterator, Literal
@@ -139,6 +149,46 @@ def get_authorized_loan(loan: CurrentLoan, user: OptionalUser) -> models.Loan:
 
 
 AuthorizedLoan = Annotated[models.Loan, Depends(get_authorized_loan)]
+
+
+def require_bank_reader(user: OptionalUser) -> SessionUser | None:
+    """The bank's own screens: the whole book, and the builders behind it.
+
+    An owner session is refused outright — the hotlist names every borrower in
+    the book, so letting one borrower's session read it would undo the
+    owner/loan boundary `get_authorized_loan` enforces one loan at a time.
+    Anonymous is allowed through, for the same reason loan reads are (see the
+    module docstring in app/api/__init__.py).
+    """
+    if user is not None and user.role != "bank":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This view is for lenders. Your session is a borrower's.",
+        )
+    return user
+
+
+BankReader = Annotated[SessionUser | None, Depends(require_bank_reader)]
+
+
+def require_bank_officer(user: CurrentUser) -> SessionUser:
+    """A real bank session, required. Used for writes, not reads.
+
+    Reads are open in this phase because the cookie is not yet a credential.
+    A write is different: a tranche decision goes into the loan file under
+    somebody's name, so it needs a session to attribute it to and that session
+    has to be a lender's. Without this an owner could release their own tranche
+    and be recorded as the officer who approved it.
+    """
+    if user.role != "bank":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only a lender may decide a tranche.",
+        )
+    return user
+
+
+BankOfficer = Annotated[SessionUser, Depends(require_bank_officer)]
 
 
 def get_tranche(

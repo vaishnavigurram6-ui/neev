@@ -14,7 +14,7 @@ from typing import Literal
 from fastapi import APIRouter, Query
 from sqlalchemy import select
 
-from app.api.deps import DbSession
+from app.api.deps import BankReader, DbSession
 from app.db import models
 from app.mappers.portfolio import to_portfolio
 from app.schemas.views import PortfolioView
@@ -23,13 +23,24 @@ router = APIRouter(prefix="/api", tags=["portfolio"])
 
 PortfolioFilter = Literal["all", "needs_action", "on_track"]
 
-# "Needs action" is the union of the two recommendations that stop a release.
+# "Needs action" is every recommendation that stops a release. The plan names
+# HOLD and INSPECT; ESCALATE joins them because a loan escalated to committee is
+# the last thing that should read as on track. No seeded loan is ESCALATE, so
+# this widens nothing today.
+#
+# KNOWN INCONSISTENCY: the "NEEDS ACTION" stat card in mappers/portfolio.py
+# counts HOLD only, so it reads 3 above a filter that returns 5 rows. That
+# card's figure also feeds CAPITAL AT RISK, whose value the mockup fixes, so
+# reconciling the two is a change to Task 10's mapper, not to this filter.
 NEEDS_ACTION = {"HOLD", "INSPECT", "ESCALATE"}
 
 
 @router.get("/portfolio", response_model=PortfolioView)
 def portfolio(
     db: DbSession,
+    # Bank-only: this table names every borrower in the book, so a borrower's
+    # own session must not read it.
+    _reader: BankReader = None,
     # Named `filter` because that is the query string the URL-state rule fixes;
     # shadowing the builtin inside one function signature is the lesser evil.
     filter: PortfolioFilter = Query(  # noqa: A002

@@ -12,7 +12,7 @@ from typing import Literal
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from app.api.deps import AuthorizedLoan, CurrentTranche, DbSession, OptionalUser
+from app.api.deps import AuthorizedLoan, BankOfficer, BankReader, CurrentTranche, DbSession
 from app.db import models
 from app.mappers.tranche import to_tranche_decision
 from app.schemas.views import TrancheDecisionView
@@ -38,7 +38,11 @@ class DecisionResponse(BaseModel):
 
 
 @router.get("/{loan_id}/tranches/{tranche_number}", response_model=TrancheDecisionView)
-def tranche_decision(loan: AuthorizedLoan, tranche: CurrentTranche) -> TrancheDecisionView:
+def tranche_decision(
+    loan: AuthorizedLoan, tranche: CurrentTranche, _reader: BankReader = None
+) -> TrancheDecisionView:
+    """The officer's view of one tranche. Bank-only: it carries the officer's
+    narrative alongside the borrower's."""
     return to_tranche_decision(loan, tranche)
 
 
@@ -48,7 +52,7 @@ def decide(
     loan: AuthorizedLoan,
     tranche: CurrentTranche,
     db: DbSession,
-    user: OptionalUser = None,
+    officer: BankOfficer,
 ) -> DecisionResponse:
     """Idempotent per tranche: a second POST updates the one row.
 
@@ -66,7 +70,7 @@ def decide(
 
     decision.action = body.action
     decision.note = body.note
-    decision.decided_by = user.name if user else "credit officer"
+    decision.decided_by = officer.name
     decision.decided_at = decided_at
     # The whole view the officer was looking at, as JSON. This is what makes the
     # trail auditable later: the figures are frozen at decision time, so a
