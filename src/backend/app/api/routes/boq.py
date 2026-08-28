@@ -5,18 +5,14 @@ back a job id; the analysis runs behind `PipelineRunner` and is watched over
 SSE. That is what lets the same screen serve a 12-second fixture replay and a
 two-minute live run without knowing which it is watching.
 
-OPEN GAP — nothing persists the analysed revision. `FixtureRunner` emits events
-and touches no database, and no live runner exists yet, so a finished run leaves
-`BoqRevision` exactly as it was: on loan 1001 the rev stays 1, and on the eight
-loans with no seeded revision the run's own `DoneEvent(redirect=".../boq")`
-points at a page that answers 404.
-
-This route cannot close it. The runner is what produces the output, so the
-runner (or the job registry driving it) is what must write the revision and its
-`raw_output`; `app/api/analysis.py` already reads `raw_output` first and would
-pick it up with no change here. A precondition in this route could not work
-either: "can this loan be analysed?" is answerable only per mode, and no route
-may read NEEV_MODE. Flagged for the plan's Task 5 / Task 15 owners.
+CLOSED (2026-08-28) — this used to note that nothing persisted the analysed
+revision, so a finished run left `BoqRevision` untouched and the run's own
+`DoneEvent` redirected to a page that answered 404. It is fixed where it
+belonged: `PipelineRunner` gained `final_output()`, and `JobRegistry._persist`
+writes the revision and its `raw_output` through `app/services/persistence.py`.
+`app/api/analysis.py` reads `raw_output` first, so a live run substitutes with no
+change here. This route still reads no mode, which is the property that made the
+fix possible in the first place.
 """
 
 from fastapi import APIRouter, File, Form, UploadFile

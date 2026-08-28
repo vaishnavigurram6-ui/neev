@@ -19,25 +19,87 @@ BoQ pdf + photos + loan context
   → explainer        (owner view + credit-officer view, numbers from upstream state only)
 ```
 
+## The application
+
+Three packages, one direction of dependency:
+
+```
+src/frontend  →  src/backend  →  authored, pipeline-shaped fixtures
+src/agents    →  standalone, driven by `adk web`
+```
+
+- **`src/agents/neev_pipeline/`** — the ADK pipeline above. Run `adk web` from
+  `src/agents/`; it discovers `neev_pipeline.agent.root_agent`. Unchanged by the
+  application work.
+- **`src/backend/`** — FastAPI + SQLAlchemy + SQLite. 17 API paths, 115 tests.
+  Declares **no** Google dependency: there is no `google` package in its venv, so
+  it cannot make a billed call.
+- **`src/frontend/`** — Next.js App Router + Tailwind v4. 17 routes, all 15
+  handoff screens, role enforcement in `proxy.ts`.
+
+### Run it
+
+```bash
+bash scripts/dev.sh          # both servers, seeded, fixture mode
+```
+
+Prints the four demo URLs. See **`docs/Neev_Demo_Runbook.md`** for what to say at
+each one.
+
+### Test it
+
+```bash
+python3 -m tests.test_offline                                  # 28, no venv, no network
+cd src/backend && .venv/bin/python -m pytest tests/ -q         # 115
+cd src/frontend && npm run verify                              # typecheck, lint, no-raw-hex, build
+```
+
+`src/backend/tests/test_golden_path.py` walks all four demo beats through the real
+HTTP surface, and asserts structurally that no billed call is reachable.
+
+### Fixture mode, and why
+
+`NEEV_MODE` defaults to `fixture` and falls back to `fixture` for any
+unrecognised value, so a typo cannot select the live path. Live mode additionally
+requires `NEEV_ALLOW_BILLED_CALLS=1`; without it, constructing the live runner
+raises. Backend tests block outbound sockets.
+
+The fixtures are **shaped like the pipeline's real output** — the five ADK
+`output_key` shapes — not like the screens, and
+`src/backend/tests/test_fixture_contract.py` proves every fixture validates
+against the schemas a live run must emit. So going live changes where the object
+comes from and nothing else. `scripts/record_golden_run.py` captures a real run
+into the same schema; it refuses to start unless billed calls are explicitly
+permitted.
+
 ## Layout
 
-- `src/agents/neev_pipeline/` — the agent package (run `adk web` from `src/agents/`; it
-  discovers `neev_pipeline.agent.root_agent`)
-- `src/agents/neev_pipeline/tools/` — grounding tools; all thresholds live in
-  `src/agents/neev_pipeline/config.py`
+- `src/agents/neev_pipeline/` — the agent package; thresholds in `config.py`,
+  grounding tools in `tools/`
+- `src/backend/app/` — `api/routes/`, `db/`, `schemas/`, `services/` (the
+  `PipelineRunner` seam), `mappers/` (the only presentation-aware layer),
+  `fixtures/`
+- `src/frontend/` — `app/` (route groups `(marketing)`, `(owner)`, `(bank)`),
+  `components/ui/` (the shared kit), `lib/`
 - `fixtures/` — `sample_boq.pdf` (Ravi golden case: 40 items, 4 seeded flaws),
   `clean_boq.pdf` (negative test: benchmark-aligned, full scope, GST stated),
   `rate_benchmarks.csv` (30 CPWD-DSR-derived rates — see `verified` column),
   `draw_schedule.csv` (10 loans; 1001 = golden HOLD case, 1002 = clean case)
-- `scripts/` — `load_bigquery.sh` (loads fixtures + portfolio view),
-  `boq_data.py` + `make_sample_boq.py --all` (regenerate both BoQ PDFs),
-  `golden_run.py` (programmatic §3 test loop, needs GCP)
+- `scripts/` — `dev.sh` (start both servers, seeded, fixture mode),
+  `load_bigquery.sh` (loads fixtures + portfolio view), `boq_data.py` +
+  `make_sample_boq.py --all` (regenerate both BoQ PDFs), `golden_run.py`
+  (programmatic pipeline test loop, needs GCP), `record_golden_run.py`
+  (captures a live run into the fixture schema — refuses to run unless billed
+  calls are explicitly permitted)
 - `tests/` — offline suite, no GCP creds needed: `python3 -m tests.test_offline`
-- `docs/` — hackathon submission, demo plan, implementation plan, data inventory
+- `docs/` — `Neev_Demo_Runbook.md` (start here to demo), setup guide,
+  `superpowers/specs/` and `superpowers/plans/` for the design and build plan
 - `figures/` — 6 pitch diagrams
 - `HANDOFF.md` — day-1 drop notes and remaining to-dos
 
-## Run (Cloud Shell)
+## Run the pipeline alone (Cloud Shell)
+
+Separate from the web app, and the only part that spends credits:
 
 ```bash
 python3.11 -m venv src/agents/.venv && source src/agents/.venv/bin/activate

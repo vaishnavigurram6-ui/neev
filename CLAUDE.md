@@ -67,3 +67,21 @@ Frontend uses `npm`.
 - `design_handoff_neev/` — 16 hi-fi screen prototypes plus a build-notes README
 - `fixtures/` — golden-case data: loan 1001 (Ravi, flagged) and 1002 (clean)
 - `tests/test_offline.py` — 28 checks, no credentials, no network, ~0.002s
+- `docs/Neev_Demo_Runbook.md` — how to run and narrate the demo; start here
+- `scripts/dev.sh` — starts both servers, seeded, in fixture mode
+
+## State of the build (2026-08-28)
+
+Phases 0-2 of the plan are complete and merged: all 21 tasks except the final
+polish. The backend serves 17 API paths; the frontend serves 17 routes covering
+all 15 handoff screens. Verify with:
+
+```bash
+python3 -m tests.test_offline                             # 28
+cd src/backend && .venv/bin/python -m pytest tests/ -q    # 115
+cd src/frontend && npm run verify                         # 4 checks
+```
+
+The mapper layer (`src/backend/app/mappers/`) is the only presentation-aware
+code, and `app/services/runner.py::get_runner` is the only place that reads
+`NEEV_MODE`. Both properties are load-bearing — keep them.

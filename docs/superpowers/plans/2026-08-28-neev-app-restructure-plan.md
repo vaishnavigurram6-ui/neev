@@ -16,7 +16,16 @@
 
 *Last updated 2026-08-28.*
 
-**Start at Task 2.** Task 1 is partly done and the pipeline is already relocated — see the table.
+**COMPLETE as of 2026-08-28.** All 21 tasks are implemented and merged to `main`.
+
+Verified on the merged tree: 115 backend tests, `npm run verify` clean on all
+four checks across 17 frontend routes, the 28 offline tests unchanged, and no
+`google` namespace in the backend venv at all — so no billed call is reachable.
+`src/backend/tests/test_golden_path.py` walks all four demo beats through the real
+HTTP surface. To run it: `bash scripts/dev.sh`; to narrate it:
+`docs/Neev_Demo_Runbook.md`.
+
+The history below is kept as the build record.
 
 | Done | Commit | Detail |
 |---|---|---|
