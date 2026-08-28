@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 const SESSION_COOKIE = 'neev_session';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const needsOwner = pathname.startsWith('/owner');
   const needsBank = pathname.startsWith('/bank');
