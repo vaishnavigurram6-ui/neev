@@ -1,0 +1,102 @@
+"""The live ADK path. Written and type-checked; NEVER EXECUTED in this build.
+
+It ships unexercised by design (spec §5.1 and the CLAUDE.md dry run): the owner
+validates it in Cloud Shell once credits are approved. Two properties make that
+safe to leave here:
+
+  1. Every ADK import is inside the method body, so this module imports cleanly
+     in the backend venv, which has no google-adk at all.
+  2. Construction goes through get_runner(), which refuses without an explicit
+     NEEV_ALLOW_BILLED_CALLS=1.
+
+The event sequence mirrors FixtureRunner's exactly, because the Analyzing
+screen's five phases are all sub-steps inside boq_analyst — they are NOT the five
+agents, contrary to the handoff README. The tool-call -> phase map is spec §5.2.
+"""
+
+from typing import AsyncIterator
+
+from app.core.settings import assert_billed_calls_permitted
+from app.schemas.events import DoneEvent, PhaseEvent, PipelineEvent
+from app.services.runner import BoqAnalysisRequest
+
+# Which display phase each ADK tool call advances (spec §5.2).
+TOOL_TO_PHASE: dict[str, int] = {
+    "lookup_benchmark_rate": 1,
+    "check_rate_deviation": 1,
+    "check_missing_scope": 2,
+    "check_steel_rcc_ratio": 3,
+    "check_payment_schedule": 4,
+}
+
+PHASE_NAMES: list[str] = [
+    "Reading the document",
+    "Checking every rate against Kompally benchmarks",
+    "Looking for missing scope",
+    "Checking specifications and quantities",
+    "Reviewing the payment schedule and terms",
+]
+
+
+class AdkPipelineRunner:
+    """Drives the real five-agent SequentialAgent through an InMemoryRunner."""
+
+    async def run(self, req: BoqAnalysisRequest) -> AsyncIterator[PipelineEvent]:
+        assert_billed_calls_permitted()
+
+        # Imported here, not at module scope: the backend venv has no ADK, and
+        # importing neev_pipeline constructs a Gemini client at module load.
+        from google.adk.runners import InMemoryRunner  # noqa: PLC0415
+        from google.genai import types  # noqa: PLC0415
+        from neev_pipeline.agent import root_agent  # noqa: PLC0415
+
+        runner = InMemoryRunner(agent=root_agent, app_name="neev")
+        session = await runner.session_service.create_session(
+            app_name="neev", user_id=f"loan-{req.loan_id}"
+        )
+
+        message = types.Content(
+            role="user",
+            parts=[
+                types.Part(
+                    text=(
+                        f"Analyse the attached Bill of Quantities for loan {req.loan_id}. "
+                        f"Location: {req.locality}. "
+                        f"Built-up area: {req.built_up_sqft} sqft. "
+                        f"Sanctioned amount: {req.sanctioned}."
+                    )
+                )
+            ],
+        )
+
+        emitted: set[int] = set()
+        yield PhaseEvent(index=0, status="running", name=PHASE_NAMES[0])
+
+        async for event in runner.run_async(
+            user_id=session.user_id, session_id=session.id, new_message=message
+        ):
+            for call in _tool_calls(event):
+                phase = TOOL_TO_PHASE.get(call)
+                if phase is None or phase in emitted:
+                    continue
+                emitted.add(phase)
+                yield PhaseEvent(index=phase - 1, status="done", name=PHASE_NAMES[phase - 1])
+                yield PhaseEvent(index=phase, status="running", name=PHASE_NAMES[phase])
+
+        for index in range(len(PHASE_NAMES)):
+            if index not in emitted:
+                yield PhaseEvent(index=index, status="done", name=PHASE_NAMES[index])
+
+        yield DoneEvent(redirect=f"/owner/loans/{req.loan_id}/boq")
+
+
+def _tool_calls(event: object) -> list[str]:
+    """Names of the function calls carried by one ADK event, if any."""
+    content = getattr(event, "content", None)
+    parts = getattr(content, "parts", None) or []
+    names = []
+    for part in parts:
+        call = getattr(part, "function_call", None)
+        if call is not None and getattr(call, "name", None):
+            names.append(call.name)
+    return names
