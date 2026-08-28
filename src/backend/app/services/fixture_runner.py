@@ -8,8 +8,9 @@ which is the whole point of the seam (spec 5.1a).
 import asyncio
 from typing import AsyncIterator
 
-from app.fixtures.loader import load_analyzing_script
+from app.fixtures.loader import load_analyzing_script, load_pipeline_output
 from app.schemas.events import DoneEvent, FindingEvent, PhaseEvent, PipelineEvent, ProgressEvent
+from app.schemas.pipeline import PipelineOutput
 from app.services.runner import BoqAnalysisRequest
 
 
@@ -46,3 +47,15 @@ class FixtureRunner:
     async def _pause(self) -> None:
         if self.step_delay_s:
             await asyncio.sleep(self.step_delay_s)
+
+    def final_output(self, req: BoqAnalysisRequest) -> PipelineOutput | None:
+        """The authored output for this loan, if one exists.
+
+        Loans the fixture does not cover return None rather than another loan's
+        figures — serving 1001's numbers under a different borrower's name is
+        worse than an empty state.
+        """
+        try:
+            return load_pipeline_output(req.loan_id)
+        except KeyError:
+            return None

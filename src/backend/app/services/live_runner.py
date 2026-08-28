@@ -18,6 +18,7 @@ from typing import AsyncIterator
 
 from app.core.settings import assert_billed_calls_permitted
 from app.schemas.events import DoneEvent, PhaseEvent, PipelineEvent
+from app.schemas.pipeline import PipelineOutput
 from app.services.runner import BoqAnalysisRequest
 
 # Which display phase each ADK tool call advances (spec §5.2).
@@ -101,6 +102,17 @@ class AdkPipelineRunner:
                 yield PhaseEvent(index=index, status="done", name=PHASE_NAMES[index])
 
         yield DoneEvent(redirect=f"/owner/loans/{req.loan_id}/boq")
+
+    def final_output(self, req: BoqAnalysisRequest) -> PipelineOutput | None:
+        """Not yet implemented — returns None, so nothing is persisted.
+
+        The five output_key values live in the ADK session state as raw model
+        TEXT, not dicts (golden_run.py verifies them by substring matching). So
+        this needs the parse-and-validate layer with a repair path that spec
+        §4.3 describes and §4.4a deferred. Until that exists, returning None is
+        the honest answer: better to store nothing than to store a guess.
+        """
+        return None
 
 
 def _tool_calls(event: object) -> list[str]:

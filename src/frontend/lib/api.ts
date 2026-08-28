@@ -20,6 +20,13 @@ export class ApiError extends Error {
   }
 }
 
+// fetch has no default timeout. A process that accepts the connection and
+// never answers wedges every screen that calls it — this actually happened in
+// development, when an unrelated local service was listening on the API port.
+// Any request that has not answered by then fails as an unreachable backend,
+// which the screens already render as an error state with a retry.
+const REQUEST_TIMEOUT_MS = 8000;
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const method = init?.method ?? 'GET';
 
@@ -30,6 +37,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       headers: { 'content-type': 'application/json', ...(init?.headers ?? {}) },
       // Loan data is private and changes on every decision; never cache it.
       cache: 'no-store',
+      signal: init?.signal ?? AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
   } catch (cause) {
     // A refused connection or DNS failure rejects with TypeError, not ApiError —

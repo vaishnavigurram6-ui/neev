@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 from app.core.settings import Settings, assert_billed_calls_permitted, get_settings
 from app.schemas.events import PipelineEvent
+from app.schemas.pipeline import PipelineOutput
 
 
 class BoqAnalysisRequest(BaseModel):

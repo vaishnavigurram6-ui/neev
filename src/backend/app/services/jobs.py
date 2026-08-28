@@ -13,6 +13,11 @@ from typing import AsyncIterator, Literal
 from app.schemas.events import DoneEvent, ErrorEvent, PipelineEvent
 from app.services.runner import BoqAnalysisRequest, get_runner
 
+# Cap on retained jobs. Each holds its full event list for replay, so an
+# unbounded registry is a slow leak in a long-lived process. Oldest completed
+# jobs are dropped first; a running job is never evicted.
+MAX_RETAINED_JOBS = 50
+
 JobStatus = Literal["running", "done", "error"]
 
 
@@ -52,15 +57,34 @@ class JobRegistry:
         job = Job(id=uuid.uuid4().hex[:12], loan_id=req.loan_id)
         self._jobs[job.id] = job
         self._tasks[job.id] = asyncio.create_task(self._drive(job, req))
+        self._evict()
         return job
+
+    def _evict(self) -> None:
+        """Drop the oldest finished jobs once the registry exceeds its cap.
+
+        Insertion order is creation order (dicts preserve it), so the first
+        finished job found is the oldest. Running jobs are skipped: a subscriber
+        may still be following one.
+        """
+        while len(self._jobs) > MAX_RETAINED_JOBS:
+            evictable = next(
+                (jid for jid, j in self._jobs.items() if j.status != "running"), None
+            )
+            if evictable is None:
+                return  # everything is still running; nothing safe to drop
+            self._jobs.pop(evictable, None)
+            self._tasks.pop(evictable, None)
 
     def get(self, job_id: str) -> Job | None:
         return self._jobs.get(job_id)
 
     async def _drive(self, job: Job, req: BoqAnalysisRequest) -> None:
         try:
-            async for event in get_runner().run(req):
+            runner = get_runner()
+            async for event in runner.run(req):
                 job.publish(event)
+            self._persist(runner, req)
             job.status = "done"
         except Exception as exc:  # noqa: BLE001 - recorded on the job, never raised at the client
             job.error = str(exc)
@@ -103,6 +127,37 @@ class JobRegistry:
                 return
 
             await job.wait_for_update()
+
+
+    def _persist(self, runner: object, req: BoqAnalysisRequest) -> None:
+        """Store the finished run as a new BoqRevision.
+
+        Without this a completed analysis left the loan at whatever revision the
+        seed gave it, and the loans with no seeded revision redirected to a BoQ
+        page that 404'd. A runner that cannot supply a final output returns None
+        and nothing is stored.
+
+        Imported inside the method so the services layer keeps no import-time
+        dependency on the DB layer, and a failure to store never fails the run —
+        the events have already been delivered.
+        """
+        output = getattr(runner, "final_output", lambda _req: None)(req)
+        if output is None:
+            return
+        try:
+            from app.db.session import SessionLocal
+            from app.services.persistence import store_revision
+
+            with SessionLocal() as db:
+                store_revision(
+                    db,
+                    req.loan_id,
+                    output,
+                    source_filename=req.filename,
+                    mode="fixture",
+                )
+        except Exception as exc:  # noqa: BLE001 - the run itself succeeded
+            self._last_persist_error = str(exc)
 
 
 registry = JobRegistry()
