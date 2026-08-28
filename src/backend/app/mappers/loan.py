@@ -9,6 +9,7 @@ database stores the pipeline's slugs (`brickwork_roof`), and the reader is shown
 """
 
 from app.db import models
+from app.mappers.history import to_phase_history
 from app.schemas.views import (
     BuildProgressView,
     LoanSummaryView,
@@ -130,6 +131,7 @@ def to_build_progress(loan: models.Loan) -> BuildProgressView:
         tranches=ladder,
         standing=standing,
         steps=list(NEXT_STEPS),
+        phases=to_phase_history(loan),
         shortfall=(
             float(assessed.cost_to_complete_gap)
             if assessed and assessed.cost_to_complete_gap is not None

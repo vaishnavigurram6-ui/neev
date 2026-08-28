@@ -21,6 +21,9 @@ import Button from '@/components/ui/Button';
 import CardTable, { type Column } from '@/components/ui/CardTable';
 import Figure from '@/components/ui/Figure';
 import KeyValueCard from '@/components/ui/KeyValueCard';
+import PhaseHistory from '@/components/loans/PhaseHistory';
+import { ApiError, apiGet } from '@/lib/api';
+import type { BuildProgressView } from '@/lib/types';
 import PageHeader from '@/components/ui/PageHeader';
 import PhotoSlot from '@/components/ui/PhotoSlot';
 import StatusPill from '@/components/ui/StatusPill';
@@ -105,6 +108,18 @@ export default async function BuildProgressPage({
 }) {
   const { loanId } = await params;
   const loan = previewLoan(loanId);
+
+  // The rest of this screen still runs on preview data (it is a scaffolded
+  // screen), but the phase history is real: it comes from the same mapper the
+  // lender's Tranche Decision reads, so the owner's account of their build and
+  // the bank's audit trail cannot disagree. Fetched defensively -- a history
+  // section is worth having, but not at the cost of the whole page.
+  let phases: BuildProgressView['phases'] = [];
+  try {
+    phases = (await apiGet<BuildProgressView>(`/api/loans/${loanId}/progress`)).phases;
+  } catch (cause) {
+    if (!(cause instanceof ApiError)) throw cause;
+  }
 
   const header = (
     <PageHeader
@@ -249,6 +264,10 @@ export default async function BuildProgressPage({
             </div>
           </Panel>
         </StickyRail>
+      </div>
+
+      <div className="mt-8">
+        <PhaseHistory phases={phases} />
       </div>
     </div>
   );

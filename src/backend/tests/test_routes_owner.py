@@ -402,3 +402,10 @@ def test_a_flag_in_an_unmapped_group_is_still_rendered(client):
     rendered = sum(len(g.items) for g in groups)
     assert rendered == len(flags), "every flag must appear in some group"
     assert "13. A SECTION THE MOCKUP NEVER NAMED" in [g.name for g in groups]
+
+
+def test_build_progress_carries_the_phase_history(client):
+    phases = client.get("/api/loans/1001/progress").json()["phases"]
+    assert [p["tranche_number"] for p in phases] == [1, 2, 3, 4]
+    assert [p["exposure"] for p in phases[:3]] == [1.44, 1.73, 1.29]
+    assert phases[2]["verified_value"] == 1390000

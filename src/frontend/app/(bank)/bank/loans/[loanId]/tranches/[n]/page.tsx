@@ -1,3 +1,4 @@
+import PhaseHistory from '@/components/loans/PhaseHistory';
 // Tranche Decision — ported from `design_handoff_neev/Neev 3 Tranche Decision.dc.html`.
 //
 // The one screen in the product where a lender changes something. Everything on
@@ -268,6 +269,10 @@ export default async function TrancheDecisionPage({
             </Card>
           )}
         </StickyRail>
+      </div>
+
+      <div className="mt-8">
+        <PhaseHistory phases={view.phases} skin="bank" />
       </div>
     </div>
   );

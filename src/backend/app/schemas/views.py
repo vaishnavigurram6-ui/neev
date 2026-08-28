@@ -177,6 +177,10 @@ class TrancheDecisionView(BaseModel):
     photos: list[PhotoView]
     owner_view: str | None
     officer_view: str | None
+    # Every earlier phase, so a decision is taken against the whole record
+    # rather than one tranche in isolation. Forward-referenced: PhaseHistoryView
+    # is declared below, next to BuildProgressView, which also carries it.
+    phases: list["PhaseHistoryView"] = Field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -229,6 +233,52 @@ class StandingRowView(BaseModel):
     tone: Tone = "neutral"
 
 
+class PhaseHistoryView(BaseModel):
+    """One build phase, after the fact: claimed, seen, decided.
+
+    Read by both Build Progress (the owner's account of their build) and Tranche
+    Decision (the lender's audit trail), from one mapper, so the two cannot tell
+    different stories about the same phase.
+    """
+
+    tranche_number: int
+    milestone: str
+    label: str
+    status: Literal["paid", "on_hold", "upcoming"]
+    status_label: str
+    tone: Tone
+    inspected_on: date | None
+    claimed_stage: str | None
+    observed_stage: str | None
+    # False for phases released before Neev was involved: no photographs were
+    # collected, and saying so is more honest than an empty evidence grid.
+    observed_by_neev: bool
+    photos: list[PhotoView] = Field(default_factory=list)
+    evidence_notes: list[str] = Field(default_factory=list)
+    confidence: str | None = None
+    needs_human_review: bool = False
+    verified_value: float | None = None
+    # Exposure AT THIS PHASE, not today's. Front-loaded payments mean it was
+    # worse early and improved as work caught up; carrying today's figure back
+    # across every row would hide exactly that.
+    exposure: float | None = None
+    exposure_undefined: bool = False
+    # The step, not the cumulative: reporting disbursed_cum as "released" would
+    # triple-count the first tranche by the third row.
+    released_amount: float
+    disbursed_cum: float
+    recommendation: str | None = None
+    decision: "PhaseDecisionView | None" = None
+
+
+class PhaseDecisionView(BaseModel):
+    action: str
+    tone: Tone
+    decided_by: str
+    decided_at: date
+    note: str | None = None
+
+
 class BuildProgressView(BaseModel):
     loan_id: str
     borrower: str
@@ -244,6 +294,7 @@ class BuildProgressView(BaseModel):
     steps: list[str]
     # Negative when the sanction will not finish the house at local rates.
     shortfall: float | None
+    phases: list[PhaseHistoryView] = Field(default_factory=list)
 
 
 class ContractorRowView(BaseModel):
@@ -261,3 +312,6 @@ class ContractorRowView(BaseModel):
 
 class ContractorScorecardView(BaseModel):
     rows: list[ContractorRowView]
+
+PhaseHistoryView.model_rebuild()
+TrancheDecisionView.model_rebuild()

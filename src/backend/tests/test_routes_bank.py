@@ -268,3 +268,12 @@ def test_derived_loans_get_no_invented_rationale(client):
     assert body["exposure"] == 1.42
     assert body["officer_view"] is None
     assert body["owner_view"] is None
+
+
+def test_the_tranche_decision_carries_the_whole_record(client):
+    """A decision is taken against the loan's history, not one tranche alone."""
+    phases = client.get("/api/loans/1001/tranches/4").json()["phases"]
+    assert len(phases) == 4
+    # Exposure was worse before this request than it is now; a screen that only
+    # showed today's 1.29 would hide the peak.
+    assert max(p["exposure"] for p in phases if p["exposure"]) == 1.73

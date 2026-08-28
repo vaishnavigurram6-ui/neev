@@ -7,6 +7,7 @@ any money.
 
 from app.db import models
 from app.schemas.views import (
+    PhaseHistoryView,
     EvidenceChipView,
     MathRowView,
     PhotoView,
@@ -161,6 +162,7 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
         stages=stages,
         math=math,
         photos=photos,
+        phases=_history(loan),
         owner_view=tranche.owner_view,
         officer_view=tranche.officer_view,
     )
@@ -199,3 +201,11 @@ def _chips(photo: models.Photo) -> list[EvidenceChipView]:
             )
         )
     return chips
+
+
+def _history(loan: models.Loan) -> list["PhaseHistoryView"]:
+    """Imported inside the function: history.py imports STAGE_LABEL and _chips
+    from this module, so a module-level import here would be circular."""
+    from app.mappers.history import to_phase_history
+
+    return to_phase_history(loan)
