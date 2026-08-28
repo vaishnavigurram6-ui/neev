@@ -8,6 +8,7 @@ export default function TrancheError({ reset }: { error: Error; reset: () => voi
       title="Could not load this tranche"
       body="The decision record was not returned. No decision has been written. Retry."
       onRetry={reset}
+      skin="bank"
     />
   );
 }

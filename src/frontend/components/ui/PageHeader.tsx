@@ -6,7 +6,11 @@ export default function PageHeader({
   sub,
   actions,
 }: {
-  eyebrow: string;
+  /** Text, or a fragment where one word of it is a link — the Tranche Decision
+   *  breadcrumb is "PORTFOLIO · LOAN 1001 — RAVI KUMAR · TRANCHE 4" with the
+   *  first word linking back to the hotlist. Widened from `string` in Task 18;
+   *  every existing caller passes a string and is unaffected. */
+  eyebrow: React.ReactNode;
   title: string;
   sub?: string;
   actions?: React.ReactNode;

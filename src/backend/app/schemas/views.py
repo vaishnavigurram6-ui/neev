@@ -159,6 +159,12 @@ class TrancheDecisionView(BaseModel):
     locality: str
     tranche_number: int
     milestone: str
+    # paid | on_hold | upcoming. Added by Task 18: without it the decision screen
+    # cannot tell a draw awaiting a decision from one already disbursed, and it
+    # offered "Release" on money that had already gone out. `str`, not a Literal,
+    # so an unrecognised status degrades to a screen that offers no decision
+    # rather than a 500.
+    status: str
     request_amount: float
     recommendation: str
     recommendation_tone: Tone
