@@ -51,7 +51,9 @@ const COPY = {
   gapEmpty: 'This analysis did not break the gap down by section.',
   meansEyebrow: 'WHAT THIS MEANS',
   shortfallLead: 'Shortfall of',
-  shortfallTail: '— flagged before drawdown',
+  // The full stop is added: the mockup draws the lead and the body as two
+  // separate lines, and `CalloutBanner` joins them into one paragraph.
+  shortfallTail: '— flagged before drawdown.',
   shortfallBody:
     'At current rates, funds run out around brickwork. Re-scope now, while the plan can still change.',
   shortfallMeans: "The sanction won't reach a habitable structure as scoped.",
@@ -62,13 +64,20 @@ const COPY = {
   // short. A loan whose sanction covers its scope still has to say so.
   coversLead: 'Your sanction covers this scope',
   coversTail: 'to spare',
+  coversExact: 'Your sanction covers this scope exactly.',
   coversBody: "Nothing needs re-scoping today. We'll check again each time rates or the BoQ move.",
   coversMeans: 'The sanction reaches a habitable structure as scoped.',
-  // AUTHORED, not in the mockup: no BoQ means there is nothing to re-price.
+  // AUTHORED, not in the mockup: no BoQ means there is nothing to re-price, so
+  // the populated sub-line ("re-priced at today's rates") would be a claim about
+  // work that has not happened.
+  emptySub: 'Nothing to re-price yet — the check runs the moment your BoQ is in.',
   emptyTitle: 'No BoQ to check yet',
   emptyBody:
     "Once your contractor's BoQ is in, we re-price every line at local rates and tell you whether the sanction reaches a finished house — before any money moves.",
-  emptyAction: 'Upload the BoQ',
+  // The onboarding screen is where a BoQ is actually uploaded, and its own words
+  // for the control are "Upload your BoQ". /boq is the *review* screen, which
+  // 404s for exactly the loans that reach this branch.
+  emptyAction: 'Upload your BoQ',
 };
 
 /** "three ways forward" is a count of the rows below it, so it is derived. A
@@ -85,6 +94,20 @@ function gapCaption(locality: string): string {
 function waysForwardLead(count: number): string {
   const word = COUNT_WORDS[count] ?? String(count);
   return `${word} ${count === 1 ? 'way' : 'ways'} ${COPY.waysTail}`;
+}
+
+/** The shortfall as a share of the realistic cost, at the coarsest precision
+ *  that does not round it away — `null` when even two decimals would.
+ *
+ *  `formatPct` rounds, so a shortfall that is a small fraction of the build
+ *  cost would print "0%" beside "Shortfall of ₹5,000", which reads as no gap at
+ *  all. Same reasoning as EM_DASH above: better no figure than a false zero. */
+function shareOfCost(share: number): string | null {
+  for (const dp of [0, 1, 2]) {
+    const text = formatPct(share, dp);
+    if (Number.parseFloat(text) !== 0) return text;
+  }
+  return null;
 }
 
 const COLUMNS: Column<SanctionSectionView>[] = [
@@ -175,23 +198,23 @@ export default async function SanctionCheckPage({
   const { loanId } = await params;
   const [loan, view] = await Promise.all([loadLoan(loanId), loadSanction(loanId)]);
 
-  const header = (
+  const header = (sub: string) => (
     <PageHeader
       eyebrow={COPY.eyebrow}
       title={`Will ${formatINR(loan.sanctioned)} finish this house?`}
-      sub={`Your BoQ scope, re-priced at today's ${loan.locality} rates — before any money moves.`}
+      sub={sub}
     />
   );
 
   if (view === null) {
     return (
       <div className="flex flex-col gap-5">
-        {header}
+        {header(COPY.emptySub)}
         <EmptyState
           title={COPY.emptyTitle}
           body={COPY.emptyBody}
           action={
-            <Button href={`/owner/loans/${loan.loan_id}/boq`} variant="primary">
+            <Button href="/owner/onboarding" variant="primary">
               {COPY.emptyAction}
             </Button>
           }
@@ -201,14 +224,21 @@ export default async function SanctionCheckPage({
   }
 
   const short = view.shortfall > 0;
-  // The shortfall as a share of the largest bar — the realistic cost — which is
-  // the mockup's −20% (7,00,000 of 35,00,000). Derived, never spelled.
-  const largest = view.bars.reduce((max, bar) => Math.max(max, bar.value), 0);
-  const share = largest > 0 ? Math.abs(view.shortfall) / largest : 0;
+  // The gap as a share of what the house actually costs — the mockup's −20%
+  // (7,00,000 of 35,00,000). Reconstructed from the sanction and the shortfall
+  // rather than taken from the widest bar: `SanctionBarView` has no field
+  // saying which bar is which, and the widest bar is the contractor's quote the
+  // moment a BoQ is over-priced, which is the case this product exists to
+  // catch. `shortfall` is realistic − sanctioned, so this identity is exact.
+  const realistic = loan.sanctioned + view.shortfall;
+  const share = realistic > 0 ? Math.abs(view.shortfall) / realistic : 0;
+  const sharePct = shareOfCost(share);
 
   return (
     <div className="flex flex-col gap-5">
-      {header}
+      {header(
+        `Your BoQ scope, re-priced at today's ${loan.locality} rates — before any money moves.`
+      )}
 
       <div className="flex items-start gap-5">
         {/* min-w-0 so the gap table scrolls inside its own container instead of
@@ -223,15 +253,19 @@ export default async function SanctionCheckPage({
             lead={
               short
                 ? `${COPY.shortfallLead} ${formatINR(view.shortfall)} ${COPY.shortfallTail}`
-                : `${COPY.coversLead} — ${formatINR(-view.shortfall)} ${COPY.coversTail}.`
+                : view.shortfall < 0
+                  ? `${COPY.coversLead} — ${formatINR(-view.shortfall)} ${COPY.coversTail}.`
+                  : COPY.coversExact
             }
             body={short ? COPY.shortfallBody : COPY.coversBody}
             action={
-              <Figure
-                value={`${short ? MINUS : '+'}${formatPct(share)}`}
-                tone={short ? 'danger' : 'success'}
-                size="lg"
-              />
+              sharePct === null ? undefined : (
+                <Figure
+                  value={`${short ? MINUS : '+'}${sharePct}`}
+                  tone={short ? 'danger' : 'success'}
+                  size="lg"
+                />
+              )
             }
           />
 
@@ -254,14 +288,18 @@ export default async function SanctionCheckPage({
             <h2 className="mt-[10px] text-[19px] font-bold leading-[1.4] text-ink">
               {short ? COPY.shortfallMeans : COPY.coversMeans}
             </h2>
-            {view.options.length > 0 && (
+            {/* The routes out are routes out of a shortfall. The mapper returns
+                them regardless of sign, so a loan whose sanction covers its
+                scope would otherwise read "nothing needs re-scoping" directly
+                above three ways to re-scope. */}
+            {short && view.options.length > 0 && (
               <p className="mt-[10px] text-[13px] leading-[1.6] text-sub">
                 {waysForwardLead(view.options.length)}
               </p>
             )}
           </Card>
 
-          <SanctionOptions options={view.options} />
+          {short && <SanctionOptions options={view.options} />}
 
           <p className="px-1 text-[12px] leading-[1.6] text-faint">{COPY.ratesNote}</p>
         </StickyRail>
