@@ -243,3 +243,28 @@ def test_the_slab_tranche_is_paid_and_carries_no_pending_decision(client):
     assert body["exposure"] is None, "the risk assessment belongs to the pending tranche"
     math = {row["label"]: row["result"] for row in body["math"]}
     assert math["Disbursed so far"] == 1800000, "T3's own cumulative is the drawn figure"
+
+
+def test_every_portfolio_row_agrees_with_the_screen_it_links_to(client):
+    """A row reading "HOLD, 1.42" must not drill into "INSPECT, exposure
+    undefined" with an em dash in every math line. Only 1001 and 1002 have
+    authored pipeline output; the rest derive theirs from the same figures the
+    row shows, so the two can never disagree."""
+    expected = {"HOLD": "HOLD", "INSPECT": "INSPECT", "ON TRACK": "RELEASE"}
+
+    for row in client.get("/api/portfolio").json()["rows"]:
+        number = row["href"].rsplit("/", 1)[-1]
+        screen = client.get(f"/api/loans/{row['loan_id']}/tranches/{number}").json()
+        assert screen["recommendation"] == expected[row["action_label"]], row["loan_id"]
+        assert screen["exposure"] == row["exposure"], row["loan_id"]
+        assert screen["exposure_undefined"] is False, row["loan_id"]
+
+
+def test_derived_loans_get_no_invented_rationale(client):
+    """No narrative was ever written for the eight non-golden loans, so the
+    rationale panel must show an empty state rather than prose invented for
+    them."""
+    body = client.get("/api/loans/1003/tranches/3").json()
+    assert body["exposure"] == 1.42
+    assert body["officer_view"] is None
+    assert body["owner_view"] is None

@@ -14,6 +14,25 @@ from app.schemas.views import (
     TrancheDecisionView,
 )
 
+def _grouped(amount: float) -> str:
+    """Indian digit grouping for the audit line: 1800000 -> '18,00,000'.
+
+    The calc strings are what a credit officer reads to check the arithmetic, so
+    they are typeset like money. Only whole rupee amounts pass through here --
+    a year or an id would be mangled by grouping, which is why this is applied
+    per-value at the call site rather than to the finished string.
+    """
+    digits = str(int(round(abs(amount))))
+    if len(digits) > 3:
+        head, tail = digits[:-3], digits[-3:]
+        out = ""
+        while len(head) > 2:
+            out = "," + head[-2:] + out
+            head = head[:-2]
+        digits = head + out + "," + tail
+    return ("\u2212" if amount < 0 else "") + digits
+
+
 STAGE_ORDER = ["foundation", "plinth", "slab", "brickwork_roof", "finishing"]
 STAGE_LABEL = {
     "foundation": "Foundation",
@@ -89,7 +108,7 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
         ),
         MathRowView(
             label="Disbursement exposure",
-            calc=f"{drawn_to_date} ÷ {tranche.verified_value or 0}",
+            calc=f"{_grouped(drawn_to_date)} ÷ {_grouped(tranche.verified_value or 0)}",
             result=_number_or_dash(tranche.exposure_ratio),
             result_kind=_kind(tranche.exposure_ratio, "ratio"),
             # An undefined ratio means there is no verified value in place at
@@ -108,7 +127,10 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
         ),
         MathRowView(
             label="Cost-to-complete gap",
-            calc=f"({loan.sanctioned} − {drawn_to_date}) − {tranche.cost_to_complete or 0}",
+            calc=(
+                f"({_grouped(loan.sanctioned)} − {_grouped(drawn_to_date)}) "
+                f"− {_grouped(tranche.cost_to_complete or 0)}"
+            ),
             result=_number_or_dash(gap),
             result_kind=_kind(gap, "money"),
             # A gap of None is a closed loan: no shortfall to report, but not a

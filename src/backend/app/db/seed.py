@@ -159,6 +159,9 @@ def seed(reset: bool = False) -> dict[str, int]:
             _seed_pipeline_output(db, loan_id)
         db.commit()
 
+        _seed_derived_risk(db, rows)
+        db.commit()
+
         _seed_change_orders(db)
         db.commit()
 
@@ -278,7 +281,7 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
                     db.add(
                         models.Photo(
                             tranche_id=current.id,
-                            slot_key=f"{loan_id}-t3-angle{index + 1}",
+                            slot_key=f"{loan_id}-t{risk_tranche_no}-angle{index + 1}",
                             caption=note,
                             geotag_match=inspection.geotag_match,
                             timestamp_ok=inspection.timestamp_ok,
@@ -286,6 +289,59 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
                             taken_at=datetime(2026, 8, 10, 11, 42),
                         )
                     )
+
+
+def _seed_derived_risk(db, rows: list[dict]) -> None:
+    """Give every loan a coherent drill-in, not just 1001 and 1002.
+
+    Only the two golden loans have authored pipeline output, so the other eight
+    portfolio rows linked to a tranche screen that contradicted the row itself:
+    the row read "HOLD, 1.42" while the screen read "INSPECT, exposure
+    undefined" with an em dash in every math line.
+
+    Nothing here is invented. Each loan's exposure, disbursed total and
+    cost-to-complete gap are already authored in portfolio_rows.json; the two
+    missing figures follow from them by definition:
+
+        verified_value   = disbursed / exposure     (exposure IS disbursed/verified)
+        cost_to_complete = (sanctioned - disbursed) - gap
+
+    So the math table ties out arithmetically instead of showing blanks.
+
+    What is NOT filled in: owner_view and officer_view stay null, because no
+    narrative was ever written for these loans. The rationale panel shows an
+    honest empty state rather than prose invented on their behalf.
+
+    The linked tranche stays `paid`. That money is already out, so the screen
+    correctly offers no decision -- and it is consistent with the portfolio
+    ratio being a screen rather than a per-loan verdict, which
+    scripts/portfolio_view.sql states outright.
+    """
+    for row in rows:
+        loan_id = row["loan_id"]
+        if loan_id in available_loan_ids():
+            continue  # 1001 and 1002 carry real authored output
+
+        loan = db.get(models.Loan, loan_id)
+        if loan is None:
+            continue
+
+        drawn = [t for t in loan.tranches if t.status in ("paid", "on_hold")]
+        if not drawn:
+            continue
+        target = max(drawn, key=lambda t: t.number)
+
+        exposure = row["exposure"]
+        disbursed = float(row["disbursed"])
+        gap = row["gap"]
+
+        target.exposure_ratio = exposure
+        target.verified_value = int(round(disbursed / exposure)) if exposure else None
+        target.exposure_undefined = not exposure
+        target.recommendation = _recommendation(row["action"])
+        if gap is not None:
+            target.cost_to_complete_gap = int(gap)
+            target.cost_to_complete = int(round((loan.sanctioned - disbursed) - gap))
 
 
 def _seed_change_orders(db) -> None:

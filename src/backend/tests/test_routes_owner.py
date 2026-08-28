@@ -207,9 +207,27 @@ def test_progress_reports_the_payment_ladder_and_where_you_stand(client):
 
 
 def test_an_unverified_site_reads_as_unknown_not_as_zero(client):
-    # Loan 1005 has no assessed tranche. "₹0 standing on site" would be a false
-    # statement to a borrower who has already paid a tranche; an em dash is the
-    # honest one, and value_kind says so.
+    """"₹0 standing on site" would be a false statement to a borrower who has
+    already paid a tranche. An em dash is the honest one, and value_kind says so.
+
+    This used to lean on loan 1005 having no assessed tranche. Every loan now
+    carries a verified value, so the unverified case is constructed directly --
+    which is the more durable test anyway: a live run with no inspection yet
+    produces exactly this state, and it should not depend on a loan being
+    under-seeded.
+    """
+    from sqlalchemy import select
+
+    from app.db import models
+    from app.db.session import SessionLocal
+
+    with SessionLocal() as db:
+        for tranche in db.scalars(
+            select(models.Tranche).where(models.Tranche.loan_id == "1005")
+        ):
+            tranche.verified_value = None
+        db.commit()
+
     standing = client.get("/api/loans/1005/progress").json()["standing"]
     unverified = next(row for row in standing if row["label"] == "Work standing on site")
     assert unverified["value"] == "—"
