@@ -56,6 +56,8 @@ def assess_tranche(
             "recommendation": "INSPECT",
             "pct_complete": 0.0,
             "verified_value": 0.0,
+            # Nothing is verified, so the whole build is still to pay for.
+            "cost_to_complete": round(expected_total_cost, 0),
             "cost_to_complete_gap": round(
                 (sanctioned_amount - disbursed_cumulative)
                 - expected_total_cost, 0),
@@ -116,6 +118,9 @@ def assess_tranche(
         "recommendation": recommendation,
         "pct_complete": pct_complete,
         "verified_value": round(verified_value, 0),
+        # Already computed for the gap and previously discarded, which left
+        # "Needed to finish" and "Cost to complete" as em dashes on screen.
+        "cost_to_complete": round(remaining_cost, 0),
         "cost_to_complete_gap": round(gap, 0),
         "live_ltv_pct": round(live_ltv, 1),
         "ltv_default_prior": ltv_default_prior(live_ltv),

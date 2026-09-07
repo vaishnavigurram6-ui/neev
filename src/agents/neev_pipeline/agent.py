@@ -7,6 +7,7 @@ from google.adk.agents import Agent, SequentialAgent
 from .config import GEMINI_MODEL
 from .tools.boq_analyst_tool import (
     lookup_benchmark_rates,
+    price_against_benchmarks,
     check_rate_deviations,
     check_steel_rcc_ratio,
     check_missing_scope,
@@ -39,6 +40,14 @@ boq_analyst_agent = Agent(
         "4. Sum steel (kg) and RCC (cum) quantities and call check_steel_rcc_ratio.\n"
         "5. Call check_missing_scope with all item descriptions; each missing item "
         "becomes a MISSING_SCOPE flag.\n"
+        "5b. Call price_against_benchmarks ONCE with your parsed line_items, the "
+        "scope names check_missing_scope returned, and the built-up area. Copy "
+        "its fair_price_for_quoted_scope and missing_scope_value into your "
+        "output verbatim, and set expected_qty, expected_unit and "
+        "expected_amount on each MISSING_SCOPE flag from its matching "
+        "missing_scope entry. Where an entry reports amount=null, leave "
+        "expected_amount unset and quote its note as the evidence -- do not "
+        "substitute a figure of your own.\n"
         "6. Read the payment schedule; call check_payment_schedule with the fraction "
         "due before slab.\n"
         "7. Also flag if GST treatment is not stated anywhere (GST_SILENT).\n\n"
@@ -60,15 +69,18 @@ boq_analyst_agent = Agent(
         "owner's screen prints this next to the contractor's own line numbering.\n"
         "Use only these type values: RATE_OUTLIER, UNBENCHMARKED, UNDERSPECIFIED, "
         "MISSING_SCOPE, GST_SILENT, STEEL_RATIO, FRONT_LOADED. Do not rename them.\n\n"
-        "Use exactly five tool calls for the whole document: lookup_benchmark_rates, "
-        "check_rate_deviations, check_steel_rcc_ratio, check_missing_scope, "
-        "check_payment_schedule. Never call any of them per line item.\n"
+        "Use exactly six tool calls for the whole document: "
+        "lookup_benchmark_rates, check_rate_deviations, check_steel_rcc_ratio, "
+        "check_missing_scope, check_payment_schedule, price_against_benchmarks. "
+        "Never call any of them per line item.\n"
         "Output JSON: {line_items: [...], flags: [...], boq_total, "
-        "payment_pct_before_slab}."
+        "payment_pct_before_slab, fair_price_for_quoted_scope, "
+        "missing_scope_value}."
     ),
     tools=[
         lookup_benchmark_rates,
         check_rate_deviations,
+        price_against_benchmarks,
         check_steel_rcc_ratio,
         check_missing_scope,
         check_payment_schedule,
@@ -85,6 +97,10 @@ cost_estimation_agent = Agent(
         "completed_value_estimate (median market ₹/sqft x built-up area). "
         "Report sanction_gap = sanctioned_amount - expected_total_cost when the "
         "sanctioned amount is provided. Use only tool-returned numbers.\n"
+        "Copy fair_price_for_quoted_scope and missing_scope_value straight from "
+        "{boq_findings}, where the analyst put price_against_benchmarks' output. "
+        "They are benchmark arithmetic, not estimates -- do not recompute or "
+        "round them, and omit either one only if it is absent upstream.\n"
         "Then account for WHERE the gap comes from, as `sections`: one entry per "
         "work section that differs, {name, quoted, market, delta}, delta = "
         "quoted - market. A negative delta means the BoQ is under-provisioned "
@@ -92,7 +108,8 @@ cost_estimation_agent = Agent(
         "{boq_findings} or the tool — omit the array rather than estimate one, "
         "and never let the entries contradict expected_total_cost.\n"
         "Output JSON: {expected_total_cost, completed_value_estimate, "
-        "sanction_gap, sections}."
+        "sanction_gap, sections, fair_price_for_quoted_scope, "
+        "missing_scope_value}."
     ),
     tools=[estimate_construction_cost],
     output_key="cost_estimate",

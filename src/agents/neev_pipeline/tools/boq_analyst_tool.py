@@ -7,6 +7,8 @@
 from google.cloud import bigquery
 
 from ..config import (
+    MISSING_SCOPE_AREA_FACTORS,
+    SQFT_PER_SQM,
     TBL_RATE_BENCHMARKS,
     RATE_DEVIATION_THRESHOLD,
     ENG_RATIOS,
@@ -190,4 +192,95 @@ def check_payment_schedule(pct_before_slab: float) -> dict:
         "pct_before_slab": round(pct_before_slab * 100, 1),
         "max_reasonable_pct": MAX_PAYMENT_PCT_BEFORE_SLAB * 100,
         "flag": pct_before_slab > MAX_PAYMENT_PCT_BEFORE_SLAB,
+    }
+
+
+def price_against_benchmarks(
+    line_items: list[dict], missing_scopes: list[str], built_up_sqft: float
+) -> dict:
+    """What the quoted scope SHOULD cost, and what the absent scope would cost.
+
+    Call this ONCE, after check_missing_scope, with the parsed line items and
+    the scope names that came back missing.
+
+    Two figures the screens need and no other tool produces:
+
+      fair_price_for_quoted_scope -- every benchmarked line repriced at its
+        benchmark, plus the quoted amount for lines with no benchmark. Dropping
+        the unbenchmarked ones would understate the fair price and so overstate
+        how much the owner is being overcharged.
+      missing_scope_value -- what the omitted work would cost, from the same
+        benchmark table, at a quantity derived from built-up area using the
+        documented factors in config.MISSING_SCOPE_AREA_FACTORS.
+
+    A scope with no benchmark rate, or no area factor, comes back with
+    amount=None and a note saying why. Reporting zero would assert the missing
+    work is free.
+
+    Args:
+        line_items: [{id, desc, qty, unit, rate, amount}, ...] as parsed.
+        missing_scopes: names from check_missing_scope, e.g. ["waterproofing"].
+        built_up_sqft: the loan's built-up area, for quantifying absent scope.
+    Returns:
+        dict with 'fair_price_for_quoted_scope', 'missing_scope' (one entry per
+        name, each {scope, qty, unit, rate, amount, note}) and
+        'missing_scope_value'.
+    """
+    descriptions = [str(i.get("desc", "")) for i in line_items]
+    descriptions += [str(s).strip().lower() for s in missing_scopes]
+    # One query for the line items and the absent scopes together.
+    return _price(
+        line_items, missing_scopes, built_up_sqft, lookup_benchmark_rates(descriptions)
+    )
+
+
+def _price(
+    line_items: list[dict],
+    missing_scopes: list[str],
+    built_up_sqft: float,
+    benchmarks: dict,
+) -> dict:
+    """The arithmetic, with the benchmark lookups already done. Pure."""
+    fair = 0.0
+    for item in line_items:
+        rate = (benchmarks.get(str(item.get("desc", ""))) or {}).get("benchmark_rate")
+        qty = float(item.get("qty") or 0)
+        if rate and qty:
+            fair += qty * float(rate)
+        else:
+            # No benchmark: the quoted amount is the only figure there is.
+            fair += float(item.get("amount") or 0)
+
+    built_up_sqm = float(built_up_sqft or 0) / SQFT_PER_SQM
+    priced: list[dict] = []
+    total = 0.0
+    for scope in missing_scopes:
+        key = str(scope).strip().lower()
+        factor = MISSING_SCOPE_AREA_FACTORS.get(key)
+        entry = benchmarks.get(key) or {}
+        rate = entry.get("benchmark_rate")
+
+        if factor is None:
+            priced.append({"scope": scope, "qty": None, "unit": None, "rate": rate,
+                           "amount": None,
+                           "note": "Cannot be quantified from area alone."})
+            continue
+
+        qty = round(built_up_sqm * factor, 1)
+        if not rate:
+            priced.append({"scope": scope, "qty": qty, "unit": "sqm", "rate": None,
+                           "amount": None,
+                           "note": "No benchmark rate for this scope; quantity only."})
+            continue
+
+        amount = round(qty * float(rate))
+        total += amount
+        priced.append({"scope": scope, "qty": qty, "unit": entry.get("unit", "sqm"),
+                       "rate": float(rate), "amount": amount,
+                       "note": f"{factor:g} x built-up area at the benchmark rate."})
+
+    return {
+        "fair_price_for_quoted_scope": round(fair, 2),
+        "missing_scope": priced,
+        "missing_scope_value": round(total, 2),
     }

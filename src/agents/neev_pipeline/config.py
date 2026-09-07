@@ -61,6 +61,24 @@ EXPECTED_SCOPE = {
     ],
 }
 
+# How much of a scope there would be, as a multiple of built-up area, when the
+# BoQ omits it entirely. Pricing absent work needs a quantity from somewhere,
+# and a model inventing one is the "no fake precision" failure this project
+# forbids -- so the assumption lives here, in the open, next to the rates.
+#
+# Standard QS practice for a low-rise residential build:
+#   waterproofing     terrace footprint plus toilet sunks (~0.95 of built-up)
+#   external plaster  external wall area runs slightly over built-up (~1.10)
+#   anti-termite      plinth area, which for G+0 is the footprint (~1.00)
+# Anything not listed cannot be quantified from area alone (electrical is per
+# point, plumbing per bath set) and is reported unpriced rather than as zero.
+MISSING_SCOPE_AREA_FACTORS = {
+    "waterproofing": 0.95,
+    "external plaster": 1.10,
+    "anti-termite": 1.00,
+}
+SQFT_PER_SQM = 10.7639
+
 # Payment schedule: flag if more than this fraction of contract value
 # is demanded before the (ground-floor) slab is cast.
 MAX_PAYMENT_PCT_BEFORE_SLAB = 0.30

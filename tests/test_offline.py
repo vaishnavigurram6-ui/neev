@@ -302,6 +302,126 @@ class TestObservedStageIsNotOverwritten(unittest.TestCase):
         self.assertTrue(result["needs_human_review"])
 
 
+class TestCostToCompleteIsReported(unittest.TestCase):
+    """assess_tranche computed remaining_cost and threw it away.
+
+    It was only ever used to derive the gap, so "Needed to finish" on Build
+    Progress and "Cost to complete" on Tranche Decision both rendered an em
+    dash on a real capture -- while the gap derived from it printed fine.
+    """
+
+    def _assess(self, **over):
+        from neev_pipeline.tools.disbursal_risk_tool import assess_tranche
+
+        kwargs = dict(
+            expected_total_cost=3_235_794,
+            observed_stage="slab",
+            stage_confidence="high",
+            sanctioned_amount=2_800_000,
+            disbursed_cumulative=1_800_000,
+            completed_value_estimate=8_099_999,
+        )
+        kwargs.update(over)
+        return assess_tranche(**kwargs)
+
+    def test_cost_to_complete_is_the_unbuilt_share_of_the_expected_cost(self):
+        r = self._assess()
+        self.assertAlmostEqual(r["cost_to_complete"], 3_235_794 * 0.5, delta=1)
+
+    def test_the_gap_still_reconciles_with_it(self):
+        """gap = what is left in the sanction, minus what is left to build."""
+        r = self._assess()
+        left_in_sanction = 2_800_000 - 1_800_000
+        self.assertAlmostEqual(
+            r["cost_to_complete_gap"], left_in_sanction - r["cost_to_complete"], delta=1
+        )
+
+    def test_an_unverifiable_stage_reports_the_whole_build_as_remaining(self):
+        r = self._assess(observed_stage="not_assessed")
+        self.assertEqual(r["cost_to_complete"], 3_235_794)
+
+
+class TestPricingAbsentScope(unittest.TestCase):
+    """What the missing scope would cost, from benchmarks -- never from a guess.
+
+    The MISSING SCOPE card read 0 next to three missing-scope flags, because
+    cost_estimate.missing_scope_value was never populated. Pricing absent work
+    needs an area, so it belongs in a tool with documented factors rather than
+    in a prompt: this is exactly the "no invented figures" case.
+    """
+
+    # Benchmarks as lookup_benchmark_rates returns them, so the arithmetic is
+    # exercised without a query. Rates are the real ones from
+    # fixtures/rate_benchmarks.csv; anti-termite deliberately has none.
+    BENCH = {
+        "RCC M25 for slab": {"matched_item": "RCC M25", "unit": "cum",
+                             "benchmark_rate": 8036.0},
+        "MS main gate": {"matched_item": None},
+        "waterproofing": {"matched_item": "Brickbat coba", "unit": "sqm",
+                          "benchmark_rate": 620.0},
+        "external plaster": {"matched_item": "18mm external plaster",
+                             "unit": "sqm", "benchmark_rate": 240.0},
+        "anti-termite": {"matched_item": None},
+    }
+
+    def _price(self, **over):
+        from neev_pipeline.tools.boq_analyst_tool import _price
+
+        kwargs = dict(
+            line_items=[
+                {"id": "3.1", "desc": "RCC M25 for slab", "qty": 10, "unit": "cum",
+                 "rate": 9800, "amount": 98000},
+                {"id": "12.2", "desc": "MS main gate", "qty": 1, "unit": "no",
+                 "rate": 18000, "amount": 18000},
+            ],
+            missing_scopes=["waterproofing"],
+            built_up_sqft=1800,
+            benchmarks=self.BENCH,
+        )
+        kwargs.update(over)
+        return _price(**kwargs)
+
+    def test_a_benchmarked_line_is_repriced_at_the_benchmark(self):
+        out = self._price()
+        # 10 cum of RCC at the benchmark, not at the quoted 9,800.
+        self.assertLess(out["fair_price_for_quoted_scope"], 98000 + 18000)
+
+    def test_an_unbenchmarked_line_keeps_its_quoted_amount(self):
+        """Repricing an MS gate to zero would understate the fair price."""
+        out = self._price(line_items=[
+            {"id": "12.2", "desc": "MS main gate", "qty": 1, "unit": "no",
+             "rate": 18000, "amount": 18000}])
+        self.assertEqual(out["fair_price_for_quoted_scope"], 18000)
+
+    def test_absent_scope_is_priced_with_a_quantity_and_a_rate(self):
+        entry = self._price()["missing_scope"][0]
+        self.assertEqual(entry["scope"], "waterproofing")
+        self.assertGreater(entry["qty"], 0)
+        self.assertGreater(entry["rate"], 0)
+        self.assertAlmostEqual(entry["amount"], entry["qty"] * entry["rate"], delta=1)
+
+    def test_the_total_is_the_sum_of_what_could_be_priced(self):
+        out = self._price(missing_scopes=["waterproofing", "external plaster"])
+        self.assertAlmostEqual(
+            out["missing_scope_value"],
+            sum(e["amount"] for e in out["missing_scope"] if e["amount"]),
+            delta=1,
+        )
+
+    def test_scope_with_no_benchmark_is_reported_unpriced_not_as_zero(self):
+        """anti-termite has no rate in the table, deliberately. Saying 0 would
+        claim the missing work is free."""
+        out = self._price(missing_scopes=["anti-termite"])
+        entry = out["missing_scope"][0]
+        self.assertIsNone(entry["amount"])
+        self.assertIn("no benchmark", entry["note"].lower())
+
+    def test_no_missing_scope_gives_a_zero_total_and_no_rows(self):
+        out = self._price(missing_scopes=[])
+        self.assertEqual(out["missing_scope"], [])
+        self.assertEqual(out["missing_scope_value"], 0)
+
+
 class TestBoqChecks(unittest.TestCase):
     def test_rate_deviation_flags_seeded_rcc_flaw(self):
         # Seeded flaw F1: RCC @ ₹9,800 vs ₹8,036 benchmark -> ~22% deviation.

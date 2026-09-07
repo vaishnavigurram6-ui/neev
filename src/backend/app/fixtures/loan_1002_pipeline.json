@@ -7,7 +7,8 @@
         "qty": 88.0,
         "unit": "cum",
         "rate": 260.0,
-        "amount": 22880.0
+        "amount": 22880.0,
+        "section": "1. EARTHWORK"
       },
       {
         "id": "1.2",
@@ -15,7 +16,8 @@
         "qty": 52.0,
         "unit": "cum",
         "rate": 150.0,
-        "amount": 7800.0
+        "amount": 7800.0,
+        "section": "1. EARTHWORK"
       },
       {
         "id": "1.3",
@@ -23,7 +25,8 @@
         "qty": 17.0,
         "unit": "cum",
         "rate": 1400.0,
-        "amount": 23800.0
+        "amount": 23800.0,
+        "section": "1. EARTHWORK"
       },
       {
         "id": "2.1",
@@ -31,7 +34,8 @@
         "qty": 13.0,
         "unit": "cum",
         "rate": 5800.0,
-        "amount": 75400.0
+        "amount": 75400.0,
+        "section": "2. FOUNDATION & PLINTH"
       },
       {
         "id": "2.2",
@@ -39,7 +43,8 @@
         "qty": 36.0,
         "unit": "cum",
         "rate": 4100.0,
-        "amount": 147600.0
+        "amount": 147600.0,
+        "section": "2. FOUNDATION & PLINTH"
       },
       {
         "id": "2.3",
@@ -47,7 +52,8 @@
         "qty": 6.0,
         "unit": "cum",
         "rate": 8300.0,
-        "amount": 49800.0
+        "amount": 49800.0,
+        "section": "2. FOUNDATION & PLINTH"
       },
       {
         "id": "2.4",
@@ -55,7 +61,8 @@
         "qty": 40.0,
         "unit": "sqm",
         "rate": 330.0,
-        "amount": 13200.0
+        "amount": 13200.0,
+        "section": "2. FOUNDATION & PLINTH"
       },
       {
         "id": "2.5",
@@ -63,7 +70,8 @@
         "qty": 180.0,
         "unit": "sqm",
         "rate": 95.0,
-        "amount": 17100.0
+        "amount": 17100.0,
+        "section": "2. FOUNDATION & PLINTH"
       },
       {
         "id": "3.1",
@@ -71,7 +79,8 @@
         "qty": 11.5,
         "unit": "cum",
         "rate": 8200.0,
-        "amount": 94300.0
+        "amount": 94300.0,
+        "section": "3. RCC WORK"
       },
       {
         "id": "3.2",
@@ -79,7 +88,8 @@
         "qty": 21.5,
         "unit": "cum",
         "rate": 8250.0,
-        "amount": 177375.0
+        "amount": 177375.0,
+        "section": "3. RCC WORK"
       },
       {
         "id": "3.3",
@@ -87,7 +97,8 @@
         "qty": 3.6,
         "unit": "cum",
         "rate": 7800.0,
-        "amount": 28080.0
+        "amount": 28080.0,
+        "section": "3. RCC WORK"
       },
       {
         "id": "3.4",
@@ -95,7 +106,8 @@
         "qty": 4.0,
         "unit": "cum",
         "rate": 8200.0,
-        "amount": 32800.0
+        "amount": 32800.0,
+        "section": "3. RCC WORK"
       },
       {
         "id": "4.1",
@@ -103,7 +115,8 @@
         "qty": 90.0,
         "unit": "kg",
         "rate": 78.0,
-        "amount": 7020.0
+        "amount": 7020.0,
+        "section": "4. STEEL"
       },
       {
         "id": "4.2",
@@ -111,7 +124,8 @@
         "qty": 4600.0,
         "unit": "kg",
         "rate": 76.0,
-        "amount": 349600.0
+        "amount": 349600.0,
+        "section": "4. STEEL"
       },
       {
         "id": "5.1",
@@ -119,7 +133,8 @@
         "qty": 112.0,
         "unit": "cum",
         "rate": 5500.0,
-        "amount": 616000.0
+        "amount": 616000.0,
+        "section": "5. MASONRY"
       },
       {
         "id": "5.2",
@@ -127,7 +142,8 @@
         "qty": 228.0,
         "unit": "sqm",
         "rate": 750.0,
-        "amount": 171000.0
+        "amount": 171000.0,
+        "section": "5. MASONRY"
       },
       {
         "id": "6.1",
@@ -135,7 +151,8 @@
         "qty": 610.0,
         "unit": "sqm",
         "rate": 190.0,
-        "amount": 115900.0
+        "amount": 115900.0,
+        "section": "6. PLASTERING"
       },
       {
         "id": "6.2",
@@ -143,7 +160,8 @@
         "qty": 158.0,
         "unit": "sqm",
         "rate": 170.0,
-        "amount": 26860.0
+        "amount": 26860.0,
+        "section": "6. PLASTERING"
       },
       {
         "id": "6.3",
@@ -151,7 +169,8 @@
         "qty": 295.0,
         "unit": "sqm",
         "rate": 250.0,
-        "amount": 73750.0
+        "amount": 73750.0,
+        "section": "6. PLASTERING"
       },
       {
         "id": "6.4",
@@ -159,7 +178,8 @@
         "qty": 155.0,
         "unit": "sqm",
         "rate": 640.0,
-        "amount": 99200.0
+        "amount": 99200.0,
+        "section": "6. PLASTERING"
       },
       {
         "id": "7.1",
@@ -167,7 +187,8 @@
         "qty": 145.0,
         "unit": "sqm",
         "rate": 1100.0,
-        "amount": 159500.0
+        "amount": 159500.0,
+        "section": "7. FLOORING"
       },
       {
         "id": "7.2",
@@ -175,7 +196,8 @@
         "qty": 26.0,
         "unit": "sqm",
         "rate": 850.0,
-        "amount": 22100.0
+        "amount": 22100.0,
+        "section": "7. FLOORING"
       },
       {
         "id": "7.3",
@@ -183,7 +205,8 @@
         "qty": 6.0,
         "unit": "sqm",
         "rate": 2800.0,
-        "amount": 16800.0
+        "amount": 16800.0,
+        "section": "7. FLOORING"
       },
       {
         "id": "7.4",
@@ -191,7 +214,8 @@
         "qty": 112.0,
         "unit": "rm",
         "rate": 155.0,
-        "amount": 17360.0
+        "amount": 17360.0,
+        "section": "7. FLOORING"
       },
       {
         "id": "8.1",
@@ -199,7 +223,8 @@
         "qty": 1.0,
         "unit": "no",
         "rate": 14500.0,
-        "amount": 14500.0
+        "amount": 14500.0,
+        "section": "8. DOORS & WINDOWS"
       },
       {
         "id": "8.2",
@@ -207,7 +232,8 @@
         "qty": 7.0,
         "unit": "no",
         "rate": 5000.0,
-        "amount": 35000.0
+        "amount": 35000.0,
+        "section": "8. DOORS & WINDOWS"
       },
       {
         "id": "8.3",
@@ -215,7 +241,8 @@
         "qty": 13.0,
         "unit": "sqm",
         "rate": 3750.0,
-        "amount": 48750.0
+        "amount": 48750.0,
+        "section": "8. DOORS & WINDOWS"
       },
       {
         "id": "8.4",
@@ -223,7 +250,8 @@
         "qty": 13.0,
         "unit": "sqm",
         "rate": 1400.0,
-        "amount": 18200.0
+        "amount": 18200.0,
+        "section": "8. DOORS & WINDOWS"
       },
       {
         "id": "9.1",
@@ -231,7 +259,8 @@
         "qty": 64.0,
         "unit": "pt",
         "rate": 690.0,
-        "amount": 44160.0
+        "amount": 44160.0,
+        "section": "9. ELECTRICAL"
       },
       {
         "id": "9.2",
@@ -239,7 +268,8 @@
         "qty": 64.0,
         "unit": "pt",
         "rate": 310.0,
-        "amount": 19840.0
+        "amount": 19840.0,
+        "section": "9. ELECTRICAL"
       },
       {
         "id": "9.3",
@@ -247,7 +277,8 @@
         "qty": 1.0,
         "unit": "no",
         "rate": 6800.0,
-        "amount": 6800.0
+        "amount": 6800.0,
+        "section": "9. ELECTRICAL"
       },
       {
         "id": "10.1",
@@ -255,7 +286,8 @@
         "qty": 3.0,
         "unit": "set",
         "rate": 11200.0,
-        "amount": 33600.0
+        "amount": 33600.0,
+        "section": "10. PLUMBING & SANITARY"
       },
       {
         "id": "10.2",
@@ -263,7 +295,8 @@
         "qty": 44.0,
         "unit": "rm",
         "rate": 385.0,
-        "amount": 16940.0
+        "amount": 16940.0,
+        "section": "10. PLUMBING & SANITARY"
       },
       {
         "id": "10.3",
@@ -271,7 +304,8 @@
         "qty": 3.0,
         "unit": "no",
         "rate": 8200.0,
-        "amount": 24600.0
+        "amount": 24600.0,
+        "section": "10. PLUMBING & SANITARY"
       },
       {
         "id": "10.4",
@@ -279,7 +313,8 @@
         "qty": 4.0,
         "unit": "no",
         "rate": 3400.0,
-        "amount": 13600.0
+        "amount": 13600.0,
+        "section": "10. PLUMBING & SANITARY"
       },
       {
         "id": "10.5",
@@ -287,7 +322,8 @@
         "qty": 1.0,
         "unit": "no",
         "rate": 9500.0,
-        "amount": 9500.0
+        "amount": 9500.0,
+        "section": "10. PLUMBING & SANITARY"
       },
       {
         "id": "11.1",
@@ -295,7 +331,8 @@
         "qty": 780.0,
         "unit": "sqm",
         "rate": 140.0,
-        "amount": 109200.0
+        "amount": 109200.0,
+        "section": "11. PAINTING"
       },
       {
         "id": "11.2",
@@ -303,7 +340,8 @@
         "qty": 295.0,
         "unit": "sqm",
         "rate": 155.0,
-        "amount": 45725.0
+        "amount": 45725.0,
+        "section": "11. PAINTING"
       },
       {
         "id": "11.3",
@@ -311,7 +349,8 @@
         "qty": 40.0,
         "unit": "sqm",
         "rate": 120.0,
-        "amount": 4800.0
+        "amount": 4800.0,
+        "section": "11. PAINTING"
       },
       {
         "id": "12.1",
@@ -319,7 +358,8 @@
         "qty": 1.0,
         "unit": "no",
         "rate": 4200.0,
-        "amount": 4200.0
+        "amount": 4200.0,
+        "section": "12. MISC"
       },
       {
         "id": "12.2",
@@ -327,7 +367,8 @@
         "qty": 1.0,
         "unit": "no",
         "rate": 18500.0,
-        "amount": 18500.0
+        "amount": 18500.0,
+        "section": "12. MISC"
       },
       {
         "id": "12.3",
@@ -335,7 +376,8 @@
         "qty": 1.0,
         "unit": "ls",
         "rate": 12000.0,
-        "amount": 12000.0
+        "amount": 12000.0,
+        "section": "12. MISC"
       },
       {
         "id": "12.4",
@@ -343,119 +385,128 @@
         "qty": 1.0,
         "unit": "ls",
         "rate": 0.0,
-        "amount": 0.0
+        "amount": 0.0,
+        "section": "12. MISC"
       }
     ],
     "flags": [
       {
         "item": "2.5",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'Anti-termite treatment to foundation & plinth per IS 6313'",
-        "question": "Could you provide a detailed technical specification or price breakdown for the anti-termite treatment rate?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you provide a detailed technical specification or supplier quotation for the anti-termite treatment per IS 6313?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
-        "item": "4.2",
+        "item": "4.1",
         "type": "UNDERSPECIFIED",
-        "evidence": "TMT bars Fe500 per IS 1786 specifies grade and IS standard but does not state the manufacturer or brand name",
-        "question": "Could you please specify which brand of TMT steel bars (such as Tata Tiscon, JSW, or Vizag Steel) will be supplied?",
+        "evidence": "Line item 4.1 'Binding wire' specifies no wire gauge or material standard.",
+        "question": "Could you clarify the gauge and material standard (e.g., 16/18 SWG GI or annealed wire) to be used for the binding wire?",
         "tone": "warn",
         "label": "Vague spec"
       },
       {
         "item": "8.1",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'Seasoned teak wood frame for main door 5\"x3\"'",
-        "question": "Could you clarify the wood grade and details for the main door teak frame rate calculation?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you share the detailed timber specification and breakdown for the seasoned teak wood main door frame?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
         "item": "9.2",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'Modular switches & sockets, Anchor Roma'",
-        "question": "Could you confirm the itemized breakdown for the modular switches and sockets per point?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you confirm the model series and component breakdown for the Anchor Roma modular switches & sockets?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
         "item": "9.3",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'DB with MCBs, single phase, Havells'",
-        "question": "Could you share the specifications and cost breakdown for the Havells single-phase distribution board?",
-        "tone": "neutral",
-        "label": "No benchmark"
-      },
-      {
-        "item": "10.2",
-        "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'PVC drainage lines 110mm/75mm, Supreme'",
-        "question": "Could you provide further specification details for the Supreme PVC drainage piping work?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you provide the specification and way-capacity details for the Havells single-phase distribution board?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
         "item": "10.3",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'EWC with concealed cistern, Hindware'",
-        "question": "Could you clarify the specific model and breakdown for the Hindware EWC with concealed cistern?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you share the specific Hindware model details and warranty terms for the EWC with concealed cistern?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
         "item": "10.4",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'Wash basins with pillar taps, Cera'",
-        "question": "Could you confirm the model details and rate breakdown for the Cera wash basins and pillar taps?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you clarify the specific Cera model and pillar tap specifications for the wash basins?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
         "item": "10.5",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'OH tank 1000L triple layer, Sintex, with fittings'",
-        "question": "Could you share the rate breakdown for the 1000L Sintex overhead tank including installation fittings?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you confirm the Sintex 1000L overhead tank model series and included fitting accessories?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
         "item": "11.3",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'Enamel on grills and MS work'",
-        "question": "Could you specify the paint brand and application details for the enamel painting on MS work?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you confirm the paint brand, shade, and application process for enamel painting on MS work?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
+        "item": "11.3",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Line item 11.3 'Enamel on grills and MS work' specifies no paint brand or grade.",
+        "question": "Could you specify the brand and grade of synthetic enamel paint to be applied on the grills and MS work?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
         "item": "12.1",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'Kitchen sink SS single bowl, Nirali, with fittings'",
-        "question": "Could you confirm the model specification and fittings included for the Nirali kitchen sink?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you share the specific Nirali stainless steel sink model number and gauge details?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
         "item": "12.2",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'MS main gate 4'x7' with painting'",
-        "question": "Could you share the fabrication weight and design specifications for the MS main gate?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you provide structural design drawing details and section gauges for the 4'x7' MS main gate?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
+        "item": "12.2",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Line item 12.2 'MS main gate 4'x7' with painting' specifies no section thickness or paint brand.",
+        "question": "Could you clarify the steel section thickness and paint brand/type for the MS main gate?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
         "item": "12.3",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'Site cleaning and debris disposal on completion'",
-        "question": "Could you outline the scope of site cleaning and debris removal included in the lump sum rate?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you outline the scope and staging of site cleaning and debris disposal included in the lump sum figure?",
         "tone": "neutral",
         "label": "No benchmark"
       },
       {
         "item": "12.4",
         "type": "UNBENCHMARKED",
-        "evidence": "lookup_benchmark_rates returned matched_item=null for 'Water & electricity for construction (borne by owner)'",
-        "question": "Could you clarify any owner responsibilities or conditions regarding temporary water and electricity connections?",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you clarify the estimated utility arrangements and responsibilities for site water and electricity during construction?",
         "tone": "neutral",
         "label": "No benchmark"
       }
@@ -467,14 +518,16 @@
     "sections": [],
     "expected_total_cost": 2966144.51,
     "completed_value_estimate": 9900000.0,
-    "sanction_gap": -466144.51
+    "sanction_gap": -466144.51,
+    "fair_price_for_quoted_scope": 2737220.0,
+    "missing_scope_value": 0.0
   },
   "inspection_result": {
     "stage": "slab",
     "confidence": "high",
     "matches_claim": true,
     "evidence_notes": [
-      "Vertical columns and slab shuttering with wooden staging/props are clearly visible. Exterior walls are absent except for a small section of partial brickwork. The site matches the slab stage, but the photos show a G+1 structure under construction, whereas the approved plan summary specifies a G+0 single-floor building."
+      "Vertical concrete columns with projecting rebar are clearly visible across both images. Cast concrete slabs and active shuttering with wooden support props are prominently featured. The structure remains largely open with only minimal, partial brickwork visible on the ground level."
     ],
     "needs_human_review": false
   },
@@ -484,6 +537,7 @@
     "recommendation": "RELEASE",
     "pct_complete": 0.5,
     "verified_value": 1483072.0,
+    "cost_to_complete": 1483072.0,
     "cost_to_complete_gap": -197409.0,
     "live_ltv_pct": 12.3,
     "ltv_default_prior": 0.139,
@@ -493,8 +547,8 @@
     ]
   },
   "explanation": {
-    "owner_view": "Great news! We recommend releasing your tranche payment as your project has successfully reached the verified slab stage (50% progress), with the verified value of completed work standing at ₹1,483,072.\n\nSo far, a cumulative amount of ₹1,214,337 has been disbursed out of your sanctioned loan amount of ₹2,500,000. However, we want to bring an important financial aspect to your attention: based on local benchmark data in Kukatpally, the total expected construction cost is estimated at ₹2,966,144.51, compared to your contractor's total quotation of ₹2,845,140. This leaves a sanction gap of ₹-466,144.51 against your loan and a cost-to-complete gap of ₹-197,409. This means remaining funds may not fully cover the remaining work, so we strongly encourage you to re-scope or plan for this shortfall early.\n\nTo help keep costs transparent, here are key questions to ask your contractor:\n1. TMT Steel (Item 4.2): Which specific brand (e.g., Tata Tiscon, JSW, or Vizag Steel) will be supplied?\n2. Anti-Termite Treatment (Item 2.5): Could you provide a detailed technical specification or price breakdown?\n3. Teak Door Frame (Item 8.1): What wood grade is being used for the main door frame calculation?\n4. Electrical (Items 9.2 & 9.3): Can you share an itemized cost breakdown for the Anchor Roma modular switches/sockets and the Havells single-phase distribution board?\n5. Plumbing & Sanitary (Items 10.2–10.5): What are the specific model details and rate breakdowns for Supreme PVC drainage lines, Hindware EWC with concealed cistern, Cera wash basins, and the 1000L Sintex overhead tank?\n6. Miscellaneous Work (Items 11.3, 12.1–12.4): Please clarify the paint brand for MS enamel work, model specs for the Nirali kitchen sink, fabrication weight for the main gate, scope of debris disposal, and temporary utility connections.",
-    "officer_view": "AUDIT & DISBURSAL RATIONALE:\n- Recommendation: RELEASE\n- Claimed & Verified Stage: Slab stage (50% physical completion verified).\n- Verified Value of Completed Work: ₹1,483,072.00\n- Disbursed Cumulative: ₹1,214,337.00 against Sanctioned Amount of ₹2,500,000.00.\n- Exposure Ratio: 0.82 (within the acceptable threshold of ≤ 1.0).\n\nFINANCIAL & LTV METRICS:\n- Contractor BOQ Total: ₹2,845,140.00\n- Expected Total Construction Cost: ₹2,966,144.51 (Benchmarked via Kukatpally median across 235 listings).\n- Completed Property Value Estimate: ₹9,900,000.00\n- Sanction Gap: ₹-466,144.51\n- Cost-to-Complete Gap: ₹-197,409.00 (Indicates potential overrun requiring borrower re-scoping).\n- Live LTV: 12.3% (against default prior LTV threshold of 0.139).\n\nEVIDENCE & SITE VERIFICATION:\n- Image verification confirms vertical columns and floor/roof slab shuttering with wooden staging/props clearly visible, with partial brickwork matching slab stage criteria.\n- Note: Site photo visual analysis flagged a G+1 structure under construction on-site vs G+0 in approved plan summary.\n\nBOQ & RATE AUDIT:\n- Payment schedule prior to slab is 25.0% (within max reasonable threshold of 30.0%).\n- Steel-to-RCC Ratio: 98.7 kg/cum (within standard range of 80–120 kg/cum).\n- Unbenchmarked/Underspecified items flagged for clarification: Anti-termite treatment (2.5), TMT steel brand specification (4.2), Teak wood main door frame (8.1), Modular switches (9.2), Distribution board (9.3), PVC drainage (10.2), EWC (10.3), Wash basins (10.4), Overhead tank (10.5), Enamel paint (11.3), Kitchen sink (12.1), MS main gate (12.2), Site cleaning scope (12.3), and Water/electricity provision terms (12.4)."
+    "owner_view": "Great news—your site photos confirm that the slab casting stage is complete, which justifies releasing the next tranche of your loan. The verified value of the work completed so far stands at ₹14,83,072 against your cumulative disbursed amount of ₹12,14,337.\n\nHowever, we want to highlight an important financial update regarding your remaining construction costs:\n- Sanctioned Loan Amount: ₹25,00,000\n- Estimated Total Construction Cost: ₹29,66,144.51\n- Quoted BOQ Total: ₹28,45,140 (Fair Market Value for quoted scope: ₹2,73,7220)\n- Cost to Complete Remaining Work: ₹14,83,072\n- Remaining Loan Funds Gap (Cost-to-Complete Gap): ₹-1,97,409\n- Total Sanction Gap: ₹-4,66,144.51\n\nBecause the remaining loan funds will fall short by ₹1,97,409 to finish the build at expected market costs, we strongly recommend reviewing your project scope or planning self-funding for the shortfall now.\n\nTo help optimize costs, here are specific clarification and negotiation questions to discuss with your contractor:\n1. Binding Wire (Item 4.1): Can you clarify the gauge and material standard (e.g., 16/18 SWG GI or annealed wire)?\n2. Teak Wood Frame (Item 8.1): Could you provide a detailed timber specification and breakdown for the seasoned teak door frame?\n3. Anti-Termite Treatment (Item 2.5): Please provide a detailed technical specification or supplier quotation per IS 6313.\n4. Electrical & Distribution Board (Items 9.2, 9.3): Could you confirm the specific model series for Anchor Roma modular switches/sockets and Havells single-phase DB way-capacity?\n5. Plumbing Fixtures & Tank (Items 10.3, 10.4, 10.5): Please clarify model numbers and warranty terms for Hindware EWCs, Cera wash basins/pillar taps, and Sintex 1000L tank accessories.\n6. Paints & MS Work (Items 11.3, 12.1, 12.2): Can you specify the brand/grade of synthetic enamel paint for MS work, model/gauge details for the Nirali kitchen sink, and section thickness for the 4'x7' MS main gate?",
+    "officer_view": "AUDIT-GRADE TRANCHE REVIEW SUMMARY — LOAN 1002\n\n1. DISBURSAL RECOMMENDATION: RELEASE\n- Recommendation: RELEASE\n- Verified Work Value: ₹14,83,072 (50.0% completion)\n- Cumulative Disbursed: ₹12,14,337\n- Exposure Ratio: 0.82 (within risk threshold)\n- Live LTV: 12.3% (LTV Default Prior: 0.139)\n- Completed Property Value Estimate: ₹99,00,000 (Based on Kukatpally median of 235 listings)\n\n2. RISK & COST GAP ANALYSIS:\n- Sanctioned Amount: ₹25,00,000\n- Expected Total Construction Cost: ₹29,66,144.51\n- Cost to Complete: ₹14,83,072\n- Cost-to-Complete Gap: ₹-1,97,409 (Negative gap indicates remaining loan funds are insufficient to complete construction)\n- Sanction Gap: ₹-4,66,144.51\n\n3. VISUAL INSPECTION & PHYSICAL VERIFICATION:\n- Claimed Stage: slab | Observed Stage: slab | Confidence: High | Claim Match: True\n- Evidence: Vertical concrete columns with projecting rebar visible; cast concrete slabs and active shuttering with wooden support props featured; structure open with minimal ground-level brickwork.\n\n4. BOQ & BENCHMARK AUDIT:\n- Total Quoted BOQ: ₹28,45,140\n- Fair Price for Quoted Scope: ₹2,73,7220\n- Benchmark Sources: CPWD DSR 2023 multiplied by Hyderabad location factor\n- Pre-Slab Payment Schedule: 25.0% (within 30.0% threshold)\n- Steel-to-RCC Ratio: 98.7 kg/cum (within 80–120 kg/cum expected range)\n- Missing Scope Value: ₹0"
   },
   "payment_schedule": [
     {
