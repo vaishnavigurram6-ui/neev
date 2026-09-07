@@ -3,6 +3,7 @@
 # params avoid the KeyError class of failures when the model builds the call).
 
 from ..config import (
+    MILESTONE_ORDER,
     cumulative_weight,
     EXPOSURE_HOLD_THRESHOLD,
     ltv_default_prior,
@@ -34,6 +35,34 @@ def assess_tranche(
         'live_ltv_pct', 'ltv_default_prior', 'reasons'.
     """
     reasons = []
+
+    # An unverifiable stage is not an error, it is an answer. With no usable
+    # photo the inspector reports something outside MILESTONE_ORDER, and
+    # cumulative_weight() would raise -- which took a whole billed five-agent
+    # run down the first time this path ran for real. Progress that cannot be
+    # verified cannot justify a release, so say INSPECT and quote no exposure
+    # rather than compute one from a stage nobody confirmed.
+    if observed_stage not in MILESTONE_ORDER:
+        live_ltv = (disbursed_cumulative / completed_value_estimate * 100
+                    if completed_value_estimate else 0.0)
+        return {
+            "exposure_ratio": None,
+            "exposure_undefined": True,
+            "recommendation": "INSPECT",
+            "pct_complete": 0.0,
+            "verified_value": 0.0,
+            "cost_to_complete_gap": round(
+                (sanctioned_amount - disbursed_cumulative)
+                - expected_total_cost, 0),
+            "live_ltv_pct": round(live_ltv, 1),
+            "ltv_default_prior": ltv_default_prior(live_ltv),
+            "reasons": [
+                f"Construction stage could not be verified from the evidence "
+                f"supplied (reported as {observed_stage or 'none'!r}). Exposure is "
+                f"undefined without a confirmed stage, so no release decision can "
+                f"be made -- route to physical inspection.",
+            ],
+        }
 
     pct_complete = cumulative_weight(observed_stage)
     verified_value = expected_total_cost * pct_complete
@@ -69,6 +98,9 @@ def assess_tranche(
 
     return {
         "exposure_ratio": round(exposure, 2),
+        # Present on both return paths so a caller never has to guess whether
+        # the key exists; RiskAssessment declares it either way.
+        "exposure_undefined": False,
         "recommendation": recommendation,
         "pct_complete": pct_complete,
         "verified_value": round(verified_value, 0),

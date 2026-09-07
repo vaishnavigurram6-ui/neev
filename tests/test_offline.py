@@ -158,6 +158,53 @@ class TestDisbursalRisk(unittest.TestCase):
         self.assertEqual(r["live_ltv_pct"], 0.0)
 
 
+class TestUnverifiableStage(unittest.TestCase):
+    """A tranche review with no usable photo must not crash the pipeline.
+
+    Found by the first real captured run. With no photos supplied,
+    visual_inspector_agent correctly reported stage "not_assessed"; assess_tranche
+    called cumulative_weight() on it before the confidence gate and raised
+    ValueError, taking the whole five-agent run down after several billed calls.
+
+    The honest answer is INSPECT: progress that cannot be verified cannot justify
+    a release. The schema already carries exposure_undefined for exactly this.
+    """
+
+    def _assess(self, stage, confidence="high"):
+        from neev_pipeline.tools.disbursal_risk_tool import assess_tranche
+
+        return assess_tranche(
+            expected_total_cost=3_235_794,
+            observed_stage=stage,
+            stage_confidence=confidence,
+            sanctioned_amount=2_800_000,
+            disbursed_cumulative=1_800_000,
+            completed_value_estimate=8_099_999,
+        )
+
+    def test_not_assessed_recommends_inspect_instead_of_raising(self):
+        r = self._assess("not_assessed")
+        self.assertEqual(r["recommendation"], "INSPECT")
+
+    def test_an_unverifiable_stage_reports_no_exposure_rather_than_a_wrong_one(self):
+        r = self._assess("not_assessed")
+        self.assertTrue(r["exposure_undefined"])
+        self.assertIsNone(r["exposure_ratio"])
+
+    def test_the_reason_says_why_a_decision_could_not_be_made(self):
+        r = self._assess("not_assessed")
+        self.assertTrue(any("verif" in x.lower() or "photo" in x.lower() for x in r["reasons"]))
+
+    def test_any_unrecognised_stage_is_treated_the_same_way(self):
+        self.assertEqual(self._assess("unknown")["recommendation"], "INSPECT")
+        self.assertEqual(self._assess("")["recommendation"], "INSPECT")
+
+    def test_a_real_stage_still_decides_normally(self):
+        """Guards against the fix swallowing the cases that already worked."""
+        self.assertEqual(self._assess("slab")["recommendation"], "HOLD")
+        self.assertFalse(self._assess("slab")["exposure_undefined"])
+
+
 class TestBoqChecks(unittest.TestCase):
     def test_rate_deviation_flags_seeded_rcc_flaw(self):
         # Seeded flaw F1: RCC @ ₹9,800 vs ₹8,036 benchmark -> ~22% deviation.

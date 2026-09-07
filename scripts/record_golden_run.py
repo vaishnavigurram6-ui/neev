@@ -66,8 +66,22 @@ def _refuse_unless_explicitly_permitted() -> None:
             "Set NEEV_ALLOW_BILLED_CALLS=1 only if the repo owner has lifted the dry\n"
             "run in CLAUDE.md. Nothing was called."
         )
-    if not os.environ.get("GOOGLE_API_KEY"):
-        sys.exit("GOOGLE_API_KEY is not set. Nothing was called.")
+    # Either credential route is fine. Vertex is the keyless one: ADC plus
+    # GOOGLE_GENAI_USE_VERTEXAI=true authenticates with the same credentials the
+    # BigQuery tools already use, so no long-lived API key has to exist anywhere.
+    # Note GOOGLE_CLOUD_LOCATION=global -- gemini-3.6-flash is not served from
+    # asia-south1, which a 404 on the first probe made clear.
+    vertex = os.environ.get("GOOGLE_GENAI_USE_VERTEXAI", "").lower() in ("1", "true")
+    if not os.environ.get("GOOGLE_API_KEY") and not vertex:
+        sys.exit(
+            "No Gemini credential. Set GOOGLE_API_KEY, or use the keyless route:\n"
+            "  export GOOGLE_GENAI_USE_VERTEXAI=true\n"
+            "  export GOOGLE_CLOUD_PROJECT=buildguard-ai-2026\n"
+            "  export GOOGLE_CLOUD_LOCATION=global\n"
+            "Nothing was called."
+        )
+    if vertex and not os.environ.get("GOOGLE_CLOUD_PROJECT"):
+        sys.exit("GOOGLE_GENAI_USE_VERTEXAI is set but GOOGLE_CLOUD_PROJECT is not. Nothing was called.")
 
 
 async def capture(loan_id: str, boq: Path, photos: list[Path]) -> dict:
@@ -114,13 +128,25 @@ async def capture(loan_id: str, boq: Path, photos: list[Path]) -> dict:
             types.Part.from_bytes(data=photo.read_bytes(), mime_type="image/jpeg")
         )
 
-    async for event in runner.run_async(
-        user_id="recorder",
-        session_id=session.id,
-        new_message=types.Content(role="user", parts=parts),
-    ):
-        if event.author and event.is_final_response():
-            print(f"  [{event.author}] responded")
+    # The run is guarded, not merely followed. A tool that raises mid-pipeline
+    # takes run_async down with it, and the first real capture died that way at
+    # agent four -- after several billed calls, with nothing saved, because
+    # _save_raw only ran on the happy path. Whatever state exists is worth more
+    # than the exception.
+    failure = None
+    try:
+        async for event in runner.run_async(
+            user_id="recorder",
+            session_id=session.id,
+            new_message=types.Content(role="user", parts=parts),
+        ):
+            if event.author and event.is_final_response():
+                print(f"  [{event.author}] responded")
+    except Exception as exc:  # noqa: BLE001 - reported, never swallowed
+        failure = f"{type(exc).__name__}: {exc}"
+        print(f"  RUN FAILED mid-pipeline: {failure}", file=sys.stderr)
+        print("  Saving whatever the session holds so the spend is not wasted.",
+              file=sys.stderr)
 
     state = (
         await runner.session_service.get_session(
@@ -130,7 +156,10 @@ async def capture(loan_id: str, boq: Path, photos: list[Path]) -> dict:
     # Session state can hold non-serialisable values alongside the output keys.
     # Keep only what is JSON-round-trippable, so saving cannot fail after the
     # money is spent.
-    return {k: v for k, v in state.items() if _serialisable(v)}
+    kept = {k: v for k, v in state.items() if _serialisable(v)}
+    if failure:
+        kept["_run_failure"] = failure
+    return kept
 
 
 def _serialisable(value: object) -> bool:
@@ -158,6 +187,8 @@ def _write_fixture(loan_id: str, state: dict, out: Path | None) -> int:
 
     result = parse_state(state, base=base)
 
+    for key, message in result.unassessed.items():
+        print(f"  absent  {key}: {message}")
     for key, message in result.errors.items():
         print(f"  FAILED {key}: {message.splitlines()[0]}", file=sys.stderr)
 

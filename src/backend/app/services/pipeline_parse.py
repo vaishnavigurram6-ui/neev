@@ -56,6 +56,50 @@ OPTIONAL_KEYS = frozenset({"inspection_result", "risk_assessment"})
 # rather than emitted by an agent -- so a capture must never overwrite it.
 UNOWNED_KEYS = frozenset({"payment_schedule"})
 
+# The ONLY fields a base fixture may contribute to a captured key. Everything
+# else: what the capture said stands, and what it did not say is absent.
+#
+# This started as "any field the capture did not mention", which is unsafe.
+# model_dump(exclude_none=True) drops an explicit null, so a model saying
+# "exposure_ratio is null because I could not compute it" looked identical to a
+# model that never mentioned exposure_ratio -- and the authored 1.29 was merged
+# onto a record that also said exposure_undefined. The stored result asserted
+# both at once. An allow-list cannot do that.
+BASE_FILLABLE: dict[str, frozenset[str]] = {
+    # Sanction Check's "where the gap comes from" table. Needs reasoning the
+    # cost prompt may not produce, and an empty table is a worse answer than
+    # the authored one.
+    "cost_estimate": frozenset({"sections"}),
+}
+
+# Flag types the model renames, mapped to the canonical FlagType. Taken from
+# real captured runs, not guessed: the first live run of loan 1001 emitted
+# PAYMENT_SCHEDULE for what FlagType calls FRONT_LOADED. Only obvious synonyms
+# belong here -- an unrecognised type must still fail validation, or aliasing
+# becomes a licence for the model to invent categories.
+FLAG_TYPE_ALIASES: dict[str, str] = {
+    "PAYMENT_SCHEDULE": "FRONT_LOADED",
+    "PAYMENT_TERMS": "FRONT_LOADED",
+    "FRONT_LOADED_PAYMENT": "FRONT_LOADED",
+    "NO_BENCHMARK": "UNBENCHMARKED",
+    "RATE_OUTLIER_HIGH": "RATE_OUTLIER",
+    "SCOPE_MISSING": "MISSING_SCOPE",
+    "GST_NOT_STATED": "GST_SILENT",
+    "STEEL_RCC_RATIO": "STEEL_RATIO",
+}
+
+
+class Unassessable(Exception):
+    """The model reported that it could not make the judgement at all.
+
+    Distinct from malformed output. The first captured run, given no photos,
+    returned confidence "none" and matches_claim null for inspection_result --
+    an honest "I could not assess this", which PipelineOutput already models as
+    an absent optional key. Coercing it into a low-confidence result would
+    imply a judgement nobody made.
+    """
+
+
 # Flag tone by type. Presentation-independent: the theme resolves the colour.
 FLAG_TONES: dict[str, str] = {
     "RATE_OUTLIER": "danger",
@@ -97,6 +141,9 @@ class ParseResult:
 
     parsed: dict[str, Any] = field(default_factory=dict)
     errors: dict[str, str] = field(default_factory=dict)
+    # Optional keys the model explicitly declined to judge. Not errors -- worth
+    # reporting so an operator knows the absence was deliberate.
+    unassessed: dict[str, str] = field(default_factory=dict)
     output: PipelineOutput | None = None
 
 
@@ -153,6 +200,9 @@ def _flag_label(flag: dict) -> str | None:
 
 def _normalize_flag(flag: dict) -> dict:
     flag = dict(flag)
+    alias = FLAG_TYPE_ALIASES.get(str(flag.get("type", "")).upper())
+    if alias:
+        flag["type"] = alias
     if "label" not in flag:
         label = _flag_label(flag)
         if label is not None:
@@ -180,6 +230,18 @@ def normalize(key: str, obj: dict) -> dict:
     if key == "cost_estimate" and "expected_total_cost" not in obj:
         if "estimated_cost" in obj:
             obj["expected_total_cost"] = obj["estimated_cost"]
+
+    if key == "inspection_result":
+        # "I could not assess this" is an answer, not malformed output.
+        if obj.get("confidence") not in ("high", "medium", "low"):
+            raise Unassessable(
+                f"inspection_result reports confidence "
+                f"{obj.get('confidence')!r}; no stage judgement was made"
+            )
+        # Models write a sentence where the schema wants list[str].
+        notes = obj.get("evidence_notes")
+        if isinstance(notes, str):
+            obj["evidence_notes"] = [notes] if notes.strip() else []
 
     return obj
 
@@ -222,18 +284,29 @@ def parse_state(state: dict, *, base: dict | None = None) -> ParseResult:
             continue
         try:
             parsed, spoke_to = _parse_one(key, raw)
+        except Unassessable as exc:
+            # Optional by contract, so an honest "could not judge" is absence,
+            # not failure. A required key has no such latitude.
+            if key in OPTIONAL_KEYS:
+                result.unassessed[key] = str(exc)
+                continue
+            result.errors[key] = str(exc)
+            continue
         except (ValidationError, ValueError, json.JSONDecodeError) as exc:
             result.errors[key] = str(exc)
             continue
         captured = parsed.model_dump(mode="json", exclude_none=True)
-        # Per-key merge, not a top-level one: a shallow {**base, **captured}
-        # over whole output_keys drops every authored field the run omitted.
-        # Restricting to the fields the capture spoke to is what lets a base
-        # value survive -- cost_estimate.sections being the case that matters.
-        result.parsed[key] = {
-            **base.get(key, {}),
-            **{k: v for k, v in captured.items() if k in spoke_to},
-        }
+        # The capture is authoritative. A base fixture may only fill the named
+        # fields in BASE_FILLABLE, and only where the capture did not speak to
+        # them -- see that constant for why anything looser is unsafe.
+        fillable = BASE_FILLABLE.get(key, frozenset())
+        unspoken = {k for k in fillable if k not in spoke_to}
+        carried = {k: v for k, v in base.get(key, {}).items() if k in unspoken}
+        # Drop the model's own default for a fillable field it never mentioned,
+        # or `sections: []` from default_factory would overwrite the base value
+        # this allow-list exists to preserve.
+        captured = {k: v for k, v in captured.items() if k not in unspoken}
+        result.parsed[key] = {**carried, **captured}
 
     for key in UNOWNED_KEYS:
         if key in base:

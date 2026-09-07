@@ -274,3 +274,82 @@ def test_derived_labels_and_tones_reproduce_the_authored_fixtures():
             assert derived["tone"] == flag.tone, f"{loan_id} {flag.item}"
             checked += 1
     assert checked, "no authored flags found -- the guard would pass vacuously"
+
+
+# ------------------------------------------------- what the first real run said
+# Every case below is taken verbatim from .golden_runs/1001-20260907T155507Z.json,
+# the first captured run. None of it was anticipated by the authored fixtures.
+
+
+def test_a_flag_type_the_model_renamed_is_mapped_to_the_canonical_one():
+    """The real run emitted PAYMENT_SCHEDULE where FlagType says FRONT_LOADED."""
+    flag = _flag(type="PAYMENT_SCHEDULE", evidence="45% due before the slab.")
+    out = normalize("boq_findings", _findings(flag))
+    assert out["flags"][0]["type"] == "FRONT_LOADED"
+    assert out["flags"][0]["label"] == "Front-loaded"
+
+
+def test_an_unrecognised_flag_type_is_still_left_to_fail():
+    """Aliasing must not become a licence to invent categories."""
+    out = normalize("boq_findings", _findings(_flag(type="VIBES_OFF")))
+    assert out["flags"][0]["type"] == "VIBES_OFF"
+    assert "label" not in out["flags"][0]
+
+
+def test_evidence_notes_given_as_prose_becomes_a_one_item_list():
+    """The real run returned a sentence where the schema wants list[str]."""
+    out = normalize(
+        "inspection_result",
+        {"stage": "slab", "confidence": "high", "matches_claim": True,
+         "evidence_notes": "Slab shuttering visible."},
+    )
+    assert out["evidence_notes"] == ["Slab shuttering visible."]
+
+
+def test_an_inspection_that_could_not_assess_anything_is_not_an_inspection():
+    """confidence 'none' + matches_claim null is the model saying "I couldn't".
+
+    PipelineOutput already models that as an absent inspection_result, which is
+    truer than coercing it into a low-confidence one that implies a judgement
+    nobody made.
+    """
+    state = _state() | {
+        "inspection_result": json.dumps({
+            "stage": "not_assessed", "confidence": "none", "matches_claim": None,
+            "evidence_notes": "No site photos were supplied.",
+        })
+    }
+    result = parse_state(state)
+    assert result.errors == {}
+    assert result.output is not None
+    assert result.output.inspection_result is None
+
+
+def test_a_required_key_that_cannot_be_assessed_is_still_an_error():
+    """The leniency above applies only to keys PipelineOutput marks optional."""
+    state = _state() | {"boq_findings": json.dumps({"unassessable": True})}
+    result = parse_state(state)
+    assert "boq_findings" in result.errors
+
+
+def test_an_explicitly_null_captured_field_is_not_back_filled_from_base():
+    """The first real run produced a self-contradictory record this way.
+
+    assess_tranche returned exposure_ratio null with exposure_undefined true --
+    "I cannot compute this". model_dump(exclude_none=True) drops the null, which
+    made it indistinguishable from a field the model never mentioned, so the
+    authored base's 1.29 was merged back in. The stored result then claimed both
+    that exposure was undefined AND that it was 1.29.
+    """
+    base = {"risk_assessment": {"exposure_ratio": 1.29, "verified_value": 1_390_000}}
+    state = _state() | {
+        "risk_assessment": json.dumps({
+            "exposure_ratio": None, "exposure_undefined": True,
+            "recommendation": "INSPECT", "pct_complete": 0.0,
+            "verified_value": 0, "cost_to_complete_gap": -435_794,
+        })
+    }
+    result = parse_state(state, base=base)
+    assert result.parsed["risk_assessment"]["exposure_undefined"] is True
+    assert result.parsed["risk_assessment"].get("exposure_ratio") is None
+    assert result.parsed["risk_assessment"]["verified_value"] == 0
