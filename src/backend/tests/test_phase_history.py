@@ -6,6 +6,14 @@ owner's account of their build and the lender's audit trail cannot drift apart.
 
 import pytest
 
+def captured(loan_id: str = "1001"):
+    """The captured run's own figures, read rather than transcribed."""
+    from app.fixtures.loader import load_pipeline_output
+
+    return load_pipeline_output(loan_id)
+
+
+
 from app.db import models
 from app.db.seed import seed
 from app.db.session import SessionLocal, init_db
@@ -43,14 +51,18 @@ def test_every_tranche_becomes_a_phase_in_order():
     ]
 
 
-def test_verified_value_is_monotonic_and_ends_at_the_frozen_figure():
-    # Derived from the one figure already on screen: 13,90,000 verified at the
-    # slab, which is 50% complete, implies a 27,80,000 base. Anything else would
-    # contradict the Tranche Decision screen.
+def test_verified_value_is_monotonic_and_ends_at_todays_figure():
+    """The history is recomputed per phase, and must land on today's number.
+
+    Was pinned to the mockup's 13,90,000. The figure is now whatever the
+    captured run's assess_tranche reported, so the assertion is the
+    relationship: work in place never goes backwards, and the last drawn phase
+    is the one the Tranche Decision screen shows.
+    """
     verified = [p.verified_value for p in _phases()[:3]]
     assert all(v is not None for v in verified)
     assert verified == sorted(verified), "value in place cannot go backwards"
-    assert verified[2] == 1390000
+    assert verified[2] == captured().risk_assessment.verified_value
 
 
 def test_released_amount_is_the_step_not_the_cumulative():
@@ -62,10 +74,11 @@ def test_released_amount_is_the_step_not_the_cumulative():
 def test_exposure_is_computed_at_each_phase_not_carried_from_today():
     phases = _phases()
     # Front-loaded payments mean exposure was worse early and improved as work
-    # caught up. Showing today's 1.29 against every past phase would hide that.
+    # caught up. Carrying today's figure back across every past phase would
+    # hide that, so the middle phase must read worse than the latest one.
     assert phases[0].exposure is not None
     assert phases[1].exposure > phases[2].exposure
-    assert phases[2].exposure == 1.29
+    assert phases[2].exposure == captured().risk_assessment.exposure_ratio
 
 
 def test_the_phases_neev_did_not_watch_say_so_and_carry_no_evidence():

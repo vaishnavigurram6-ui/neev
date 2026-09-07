@@ -70,34 +70,98 @@ def test_no_fixture_contains_a_preformatted_money_string(path):
     assert offenders == [], f"pre-formatted money in {path.name}: {offenders}"
 
 
-def test_loan_1001_carries_the_frozen_mockup_figures():
-    # Transcribed from the mockups (spec 4.4). If any of these change, a screen
-    # and the fixture have drifted apart.
+def test_the_golden_loan_agrees_with_itself():
+    """Captured runs are checked for consistency, not against frozen figures.
+
+    This replaced a list of numbers transcribed from the mockups. Those were the
+    right assertion while the fixture was authored to match the mockups; the
+    fixture is now a recorded real run, so pinning its figures would break on
+    every re-capture while proving nothing about correctness. What must hold is
+    that the run agrees with itself and with the document it read.
+    """
     out = load_pipeline_output("1001")
-    assert out.boq_findings.boq_total == 3200000
-    assert out.boq_findings.payment_pct_before_slab == 0.45
-    assert len(out.boq_findings.flags) == 9
-    assert out.cost_estimate.expected_total_cost == 3500000
-    assert out.cost_estimate.fair_price_for_quoted_scope == 2915000
-    assert out.cost_estimate.missing_scope_value == 154000
-    assert out.risk_assessment is not None
-    assert out.risk_assessment.exposure_ratio == 1.29
-    assert out.risk_assessment.verified_value == 1390000
-    assert out.risk_assessment.cost_to_complete == 1580000
-    assert out.risk_assessment.cost_to_complete_gap == -580000
-    assert out.risk_assessment.recommendation == "HOLD"
+    findings = out.boq_findings
+
+    # boq_total is the document's stated TOTAL, which is the sum of its lines.
+    # The authored fixture said 3,200,000 where sample_boq.pdf prints 2,847,930
+    # -- a contradiction only a real run exposed.
+    assert findings.boq_total == pytest.approx(
+        sum(li.amount for li in findings.line_items), rel=0.01
+    )
+    assert 0 < findings.payment_pct_before_slab <= 1
+
+    risk = out.risk_assessment
+    assert risk is not None
+    # verified_value IS the expected cost scaled by how far the build has got.
+    assert risk.verified_value == pytest.approx(
+        out.cost_estimate.expected_total_cost * risk.pct_complete, rel=0.01
+    )
 
 
-def test_flag_counts_match_the_boq_review_stat_card():
-    # "9 items — 3 rate outliers, 2 missing scope, 4 vague specs"
-    flags = load_pipeline_output("1001").boq_findings.flags
-    by_type: dict[str, int] = {}
-    for flag in flags:
-        by_type[flag.type] = by_type.get(flag.type, 0) + 1
-    assert by_type["RATE_OUTLIER"] == 3
-    assert by_type["MISSING_SCOPE"] == 2
-    assert by_type["UNDERSPECIFIED"] == 4
+def test_a_hold_is_only_ever_issued_against_an_exposure_over_one():
+    """The recommendation and the arithmetic must not disagree on screen."""
+    for loan_id in available_loan_ids():
+        risk = load_pipeline_output(loan_id).risk_assessment
+        if risk is None or risk.exposure_undefined:
+            continue
+        if risk.recommendation == "HOLD":
+            assert risk.exposure_ratio > 1.0, loan_id
+        if risk.recommendation == "RELEASE":
+            assert risk.exposure_ratio <= 1.0, loan_id
 
 
-def test_clean_loan_1002_has_no_flags():
-    assert load_pipeline_output("1002").boq_findings.flags == []
+def test_every_rate_outlier_can_say_how_far_off_the_rate_is():
+    """A RATE_OUTLIER without deviation_pct is not a usable finding.
+
+    The first captured run omitted it, so every pill degraded from "Rate +22%"
+    to a bare "Rate outlier". The analyst prompt now demands it; this is what
+    stops that regressing silently.
+    """
+    for loan_id in available_loan_ids():
+        for flag in load_pipeline_output(loan_id).boq_findings.flags:
+            if flag.type != "RATE_OUTLIER":
+                continue
+            assert flag.deviation_pct is not None, f"{loan_id} {flag.item}"
+            assert flag.benchmark_rate is not None, f"{loan_id} {flag.item}"
+            assert "%" in flag.label, f"{loan_id} {flag.item}: {flag.label!r}"
+
+
+def test_a_flag_points_at_the_document_not_at_an_invented_code():
+    """Flag ids are printed beside the contractor's own line numbering.
+
+    A real run produced SCOPE_WATERPROOFING and GST_TERMS before the prompt
+    pinned this down. Either a line number, or a lower-case scope name.
+    """
+    for loan_id in available_loan_ids():
+        for flag in load_pipeline_output(loan_id).boq_findings.flags:
+            assert flag.item == flag.item.lower(), f"{loan_id}: {flag.item!r}"
+            assert "_" not in flag.item, f"{loan_id}: {flag.item!r}"
+
+
+def test_the_flagged_loan_is_flagged_and_the_clean_one_is_clean():
+    """The two golden loans exist to differ. 1002 having *no* flags at all was
+    the old assertion; a real run legitimately reports UNBENCHMARKED for
+    fittings nobody holds a rate for. What makes it the clean control is the
+    absence of findings against the contractor -- no rate outliers, no missing
+    scope.
+    """
+    flagged = load_pipeline_output("1001").boq_findings.flags
+    clean = load_pipeline_output("1002").boq_findings.flags
+
+    def counts(flags):
+        out: dict[str, int] = {}
+        for flag in flags:
+            out[flag.type] = out.get(flag.type, 0) + 1
+        return out
+
+    assert counts(flagged).get("RATE_OUTLIER", 0) >= 1
+    assert counts(flagged).get("MISSING_SCOPE", 0) >= 1
+    assert counts(clean).get("RATE_OUTLIER", 0) == 0
+    assert counts(clean).get("MISSING_SCOPE", 0) == 0
+
+
+def test_every_flag_carries_a_label_a_screen_can_print():
+    for loan_id in available_loan_ids():
+        for flag in load_pipeline_output(loan_id).boq_findings.flags:
+            assert flag.label.strip(), f"{loan_id} {flag.item}"
+            assert flag.tone in ("danger", "warn", "success", "neutral")

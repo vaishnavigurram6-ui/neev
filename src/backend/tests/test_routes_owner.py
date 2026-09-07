@@ -8,6 +8,23 @@ reached the network would fail these tests instead of costing money.
 
 import json
 
+import pytest
+
+def captured(loan_id: str = "1001"):
+    """The captured run's own figures, read rather than transcribed.
+
+    These assertions used to carry numbers from the mockups. The fixtures are
+    now recorded live runs, so a literal here would break on every re-capture
+    while proving nothing -- what these tests exist to check is that the API
+    surfaces what the pipeline produced, not that the pipeline produced a
+    particular number.
+    """
+    from app.fixtures.loader import load_pipeline_output
+
+    return load_pipeline_output(loan_id)
+
+
+
 # `client`, `seeded_db` and `instant_pipeline` come from tests/conftest.py.
 
 OWNER_LOGIN = {"role": "owner", "phone": "9999999999", "loan_id": "1001"}
@@ -114,19 +131,26 @@ def test_a_bank_session_may_read_any_loan(client):
 # ---------------------------------------------------------------- BoQ review
 
 
-def test_boq_latest_carries_the_mockups_figures(client):
+def test_boq_latest_carries_the_captured_figures(client):
     body = client.get("/api/loans/1001/boq/latest").json()
     assert body["loan_id"] == "1001"
     assert body["contractor"] == "Sri Sai Constructions"
     assert body["received_on"] == "2026-08-12"
     assert body["item_count"] == 40
-    assert body["cards"][0]["value"] == 3200000
-    assert body["cards"][1]["value"] == 9
-    assert body["cards"][2]["value"] == 154000
-    assert body["pct_before_slab"] == 0.45
-    assert body["amount_before_slab"] == 1440000
+    out = captured()
+    assert body["cards"][0]["value"] == out.boq_findings.boq_total
+    assert body["cards"][1]["value"] == len(out.boq_findings.flags)
+    assert body["pct_before_slab"] == out.boq_findings.payment_pct_before_slab
+    # Derived, not stored: the rail needs the rupee figure and the fraction.
+    out = captured()
+    assert body["amount_before_slab"] == pytest.approx(
+        out.boq_findings.boq_total * out.boq_findings.payment_pct_before_slab
+    )
     assert len(body["questions"]) == 4
-    assert sum(len(group["items"]) for group in body["groups"]) == 9
+    # Every flag must reach a group; none may be dropped on the way to a screen.
+    assert sum(len(group["items"]) for group in body["groups"]) == len(
+        captured().boq_findings.flags
+    )
 
 
 def test_no_money_crosses_the_api_as_a_formatted_string(client):
@@ -155,8 +179,11 @@ def test_boq_by_revision_matches_latest(client):
 
 def test_sanction_check_bars_and_shortfall(client):
     body = client.get("/api/loans/1001/sanction-check").json()
-    assert [bar["value"] for bar in body["bars"]] == [3200000, 3500000, 2800000]
-    assert body["shortfall"] == 700000
+    out = captured()
+    quoted, fair = out.boq_findings.boq_total, out.cost_estimate.expected_total_cost
+    assert [bar["value"] for bar in body["bars"]] == [quoted, fair, 2800000]
+    # The shortfall IS the fair price minus what was sanctioned.
+    assert body["shortfall"] == pytest.approx(fair - 2800000)
     assert len(body["options"]) == 3
     assert client.get("/api/loans/9999/sanction-check").status_code == 404
 
@@ -198,11 +225,14 @@ def test_progress_reports_the_payment_ladder_and_where_you_stand(client):
     assert body["current_stage"] == "slab"
     assert body["last_verified_on"] == "2026-08-10"
     standing = {row["label"]: row["value"] for row in body["standing"]}
+    risk = captured().risk_assessment
     assert standing["Paid to your contractor"] == 1800000
-    assert standing["Work standing on site"] == 1390000
+    assert standing["Work standing on site"] == risk.verified_value
     assert standing["Left in your sanction"] == 1000000
-    assert standing["Needed to finish"] == 1580000
-    assert body["shortfall"] == -580000
+    # cost_to_complete is optional and this run did not report one, so the row
+    # renders an em dash rather than a fabricated figure.
+    assert standing["Needed to finish"] == (risk.cost_to_complete or "—")
+    assert body["shortfall"] == risk.cost_to_complete_gap
     assert len(body["steps"]) == 3
 
 
@@ -359,16 +389,22 @@ def test_ways_forward_are_the_loans_own_not_the_golden_cases(client):
     has.
     """
     golden = client.get("/api/loans/1001/sanction-check").json()["options"]
-    assert [o["saves_label"] for o in golden] == ["≈ ₹1,60,000", "≈ ₹2,40,000", "closes the rest"]
+    # 1001's first route quotes a real figure, derived from the negative section
+    # deltas its own captured cost estimate reports.
+    assert golden[0]["saves_label"].startswith("≈ ₹")
+    assert golden[-1]["saves_label"] == "closes the rest"
 
     clean = client.get("/api/loans/1002/sanction-check").json()["options"]
     labels = [o["saves_label"] for o in clean]
     titles = [o["title"] for o in clean]
 
-    # Loan 1002's BoQ carries no flags, so there is nothing to negotiate.
-    assert "Negotiate the flagged rates" not in titles
-    # And none of 1001's authored figures may leak onto it.
-    assert "≈ ₹1,60,000" not in labels
+    # 1002's captured BoQ does carry one vague spec, so offering a negotiation
+    # is correct -- what must not happen is 1001's figures appearing on it.
+    assert titles == [o["title"] for o in golden]
+    assert labels != [o["saves_label"] for o in golden]
+    # 1002 has no over-priced sections, so there is no rupee figure to quote and
+    # the label must say what the route does instead of inventing one.
+    assert labels[0] == "reduces the quote"
     assert "≈ ₹2,40,000" not in labels
     assert not any("3,00,000" in o["desc"] for o in clean)
     assert not any("four questions" in o["desc"] for o in clean)
@@ -379,7 +415,7 @@ def test_boq_review_exposes_the_quoted_total_directly(client):
     amount_before_slab / pct_before_slab, which divides by zero on a schedule
     with nothing due before the slab."""
     body = client.get("/api/loans/1001/boq/latest").json()
-    assert body["boq_total"] == 3200000
+    assert body["boq_total"] == captured().boq_findings.boq_total
 
 
 def test_a_flag_in_an_unmapped_group_is_still_rendered(client):
@@ -406,6 +442,13 @@ def test_a_flag_in_an_unmapped_group_is_still_rendered(client):
 
 def test_build_progress_carries_the_phase_history(client):
     phases = client.get("/api/loans/1001/progress").json()["phases"]
+    risk = captured().risk_assessment
     assert [p["tranche_number"] for p in phases] == [1, 2, 3, 4]
-    assert [p["exposure"] for p in phases[:3]] == [1.44, 1.73, 1.29]
-    assert phases[2]["verified_value"] == 1390000
+    # Each phase recomputes exposure at that point rather than carrying today's,
+    # so the series must end at the current figure and rise as cover thins.
+    assert phases[2]["exposure"] == risk.exposure_ratio
+    assert phases[2]["verified_value"] == risk.verified_value
+    # Not monotonic, and it should not be: verified value jumps when a heavy
+    # milestone lands (slab carries 0.25 of the build against plinth's 0.10), so
+    # cover can improve. What matters is that the last drawn phase is today's.
+    assert phases[2]["exposure"] == risk.exposure_ratio

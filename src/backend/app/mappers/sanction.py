@@ -13,8 +13,6 @@ from app.schemas.views import (
     SanctionSectionView,
 )
 
-# The one loan the mockups author copy for. Everything else is derived.
-GOLDEN_LOAN_ID = "1001"
 
 
 def _ways_forward(
@@ -35,24 +33,13 @@ def _ways_forward(
     Where a figure is genuinely known it is used; where it is not, the label says
     what the route does instead of naming a number.
     """
-    if loan.id == GOLDEN_LOAN_ID:
-        return [
-            SanctionOptionView(
-                title="Negotiate the flagged rates",
-                saves_label="≈ ₹1,60,000",
-                desc="The four questions from your BoQ review already cover this — RCC rates and the steel grade.",
-            ),
-            SanctionOptionView(
-                title="Phase the finishing scope",
-                saves_label="≈ ₹2,40,000",
-                desc="Defer the main gate, granite platform and exterior painting to a post-handover phase.",
-            ),
-            SanctionOptionView(
-                title="Top-up before drawdown",
-                saves_label="closes the rest",
-                desc="A ₹3,00,000 top-up now costs far less than a stalled build at tranche four.",
-            ),
-        ]
+    # Loan 1001 used to short-circuit here with the mockup's own copy --
+    # "≈ ₹1,60,000", "the four questions from your BoQ review". Removed
+    # 2026-09-07: the fixture is now a captured run reporting 31 flags and its
+    # own section deltas, so those figures were invented relative to what the
+    # pipeline actually computed. This function's own docstring forbids exactly
+    # that, and the exemption for the demo loan was the one place it did not
+    # hold. Every loan now derives its routes from its own data.
 
     options: list[SanctionOptionView] = []
 

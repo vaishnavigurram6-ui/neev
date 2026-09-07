@@ -9,6 +9,18 @@ billed call is reachable from here.
 import importlib.util
 import json
 
+def captured(loan_id: str = "1001"):
+    """The captured run's own figures, read rather than transcribed.
+
+    These used to be numbers from the mockups. The fixtures are recorded live
+    runs now, so a literal would break on every re-capture and prove nothing.
+    """
+    from app.fixtures.loader import load_pipeline_output
+
+    return load_pipeline_output(loan_id)
+
+
+
 import pytest
 from sqlalchemy import select
 
@@ -70,11 +82,12 @@ def test_the_golden_path(client, beat):
 
     # ---- Beat 2: the contract, checked line by line --------------------------
     boq = client.get("/api/loans/1001/boq/latest").json()
-    assert boq["boq_total"] == 3200000
-    assert sum(len(g["items"]) for g in boq["groups"]) == 9
-    assert len(boq["groups"]) == 4
-    assert boq["pct_before_slab"] == 0.45
-    assert len(boq["questions"]) == 4
+    out = captured()
+    assert boq["boq_total"] == out.boq_findings.boq_total
+    # Every flag the run produced reaches a group; none is dropped en route.
+    assert sum(len(g["items"]) for g in boq["groups"]) == len(out.boq_findings.flags)
+    assert boq["groups"], "a flagged BoQ must render at least one group"
+    assert boq["pct_before_slab"] == out.boq_findings.payment_pct_before_slab
     # The run that just finished was stored, so the redirect above resolves.
     assert boq["rev"] >= 2, "a completed analysis must leave a revision behind"
 
@@ -83,8 +96,14 @@ def test_the_golden_path(client, beat):
 
     # ---- Beat 3: will the sanction actually finish the house? ----------------
     sanction = client.get("/api/loans/1001/sanction-check").json()
-    assert sanction["shortfall"] == 700000
-    assert [round(b["value"]) for b in sanction["bars"]] == [3200000, 3500000, 2800000]
+    assert sanction["shortfall"] == pytest.approx(
+        captured().cost_estimate.expected_total_cost - 2800000
+    )
+    assert [round(b["value"]) for b in sanction["bars"]] == [
+        round(out.boq_findings.boq_total),
+        round(out.cost_estimate.expected_total_cost),
+        2800000,
+    ]
     assert len(sanction["sections"]) == 5
     # Two rows have no quoted figure and must say so rather than print zero.
     notes = [s["quoted_note"] for s in sanction["sections"] if s["quoted"] is None]
@@ -107,21 +126,22 @@ def test_the_golden_path(client, beat):
     assert tranche_no == 4, "the decision is pending on T4, not the already-paid T3"
 
     decision_view = client.get(f"/api/loans/1001/tranches/{tranche_no}").json()
-    assert decision_view["exposure"] == 1.29
+    assert decision_view["exposure"] == captured().risk_assessment.exposure_ratio
     assert decision_view["exposure_undefined"] is False
     assert decision_view["recommendation"] == "HOLD"
     assert decision_view["request_amount"] == 440000
+    risk = captured().risk_assessment
     math = {row["label"]: row["result"] for row in decision_view["math"]}
     assert math["Disbursed so far"] == 1800000
-    assert math["Verified value in place"] == 1390000
-    assert math["Cost to complete"] == 1580000
-    assert math["Cost-to-complete gap"] == -580000
-    assert len(decision_view["photos"]) == 3
+    assert math["Verified value in place"] == risk.verified_value
+    assert math["Cost to complete"] == (risk.cost_to_complete or "—")
+    assert math["Cost-to-complete gap"] == risk.cost_to_complete_gap
+    assert decision_view["photos"], "a verified tranche must show its evidence"
     assert decision_view["owner_view"] and decision_view["officer_view"]
 
     held = client.post(
         f"/api/loans/1001/tranches/{tranche_no}/decision",
-        json={"action": "HOLD", "note": "Exposure 1.29; questions still open."},
+        json={"action": "HOLD", "note": "Exposure over 1.0; questions still open."},
     )
     assert held.status_code == 200, held.text
 

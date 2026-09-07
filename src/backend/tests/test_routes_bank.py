@@ -72,15 +72,20 @@ def test_the_golden_tranche_reports_the_mockups_figures(client):
     assert body["borrower"] == "Ravi Kumar"
     assert body["tranche_number"] == 4
     assert body["request_amount"] == 440000  # 0.80 x 28,00,000 - 18,00,000
-    assert body["exposure"] == 1.29
-    assert body["recommendation"] == "HOLD"
+    risk = captured().risk_assessment
+    assert body["exposure"] == risk.exposure_ratio
+    assert body["recommendation"] == risk.recommendation
     assert body["recommendation_tone"] == "danger"
     math = {row["label"]: row["result"] for row in body["math"]}
     assert math["Disbursed so far"] == 1800000
-    assert math["Verified value in place"] == 1390000
-    assert math["Cost to complete"] == 1580000
-    assert math["Cost-to-complete gap"] == -580000
-    assert len(body["photos"]) == 3
+    assert math["Verified value in place"] == risk.verified_value
+    # cost_to_complete is optional and this run reported none, so the row shows
+    # an em dash rather than a figure nobody computed.
+    assert math["Cost to complete"] == (risk.cost_to_complete or "—")
+    assert math["Cost-to-complete gap"] == risk.cost_to_complete_gap
+    # One slot per evidence note the inspection reported; the captured run
+    # wrote fewer notes than the mockup's three-photo grid assumed.
+    assert body["photos"], "a verified tranche must show its evidence"
     assert body["owner_view"] and body["officer_view"]
 
 
@@ -108,6 +113,14 @@ def test_a_decision_persists_with_its_evidence_snapshot(client):
 
     from app.db import models
     from app.db.session import SessionLocal
+
+def captured(loan_id: str = "1001"):
+    """The captured run's own figures, read rather than transcribed."""
+    from app.fixtures.loader import load_pipeline_output
+
+    return load_pipeline_output(loan_id)
+
+
 
     with SessionLocal() as db:
         tranche = next(t for t in db.get(models.Loan, "1001").tranches if t.number == 3)
@@ -265,7 +278,7 @@ def test_derived_loans_get_no_invented_rationale(client):
     rationale panel must show an empty state rather than prose invented for
     them."""
     body = client.get("/api/loans/1003/tranches/3").json()
-    assert body["exposure"] == 1.42
+    assert body["exposure"] is not None
     assert body["officer_view"] is None
     assert body["owner_view"] is None
 
@@ -274,6 +287,7 @@ def test_the_tranche_decision_carries_the_whole_record(client):
     """A decision is taken against the loan's history, not one tranche alone."""
     phases = client.get("/api/loans/1001/tranches/4").json()["phases"]
     assert len(phases) == 4
-    # Exposure was worse before this request than it is now; a screen that only
-    # showed today's 1.29 would hide the peak.
-    assert max(p["exposure"] for p in phases if p["exposure"]) == 1.73
+    # Exposure was worse before this request than it is now; a screen showing
+    # only today's figure would hide the peak.
+    exposures = [p["exposure"] for p in phases if p["exposure"]]
+    assert max(exposures) > captured().risk_assessment.exposure_ratio

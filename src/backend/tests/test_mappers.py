@@ -5,6 +5,18 @@ taken from the mockups rather than recomputed."""
 import pytest
 from sqlalchemy import select
 
+def captured(loan_id: str = "1001"):
+    """The captured run's own figures, read rather than transcribed.
+
+    These used to be numbers from the mockups. The fixtures are recorded live
+    runs now, so a literal would break on every re-capture and prove nothing.
+    """
+    from app.fixtures.loader import load_pipeline_output
+
+    return load_pipeline_output(loan_id)
+
+
+
 from app.db import models
 from app.db.seed import seed
 from app.db.session import SessionLocal, init_db
@@ -43,21 +55,28 @@ def test_boq_review_carries_numbers_not_formatted_strings():
         revision = loan.revisions[-1]
         view = _review(loan, revision)
 
-    assert view.cards[0].value == 3200000  # a number, not "₹32,00,000"
+    # a number, not "₹28,47,930"
+    assert view.cards[0].value == captured().boq_findings.boq_total
     for card in view.cards:
         assert not isinstance(card.value, str) or card.value_kind == "text"
 
 
-def test_flag_groups_follow_the_mockups_order():
+def test_flag_groups_lead_with_findings_and_end_with_what_we_could_not_check():
+    """Order is editorial, and the editorial point is what a reader sees first.
+
+    Was the mockup's work-section order. A captured run spreads 31 flags across
+    item ids no hand-written section map covers, so grouping is by finding type
+    now -- and the twelve "no benchmark" rows go last so they never crowd the
+    three real outliers.
+    """
     with SessionLocal() as db:
         loan = db.get(models.Loan, "1001")
         view = _review(loan)
-    assert [g.name for g in view.groups] == [
-        "FOUNDATION & RCC",
-        "STEEL",
-        "PLASTERING — EXPECTED BUT ABSENT",
-        "FLOORING & ELECTRICAL",
-    ]
+
+    names = [g.name for g in view.groups]
+    assert names[0] == "RATES ABOVE BENCHMARK"
+    assert names[-1] == "NO BENCHMARK TO COMPARE AGAINST"
+    assert "OTHER" not in names, "every flag type must have a home"
 
 
 def test_portfolio_preserves_the_designs_exposure_descending_order():

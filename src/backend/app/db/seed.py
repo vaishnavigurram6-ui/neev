@@ -193,12 +193,11 @@ def _read_draw_schedule() -> dict[str, list[dict]]:
 
 # Which BoQ Review group each flag belongs under. Groups and their order are the
 # mockup's, verbatim.
-FLAG_GROUPS = {
-    "2.3": "FOUNDATION & RCC", "3.1": "FOUNDATION & RCC", "3.2": "FOUNDATION & RCC",
-    "4.2": "STEEL",
-    "7.1": "FLOORING & ELECTRICAL", "9.1": "FLOORING & ELECTRICAL", "9.2": "FLOORING & ELECTRICAL",
-}
-MISSING_SCOPE_GROUP = "PLASTERING — EXPECTED BUT ABSENT"
+# Grouping lives in one place. This file used to carry its own copy of the
+# item-id -> section map, so changing the real one in app/services/persistence.py
+# silently did nothing to the seeded rows -- the two drifted the moment captured
+# runs replaced the authored fixture.
+from app.services.persistence import FLAG_GROUPS_BY_TYPE, UNGROUPED
 
 
 def _seed_pipeline_output(db, loan_id: str) -> None:
@@ -231,8 +230,7 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
             models.Flag(
                 revision_id=revision.id, item=flag.item, type=flag.type, label=flag.label,
                 tone=flag.tone,
-                group_name=MISSING_SCOPE_GROUP if flag.type == "MISSING_SCOPE"
-                else FLAG_GROUPS.get(flag.item, "OTHER"),
+                group_name=FLAG_GROUPS_BY_TYPE.get(flag.type, UNGROUPED),
                 evidence=flag.evidence, question=flag.question,
                 benchmark_rate=flag.benchmark_rate, deviation_pct=flag.deviation_pct,
                 expected_qty=flag.expected_qty, expected_unit=flag.expected_unit,
@@ -273,6 +271,19 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
             )
             current.cost_to_complete_gap = int(risk.cost_to_complete_gap)
             current.recommendation = risk.recommendation
+
+            # The Portfolio Hotlist row reads off the LOAN, the Tranche Decision
+            # screen off the tranche. Both must be the same number or a row
+            # links to a screen that contradicts it. The loan used to keep
+            # portfolio_rows.json's authored exposure while the tranche took the
+            # pipeline's -- 1.29 on the row against 1.11 on the screen once
+            # captured runs replaced the authored fixture.
+            parent = db.get(models.Loan, loan_id)
+            if parent is not None:
+                parent.exposure_ratio = risk.exposure_ratio
+                parent.exposure_undefined = risk.exposure_undefined
+                parent.cost_to_complete_gap = int(risk.cost_to_complete_gap)
+                parent.recommendation = risk.recommendation
             current.owner_view = output.explanation.owner_view
             current.officer_view = output.explanation.officer_view
             if inspection is not None:

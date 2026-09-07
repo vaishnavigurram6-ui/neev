@@ -16,12 +16,21 @@ from app.schemas.views import (
     StatCardView,
 )
 
+# Reading order for the BoQ Review groups. Kept explicit rather than derived,
+# because the order is editorial: what the contractor over-priced comes first,
+# and what we simply could not check comes last so it never crowds a real
+# finding. Names must match app/services/persistence.py::FLAG_GROUPS_BY_TYPE.
+#
+# Was the mockup's work-section order (FOUNDATION & RCC, STEEL, ...). Replaced
+# 2026-09-07 when captured runs began arriving with 31 flags spread across item
+# ids no hand-written section map could cover -- every one landed in "OTHER".
 GROUP_ORDER = [
-    "FOUNDATION & RCC",
-    "STEEL",
-    "PLASTERING — EXPECTED BUT ABSENT",
-    "FLOORING & ELECTRICAL",
-    "OTHER",
+    "RATES ABOVE BENCHMARK",
+    "QUANTITIES THAT DO NOT ADD UP",
+    "SPECIFICATIONS TOO VAGUE TO PRICE",
+    "EXPECTED BUT ABSENT",
+    "PAYMENT TERMS",
+    "NO BENCHMARK TO COMPARE AGAINST",
 ]
 
 

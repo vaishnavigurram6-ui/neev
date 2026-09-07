@@ -19,18 +19,35 @@ from sqlalchemy.orm import Session
 from app.db import models
 from app.schemas.pipeline import PipelineOutput
 
-# Which BoQ Review group each flagged item belongs under. Mirrors the seed's
-# map; both derive from the mockup's editorial grouping.
-FLAG_GROUPS = {
-    "2.3": "FOUNDATION & RCC",
-    "3.1": "FOUNDATION & RCC",
-    "3.2": "FOUNDATION & RCC",
-    "4.2": "STEEL",
-    "7.1": "FLOORING & ELECTRICAL",
-    "9.1": "FLOORING & ELECTRICAL",
-    "9.2": "FLOORING & ELECTRICAL",
+# Which BoQ Review group each flag belongs under.
+#
+# This was a hand-written map from item id to work section ("2.3" -> "FOUNDATION
+# & RCC"), transcribed from the mockup's editorial grouping. That worked for the
+# nine authored flags and broke on the first real run: 31 flags arrived with ids
+# like 8.1, 10.4, 12.2 and every one fell into "OTHER".
+#
+# Grouping by finding type instead needs nothing the document has to supply, and
+# it does something the section grouping could not -- it keeps "we could not
+# check this rate" visually apart from "this rate looks wrong". Twelve
+# UNBENCHMARKED fittings sitting among three real outliers made the outliers
+# harder to see, not easier.
+#
+# (LineItem.section exists but a captured run leaves it null, because the
+# analyst prompt asks for {id, desc, qty, unit, rate, amount} and nothing more.
+# It is now requested, so a future capture could group by the document's own
+# sections if that reads better.)
+FLAG_GROUPS_BY_TYPE = {
+    "RATE_OUTLIER": "RATES ABOVE BENCHMARK",
+    "UNDERSPECIFIED": "SPECIFICATIONS TOO VAGUE TO PRICE",
+    "MISSING_SCOPE": "EXPECTED BUT ABSENT",
+    "STEEL_RATIO": "QUANTITIES THAT DO NOT ADD UP",
+    "FRONT_LOADED": "PAYMENT TERMS",
+    "GST_SILENT": "PAYMENT TERMS",
+    # Deliberately last and plainly worded: these are not findings against the
+    # contractor, they are gaps in our own benchmark table.
+    "UNBENCHMARKED": "NO BENCHMARK TO COMPARE AGAINST",
 }
-MISSING_SCOPE_GROUP = "PLASTERING — EXPECTED BUT ABSENT"
+UNGROUPED = "OTHER"
 
 
 def store_revision(
@@ -93,11 +110,7 @@ def store_revision(
                 type=flag.type,
                 label=flag.label,
                 tone=flag.tone,
-                group_name=(
-                    MISSING_SCOPE_GROUP
-                    if flag.type == "MISSING_SCOPE"
-                    else FLAG_GROUPS.get(flag.item, "OTHER")
-                ),
+                group_name=FLAG_GROUPS_BY_TYPE.get(flag.type, UNGROUPED),
                 evidence=flag.evidence,
                 question=flag.question,
                 benchmark_rate=flag.benchmark_rate,
