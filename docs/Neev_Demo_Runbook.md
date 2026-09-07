@@ -29,16 +29,27 @@ Kompally** — seen from both sides of the table.
 
 `/owner/loans/1001/boq`
 
-**Say:** Ravi's contractor sent a 40-item BoQ totalling ₹32,00,000. Neev priced
-the same scope at Kompally rates: ₹29,15,000. Nine items are flagged — three
-rate outliers, two pieces of missing scope, four vague specs.
+**Say:** Ravi's contractor sent a 40-item BoQ totalling ₹28,47,930. Neev priced
+the same scope at Kompally benchmark rates: ₹26,77,618. Twenty-six items carry
+a flag, grouped so the three that matter sit at the top.
 
-**Point at:** the RCC M25 rows, priced at ₹9,800/cum against a ₹8,033 benchmark.
-Then the *missing* rows — external plaster and terrace waterproofing, ₹1,54,000
-of scope that isn't in the contract at all and comes back later as "extras".
+**Point at:** the first group, **RATES ABOVE BENCHMARK** — three RCC rows at
+₹9,800/cum against a ₹8,036 benchmark. Read the note aloud; it is the tool's
+own sentence, not prose: *"Quoted rate of Rs 9,800/cum exceeds the benchmark
+rate of Rs 8,036/cum by 22%."*
+
+**Then:** scroll to **EXPECTED BUT ABSENT** — waterproofing, anti-termite and
+external plaster, ₹1,42,654 of scope that is not in the contract at all and
+comes back later as "extras". Note that anti-termite shows a quantity but no
+rupee figure: there is no benchmark for it, and Neev will not invent one.
 
 **The line that lands:** 45% of the money falls due before the slab is cast.
-₹14,40,000 before there is meaningful structure to show for it.
+₹12,81,569 before there is meaningful structure to show for it.
+
+**If asked about the last group:** *NO BENCHMARK TO COMPARE AGAINST* holds
+twelve fittings — a teak door frame, modular switches, an MS gate — priced by
+brand and model, which a structural benchmark table has no rate for. It sits
+last on purpose, so it cannot crowd the three real findings.
 
 **Then:** the rail's four questions. Neev doesn't accuse anyone — it writes the
 questions Ravi can send his contractor in writing. Hit **Send 4 questions**.
@@ -47,21 +58,24 @@ questions Ravi can send his contractor in writing. Hit **Send 4 questions**.
 
 `/owner/loans/1001/sanction`
 
-**Say:** the bank approved ₹28,00,000. The realistic cost at local rates,
-including the scope the contract left out, is ₹35,00,000. That's a ₹7,00,000
+**Say:** the bank approved ₹28,00,000. The realistic cost at Kompally rates,
+including the scope the contract left out, is ₹32,35,794. That's a ₹4,35,794
 shortfall, visible before a rupee is drawn rather than at tranche four.
 
-**Point at:** the gap table — where the ₹7,00,000 comes from, line by line. The
-GST row reads "not stated", because the contract is silent on it.
+**Point at:** the gap table — five rows showing where the shortfall comes from.
+Two have no quoted figure and say "not stated" rather than printing a zero.
 
-**Then:** the three ways forward. Neev doesn't just diagnose.
+**Then:** the three ways forward. The first quotes **≈ ₹2,50,000**, derived from
+this loan's own negative section deltas — not a number typed into a design.
+Loan 1002's version of the same screen says "reduces the quote", because it has
+no over-priced sections and Neev will not quote a saving that isn't there.
 
 ### 3 · The bank's view — worst loans first
 
 `/bank/portfolio`
 
 **Say:** same product, other side of the table. Ten active construction loans,
-ranked by exposure, worst first. Three need action.
+ranked by exposure, worst first. Three need action, and ₹21,27,897 is at risk.
 
 **Point at:** the "seen on site" column against "paid up to". Loan 1003 has been
 paid to slab; photos show plinth only. That's the whole thesis in one column.
@@ -78,15 +92,27 @@ Neev recommends **HOLD**, and shows its arithmetic in one line each:
 | | |
 |---|---|
 | Disbursed so far | ₹18,00,000 |
-| Verified value in place | ₹13,90,000 |
-| Disbursement exposure | 1.29 |
-| Cost to complete | ₹15,80,000 |
-| Cost-to-complete gap | −₹5,80,000 |
+| Verified value in place | ₹16,17,897 |
+| Disbursement exposure | 1.11 |
+| Cost to complete | ₹16,17,897 |
+| Cost-to-complete gap | −₹6,17,897 |
 
-**The point:** the site photos check out — geotag matches Plot 47, timestamp
-10 Aug 11:42, same camera angle as last time. **The work is real; the money is
-ahead of it.** Releasing the next draw funds a house that can't be finished with
-what's left.
+Every one of those five figures came out of a real pipeline run. The gap
+reconciles in front of the audience: ₹28,00,000 sanctioned less ₹18,00,000 drawn
+leaves ₹10,00,000, against ₹16,17,897 still to build.
+
+**The point:** the site photo checks out. Gemini read it against a stage
+checklist and reported *slab*, high confidence, matching the claim — the caption
+on screen is its own words about columns, shuttering and props. **The work is
+real; the money is ahead of it.** Releasing the next draw funds a house that
+cannot be finished with what is left.
+
+**If asked how reliable that photo check is:** honestly. It is a model
+judgement and it varies. On one recorded run of loan 1002 it caught that the
+photo showed a G+1 structure against a G+0 plan and refused the release; on
+another it did not. Both runs are in `.golden_runs/`. That variance is why the
+escalation gate exists — when the check fires, `assess_tranche` stops the money
+regardless of how comfortable the ratio looks.
 
 **Then:** the officer/owner tabs — the same decision explained twice, in two
 registers. And the decision card, which writes the full evidence trail to the
@@ -111,21 +137,58 @@ answers directly — `curl localhost:8000/api/loans/1001/boq/latest` — and
 
 Say this plainly if asked; it is more convincing than the alternative.
 
-- **Real:** the five-agent ADK pipeline (`src/agents/`, runnable in `adk web`),
-  the risk arithmetic and its thresholds, the benchmark-comparison logic, the
-  whole web application, role enforcement, and the audit trail a decision writes.
-- **Staged:** the pipeline is not driving these screens yet. The figures are
-  authored fixtures shaped exactly like the pipeline's real output — the five
-  ADK `output_key` shapes — and a contract test proves every fixture validates
-  against the schemas a live run must emit. Switching to live data changes where
-  the object comes from and nothing else.
-- **Not built:** real OTP, translation, text-to-speech, marked-up PDF export,
-  WhatsApp sending. Each renders as a disabled control that says why, rather
-  than a dead button that lies.
-- **Why fixtures:** the build ran under a deliberate no-billed-calls rule. The
-  live path is written and type-checked but never executed;
-  `scripts/record_golden_run.py` captures a real run into the same schema once
-  credits are approved, and refuses to start until they are.
+**Real.** Every figure on the demo path came out of a captured pipeline run on
+2026-09-07 — Gemini reading `fixtures/sample_boq.pdf`, benchmark rates from a
+62-row BigQuery table, construction cost from `loan_history` and
+`metro_city_prices`, and the stage judgement from two real site photos through
+`verify_construction_stage`. The raw runs are in `.golden_runs/`; the parsed
+results are the fixtures the app serves. Also real: the five-agent ADK pipeline,
+the risk arithmetic and its thresholds, the whole web application, role
+enforcement, and the audit trail a decision writes.
+
+**Staged.** The pipeline is not driving the screens *live*. The app replays a
+recorded run rather than analysing on upload, so **whatever PDF you upload, you
+will see loan 1001's recorded analysis.** Say so rather than letting a judge
+discover it. Wiring live analysis to the upload path needs an artefact store and
+the ADK in the backend image; the seam is built and `get_runner()` is the only
+place that would change.
+
+**Not built.** Real OTP, translation, text-to-speech, marked-up PDF export,
+WhatsApp sending. Each renders as a disabled control that says why, rather than
+a dead button that lies.
+
+## The measurement worth quoting
+
+Judges ask how you know it works. There is an answer, and it costs nothing to
+reproduce:
+
+```bash
+src/agents/.venv/bin/python scripts/synthetic_boqs.py score
+```
+
+Forty synthetic BoQs carrying 81 planted defects, scored against the grounding
+tools with Gemini made unreachable — `google.genai.Client` is replaced with a
+stub that raises, so a model call is impossible rather than merely unintended.
+It reports **100% precision and recall** on rate outliers, missing scope,
+front-loaded payment terms and GST silence, and **95% benchmark coverage** (826
+of 866 priced items).
+
+Two caveats to offer before they are asked. `UNDERSPECIFIED` is excluded from
+the score, because judging a specification too vague is a model judgement no
+tool makes. And the eval measures the grounded half only — whether Gemini
+correctly extracts 40 line items from a PDF is not measurable without paid runs.
+
+## Why there is no RAG here
+
+Asked often enough to prepare for. The BoQ is two pages; it fits in one prompt
+whole. An audit must check *every* priced line, and top-k retrieval is lossy by
+design — a silently skipped line is an unchecked rate. And the benchmark lookup
+is a SQL join on a 62-row table, which gives the property a credit officer
+needs: every flag names the row that caused it. An embedding match that is wrong
+is silent and unexplainable.
+
+RAG would be the right tool for querying the full CPWD DSR — thousands of pages,
+rather than the 30 items someone pre-extracted from it. That is post-hackathon.
 
 ## Screens beyond the demo path
 
