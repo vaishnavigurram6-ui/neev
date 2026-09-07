@@ -1,13 +1,26 @@
 # Neev — working agreements
 
-## 🚫 DRY RUN: no billed Google API calls (ACTIVE)
+## 🚫 DRY RUN: no billed Google API calls (PARTIALLY LIFTED)
 
-**Status: ACTIVE as of 2026-08-27. Only the repo owner may lift it.**
+**Status: PARTIALLY LIFTED 2026-09-07 by the repo owner.**
 
-While this section says ACTIVE, nothing in this repo may consume Google credits.
-That means **no** Gemini completions, **no** Gemini vision calls, and **no**
-BigQuery queries — not in the app, not in tests, not in a "quick check", and not
-to record a fixture.
+The owner lifted this for *free* operations only, in their words: "run all the
+tests/commands that are free without my approval… deploy command needs my
+approval." Gemini was not mentioned, and Gemini is the part that costs money per
+call — so it stays gated. Read the table as the whole rule:
+
+| Operation | Status |
+|---|---|
+| BigQuery reads and `bq load` on this project's own tables | **Permitted, no approval.** They are kilobytes, inside the 1 TB/month free tier, and a load is free outright. |
+| `gcloud` metadata and read-only commands | **Permitted, no approval.** |
+| Scripts fenced against Gemini — `verify_against_bigquery.py`, `synthetic_boqs.py` | **Permitted, no approval.** Each replaces `google.genai.Client` so a model call raises rather than bills. |
+| **Gemini completions and vision** | **STILL GATED.** Every call spends credit. Needs the owner's explicit go-ahead for the specific task, and `NEEV_ALLOW_BILLED_CALLS=1`. |
+| `record_golden_run.py`, `golden_run.py`, `adk web` | **STILL GATED** — all three drive Gemini. |
+| **`gcloud run deploy`** | **GATED, always.** The owner approves each one. Only **two** free deploys exist for this hackathon; a third costs money. See `docs/Neev_Two_Week_Plan.md`. |
+
+The original prohibition, for reference: no Gemini completions, no Gemini vision
+calls, and no BigQuery queries — not in the app, not in tests, not in a "quick
+check", and not to record a fixture.
 
 `GOOGLE_API_KEY` in `.env` is deliberately commented out (`#[DRY-RUN DISABLED …]`).
 The original value is kept locally in `.env.disabled-backup`, which is git-ignored.
@@ -16,8 +29,12 @@ The original value is kept locally in `.env.disabled-backup`, which is git-ignor
 
 1. **Do not uncomment, restore, export, or otherwise reinstate `GOOGLE_API_KEY`.**
    Not to debug, not to verify, not "just once". Only the owner re-enables it.
-2. **Never run** `adk web`, `scripts/golden_run.py`, `scripts/load_bigquery.sh`,
-   or any `bq` command. These all hit billed services.
+   Still true: the key only buys Gemini, which is still gated.
+2. **Never run** `adk web` or `scripts/golden_run.py` without the owner saying so
+   for that specific task — both drive the full billed pipeline.
+   `scripts/load_bigquery.sh` and plain `bq` commands are now permitted: loads are
+   free and these tables are kilobytes. `gcloud run deploy` needs approval every
+   time.
 3. **The backend runs in `NEEV_MODE=fixture`** — the default. Live mode also
    requires `NEEV_ALLOW_BILLED_CALLS=1`, which must never be set while this
    section is ACTIVE.
