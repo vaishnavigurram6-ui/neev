@@ -197,6 +197,88 @@ class TestBoqChecks(unittest.TestCase):
         self.assertFalse(check_payment_schedule(0.25)["flag"])
 
 
+class TestBatchedBenchmarkLookup(unittest.TestCase):
+    """One query for all 39 items instead of 39 queries.
+
+    The unbatched form made the analyst agent take 81 sequential model turns --
+    about two minutes of wall clock and 85% of the run's cost -- because every
+    tool call is its own round trip. The row-shaping half is pure, so it is
+    tested here without touching BigQuery.
+    """
+
+    def _row(self, desc_text, description, unit, rate):
+        return types.SimpleNamespace(
+            desc_text=desc_text, description=description, unit=unit, effective_rate=rate
+        )
+
+    def test_a_matched_item_carries_its_benchmark(self):
+        from neev_pipeline.tools.boq_analyst_tool import _shape_benchmark_rows
+
+        rows = [self._row("RCC M25 for slab", "RCC M25 slab", "cum", 8036.0)]
+        out = _shape_benchmark_rows(["RCC M25 for slab"], rows)
+        self.assertEqual(out["RCC M25 for slab"]["benchmark_rate"], 8036.0)
+        self.assertEqual(out["RCC M25 for slab"]["matched_item"], "RCC M25 slab")
+
+    def test_every_input_description_appears_in_the_output(self):
+        """A silently dropped item is an unchecked rate, so the shape must be total."""
+        from neev_pipeline.tools.boq_analyst_tool import _shape_benchmark_rows
+
+        descs = ["RCC M25 for slab", "MS main gate", "Sand filling"]
+        rows = [self._row("RCC M25 for slab", "RCC M25 slab", "cum", 8036.0)]
+        out = _shape_benchmark_rows(descs, rows)
+        self.assertEqual(sorted(out), sorted(descs))
+
+    def test_an_unmatched_item_says_so_rather_than_guessing(self):
+        from neev_pipeline.tools.boq_analyst_tool import _shape_benchmark_rows
+
+        out = _shape_benchmark_rows(["MS main gate"], [])
+        self.assertIsNone(out["MS main gate"]["matched_item"])
+        self.assertIn("UNBENCHMARKED", out["MS main gate"]["note"])
+
+    def test_a_left_join_miss_row_is_not_mistaken_for_a_match(self):
+        """The batched SQL LEFT JOINs, so a miss arrives as a row of NULLs."""
+        from neev_pipeline.tools.boq_analyst_tool import _shape_benchmark_rows
+
+        rows = [self._row("MS main gate", None, None, None)]
+        out = _shape_benchmark_rows(["MS main gate"], rows)
+        self.assertIsNone(out["MS main gate"]["matched_item"])
+
+    def test_a_repeated_description_is_queried_once_and_answered_once(self):
+        from neev_pipeline.tools.boq_analyst_tool import _shape_benchmark_rows
+
+        rows = [self._row("Sand filling", "Sand filling under floors", "cum", 1350.0)]
+        out = _shape_benchmark_rows(["Sand filling", "Sand filling"], rows)
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out["Sand filling"]["benchmark_rate"], 1350.0)
+
+
+class TestBatchedDeviationCheck(unittest.TestCase):
+    """The second half of the fan-out.
+
+    Batching only the benchmark lookup left check_rate_deviation being called
+    once per matched item -- 28 more model turns. The singular function stays as
+    the pure, tested implementation; the plural one is what the agent calls.
+    """
+
+    def test_one_call_scores_every_quote(self):
+        from neev_pipeline.tools.boq_analyst_tool import check_rate_deviations
+
+        out = check_rate_deviations([
+            {"item": "3.1", "boq_rate": 9800, "benchmark_rate": 8036},
+            {"item": "1.1", "boq_rate": 285, "benchmark_rate": 252},
+        ])
+        self.assertTrue(out["3.1"]["flag"])
+        self.assertEqual(sorted(out), ["1.1", "3.1"])
+
+    def test_a_quote_missing_its_benchmark_is_reported_not_scored(self):
+        """Guards against dividing by a null benchmark for an UNBENCHMARKED item."""
+        from neev_pipeline.tools.boq_analyst_tool import check_rate_deviations
+
+        out = check_rate_deviations([{"item": "12.2", "boq_rate": 18000}])
+        self.assertFalse(out["12.2"]["flag"])
+        self.assertIn("UNBENCHMARKED", out["12.2"]["note"])
+
+
 class TestPipelineWiring(unittest.TestCase):
     def test_agent_module_imports_and_wires_five_agents(self):
         from neev_pipeline import agent

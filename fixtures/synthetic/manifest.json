@@ -1,0 +1,8886 @@
+[
+  {
+    "boq_id": "SYN-1001",
+    "locality": "Miyapur",
+    "built_up_sqft": 1100,
+    "firm": "NAVYA INFRA",
+    "client": "Mrs. P. Anjali",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        55.0,
+        "cum",
+        5911
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        35.6,
+        "cum",
+        1952
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        10.2,
+        "cum",
+        1461
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        9.4,
+        "cum",
+        6491
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        23.5,
+        "cum",
+        8447
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        5.7,
+        "cum",
+        8260
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        12.2,
+        "sqm",
+        343
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "M25 grade RCC — columns, beams, slab",
+        31.6,
+        "cum",
+        6245
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        3.5,
+        "cum",
+        7895
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT barsD, fabrication and placing",
+        3127.6,
+        "kg",
+        71
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        24.7,
+        "cum",
+        3268
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        8.1,
+        "sqm",
+        770
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        186.8,
+        "sqm",
+        4011
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        104.7,
+        "sqm",
+        293
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        97.0,
+        "sqm",
+        1125
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        22.4,
+        "sqm",
+        811
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        64.9,
+        "sqm",
+        675
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        18.3,
+        "set",
+        11536
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        62.7,
+        "sqm",
+        2259
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior painting, emulsion, over putty",
+        191.4,
+        "sqm",
+        126
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        114.5,
+        "sqm",
+        150
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "12%"
+      ],
+      [
+        "On completion of plinth",
+        "6%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 2599346,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "RATE_OUTLIER",
+        "item": "14",
+        "detail": "quoted 293 against benchmark 240 (+22%)",
+        "planted_pct": 22,
+        "matched_keyword": "external plaster"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "electrical",
+        "detail": "electrical omitted from the document entirely"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1002",
+    "locality": "Bachupally",
+    "built_up_sqft": 2200,
+    "firm": "SRINIVASA CONSTRUCTIONS",
+    "client": "Mrs. G. Swathi",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        111.9,
+        "cum",
+        260
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        63.8,
+        "cum",
+        8963
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        20.4,
+        "cum",
+        2184
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        17.4,
+        "cum",
+        5714
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        43.5,
+        "cum",
+        5331
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        10.9,
+        "cum",
+        8313
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        25.5,
+        "sqm",
+        344
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "M25 grade RCC — columns, beams, slab",
+        63.6,
+        "cum",
+        5959
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        6.5,
+        "cum",
+        7846
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        5493.1,
+        "kg",
+        73
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        49.2,
+        "cum",
+        5195
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        18.9,
+        "sqm",
+        738
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        420.1,
+        "sqm",
+        949
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        208.7,
+        "sqm",
+        574
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        182.8,
+        "sqm",
+        1048
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        44.9,
+        "sqm",
+        2570
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        114.6,
+        "sqm",
+        594
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        39.3,
+        "set",
+        11683
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        115.0,
+        "sqm",
+        2294
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        409.9,
+        "sqm",
+        131
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        224.7,
+        "sqm",
+        136
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "10%"
+      ],
+      [
+        "On completion of plinth",
+        "8%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 3877439,
+    "defects": [
+      {
+        "type": "MISSING_SCOPE",
+        "item": "electrical",
+        "detail": "electrical omitted from the document entirely"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1003",
+    "locality": "Nizampet",
+    "built_up_sqft": 2450,
+    "firm": "SAI TEJA ENGINEERS",
+    "client": "Mr. M. Farhan",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        125.7,
+        "cum",
+        251
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        73.9,
+        "cum",
+        4385
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        24.5,
+        "cum",
+        8090
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        19.9,
+        "cum",
+        4652
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        54.7,
+        "cum",
+        490
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        12.6,
+        "cum",
+        8176
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        28.1,
+        "sqm",
+        5126
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        62.3,
+        "cum",
+        7914
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        7.0,
+        "cum",
+        8625
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT incl. binding",
+        6074.9,
+        "kg",
+        70
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        62.2,
+        "cum",
+        2443
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        20.9,
+        "sqm",
+        692
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        432.9,
+        "sqm",
+        190
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        230.6,
+        "sqm",
+        1398
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        222.3,
+        "sqm",
+        1019
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        57.0,
+        "sqm",
+        789
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        136.0,
+        "sqm",
+        613
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        108.0,
+        "pt",
+        660
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        130.6,
+        "sqm",
+        6257
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        436.3,
+        "sqm",
+        137
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        243.1,
+        "sqm",
+        150
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "12%"
+      ],
+      [
+        "On completion of plinth",
+        "6%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 3809498,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "plumbing",
+        "detail": "plumbing omitted from the document entirely"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1004",
+    "locality": "Uppal",
+    "built_up_sqft": 2200,
+    "firm": "LAKSHMI CONSTRUCTIONS",
+    "client": "Mrs. G. Swathi",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        114.2,
+        "cum",
+        6299
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        69.7,
+        "cum",
+        6999
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        21.4,
+        "cum",
+        1269
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        18.6,
+        "cum",
+        1528
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        45.2,
+        "cum",
+        4649
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        10.1,
+        "cum",
+        8392
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        24.9,
+        "sqm",
+        340
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        58.7,
+        "cum",
+        473
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        6.2,
+        "cum",
+        8825
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        6216.4,
+        "kg",
+        68
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        50.7,
+        "cum",
+        340
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        17.3,
+        "sqm",
+        779
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        405.1,
+        "sqm",
+        1848
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        230.9,
+        "sqm",
+        242
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        192.5,
+        "sqm",
+        1004
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        45.5,
+        "sqm",
+        4357
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        116.4,
+        "sqm",
+        623
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        94.6,
+        "pt",
+        617
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        35.3,
+        "set",
+        10805
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        130.6,
+        "sqm",
+        8506
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        401.4,
+        "sqm",
+        145
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        236.7,
+        "sqm",
+        135
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "10%"
+      ],
+      [
+        "On completion of plinth",
+        "8%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 5011383,
+    "defects": []
+  },
+  {
+    "boq_id": "SYN-1005",
+    "locality": "Bachupally",
+    "built_up_sqft": 2450,
+    "firm": "SAI TEJA ENGINEERS",
+    "client": "Mr. B. Yadav",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        128.2,
+        "cum",
+        4497
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        80.7,
+        "cum",
+        3435
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        25.7,
+        "cum",
+        1398
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        20.5,
+        "cum",
+        2813
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        50.1,
+        "cum",
+        3781
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        11.4,
+        "cum",
+        8308
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        28.0,
+        "sqm",
+        6816
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        71.2,
+        "cum",
+        8530
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        7.8,
+        "cum",
+        7534
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT barsD, fabrication and placing",
+        6706.3,
+        "kg",
+        75
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        58.0,
+        "cum",
+        4367
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        19.1,
+        "sqm",
+        763
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        407.8,
+        "sqm",
+        7807
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        213.6,
+        "sqm",
+        1043
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        56.5,
+        "sqm",
+        870
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        139.7,
+        "sqm",
+        623
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        113.6,
+        "pt",
+        681
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        38.5,
+        "set",
+        10059
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        127.2,
+        "sqm",
+        1307
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        417.9,
+        "sqm",
+        136
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        263.2,
+        "sqm",
+        143
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "25%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "21%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "18%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 7127258,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "external plaster",
+        "detail": "external plaster omitted from the document entirely"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "50% of contract value due before the slab"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1006",
+    "locality": "Kukatpally",
+    "built_up_sqft": 2000,
+    "firm": "PRAGATI BUILDCON",
+    "client": "Mrs. G. Swathi",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        101.1,
+        "cum",
+        243
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        60.2,
+        "cum",
+        206
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        21.3,
+        "cum",
+        1449
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        16.3,
+        "cum",
+        5357
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        44.5,
+        "cum",
+        2906
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        9.3,
+        "cum",
+        7857
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        22.1,
+        "sqm",
+        311
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        58.2,
+        "cum",
+        8884
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        5.6,
+        "cum",
+        8067
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        5588.8,
+        "kg",
+        69
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        46.7,
+        "cum",
+        1137
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        17.0,
+        "sqm",
+        735
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        368.5,
+        "sqm",
+        4254
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        201.5,
+        "sqm",
+        243
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        187.5,
+        "sqm",
+        1076
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        46.8,
+        "sqm",
+        869
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        106.0,
+        "sqm",
+        612
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        90.8,
+        "pt",
+        702
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        31.7,
+        "set",
+        10152
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        119.7,
+        "sqm",
+        3144
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        335.7,
+        "sqm",
+        145
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        186.5,
+        "sqm",
+        136
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "15%"
+      ],
+      [
+        "On completion of foundation",
+        "8%"
+      ],
+      [
+        "On completion of plinth",
+        "5%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 4137648,
+    "defects": []
+  },
+  {
+    "boq_id": "SYN-1007",
+    "locality": "Patancheru",
+    "built_up_sqft": 1100,
+    "firm": "SRINIVASA CONSTRUCTIONS",
+    "client": "Mr. V. Naidu",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        57.3,
+        "cum",
+        257
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        34.5,
+        "cum",
+        6641
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        10.2,
+        "cum",
+        4039
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        8.4,
+        "cum",
+        5842
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        21.7,
+        "cum",
+        4307
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        5.1,
+        "cum",
+        7828
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        13.5,
+        "sqm",
+        313
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        30.3,
+        "cum",
+        7901
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        3.1,
+        "cum",
+        8831
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        2976.5,
+        "kg",
+        70
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        26.0,
+        "cum",
+        6899
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        9.3,
+        "sqm",
+        713
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        185.9,
+        "sqm",
+        173
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        117.2,
+        "sqm",
+        4205
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        102.4,
+        "sqm",
+        1057
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        23.2,
+        "sqm",
+        810
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        56.7,
+        "sqm",
+        849
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        19.1,
+        "set",
+        10477
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        65.8,
+        "sqm",
+        8691
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior painting, emulsion, over putty",
+        189.1,
+        "sqm",
+        128
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        105.8,
+        "sqm",
+        145
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "30%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "19%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "16%"
+      ],
+      [
+        "On finishing & handover",
+        "10%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 2644536,
+    "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "17",
+        "detail": "quoted 849 against benchmark 620 (+37%)",
+        "planted_pct": 37,
+        "matched_keyword": "waterproofing"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "electrical",
+        "detail": "electrical omitted from the document entirely"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "55% of contract value due before the slab"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1008",
+    "locality": "Bachupally",
+    "built_up_sqft": 2450,
+    "firm": "VENKATESHWARA BUILDERS",
+    "client": "Mr. M. Farhan",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        129.2,
+        "cum",
+        1447
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        77.1,
+        "cum",
+        1191
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        25.2,
+        "cum",
+        4945
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        18.8,
+        "cum",
+        4470
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        47.7,
+        "cum",
+        1461
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        13.2,
+        "cum",
+        7956
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        31.1,
+        "sqm",
+        305
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        64.8,
+        "cum",
+        8610
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        7.3,
+        "cum",
+        8150
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT Fe 500 incl. binding",
+        6820.3,
+        "kg",
+        67
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        58.4,
+        "cum",
+        5162
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        19.3,
+        "sqm",
+        768
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        441.5,
+        "sqm",
+        179
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        227.3,
+        "sqm",
+        242
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        205.6,
+        "sqm",
+        986
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        52.0,
+        "sqm",
+        4173
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        136.9,
+        "sqm",
+        623
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        110.4,
+        "pt",
+        618
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        43.2,
+        "set",
+        10220
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        132.0,
+        "sqm",
+        950
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        437.0,
+        "sqm",
+        136
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        239.0,
+        "sqm",
+        157
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "12%"
+      ],
+      [
+        "On completion of plinth",
+        "6%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 3433417,
+    "defects": [
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1009",
+    "locality": "Uppal",
+    "built_up_sqft": 1400,
+    "firm": "NAVYA INFRA",
+    "client": "Mr. M. Farhan",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        77.1,
+        "cum",
+        264
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        46.3,
+        "cum",
+        7911
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        14.6,
+        "cum",
+        6941
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        10.7,
+        "cum",
+        5287
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        28.0,
+        "cum",
+        3770
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        6.6,
+        "cum",
+        8433
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        16.4,
+        "sqm",
+        298
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        40.0,
+        "cum",
+        7928
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        4.0,
+        "cum",
+        8363
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT Fe 500 incl. binding",
+        3951.6,
+        "kg",
+        68
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        35.1,
+        "cum",
+        4192
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        10.8,
+        "sqm",
+        694
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        265.0,
+        "sqm",
+        177
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        140.8,
+        "sqm",
+        235
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        131.4,
+        "sqm",
+        998
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        30.0,
+        "sqm",
+        880
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        84.1,
+        "sqm",
+        583
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        65.5,
+        "pt",
+        659
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        22.6,
+        "set",
+        10981
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        73.4,
+        "sqm",
+        4820
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        240.1,
+        "sqm",
+        134
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        129.3,
+        "sqm",
+        147
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "15%"
+      ],
+      [
+        "On completion of foundation",
+        "8%"
+      ],
+      [
+        "On completion of plinth",
+        "5%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 2467428,
+    "defects": []
+  },
+  {
+    "boq_id": "SYN-1010",
+    "locality": "Kompally",
+    "built_up_sqft": 1650,
+    "firm": "VENKATESHWARA BUILDERS",
+    "client": "Mr. K. Srinivas",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        83.3,
+        "cum",
+        264
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        47.9,
+        "cum",
+        149
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        16.5,
+        "cum",
+        8971
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        13.6,
+        "cum",
+        3649
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        36.1,
+        "cum",
+        3441
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        7.6,
+        "cum",
+        11009
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        20.6,
+        "sqm",
+        336
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        42.0,
+        "cum",
+        8753
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        5.3,
+        "cum",
+        8589
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT bars Fe500D, fabrication and placing",
+        4066.4,
+        "kg",
+        76
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        40.9,
+        "cum",
+        348
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        14.1,
+        "sqm",
+        673
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        272.6,
+        "sqm",
+        6896
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        153.2,
+        "sqm",
+        7847
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        155.8,
+        "sqm",
+        1015
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        36.7,
+        "sqm",
+        2295
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        96.4,
+        "sqm",
+        610
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        77.9,
+        "pt",
+        623
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        92.0,
+        "sqm",
+        3550
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        278.6,
+        "sqm",
+        139
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        169.2,
+        "sqm",
+        150
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "30%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "19%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "16%"
+      ],
+      [
+        "On finishing & handover",
+        "10%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 5009918,
+    "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "6",
+        "detail": "quoted 11009 against benchmark 8036 (+37%)",
+        "planted_pct": 37,
+        "matched_keyword": "plinth beam"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "plumbing",
+        "detail": "plumbing omitted from the document entirely"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "55% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1011",
+    "locality": "Nizampet",
+    "built_up_sqft": 2000,
+    "firm": "LAKSHMI CONSTRUCTIONS",
+    "client": "Mr. K. Srinivas",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        101.1,
+        "cum",
+        7098
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        66.5,
+        "cum",
+        2470
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        19.9,
+        "cum",
+        1320
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        15.7,
+        "cum",
+        5634
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        41.0,
+        "cum",
+        3772
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        9.8,
+        "cum",
+        9482
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        25.3,
+        "sqm",
+        7486
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "M25 grade RCC — columns, beams, slab",
+        49.7,
+        "cum",
+        2553
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        5.7,
+        "cum",
+        8395
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        5132.0,
+        "kg",
+        70
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        50.8,
+        "cum",
+        8669
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        16.0,
+        "sqm",
+        753
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        350.9,
+        "sqm",
+        2436
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        187.1,
+        "sqm",
+        6921
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        177.2,
+        "sqm",
+        986
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        43.1,
+        "sqm",
+        779
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        105.8,
+        "sqm",
+        595
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        93.5,
+        "pt",
+        674
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        36.1,
+        "set",
+        10108
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        119.8,
+        "sqm",
+        2229
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        337.3,
+        "sqm",
+        129
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        208.0,
+        "sqm",
+        135
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "25%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "21%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "18%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 5607465,
+    "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "6",
+        "detail": "quoted 9482 against benchmark 8036 (+18%)",
+        "planted_pct": 18,
+        "matched_keyword": "plinth beam"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "50% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1012",
+    "locality": "Miyapur",
+    "built_up_sqft": 2000,
+    "firm": "SRINIVASA CONSTRUCTIONS",
+    "client": "Mr. K. Srinivas",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        103.7,
+        "cum",
+        248
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        65.5,
+        "cum",
+        4892
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        20.5,
+        "cum",
+        1351
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        15.7,
+        "cum",
+        6032
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        42.7,
+        "cum",
+        2169
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        10.0,
+        "cum",
+        7937
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        22.9,
+        "sqm",
+        318
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "M25 grade RCC — columns, beams, slab",
+        57.5,
+        "cum",
+        4440
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        5.8,
+        "cum",
+        7612
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        5759.0,
+        "kg",
+        75
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        51.1,
+        "cum",
+        8207
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        14.8,
+        "sqm",
+        762
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        348.3,
+        "sqm",
+        1957
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        208.5,
+        "sqm",
+        7112
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        189.9,
+        "sqm",
+        1118
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        44.2,
+        "sqm",
+        878
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        120.6,
+        "sqm",
+        660
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        88.2,
+        "pt",
+        657
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        109.4,
+        "sqm",
+        5984
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior painting, emulsion, over putty",
+        336.2,
+        "sqm",
+        143
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        189.9,
+        "sqm",
+        144
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "10%"
+      ],
+      [
+        "On completion of plinth",
+        "8%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 5093046,
+    "defects": [
+      {
+        "type": "MISSING_SCOPE",
+        "item": "plumbing",
+        "detail": "plumbing omitted from the document entirely"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1013",
+    "locality": "Nizampet",
+    "built_up_sqft": 2450,
+    "firm": "AKSHAYA HOMES",
+    "client": "Mrs. P. Anjali",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        119.9,
+        "cum",
+        245
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        73.9,
+        "cum",
+        5536
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        23.8,
+        "cum",
+        2050
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        20.3,
+        "cum",
+        6180
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        55.2,
+        "cum",
+        3060
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        12.7,
+        "cum",
+        7733
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        27.7,
+        "sqm",
+        303
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        70.7,
+        "cum",
+        8093
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        7.0,
+        "cum",
+        8580
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT barsD, fabrication and placing",
+        6725.5,
+        "kg",
+        69
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        56.0,
+        "cum",
+        4949
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        20.1,
+        "sqm",
+        728
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        465.0,
+        "sqm",
+        191
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        238.1,
+        "sqm",
+        2640
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        228.1,
+        "sqm",
+        1050
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        52.1,
+        "sqm",
+        784
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        129.0,
+        "sqm",
+        613
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        108.6,
+        "pt",
+        658
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        137.9,
+        "sqm",
+        6293
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior painting, emulsion, over putty",
+        466.2,
+        "sqm",
+        133
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        236.8,
+        "sqm",
+        145
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "12%"
+      ],
+      [
+        "On completion of plinth",
+        "6%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 4388747,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "plumbing",
+        "detail": "plumbing omitted from the document entirely"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1014",
+    "locality": "Kompally",
+    "built_up_sqft": 1100,
+    "firm": "AKSHAYA HOMES",
+    "client": "Mr. K. Srinivas",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        55.4,
+        "cum",
+        262
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        34.8,
+        "cum",
+        4308
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        11.0,
+        "cum",
+        7318
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        8.9,
+        "cum",
+        1103
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        24.0,
+        "cum",
+        4184
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        5.5,
+        "cum",
+        7657
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        12.8,
+        "sqm",
+        337
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        28.2,
+        "cum",
+        7789
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        3.3,
+        "cum",
+        8201
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT barsD, fabrication and placing",
+        2897.3,
+        "kg",
+        65
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        28.0,
+        "cum",
+        5078
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        8.4,
+        "sqm",
+        754
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        196.9,
+        "sqm",
+        2142
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        113.9,
+        "sqm",
+        8898
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        103.6,
+        "sqm",
+        1125
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        24.2,
+        "sqm",
+        870
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        62.5,
+        "sqm",
+        621
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        51.6,
+        "pt",
+        694
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        19.1,
+        "set",
+        11195
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        65.7,
+        "sqm",
+        8958
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        192.5,
+        "sqm",
+        129
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        112.6,
+        "sqm",
+        142
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "15%"
+      ],
+      [
+        "On completion of foundation",
+        "8%"
+      ],
+      [
+        "On completion of plinth",
+        "5%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 3475802,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1015",
+    "locality": "Gachibowli",
+    "built_up_sqft": 1250,
+    "firm": "SRI SAI CONSTRUCTIONS",
+    "client": "Mr. M. Farhan",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        64.7,
+        "cum",
+        268
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        40.2,
+        "cum",
+        5687
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        12.7,
+        "cum",
+        1416
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        10.5,
+        "cum",
+        7979
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        25.5,
+        "cum",
+        5877
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        6.5,
+        "cum",
+        7863
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        15.3,
+        "sqm",
+        345
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "M25 grade RCC — columns, beams, slab",
+        31.7,
+        "cum",
+        2448
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        3.8,
+        "cum",
+        8680
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT barsD, fabrication and placing",
+        3204.6,
+        "kg",
+        71
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        32.1,
+        "cum",
+        1138
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        10.7,
+        "sqm",
+        771
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        218.6,
+        "sqm",
+        286
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        106.3,
+        "sqm",
+        982
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        29.4,
+        "sqm",
+        754
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        68.7,
+        "sqm",
+        615
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        53.6,
+        "pt",
+        673
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        21.3,
+        "set",
+        10101
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        70.5,
+        "sqm",
+        2227
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        240.0,
+        "sqm",
+        133
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        131.1,
+        "sqm",
+        152
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "30%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "19%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "16%"
+      ],
+      [
+        "On finishing & handover",
+        "10%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 1628262,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "external plaster",
+        "detail": "external plaster omitted from the document entirely"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "55% of contract value due before the slab"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1016",
+    "locality": "Uppal",
+    "built_up_sqft": 2000,
+    "firm": "PRAGATI BUILDCON",
+    "client": "Mr. K. Srinivas",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        96.6,
+        "cum",
+        6003
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        60.5,
+        "cum",
+        143
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        20.1,
+        "cum",
+        6903
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        16.0,
+        "cum",
+        5567
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        42.0,
+        "cum",
+        1107
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        9.7,
+        "cum",
+        7938
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        23.4,
+        "sqm",
+        2323
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        56.7,
+        "cum",
+        6736
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        6.0,
+        "cum",
+        7735
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT incl. binding",
+        5403.1,
+        "kg",
+        69
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        45.2,
+        "cum",
+        5214
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        15.7,
+        "sqm",
+        769
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        370.3,
+        "sqm",
+        4053
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        208.4,
+        "sqm",
+        1945
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        172.2,
+        "sqm",
+        1125
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        47.2,
+        "sqm",
+        3634
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        111.0,
+        "sqm",
+        599
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        87.6,
+        "pt",
+        683
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        31.4,
+        "set",
+        11601
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        107.0,
+        "sqm",
+        2142
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior painting, emulsion, over putty",
+        373.5,
+        "sqm",
+        127
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        202.7,
+        "sqm",
+        147
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "30%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "19%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "16%"
+      ],
+      [
+        "On finishing & handover",
+        "10%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 5111546,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "55% of contract value due before the slab"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1017",
+    "locality": "Shamirpet",
+    "built_up_sqft": 2450,
+    "firm": "AKSHAYA HOMES",
+    "client": "Mr. V. Naidu",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        120.8,
+        "cum",
+        265
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        77.9,
+        "cum",
+        151
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        25.0,
+        "cum",
+        5689
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        19.1,
+        "cum",
+        5094
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        51.2,
+        "cum",
+        856
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        12.5,
+        "cum",
+        7798
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        29.4,
+        "sqm",
+        342
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        65.5,
+        "cum",
+        7833
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        6.9,
+        "cum",
+        7986
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT Fe 500 incl. binding",
+        6315.4,
+        "kg",
+        83
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        61.4,
+        "cum",
+        5192
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        20.1,
+        "sqm",
+        744
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        415.1,
+        "sqm",
+        4956
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        211.9,
+        "sqm",
+        1021
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        57.6,
+        "sqm",
+        1106
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        136.6,
+        "sqm",
+        628
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        101.9,
+        "pt",
+        664
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        38.5,
+        "set",
+        10116
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        142.4,
+        "sqm",
+        2999
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        450.6,
+        "sqm",
+        139
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        246.8,
+        "sqm",
+        140
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "20%"
+      ],
+      [
+        "On completion of foundation",
+        "20%"
+      ],
+      [
+        "On completion of plinth",
+        "12%"
+      ],
+      [
+        "On casting of roof slab",
+        "20%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "17%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 5265185,
+    "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "10",
+        "detail": "quoted 83 against benchmark 70 (+18%)",
+        "planted_pct": 18,
+        "matched_keyword": "tmt"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "external plaster",
+        "detail": "external plaster omitted from the document entirely"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "52% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1018",
+    "locality": "Shamirpet",
+    "built_up_sqft": 2200,
+    "firm": "PRAGATI BUILDCON",
+    "client": "Mr. S. Reddy",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        108.9,
+        "cum",
+        6684
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        72.6,
+        "cum",
+        148
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        21.0,
+        "cum",
+        6818
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        18.7,
+        "cum",
+        5841
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        48.2,
+        "cum",
+        6114
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        11.2,
+        "cum",
+        7540
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        28.4,
+        "sqm",
+        5429
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        58.1,
+        "cum",
+        8432
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        6.1,
+        "cum",
+        8373
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT incl. binding",
+        5853.4,
+        "kg",
+        68
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        55.7,
+        "cum",
+        1514
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        18.8,
+        "sqm",
+        684
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        396.9,
+        "sqm",
+        6121
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        204.8,
+        "sqm",
+        4774
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        192.7,
+        "sqm",
+        981
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        49.9,
+        "sqm",
+        1673
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        114.1,
+        "sqm",
+        598
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        96.5,
+        "pt",
+        664
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        34.5,
+        "set",
+        11655
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        127.6,
+        "sqm",
+        1208
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        420.3,
+        "sqm",
+        143
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        231.6,
+        "sqm",
+        145
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "20%"
+      ],
+      [
+        "On completion of foundation",
+        "20%"
+      ],
+      [
+        "On completion of plinth",
+        "12%"
+      ],
+      [
+        "On casting of roof slab",
+        "20%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "17%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 7022451,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "52% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1019",
+    "locality": "Nizampet",
+    "built_up_sqft": 1100,
+    "firm": "AKSHAYA HOMES",
+    "client": "Mr. B. Yadav",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        60.5,
+        "cum",
+        8932
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        36.0,
+        "cum",
+        151
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        10.8,
+        "cum",
+        2485
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        8.2,
+        "cum",
+        5944
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        21.4,
+        "cum",
+        7587
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        5.8,
+        "cum",
+        8314
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        12.2,
+        "sqm",
+        1262
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        30.2,
+        "cum",
+        7718
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        3.4,
+        "cum",
+        8000
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        2904.3,
+        "kg",
+        75
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        27.0,
+        "cum",
+        7952
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        8.6,
+        "sqm",
+        765
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        204.2,
+        "sqm",
+        8285
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        114.4,
+        "sqm",
+        1751
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        93.3,
+        "sqm",
+        1376
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        24.0,
+        "sqm",
+        838
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        61.6,
+        "sqm",
+        589
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        19.5,
+        "set",
+        10302
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        62.7,
+        "sqm",
+        935
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior painting, emulsion, over putty",
+        199.9,
+        "sqm",
+        135
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        108.1,
+        "sqm",
+        149
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "15%"
+      ],
+      [
+        "On completion of foundation",
+        "8%"
+      ],
+      [
+        "On completion of plinth",
+        "5%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 3926263,
+    "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "15",
+        "detail": "quoted 1376 against benchmark 1050 (+31%)",
+        "planted_pct": 31,
+        "matched_keyword": "vitrified tile"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "electrical",
+        "detail": "electrical omitted from the document entirely"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1020",
+    "locality": "Shamirpet",
+    "built_up_sqft": 1250,
+    "firm": "NAVYA INFRA",
+    "client": "Mr. B. Yadav",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        66.5,
+        "cum",
+        258
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        40.5,
+        "cum",
+        5491
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        12.3,
+        "cum",
+        4812
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        10.8,
+        "cum",
+        630
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        24.3,
+        "cum",
+        4196
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        6.2,
+        "cum",
+        8316
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        14.2,
+        "sqm",
+        338
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "M25 grade RCC — columns, beams, slab",
+        31.5,
+        "cum",
+        4465
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        3.7,
+        "cum",
+        7793
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        3490.2,
+        "kg",
+        67
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        32.0,
+        "cum",
+        2240
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        10.7,
+        "sqm",
+        675
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        211.6,
+        "sqm",
+        170
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        117.7,
+        "sqm",
+        3672
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        119.9,
+        "sqm",
+        1136
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        26.5,
+        "sqm",
+        817
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        66.2,
+        "sqm",
+        606
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        59.3,
+        "pt",
+        682
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        19.9,
+        "set",
+        10239
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        73.4,
+        "sqm",
+        6353
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        226.5,
+        "sqm",
+        145
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        127.6,
+        "sqm",
+        148
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "10%"
+      ],
+      [
+        "On completion of plinth",
+        "8%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 2374460,
+    "defects": []
+  },
+  {
+    "boq_id": "SYN-1021",
+    "locality": "Kukatpally",
+    "built_up_sqft": 1400,
+    "firm": "SRI SAI CONSTRUCTIONS",
+    "client": "Mr. B. Yadav",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        70.6,
+        "cum",
+        3799
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        40.6,
+        "cum",
+        142
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        13.8,
+        "cum",
+        1411
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        10.3,
+        "cum",
+        5890
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        31.7,
+        "cum",
+        4022
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        6.5,
+        "cum",
+        7928
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        16.7,
+        "sqm",
+        4128
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        34.9,
+        "cum",
+        7673
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        4.2,
+        "cum",
+        8644
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT barsD, fabrication and placing",
+        3500.1,
+        "kg",
+        71
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        35.4,
+        "cum",
+        3087
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        11.8,
+        "sqm",
+        781
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        249.1,
+        "sqm",
+        4574
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        138.5,
+        "sqm",
+        227
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        126.1,
+        "sqm",
+        1134
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        28.7,
+        "sqm",
+        771
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        83.2,
+        "sqm",
+        584
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        60.7,
+        "pt",
+        616
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        82.1,
+        "sqm",
+        3207
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        253.5,
+        "sqm",
+        128
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        140.9,
+        "sqm",
+        143
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "20%"
+      ],
+      [
+        "On completion of foundation",
+        "20%"
+      ],
+      [
+        "On completion of plinth",
+        "12%"
+      ],
+      [
+        "On casting of roof slab",
+        "20%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "17%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 3010995,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "plumbing",
+        "detail": "plumbing omitted from the document entirely"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "52% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1022",
+    "locality": "Gachibowli",
+    "built_up_sqft": 1400,
+    "firm": "NAVYA INFRA",
+    "client": "Mr. B. Yadav",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        75.0,
+        "cum",
+        256
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        40.4,
+        "cum",
+        8923
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        13.4,
+        "cum",
+        682
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        11.2,
+        "cum",
+        2650
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        28.8,
+        "cum",
+        1291
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        7.2,
+        "cum",
+        8320
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        15.9,
+        "sqm",
+        327
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        36.7,
+        "cum",
+        8686
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        4.0,
+        "cum",
+        8521
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT incl. binding",
+        3644.0,
+        "kg",
+        71
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        31.5,
+        "cum",
+        5506
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        11.5,
+        "sqm",
+        730
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        237.4,
+        "sqm",
+        1208
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        141.7,
+        "sqm",
+        8397
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        126.1,
+        "sqm",
+        1109
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        31.5,
+        "sqm",
+        812
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        74.8,
+        "sqm",
+        594
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        61.6,
+        "pt",
+        623
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        22.7,
+        "set",
+        10411
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        78.3,
+        "sqm",
+        6213
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        230.0,
+        "sqm",
+        126
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        135.2,
+        "sqm",
+        130
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "10%"
+      ],
+      [
+        "On completion of plinth",
+        "8%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 3808439,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1023",
+    "locality": "Uppal",
+    "built_up_sqft": 2450,
+    "firm": "AKSHAYA HOMES",
+    "client": "Mr. V. Naidu",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        115.0,
+        "cum",
+        272
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        74.1,
+        "cum",
+        3369
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        24.2,
+        "cum",
+        783
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        18.9,
+        "cum",
+        8591
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        51.5,
+        "cum",
+        1682
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        12.6,
+        "cum",
+        7606
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        28.5,
+        "sqm",
+        4268
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        68.8,
+        "cum",
+        4340
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        7.0,
+        "cum",
+        8745
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT Fe 500 incl. binding",
+        6913.6,
+        "kg",
+        76
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        59.1,
+        "cum",
+        5651
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        19.8,
+        "sqm",
+        717
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        445.3,
+        "sqm",
+        191
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        259.5,
+        "sqm",
+        8979
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        230.8,
+        "sqm",
+        1040
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        54.3,
+        "sqm",
+        792
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        129.4,
+        "sqm",
+        619
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        112.6,
+        "pt",
+        642
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        43.4,
+        "set",
+        11719
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        128.8,
+        "sqm",
+        3117
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        426.8,
+        "sqm",
+        140
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        255.6,
+        "sqm",
+        147
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "20%"
+      ],
+      [
+        "On completion of foundation",
+        "20%"
+      ],
+      [
+        "On completion of plinth",
+        "12%"
+      ],
+      [
+        "On casting of roof slab",
+        "20%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "17%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 5857677,
+    "defects": [
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "52% of contract value due before the slab"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1024",
+    "locality": "Shamirpet",
+    "built_up_sqft": 1100,
+    "firm": "VENKATESHWARA BUILDERS",
+    "client": "Mr. V. Naidu",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        52.5,
+        "cum",
+        4713
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        35.8,
+        "cum",
+        3446
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        11.4,
+        "cum",
+        1444
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        8.2,
+        "cum",
+        1565
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        22.9,
+        "cum",
+        4819
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        5.6,
+        "cum",
+        8636
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        12.2,
+        "sqm",
+        302
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        27.8,
+        "cum",
+        8360
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        3.2,
+        "cum",
+        7956
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT bars, cut bent and placed",
+        2773.9,
+        "kg",
+        69
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        27.9,
+        "cum",
+        1000
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        8.3,
+        "sqm",
+        748
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        180.9,
+        "sqm",
+        8625
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        118.3,
+        "sqm",
+        389
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        101.8,
+        "sqm",
+        1116
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        23.6,
+        "sqm",
+        7908
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        62.1,
+        "sqm",
+        656
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        45.0,
+        "pt",
+        621
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        19.8,
+        "set",
+        11300
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        58.5,
+        "sqm",
+        2086
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior painting, emulsion, over putty",
+        181.2,
+        "sqm",
+        139
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        107.0,
+        "sqm",
+        160
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "30%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "19%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "16%"
+      ],
+      [
+        "On finishing & handover",
+        "10%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 3409149,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "55% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1025",
+    "locality": "Uppal",
+    "built_up_sqft": 1650,
+    "firm": "PRAGATI BUILDCON",
+    "client": "Mrs. T. Lakshmi",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        80.2,
+        "cum",
+        273
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        52.6,
+        "cum",
+        3580
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        16.4,
+        "cum",
+        3352
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        12.8,
+        "cum",
+        812
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        33.8,
+        "cum",
+        4139
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        8.5,
+        "cum",
+        8439
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        18.6,
+        "sqm",
+        324
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        45.2,
+        "cum",
+        8474
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        4.8,
+        "cum",
+        8453
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT Fe 500 incl. binding",
+        4513.9,
+        "kg",
+        69
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        40.6,
+        "cum",
+        6891
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        13.6,
+        "sqm",
+        690
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        316.6,
+        "sqm",
+        513
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        174.6,
+        "sqm",
+        223
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        152.6,
+        "sqm",
+        1031
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        37.8,
+        "sqm",
+        886
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        98.1,
+        "sqm",
+        672
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        73.4,
+        "pt",
+        617
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        28.1,
+        "set",
+        11374
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        97.9,
+        "sqm",
+        381
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        279.3,
+        "sqm",
+        129
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        170.7,
+        "sqm",
+        139
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "15%"
+      ],
+      [
+        "On completion of foundation",
+        "8%"
+      ],
+      [
+        "On completion of plinth",
+        "5%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 2437492,
+    "defects": []
+  },
+  {
+    "boq_id": "SYN-1026",
+    "locality": "Kompally",
+    "built_up_sqft": 1100,
+    "firm": "AKSHAYA HOMES",
+    "client": "Mr. M. Farhan",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        54.0,
+        "cum",
+        5271
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        33.8,
+        "cum",
+        4952
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        11.4,
+        "cum",
+        1180
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        9.0,
+        "cum",
+        2792
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        23.9,
+        "cum",
+        4181
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        5.1,
+        "cum",
+        7488
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        13.5,
+        "sqm",
+        328
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        31.5,
+        "cum",
+        1722
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        3.1,
+        "cum",
+        7847
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT incl. binding",
+        2789.1,
+        "kg",
+        75
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        25.6,
+        "cum",
+        5212
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        8.6,
+        "sqm",
+        725
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        200.8,
+        "sqm",
+        3343
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        114.2,
+        "sqm",
+        2623
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        95.8,
+        "sqm",
+        1067
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        26.1,
+        "sqm",
+        768
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        57.7,
+        "sqm",
+        591
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        47.9,
+        "pt",
+        623
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        19.7,
+        "set",
+        10143
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        61.9,
+        "sqm",
+        2500
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        208.3,
+        "sqm",
+        133
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        105.2,
+        "sqm",
+        140
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "25%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "21%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "18%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 2614574,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "50% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1027",
+    "locality": "Kukatpally",
+    "built_up_sqft": 1100,
+    "firm": "SRI SAI CONSTRUCTIONS",
+    "client": "Mrs. P. Anjali",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        56.5,
+        "cum",
+        271
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        32.6,
+        "cum",
+        8122
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        10.8,
+        "cum",
+        5826
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        8.8,
+        "cum",
+        5665
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        23.4,
+        "cum",
+        5288
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        5.3,
+        "cum",
+        8422
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        13.6,
+        "sqm",
+        3520
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "M25 grade RCC — columns, beams, slab",
+        27.7,
+        "cum",
+        5438
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        3.1,
+        "cum",
+        8149
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT bars Fe500D, fabrication and placing",
+        2968.1,
+        "kg",
+        65
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        25.9,
+        "cum",
+        5340
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        8.7,
+        "sqm",
+        781
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        183.4,
+        "sqm",
+        1551
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        113.2,
+        "sqm",
+        2809
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        98.6,
+        "sqm",
+        1002
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        26.0,
+        "sqm",
+        3001
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        60.4,
+        "sqm",
+        664
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        49.1,
+        "pt",
+        706
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        19.4,
+        "set",
+        10123
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        65.1,
+        "sqm",
+        8515
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior painting, emulsion, over putty",
+        184.7,
+        "sqm",
+        128
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        110.8,
+        "sqm",
+        151
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "12%"
+      ],
+      [
+        "On completion of plinth",
+        "6%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 2768142,
+    "defects": []
+  },
+  {
+    "boq_id": "SYN-1028",
+    "locality": "Kukatpally",
+    "built_up_sqft": 2450,
+    "firm": "SRI SAI CONSTRUCTIONS",
+    "client": "Mrs. P. Anjali",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        125.9,
+        "cum",
+        269
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        70.2,
+        "cum",
+        147
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        25.0,
+        "cum",
+        942
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        19.8,
+        "cum",
+        5277
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        55.3,
+        "cum",
+        4340
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        12.7,
+        "cum",
+        7926
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        28.1,
+        "sqm",
+        4829
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "M25 grade RCC — columns, beams, slab",
+        68.1,
+        "cum",
+        2838
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        7.2,
+        "cum",
+        8248
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT bars, cut bent and placed",
+        6605.3,
+        "kg",
+        74
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        56.6,
+        "cum",
+        6757
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        18.3,
+        "sqm",
+        719
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        420.2,
+        "sqm",
+        4420
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        249.4,
+        "sqm",
+        4319
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        213.4,
+        "sqm",
+        1239
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        57.3,
+        "sqm",
+        815
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        132.1,
+        "sqm",
+        607
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        109.0,
+        "pt",
+        636
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        40.0,
+        "set",
+        10813
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        137.7,
+        "sqm",
+        1704
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        452.1,
+        "sqm",
+        135
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        254.6,
+        "sqm",
+        141
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "20%"
+      ],
+      [
+        "On completion of foundation",
+        "20%"
+      ],
+      [
+        "On completion of plinth",
+        "12%"
+      ],
+      [
+        "On casting of roof slab",
+        "20%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "17%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 5944774,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "RATE_OUTLIER",
+        "item": "15",
+        "detail": "quoted 1239 against benchmark 1050 (+18%)",
+        "planted_pct": 18,
+        "matched_keyword": "vitrified tile"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "52% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1029",
+    "locality": "Uppal",
+    "built_up_sqft": 1800,
+    "firm": "SRI SAI CONSTRUCTIONS",
+    "client": "Mr. S. Reddy",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        98.3,
+        "cum",
+        4655
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        59.2,
+        "cum",
+        2465
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        17.6,
+        "cum",
+        8682
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        13.9,
+        "cum",
+        5453
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        38.0,
+        "cum",
+        3055
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        9.7,
+        "cum",
+        8747
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        20.6,
+        "sqm",
+        6316
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        51.7,
+        "cum",
+        7481
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        5.0,
+        "cum",
+        7760
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT barsD, fabrication and placing",
+        4825.7,
+        "kg",
+        71
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        41.2,
+        "cum",
+        5176
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        15.5,
+        "sqm",
+        700
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        339.0,
+        "sqm",
+        8843
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        189.7,
+        "sqm",
+        5901
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        170.5,
+        "sqm",
+        1119
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        36.8,
+        "sqm",
+        259
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        73.2,
+        "pt",
+        670
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        31.2,
+        "set",
+        10420
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        103.7,
+        "sqm",
+        8053
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        297.5,
+        "sqm",
+        137
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        192.1,
+        "sqm",
+        131
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "12%"
+      ],
+      [
+        "On completion of plinth",
+        "6%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 7748138,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "MISSING_SCOPE",
+        "item": "waterproofing",
+        "detail": "waterproofing omitted from the document entirely"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1030",
+    "locality": "Gachibowli",
+    "built_up_sqft": 1100,
+    "firm": "PRAGATI BUILDCON",
+    "client": "Mr. S. Reddy",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        60.1,
+        "cum",
+        255
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        35.5,
+        "cum",
+        4149
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        11.5,
+        "cum",
+        1257
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        8.3,
+        "cum",
+        312
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        24.4,
+        "cum",
+        6970
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        5.7,
+        "cum",
+        8027
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        12.9,
+        "sqm",
+        344
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        27.5,
+        "cum",
+        7638
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        3.2,
+        "cum",
+        8138
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT Fe 500 incl. binding",
+        2880.3,
+        "kg",
+        74
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        28.4,
+        "cum",
+        5569
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        9.2,
+        "sqm",
+        698
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        182.8,
+        "sqm",
+        185
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        102.0,
+        "sqm",
+        2958
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        96.6,
+        "sqm",
+        1087
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        23.6,
+        "sqm",
+        5207
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        61.3,
+        "sqm",
+        615
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        17.3,
+        "set",
+        10073
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        59.0,
+        "sqm",
+        670
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        194.8,
+        "sqm",
+        143
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        107.3,
+        "sqm",
+        157
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "12%"
+      ],
+      [
+        "On completion of plinth",
+        "6%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 1873348,
+    "defects": [
+      {
+        "type": "MISSING_SCOPE",
+        "item": "electrical",
+        "detail": "electrical omitted from the document entirely"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1031",
+    "locality": "Miyapur",
+    "built_up_sqft": 1100,
+    "firm": "SRINIVASA CONSTRUCTIONS",
+    "client": "Mrs. T. Lakshmi",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        54.5,
+        "cum",
+        269
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        34.8,
+        "cum",
+        8314
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        11.5,
+        "cum",
+        4206
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        8.8,
+        "cum",
+        6027
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        24.8,
+        "cum",
+        3837
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        5.8,
+        "cum",
+        8220
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        13.6,
+        "sqm",
+        336
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        30.6,
+        "cum",
+        8259
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        3.3,
+        "cum",
+        8254
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT bars Fe500D, fabrication and placing",
+        2964.1,
+        "kg",
+        70
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        26.8,
+        "cum",
+        5070
+      ],
+      [
+        "",
+        "12",
+        "Internal brick partition 4.5 inch",
+        8.6,
+        "sqm",
+        777
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        194.9,
+        "sqm",
+        192
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        109.4,
+        "sqm",
+        1219
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        97.7,
+        "sqm",
+        1118
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        23.5,
+        "sqm",
+        867
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        65.9,
+        "sqm",
+        596
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        50.2,
+        "pt",
+        643
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        19.0,
+        "set",
+        10867
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        65.0,
+        "sqm",
+        8963
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        187.8,
+        "sqm",
+        134
+      ],
+      [
+        "",
+        "22",
+        "Exterior emulsion weather coat, two coats",
+        118.1,
+        "sqm",
+        132
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "15%"
+      ],
+      [
+        "On completion of foundation",
+        "8%"
+      ],
+      [
+        "On completion of plinth",
+        "5%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 2384566,
+    "defects": []
+  },
+  {
+    "boq_id": "SYN-1032",
+    "locality": "Medchal",
+    "built_up_sqft": 2200,
+    "firm": "NAVYA INFRA",
+    "client": "Mrs. G. Swathi",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        111.5,
+        "cum",
+        263
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        72.4,
+        "cum",
+        132
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        21.6,
+        "cum",
+        1343
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        16.9,
+        "cum",
+        4768
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        49.0,
+        "cum",
+        5227
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        10.6,
+        "cum",
+        7797
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        24.5,
+        "sqm",
+        7569
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        56.8,
+        "cum",
+        8178
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        7.1,
+        "cum",
+        7616
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT Fe 500 incl. binding",
+        5942.9,
+        "kg",
+        74
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        51.0,
+        "cum",
+        6254
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        17.6,
+        "sqm",
+        775
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        363.5,
+        "sqm",
+        186
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        215.3,
+        "sqm",
+        8805
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        197.4,
+        "sqm",
+        1011
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        45.3,
+        "sqm",
+        834
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        120.1,
+        "sqm",
+        672
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        95.6,
+        "pt",
+        680
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        39.5,
+        "set",
+        10884
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        119.7,
+        "sqm",
+        7299
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        418.7,
+        "sqm",
+        134
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        235.5,
+        "sqm",
+        141
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "25%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "21%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "18%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 5702948,
+    "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "11",
+        "detail": "quoted 6254 against benchmark 5300 (+18%)",
+        "planted_pct": 18,
+        "matched_keyword": "brick wall"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "50% of contract value due before the slab"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1033",
+    "locality": "Nizampet",
+    "built_up_sqft": 1650,
+    "firm": "SRI SAI CONSTRUCTIONS",
+    "client": "Mr. M. Farhan",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        86.3,
+        "cum",
+        261
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        50.2,
+        "cum",
+        141
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        15.4,
+        "cum",
+        1289
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        12.3,
+        "cum",
+        4414
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        35.4,
+        "cum",
+        4092
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        7.6,
+        "cum",
+        7977
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        19.2,
+        "sqm",
+        3083
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        44.9,
+        "cum",
+        4259
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        5.3,
+        "cum",
+        7677
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT bars, cut bent and placed",
+        4242.6,
+        "kg",
+        73
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        38.7,
+        "cum",
+        5220
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        13.5,
+        "sqm",
+        677
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        287.8,
+        "sqm",
+        4889
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        161.2,
+        "sqm",
+        5373
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        151.9,
+        "sqm",
+        1063
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        34.4,
+        "sqm",
+        840
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        95.0,
+        "sqm",
+        638
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        69.8,
+        "pt",
+        671
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        26.6,
+        "set",
+        11674
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        91.1,
+        "sqm",
+        4687
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        283.2,
+        "sqm",
+        143
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        155.8,
+        "sqm",
+        189
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "25%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "21%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "18%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 4499653,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      },
+      {
+        "type": "RATE_OUTLIER",
+        "item": "22",
+        "detail": "quoted 189 against benchmark 150 (+26%)",
+        "planted_pct": 26,
+        "matched_keyword": "weatherproof"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "50% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1034",
+    "locality": "Medchal",
+    "built_up_sqft": 1100,
+    "firm": "LAKSHMI CONSTRUCTIONS",
+    "client": "Mr. K. Srinivas",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        53.7,
+        "cum",
+        250
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        32.4,
+        "cum",
+        139
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        10.2,
+        "cum",
+        1378
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        8.4,
+        "cum",
+        4279
+      ],
+      [
+        "",
+        "5",
+        "Size stone masonry in CM 1:6 for foundation",
+        23.8,
+        "cum",
+        3861
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        5.1,
+        "cum",
+        8605
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        14.0,
+        "sqm",
+        321
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "M25 grade RCC — columns, beams, slab",
+        29.0,
+        "cum",
+        264
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        3.6,
+        "cum",
+        7808
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        2853.8,
+        "kg",
+        65
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Brickwork in CM 1:6 for external walls, 230mm",
+        26.9,
+        "cum",
+        5545
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        8.9,
+        "sqm",
+        747
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        199.5,
+        "sqm",
+        247
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        113.9,
+        "sqm",
+        252
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        96.3,
+        "sqm",
+        1043
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        25.8,
+        "sqm",
+        856
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Waterproofing treatment to terrace and toilet sunk",
+        62.6,
+        "sqm",
+        619
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        46.1,
+        "pt",
+        671
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Concealed CPVC plumbing lines with fittings",
+        20.0,
+        "set",
+        11681
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Anti-termite treatment to foundation and plinth",
+        57.8,
+        "sqm",
+        6545
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        189.5,
+        "sqm",
+        139
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        115.9,
+        "sqm",
+        141
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "25%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "21%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "18%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 1510061,
+    "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "13",
+        "detail": "quoted 247 against benchmark 180 (+37%)",
+        "planted_pct": 37,
+        "matched_keyword": "internal plaster"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "50% of contract value due before the slab"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1035",
+    "locality": "Bachupally",
+    "built_up_sqft": 2450,
+    "firm": "SAI TEJA ENGINEERS",
+    "client": "Mr. M. Farhan",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        116.4,
+        "cum",
+        250
+      ],
+      [
+        "",
+        "2",
+        "Back filling and ramming in layers",
+        78.3,
+        "cum",
+        2422
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        23.9,
+        "cum",
+        1321
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Lean concrete bed below foundation",
+        19.1,
+        "cum",
+        6040
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        55.2,
+        "cum",
+        3615
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        11.6,
+        "cum",
+        8437
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        27.2,
+        "sqm",
+        1932
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        69.9,
+        "cum",
+        8682
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        7.6,
+        "cum",
+        7914
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "Steel reinforcement TMT incl. binding",
+        6970.8,
+        "kg",
+        71
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        57.9,
+        "cum",
+        5075
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        18.6,
+        "sqm",
+        762
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Internal cement plaster 12mm in CM 1:4",
+        458.1,
+        "sqm",
+        2481
+      ],
+      [
+        "",
+        "14",
+        "External cement plaster 18mm in CM 1:4, two coats",
+        256.8,
+        "sqm",
+        3606
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        233.0,
+        "sqm",
+        1116
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        50.7,
+        "sqm",
+        862
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        130.0,
+        "sqm",
+        596
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        100.4,
+        "pt",
+        715
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        44.4,
+        "set",
+        10813
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        138.0,
+        "sqm",
+        7838
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        449.4,
+        "sqm",
+        138
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        242.7,
+        "sqm",
+        160
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "10%"
+      ],
+      [
+        "On completion of plinth",
+        "8%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 6363762,
+    "defects": [
+      {
+        "type": "UNDERSPECIFIED",
+        "item": "10",
+        "detail": "steel grade not stated"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1036",
+    "locality": "Bachupally",
+    "built_up_sqft": 2200,
+    "firm": "LAKSHMI CONSTRUCTIONS",
+    "client": "Mrs. P. Anjali",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        111.5,
+        "cum",
+        234
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        69.5,
+        "cum",
+        1125
+      ],
+      [
+        "",
+        "3",
+        "Sand bed under floor slab",
+        21.2,
+        "cum",
+        4410
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        18.4,
+        "cum",
+        6065
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        43.5,
+        "cum",
+        398
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        10.6,
+        "cum",
+        7950
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        25.7,
+        "sqm",
+        3078
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        63.4,
+        "cum",
+        7815
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        7.0,
+        "cum",
+        7982
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT bars Fe500D, fabrication and placing",
+        6132.9,
+        "kg",
+        76
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        56.4,
+        "cum",
+        905
+      ],
+      [
+        "",
+        "12",
+        "Half brick partition wall 115 mm CM 1:4",
+        17.2,
+        "sqm",
+        754
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        362.6,
+        "sqm",
+        5752
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        207.1,
+        "sqm",
+        235
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        187.0,
+        "sqm",
+        1002
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        50.4,
+        "sqm",
+        875
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        117.6,
+        "sqm",
+        609
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        100.1,
+        "pt",
+        660
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        36.3,
+        "set",
+        10298
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        115.2,
+        "sqm",
+        1212
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior painting, emulsion, over putty",
+        388.5,
+        "sqm",
+        141
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        228.0,
+        "sqm",
+        153
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "25%"
+      ],
+      [
+        "On completion of foundation",
+        "15%"
+      ],
+      [
+        "On completion of plinth",
+        "10%"
+      ],
+      [
+        "On casting of roof slab",
+        "21%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "18%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 4678115,
+    "defects": [
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "50% of contract value due before the slab"
+      },
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1037",
+    "locality": "Uppal",
+    "built_up_sqft": 1250,
+    "firm": "PRAGATI BUILDCON",
+    "client": "Mr. V. Naidu",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        62.2,
+        "cum",
+        246
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        39.5,
+        "cum",
+        195
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        12.5,
+        "cum",
+        1397
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        10.1,
+        "cum",
+        5509
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        27.2,
+        "cum",
+        7617
+      ],
+      [
+        "",
+        "6",
+        "Reinforced cement concrete M20 plinth beam",
+        6.7,
+        "cum",
+        8588
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        15.6,
+        "sqm",
+        8034
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        31.9,
+        "cum",
+        7982
+      ],
+      [
+        "",
+        "9",
+        "RCC M25 for staircase and landing",
+        3.8,
+        "cum",
+        8763
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        3396.0,
+        "kg",
+        70
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        29.8,
+        "cum",
+        8994
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        9.7,
+        "sqm",
+        708
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        217.7,
+        "sqm",
+        190
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        116.5,
+        "sqm",
+        7790
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        118.0,
+        "sqm",
+        1007
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        27.8,
+        "sqm",
+        821
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        75.3,
+        "sqm",
+        636
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        57.2,
+        "pt",
+        646
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        19.9,
+        "set",
+        11157
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        67.5,
+        "sqm",
+        6813
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        222.4,
+        "sqm",
+        127
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        124.4,
+        "sqm",
+        155
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "20%"
+      ],
+      [
+        "On completion of foundation",
+        "20%"
+      ],
+      [
+        "On completion of plinth",
+        "12%"
+      ],
+      [
+        "On casting of roof slab",
+        "20%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "17%"
+      ],
+      [
+        "On finishing & handover",
+        "11%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 3191512,
+    "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "2",
+        "detail": "quoted 195 against benchmark 142 (+37%)",
+        "planted_pct": 37,
+        "matched_keyword": "backfill"
+      },
+      {
+        "type": "FRONT_LOADED",
+        "item": "payment schedule",
+        "detail": "52% of contract value due before the slab"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1038",
+    "locality": "Patancheru",
+    "built_up_sqft": 1250,
+    "firm": "VENKATESHWARA BUILDERS",
+    "client": "Mr. B. Yadav",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Earthwork excavation in ordinary soil, foundation",
+        60.2,
+        "cum",
+        249
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        38.5,
+        "cum",
+        143
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        11.6,
+        "cum",
+        1387
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        9.6,
+        "cum",
+        1001
+      ],
+      [
+        "",
+        "5",
+        "Stone masonry foundation CM 1:6",
+        24.4,
+        "cum",
+        5756
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        6.3,
+        "cum",
+        8327
+      ],
+      [
+        "",
+        "7",
+        "Damp proof course 50 mm, CC 1:2:4",
+        16.2,
+        "sqm",
+        3649
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        35.8,
+        "cum",
+        804
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        3.7,
+        "cum",
+        7700
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        3524.4,
+        "kg",
+        68
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        31.2,
+        "cum",
+        4931
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        10.5,
+        "sqm",
+        776
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        223.8,
+        "sqm",
+        186
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        117.8,
+        "sqm",
+        261
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        113.2,
+        "sqm",
+        1094
+      ],
+      [
+        "",
+        "16",
+        "Ceramic tile dado in toilets up to 7ft",
+        26.4,
+        "sqm",
+        834
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "APP membrane waterproofing to terrace slab",
+        64.9,
+        "sqm",
+        588
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Internal concealed wiring, copper, per point",
+        51.4,
+        "pt",
+        697
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "Water supply piping CPVC, concealed",
+        21.0,
+        "set",
+        10504
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Termite proofing to foundation trenches",
+        68.3,
+        "sqm",
+        7174
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        236.6,
+        "sqm",
+        144
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        120.8,
+        "sqm",
+        151
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "10%"
+      ],
+      [
+        "On completion of plinth",
+        "8%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 1812239,
+    "defects": []
+  },
+  {
+    "boq_id": "SYN-1039",
+    "locality": "Bachupally",
+    "built_up_sqft": 1400,
+    "firm": "LAKSHMI CONSTRUCTIONS",
+    "client": "Mr. M. Farhan",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Excavation for foundation in ordinary soil incl. disposal",
+        76.0,
+        "cum",
+        266
+      ],
+      [
+        "",
+        "2",
+        "Backfilling with excavated earth, watered and rammed",
+        41.0,
+        "cum",
+        173
+      ],
+      [
+        "",
+        "3",
+        "Sand filling under floors, 100mm",
+        13.2,
+        "cum",
+        1279
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "Plain cement concrete 1:4:8 under footings",
+        11.5,
+        "cum",
+        5686
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        30.6,
+        "cum",
+        2632
+      ],
+      [
+        "",
+        "6",
+        "Plinth beam concrete M20 with formwork",
+        7.5,
+        "cum",
+        8414
+      ],
+      [
+        "",
+        "7",
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        16.3,
+        "sqm",
+        318
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "RCC M25 for columns, beams and roof slab",
+        36.6,
+        "cum",
+        8381
+      ],
+      [
+        "",
+        "9",
+        "Reinforced concrete M25 staircase waist slab",
+        3.9,
+        "cum",
+        7926
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        3862.2,
+        "kg",
+        67
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        31.5,
+        "cum",
+        5471
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        10.7,
+        "sqm",
+        703
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "Inside wall plaster 12mm",
+        241.5,
+        "sqm",
+        4355
+      ],
+      [
+        "",
+        "14",
+        "Outside wall plaster 18mm two coats",
+        136.4,
+        "sqm",
+        7598
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Vitrified tile flooring 600x600 incl. skirting",
+        121.1,
+        "sqm",
+        1065
+      ],
+      [
+        "",
+        "16",
+        "Wall tiles in bathrooms up to 7 feet",
+        29.4,
+        "sqm",
+        7561
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        75.3,
+        "sqm",
+        609
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Electrical points incl. conduit and wiring",
+        57.7,
+        "pt",
+        637
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        24.4,
+        "set",
+        10888
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        76.5,
+        "sqm",
+        8171
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Two coats acrylic emulsion on inside walls",
+        230.9,
+        "sqm",
+        127
+      ],
+      [
+        "",
+        "22",
+        "Exterior weatherproof paint two coats",
+        146.5,
+        "sqm",
+        146
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "12%"
+      ],
+      [
+        "On completion of plinth",
+        "6%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": true,
+    "boq_total": 4498130,
+    "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "2",
+        "detail": "quoted 173 against benchmark 142 (+22%)",
+        "planted_pct": 22,
+        "matched_keyword": "backfill"
+      }
+    ]
+  },
+  {
+    "boq_id": "SYN-1040",
+    "locality": "Medchal",
+    "built_up_sqft": 1800,
+    "firm": "VENKATESHWARA BUILDERS",
+    "client": "Mr. S. Reddy",
+    "items": [
+      [
+        "1. EARTHWORK",
+        "1",
+        "Digging of foundation trenches, ordinary soil",
+        87.9,
+        "cum",
+        3455
+      ],
+      [
+        "",
+        "2",
+        "Refilling excavated soil around foundation",
+        51.4,
+        "cum",
+        2537
+      ],
+      [
+        "",
+        "3",
+        "Filling river sand below flooring 100 mm",
+        17.4,
+        "cum",
+        8240
+      ],
+      [
+        "2. FOUNDATION & PLINTH",
+        "4",
+        "PCC 1:4:8 with 40mm aggregate below footings",
+        14.6,
+        "cum",
+        5805
+      ],
+      [
+        "",
+        "5",
+        "Random rubble masonry in cement mortar 1:6",
+        39.3,
+        "cum",
+        2330
+      ],
+      [
+        "",
+        "6",
+        "RCC M20 for plinth beam incl. shuttering",
+        9.4,
+        "cum",
+        7854
+      ],
+      [
+        "",
+        "7",
+        "DPC layer above plinth level",
+        20.1,
+        "sqm",
+        339
+      ],
+      [
+        "3. RCC SUPERSTRUCTURE",
+        "8",
+        "Reinforced cement concrete M25 for slab and beams",
+        47.6,
+        "cum",
+        5299
+      ],
+      [
+        "",
+        "9",
+        "Stair case RCC M25 incl. steps",
+        5.4,
+        "cum",
+        8705
+      ],
+      [
+        "4. REINFORCEMENT",
+        "10",
+        "TMT reinforcement bars Fe500, cut bent and placed",
+        4620.0,
+        "kg",
+        72
+      ],
+      [
+        "5. MASONRY",
+        "11",
+        "External brick wall 9 inch, cement mortar 1:6",
+        42.0,
+        "cum",
+        5319
+      ],
+      [
+        "",
+        "12",
+        "Brickwork in CM 1:4 for internal partitions, 115mm",
+        14.5,
+        "sqm",
+        713
+      ],
+      [
+        "6. PLASTERING",
+        "13",
+        "12 mm thick internal plastering CM 1:4",
+        297.0,
+        "sqm",
+        182
+      ],
+      [
+        "",
+        "14",
+        "18 mm external plastering, sponge finish",
+        177.3,
+        "sqm",
+        241
+      ],
+      [
+        "7. FLOORING",
+        "15",
+        "Floor tiling with vitrified tiles incl. skirting",
+        156.6,
+        "sqm",
+        1037
+      ],
+      [
+        "",
+        "16",
+        "Toilet dado ceramic tiling",
+        37.0,
+        "sqm",
+        831
+      ],
+      [
+        "8. WATERPROOFING",
+        "17",
+        "Terrace and sunk waterproofing treatment",
+        100.8,
+        "sqm",
+        601
+      ],
+      [
+        "9. ELECTRICAL",
+        "18",
+        "Concealed electrical wiring with copper conductor per point",
+        78.0,
+        "pt",
+        668
+      ],
+      [
+        "10. PLUMBING",
+        "19",
+        "CPVC water supply lines concealed incl. fittings",
+        31.9,
+        "set",
+        11570
+      ],
+      [
+        "11. ANTI-TERMITE",
+        "20",
+        "Pre-construction anti termite treatment",
+        107.0,
+        "sqm",
+        6264
+      ],
+      [
+        "12. PAINTING",
+        "21",
+        "Interior emulsion paint two coats over primer",
+        345.2,
+        "sqm",
+        137
+      ],
+      [
+        "",
+        "22",
+        "Outside weatherproof painting",
+        172.5,
+        "sqm",
+        151
+      ]
+    ],
+    "payment": [
+      [
+        "Advance on agreement signing",
+        "10%"
+      ],
+      [
+        "On completion of foundation",
+        "10%"
+      ],
+      [
+        "On completion of plinth",
+        "8%"
+      ],
+      [
+        "On casting of roof slab",
+        "30%"
+      ],
+      [
+        "On completion of brickwork & roof",
+        "26%"
+      ],
+      [
+        "On finishing & handover",
+        "16%"
+      ]
+    ],
+    "gst_stated": false,
+    "boq_total": 3215332,
+    "defects": [
+      {
+        "type": "GST_SILENT",
+        "item": "terms",
+        "detail": "document does not state GST treatment"
+      }
+    ]
+  }
+]

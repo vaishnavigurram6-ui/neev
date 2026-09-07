@@ -35,17 +35,23 @@ echo
 # context, which is why ./Dockerfile is the backend's and the frontend keeps its
 # own under src/frontend/.
 #
-# min/max-instances=1 is not a cost tweak, it is a correctness requirement:
-# SQLite lives on the instance's own disk, so two instances would serve two
-# different databases and a decision written on one would be invisible to the
-# other. One instance, seeded at start.
+# max-instances=1 IS a correctness requirement: SQLite lives on the instance's
+# own disk, so two instances would serve two different databases and a decision
+# written on one would be invisible to the other.
+#
+# min-instances=0 is a cost one. Keeping an instance warm for a fortnight bills
+# about 1.2M vCPU-seconds against a 180k free tier -- roughly Rs 2,530 to answer
+# nobody at 3am. The price is a 3-6 second cold start (the entrypoint reseeds on
+# boot); hit the URL once before presenting and no viewer sees it. Decisions
+# recorded during a session are lost when the instance recycles after 15 idle
+# minutes, which for a demo is arguably right: every visitor gets clean state.
 echo "==> Building and deploying $BACKEND"
 gcloud run deploy "$BACKEND" \
   --project "$PROJECT" \
   --region "$REGION" \
   --source . \
   --allow-unauthenticated \
-  --min-instances 1 \
+  --min-instances 0 \
   --max-instances 1 \
   --memory 1Gi \
   --timeout 300 \

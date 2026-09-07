@@ -6,8 +6,8 @@ from google.adk.agents import Agent, SequentialAgent
 
 from .config import GEMINI_MODEL
 from .tools.boq_analyst_tool import (
-    lookup_benchmark_rate,
-    check_rate_deviation,
+    lookup_benchmark_rates,
+    check_rate_deviations,
     check_steel_rcc_ratio,
     check_missing_scope,
     check_payment_schedule,
@@ -23,10 +23,12 @@ boq_analyst_agent = Agent(
         "You are a quantity surveyor working FOR the home owner. Read the attached "
         "Bill of Quantities (PDF/image/Excel) and:\n"
         "1. Parse every line item to {id, desc, qty, unit, rate, amount}.\n"
-        "2. For each priced item, call lookup_benchmark_rate then check_rate_deviation. "
-        "Flag type RATE_OUTLIER only when the tool returns flag=true; quote the tool's "
-        "deviation number verbatim. If no benchmark matched, mark UNBENCHMARKED — never "
-        "estimate a benchmark yourself.\n"
+        "2. Call lookup_benchmark_rates ONCE, passing every priced item's "
+        "description in a single list. Do NOT call it per item. Then call "
+        "check_rate_deviation for each item that came back with a benchmark_rate. "
+        "Flag type RATE_OUTLIER only when check_rate_deviation returns flag=true; "
+        "quote its deviation number verbatim. An item whose entry has "
+        "matched_item=null is UNBENCHMARKED — never estimate a benchmark yourself.\n"
         "3. Flag UNDERSPECIFIED items: no grade (e.g. TMT without Fe500), no brand, "
         "no IS standard.\n"
         "4. Sum steel (kg) and RCC (cum) quantities and call check_steel_rcc_ratio.\n"
@@ -39,12 +41,15 @@ boq_analyst_agent = Agent(
         "the tool output or the document line. 'question' is one polite sentence the "
         "owner can send the contractor in writing. Questions, not verdicts — never "
         "state or imply the contractor is cheating.\n\n"
+        "Use exactly five tool calls for the whole document: lookup_benchmark_rates, "
+        "check_rate_deviations, check_steel_rcc_ratio, check_missing_scope, "
+        "check_payment_schedule. Never call any of them per line item.\n"
         "Output JSON: {line_items: [...], flags: [...], boq_total, "
         "payment_pct_before_slab}."
     ),
     tools=[
-        lookup_benchmark_rate,
-        check_rate_deviation,
+        lookup_benchmark_rates,
+        check_rate_deviations,
         check_steel_rcc_ratio,
         check_missing_scope,
         check_payment_schedule,

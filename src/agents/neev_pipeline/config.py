@@ -40,12 +40,25 @@ ENG_RATIOS = {
 # (these are the items that most often return later as paid "extras").
 # Each scope maps to the phrases that count as evidence of its presence —
 # real BoQs write "concealed wiring per point", not the word "electrical".
+# Phrase lists widened 2026-09-07 after scripts/synthetic_boqs.py measured a 35%
+# precision on MISSING_SCOPE across 40 varied BoQs. "External cement plaster
+# 18mm in CM 1:4" -- an entirely ordinary Indian BoQ line -- matched neither
+# "external plaster" nor "exterior plaster", so a priced item was reported as
+# absent scope. Ravi's fixture never caught it because external plaster is a
+# seeded omission there, so the present-but-differently-worded case was never
+# exercised. Re-score after any edit here.
 EXPECTED_SCOPE = {
-    "waterproofing": ["waterproofing"],
+    "waterproofing": ["waterproofing", "water proofing", "waterproof treatment"],
     "electrical": ["electrical", "wiring", "conduit"],
-    "plumbing": ["plumbing", "cpvc", "water lines", "drainage"],
+    "plumbing": ["plumbing", "cpvc", "water lines", "water supply", "drainage"],
     "anti-termite": ["anti-termite", "termite"],
-    "external plaster": ["external plaster", "exterior plaster"],
+    "external plaster": [
+        "external plaster", "exterior plaster",
+        "external cement plaster", "exterior cement plaster",
+        "external plastering", "exterior plastering",
+        "outside wall plaster", "outer wall plaster",
+        "weathering coat plaster",
+    ],
 }
 
 # Payment schedule: flag if more than this fraction of contract value

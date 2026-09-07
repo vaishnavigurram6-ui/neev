@@ -1,0 +1,387 @@
+# Neev — two-week live plan
+
+*Cost, deployment, data and demo, for a hackathon window of roughly fourteen days.
+Written 2026-09-07. Every figure is measured from this repository or verified
+against Google's published pricing on that date.*
+
+---
+
+## The constraint that shapes everything
+
+**You get two free deploys. Subsequent deploys cost money.**
+
+`scripts/deploy_cloudrun.sh` makes **two** `gcloud run deploy` calls — one for
+the backend, one for the frontend. So a single run of that script consumes both
+free deploys, with nothing left for a repair.
+
+That inverts the obvious order. You cannot "deploy early on fixtures, then
+redeploy with real data" — that is two deploys with zero margin for a mistake in
+either. Instead:
+
+> **Everything is final before anything is deployed.** Capture the real runs,
+> generate the data, verify locally, and deploy once — keeping the second deploy
+> as your only emergency repair.
+
+### What does *not* consume a deploy
+
+This is the part that makes a single-shot deploy safe. In Cloud Shell:
+
+- `docker build` — unlimited, free, and it is the same Dockerfile Cloud Build
+  will use
+- `docker run` — unlimited; you can exercise both containers end to end locally
+- `gcloud artifacts docker push` — pushing an image is not deploying it
+- Everything offline in this repo: tests, the BigQuery verifier, the synthetic
+  eval, `--from-raw` re-parsing
+
+So **all container debugging happens in Cloud Shell with Docker, at no deploy
+cost.** Only the final `gcloud run deploy` is scarce.
+
+### Worth asking the organisers
+
+The accounting is ambiguous and the answer changes your margin from zero to one:
+
+- Is a "deploy" a `gcloud run deploy` invocation, a Cloud Run **revision**, or a
+  **service**? Two services deployed once each may count as one deploy or two.
+- Does `gcloud run services update` (an env-var change, no new image) count?
+
+Ask before you spend either one.
+
+---
+
+## Cost summary
+
+Verified 2026-09-07. Conversion at 1 USD = ₹94.5.
+
+| Service | Rate | Free tier |
+|---|---|---|
+| Gemini 3.6 Flash | $0.75 in / $3.75 out per 1M tokens | n/a — this project bills |
+| Gemini, from 1 Jan 2027 | **$1.50 / $7.50** — doubles, already published | — |
+| Gemini batch mode | 50% of standard | — |
+| BigQuery on-demand | $6.25 / TB, 10 MB minimum per table per query | 1 TB / month |
+| Cloud Run | $0.000024 / vCPU-s, $0.0000025 / GiB-s | 180k vCPU-s, 360k GiB-s, 2M requests |
+
+Your project reports `billingEnabled: true` and `generativelanguage.googleapis.com`
+enabled, so you are on the **Gemini paid tier**: calls bill against credit, and
+there is no 15 RPM free-tier cap to design around.
+
+### Cost of one pipeline run
+
+The dominant term is not token price — it is how many times the model is called.
+Every tool call is a separate turn that re-sends the whole conversation, so cost
+grows with the square of the turn count.
+
+| | Before (2026-09-07) | After batching | |
+|---|---|---|---|
+| Analyst tool calls | 81 | **5** | one per check, never per item |
+| Input tokens | ~342,000 | ~43,000 | |
+| Wall clock | ~2 min | ~10 s | this is the demo-critical one |
+| Gemini | ₹25.60 | **₹3.81** | |
+| BigQuery | 810 MB | 30 MB | the 10 MB minimum dominated, not the data |
+| **Per run** | **₹26.08** | **₹3.81** | 85% less |
+
+That change is already made — see *Code changes* below.
+
+### Two-week budget
+
+| Item | Runs | Cost |
+|---|---|---|
+| Captures for loans 1001 and 1002, with retries | 6 | ₹23 |
+| `adk web` exploration | 10 | ₹38 |
+| Live demo runs across the window | 60 | ₹229 |
+| Buffer | 24 | ₹91 |
+| **Gemini** | 100 | **₹381** |
+| BigQuery — 3 GB against a 1 TB free tier | | **₹0** |
+| Cloud Run at `--min-instances 0` | | **₹0** |
+| Cloud Build, ~2 builds | | **₹0** |
+| Docker in Cloud Shell, unlimited | | **₹0** |
+| **Total** | | **≈ ₹400 of 30,000 — about 1.3%** |
+
+**Credits are not your constraint.** The scarce resources are your two deploys
+and the demo's wall clock.
+
+### The one line that would have cost ₹2,530
+
+`deploy_cloudrun.sh` previously passed `--min-instances 1`, which bills roughly
+1.2M vCPU-seconds over a fortnight against a 180k free tier — about **₹2,530 to
+answer nobody at 3am**. Now `0`.
+
+The trade: a 3–6 second cold start, because the entrypoint reseeds SQLite on
+boot. Hit the URL once before presenting and no viewer sees it. And a decision a
+judge records is lost when the instance recycles after 15 idle minutes — for a
+demo that is arguably correct, since every visitor gets clean state.
+`--max-instances 1` stays, because that one *is* a correctness requirement:
+SQLite on an instance's own disk cannot survive a second instance.
+
+---
+
+## Does synthetic data cost credits?
+
+**No.** Both halves are free, and the second is free by construction rather than
+by intention.
+
+| Step | Cost | Why |
+|---|---|---|
+| `synthetic_boqs.py generate` | ₹0 | Local arithmetic and reportlab. No API of any kind. |
+| `synthetic_boqs.py score` | ₹0 | Reads BigQuery (kilobyte tables, free tier); `google.genai` is replaced with a stub that **raises** before any pipeline module imports, so a model call is impossible. |
+| Running the full pipeline on a synthetic BoQ | ₹3.81 each | This is a real run and does bill. Only do it if you want a live demo on a second document. |
+
+The same Gemini fence protects `scripts/verify_against_bigquery.py`.
+
+---
+
+## What the synthetic set is for
+
+**It is an evaluation set, not training data.** Nothing in Neev is trained, and
+that is a design decision worth defending rather than apologising for:
+
+- The only model work is reading a PDF into line items and classifying a photo.
+  Gemini does both zero-shot.
+- Every number that constitutes a *decision* — benchmark rate, 15% threshold,
+  steel/RCC range, exposure ratio, LTV band, RELEASE/HOLD — comes from a
+  BigQuery lookup or a documented constant. Fine-tuning cannot improve a SQL
+  query.
+- Fine-tuning on synthetic BoQs would teach the model to reproduce *this
+  generator's* patterns, and cost you the one property a bank needs: you can
+  point at the row in `rate_benchmarks` that caused each flag.
+- `docs/Neev_Data_Inventory.md` already forbids training on the one labelled
+  dataset, for leakage.
+
+What the set buys instead is a **measurement**. The generator knows what it
+planted, so the grounding layer can be scored against ground truth:
+
+```
+Grounding-layer accuracy over 40 synthetic BoQs
+BigQuery: real.  Gemini: unreachable by construction.
+
+  defect type        planted  found  missed  false+   recall   prec.
+  RATE_OUTLIER            12     12       0       0    100%    100%
+  MISSING_SCOPE           14     14       0       0    100%    100%
+  UNDERSPECIFIED           0      —       —       —      n/a     n/a
+  FRONT_LOADED            18     18       0       0    100%    100%
+  GST_SILENT              16     16       0       0    100%    100%
+
+  benchmark coverage   583/866 priced items (67%)
+```
+
+Reproducible by a judge in thirty seconds, at zero cost. That is a far stronger
+claim than any assertion about training.
+
+`UNDERSPECIFIED` is excluded deliberately: it is a judgement about wording, which
+only the model makes. Counting it as a tool miss would be dishonest.
+
+### Two findings the eval produced immediately
+
+**1. A real false-positive bug, now fixed.** `EXPECTED_SCOPE["external plaster"]`
+matched only the exact phrases `"external plaster"` and `"exterior plaster"`. An
+ordinary Indian BoQ line — *"External cement plaster 18mm in CM 1:4"* — matched
+neither, so a priced item was reported as **absent scope**. `MISSING_SCOPE`
+precision was 35%. Ravi's fixture never caught it because external plaster is a
+seeded *omission* there, so the present-but-differently-worded case had never
+been exercised. Phrase lists widened in `config.py`; precision is now 100%.
+
+**2. Benchmark coverage is 67%, not the 70% Ravi suggested.** A third of priced
+items have no benchmark at all — and the top misses are not exotic:
+
+```
+  17×  Damp proof course 50 mm, CC 1:2:4
+  16×  Stone masonry foundation CM 1:6
+  15×  Plain cement concrete 1:4:8 under footings
+  15×  Anti-termite treatment to foundation and plinth
+  15×  External cement plaster 18mm in CM 1:4, two coats
+```
+
+Every one of those is a rate nobody checked. The table has 30 keywords and needs
+synonyms, not more rows — `dpc` exists but not "damp proof course", `pcc` exists
+but not "plain cement concrete". This is a **data** fix, it is free, and it is
+the highest-value remaining improvement to accuracy.
+
+---
+
+## Code changes already made
+
+All verified offline. No credits spent.
+
+| Change | File | Effect |
+|---|---|---|
+| Batched benchmark lookup | `tools/boq_analyst_tool.py` | `lookup_benchmark_rates(list)` — one query for the whole BoQ. 39 calls → 1 |
+| Batched deviation check | `tools/boq_analyst_tool.py` | `check_rate_deviations(list)` — 28 calls → 1. Singular stays as the pure, tested implementation |
+| Prompt caps tool calls | `agent.py` | "Use exactly five tool calls for the whole document… never per line item" |
+| Scope phrases widened | `config.py` | Fixes the false-positive bug above |
+| `--min-instances 0` | `scripts/deploy_cloudrun.sh` | Saves ₹2,530 |
+| Verifier uses the batched path | `scripts/verify_against_bigquery.py` | Exercises what the paid run will actually do |
+
+Behaviour is preserved: the verifier reports the same 28 matched items, 3 rate
+flags and 7 total flags as before, in 2 queries instead of 78.
+
+**Suites:** offline 35 · backend 158 · frontend verify clean.
+
+---
+
+## The schedule
+
+Five stages, each with a gate. The gates exist so a bad step is not paid for
+twice — the same logic the app applies to a construction loan.
+
+### Stage 1 — Verify offline · Day 1 · ₹0
+
+```bash
+python3 -m tests.test_offline                              # 35
+cd src/backend && .venv/bin/python -m pytest tests/ -q     # 158
+cd src/frontend && npm run verify                          # clean
+```
+
+**Gate:** all three green.
+
+### Stage 2 — Build and run both containers in Cloud Shell · Day 1 · ₹0
+
+This is the stage that protects your two deploys. Do not skip it.
+
+```bash
+docker build -t neev-api .
+docker build -t neev-web src/frontend
+
+docker run -d --name api -p 8080:8080 neev-api
+curl -fsS http://localhost:8080/api/health
+
+docker run -d --name web -p 3000:8080 \
+  -e NEEV_API_BASE=http://host.docker.internal:8080 neev-web
+curl -fsS -o /dev/null -w '%{http_code}\n' http://localhost:3000/
+```
+
+Iterate here as many times as it takes — Docker is free and unlimited.
+
+**Gate:** both containers serve, and `/owner/loans/1001/boq` renders with data
+when you pass an owner session cookie. Neither Dockerfile has ever been built,
+so budget real time for this stage.
+
+### Stage 3 — Lift the dry run and capture · Day 2 · ₹23
+
+Edit `CLAUDE.md`: change the dry-run status to `LIFTED 2026-09-07`.
+
+```bash
+export GOOGLE_CLOUD_PROJECT=buildguard-ai-2026
+export GOOGLE_API_KEY=...
+export NEEV_ALLOW_BILLED_CALLS=1
+
+python3 -m venv src/agents/.venv
+src/agents/.venv/bin/pip install -e src/agents
+
+# FREE — the grounding path against real BigQuery, Gemini unreachable
+src/agents/.venv/bin/python scripts/verify_against_bigquery.py
+
+# Then the paid captures
+src/agents/.venv/bin/python scripts/record_golden_run.py --loan 1001 --boq fixtures/sample_boq.pdf
+src/agents/.venv/bin/python scripts/record_golden_run.py --loan 1002 --boq fixtures/clean_boq.pdf
+```
+
+The verifier must show a `benchmark_rate` on the lookups before you pay for
+anything. If a capture fails validation, **do not re-run it** — the raw session
+state is saved in `.golden_runs/`; fix the parse layer and replay with
+`--from-raw`, free.
+
+**Gate:** `pytest tests/test_fixture_contract.py -q` passes on both captures.
+
+### Stage 4 — Generate and score the synthetic set · Day 2 · ₹0
+
+```bash
+src/backend/.venv/bin/python scripts/synthetic_boqs.py generate --count 40
+src/agents/.venv/bin/python scripts/synthetic_boqs.py score
+```
+
+**Gate:** a precision/recall table you are willing to put in the submission.
+Widen `rate_benchmarks` synonyms and re-score until coverage stops embarrassing
+you — every iteration is free.
+
+### Stage 5 — Deploy once · Day 3 · ₹0
+
+Only now, with the data final and the containers proven:
+
+```bash
+bash scripts/deploy_cloudrun.sh
+```
+
+**Gate:** the frontend URL serves the owner and bank consoles with captured
+figures. **Do not deploy again unless something is broken** — the second deploy
+is your only repair.
+
+Warm it before you present:
+
+```bash
+curl -fsS "$WEB_URL" >/dev/null && curl -fsS "$API_URL/api/health"
+```
+
+---
+
+## Demo plan
+
+Follow `docs/Neev_Demo_Runbook.md` for the four beats. Two additions for this
+window:
+
+1. **Warm the services** a minute before you present. `--min-instances 0` means
+   the first request pays a cold start.
+2. **Do not demo a live upload.** The deployed app runs `FixtureRunner`, so any
+   uploaded PDF replays the captured analysis. Say so plainly — the figures are
+   real, the analysis is a recording — rather than letting a judge discover that
+   their own document produced Ravi's flags.
+
+`adk web` from `src/agents/` is the stronger artifact for showing mechanism: it
+displays the five agents and their grounding tool calls, which the polished UI
+deliberately hides. Record it once rather than running it live; every message is
+a billed run. **Do not deploy `adk web`** — it is a dev UI with no auth.
+
+### Be straight about three things
+
+Judges respect disclosed limits more than they punish them:
+
+- **Auth is stubbed.** `src/backend/app/api/deps.py` says so in its own
+  docstring: the cookie is unsigned, there is no OTP. The boundary and the 401
+  are real.
+- **The pipeline is not driving the screens.** Figures are captured from real
+  runs against real BigQuery; live per-upload analysis is built but not wired to
+  the upload path.
+- **`rate_benchmarks.verified` says `NO - check vs CPWD DSR 2023` on every row**,
+  while the tool tells the model its source is "CPWD DSR 2023 × Hyderabad
+  factor". Either verify the rates or soften that string before a banker reads
+  it closely.
+
+---
+
+## If it goes to production
+
+Modelled at 1,000 loans/month — one BoQ analysis plus four tranche reviews each,
+so 5,000 runs.
+
+| Line | Unbatched | Batched | Note |
+|---|---|---|---|
+| Gemini 3.6 Flash | ₹75,000 | ₹19,000 | Doubles 1 Jan 2027 |
+| BigQuery | ₹1,800 | ₹0 | Batched volume stays inside the free tier |
+| Cloud Run | ₹12,000 | ₹12,000 | Two warm instances, real traffic |
+| Cloud SQL | ₹7,000 | ₹7,000 | SQLite cannot survive a second instance |
+| **Per month** | **₹95,800** | **₹38,000** | |
+| **Per loan** | **₹96** | **₹38** | |
+
+Against a ₹28 lakh sanction, ₹38 is **0.0014%**. Unit economics are not the
+question, and a pitch that dwells on them is answering the wrong one.
+
+The two real risks are structural: the tool-call fan-out, which is now fixed and
+would have been four times worse at this volume; and the **1 January 2027 price
+doubling**, which turns ₹19,000 a month into ₹38,000 with no code change. Batch
+mode halves the rate again for anything non-interactive — nightly portfolio
+re-scoring is the obvious candidate.
+
+What production needs and this demo does not have is unchanged by any of the
+above: real authentication, a database that survives a second instance, and audit
+logging on every disbursement decision.
+
+---
+
+## Open items
+
+- [ ] **Credit expiry date** — console only, *Billing → Credits*. The balance is
+      twelve times what you need; an expiry inside the window is the only budget
+      fact that could still change this plan.
+- [ ] **Ask the organisers what counts as a deploy** — service, revision, or
+      command. Changes your margin from zero to one.
+- [ ] **Widen `rate_benchmarks` synonyms** — free, and worth ~33% more coverage.
+- [ ] **Site photos** in `demo_assets/` — without them `inspection_result` is
+      absent and the tranche screen's visual evidence stays authored.

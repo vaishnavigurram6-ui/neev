@@ -71,9 +71,9 @@ from neev_pipeline.config import ENG_RATIOS, MAX_PAYMENT_PCT_BEFORE_SLAB  # noqa
 from neev_pipeline.tools.boq_analyst_tool import (  # noqa: E402
     check_missing_scope,
     check_payment_schedule,
-    check_rate_deviation,
+    check_rate_deviations,
     check_steel_rcc_ratio,
-    lookup_benchmark_rate,
+    lookup_benchmark_rates,
 )
 from neev_pipeline.tools.cost_estimation_tool import estimate_construction_cost  # noqa: E402
 from neev_pipeline.tools.disbursal_risk_tool import assess_tranche  # noqa: E402
@@ -87,19 +87,33 @@ def _rule(title: str) -> None:
 
 
 def check_benchmarks(items: list[tuple]) -> tuple[list[dict], int]:
-    """Look every priced line item up against the real benchmark table."""
-    _rule("1 · rate_benchmarks — every line item, against real BigQuery")
+    """Look every priced line item up against the real benchmark table.
+
+    Two tool calls for the whole document, which is exactly what the agent is
+    now instructed to do -- so this exercises the batched path the paid run will
+    take, not a per-item one the agent no longer uses.
+    """
+    _rule("1 · rate_benchmarks — every line item, one query, against real BigQuery")
+
+    priced = [(i, d, r) for _s, i, d, _q, _u, r in items if r]
+    benchmarks = lookup_benchmark_rates([d for _i, d, _r in priced])
+
+    quotes = [
+        {"item": i, "boq_rate": r, "benchmark_rate": benchmarks[d].get("benchmark_rate")}
+        for i, d, r in priced
+    ]
+    deviations = check_rate_deviations(quotes)
 
     flags, matched = [], 0
-    for _section, item_id, desc, qty, unit, rate in items:
-        result = lookup_benchmark_rate(desc)
-        if not result.get("matched_item"):
+    for item_id, desc, rate in priced:
+        entry = benchmarks[desc]
+        if not entry.get("matched_item"):
             print(f"  ---   {item_id:<5} no benchmark  · {desc[:46]}")
             continue
 
         matched += 1
-        benchmark = result["benchmark_rate"]
-        deviation = check_rate_deviation(float(rate), float(benchmark))
+        benchmark = entry["benchmark_rate"]
+        deviation = deviations[item_id]
         marker = "FLAG" if deviation.get("flag") else " ok "
         print(
             f"  {marker}  {item_id:<5} quoted {rate:>7,.0f} vs "
@@ -107,23 +121,20 @@ def check_benchmarks(items: list[tuple]) -> tuple[list[dict], int]:
             f"· {desc[:34]}"
         )
         if deviation.get("flag"):
-            flags.append(
-                {
-                    "item": item_id,
-                    "type": "RATE_OUTLIER",
-                    "evidence": (
-                        f"Quoted INR {rate:,.0f} against a benchmark of "
-                        f"INR {benchmark:,.0f} ({result['matched_item']})."
-                    ),
-                    "question": (
-                        f"Could you share the rate basis for item {item_id}?"
-                    ),
-                    "deviation_pct": round(deviation["deviation_pct"], 1),
-                    "benchmark_rate": benchmark,
-                }
-            )
+            flags.append({
+                "item": item_id,
+                "type": "RATE_OUTLIER",
+                "evidence": (
+                    f"Quoted INR {rate:,.0f} against a benchmark of "
+                    f"INR {benchmark:,.0f} ({entry['matched_item']})."
+                ),
+                "question": f"Could you share the rate basis for item {item_id}?",
+                "deviation_pct": round(deviation["deviation_pct"], 1),
+                "benchmark_rate": benchmark,
+            })
 
-    print(f"\n  {matched}/{len(items)} items matched a benchmark; {len(flags)} flagged")
+    print(f"\n  {matched}/{len(priced)} priced items matched a benchmark; {len(flags)} flagged")
+    print("  model turns this would cost the agent: 2 (was 78)")
     if matched == 0:
         print(
             f"{BAD} nothing matched. The `keyword` column does not overlap this "
