@@ -5,7 +5,11 @@
 # downstream cumulative_weight() lookups never KeyError.
 
 import json
+import mimetypes
+import pathlib
+
 from google import genai
+from google.genai import types
 
 from ..config import GEMINI_MODEL
 
@@ -14,6 +18,16 @@ from ..config import GEMINI_MODEL
 # without a key -- which is exactly what the backend's live runner does, and
 # what scripts/record_golden_run.py does before it has read its arguments.
 _genai = None
+
+
+def _mime_for(path: str) -> str:
+    """Best-effort content type for a local site photo.
+
+    Gemini needs an explicit mime type on an inline part. Anything unguessable
+    is treated as JPEG, which is what a phone or a WhatsApp export produces.
+    """
+    guessed, _ = mimetypes.guess_type(str(path))
+    return guessed if (guessed or "").startswith("image/") else "image/jpeg"
 
 
 def _client():
@@ -119,17 +133,45 @@ Respond ONLY in JSON:
 }}
 """
 
-    image_files = [_client().files.upload(file=p) for p in image_paths]
+    # Inline bytes, not the Files API. client.files.upload() raises
+    # "This method is only supported in the Gemini Developer client" on Vertex,
+    # which is the keyless route this project authenticates through -- so the
+    # upload path made the whole inspector unusable there. Inline parts work on
+    # both backends and need no intermediate upload at all.
+    parts = [types.Part.from_text(text=prompt)]
+    for path in image_paths:
+        data = pathlib.Path(path).read_bytes()
+        parts.append(
+            types.Part.from_bytes(
+                data=data, mime_type=_mime_for(path)
+            )
+        )
     response = _client().models.generate_content(
         model=GEMINI_MODEL,
-        contents=[prompt, *image_files],
+        contents=[types.Content(role="user", parts=parts)],
     )
     text = response.text.strip().removeprefix("```json").removesuffix("```").strip()
     result = json.loads(text)
+
+    return _finalise(result, claimed_stage)
+
+
+def _finalise(result: dict, claimed_stage: str) -> dict:
+    """Normalise the model's reply. Pure, so it is testable without a call.
+
+    `stage` used to be assigned claimed_stage unconditionally, which meant the
+    stage every downstream calculation trusted was the borrower's claim rather
+    than anything observed -- the verification was cosmetic. It now reports what
+    was seen, and falls back to the claim only when the model named no stage.
+    """
+    result = dict(result)
 
     # Belt-and-braces: force human review on low confidence even if the model
     # forgot to flag it.
     if result.get("confidence") == "low":
         result["needs_human_review"] = True
-    result["stage"] = claimed_stage
+
+    observed = result.get("observed_stage") or result.get("stage")
+    result["stage"] = observed or claimed_stage
+    result["claimed_stage"] = claimed_stage
     return result

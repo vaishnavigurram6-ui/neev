@@ -54,6 +54,28 @@ def _install_stubs():
 
     genai.Client = _StubGenaiClient
 
+    # visual_inspector_tool builds inline image parts, so the stub has to carry
+    # google.genai.types as well. It only ever needs to be constructible here --
+    # the stubbed client raises before any part is actually sent.
+    genai_types = _module("google.genai.types")
+
+    class _Part:
+        @staticmethod
+        def from_text(text=""):
+            return ("text", text)
+
+        @staticmethod
+        def from_bytes(data=b"", mime_type=""):
+            return ("bytes", mime_type, len(data))
+
+    class _Content:
+        def __init__(self, role="user", parts=None):
+            self.role, self.parts = role, parts or []
+
+    genai_types.Part = _Part
+    genai_types.Content = _Content
+    genai.types = genai_types
+
     adk = _module("google.adk")
     adk_agents = _module("google.adk.agents")
     adk.agents = adk_agents
@@ -203,6 +225,81 @@ class TestUnverifiableStage(unittest.TestCase):
         """Guards against the fix swallowing the cases that already worked."""
         self.assertEqual(self._assess("slab")["recommendation"], "HOLD")
         self.assertFalse(self._assess("slab")["exposure_undefined"])
+
+
+class TestEvidenceContradictingTheClaim(unittest.TestCase):
+    """A photo that contradicts the claim must not release money.
+
+    The first captured run of loan 1002 returned matches_claim false with a note
+    that the photo showed a G+1 structure against a G+0 plan -- a real finding,
+    of exactly the kind this product exists to surface. assess_tranche never
+    read matches_claim, so it recommended RELEASE anyway, and 12 lakh would have
+    gone out against a building that is not the one financed.
+    """
+
+    def _assess(self, **over):
+        from neev_pipeline.tools.disbursal_risk_tool import assess_tranche
+
+        kwargs = dict(
+            expected_total_cost=2_966_145,
+            observed_stage="slab",
+            stage_confidence="high",
+            sanctioned_amount=2_500_000,
+            disbursed_cumulative=1_214_337,
+            completed_value_estimate=8_099_999,
+        )
+        kwargs.update(over)
+        return assess_tranche(**kwargs)
+
+    def test_evidence_that_backs_the_claim_still_releases(self):
+        r = self._assess(matches_claim=True)
+        self.assertEqual(r["recommendation"], "RELEASE")
+
+    def test_evidence_contradicting_the_claim_escalates_instead(self):
+        r = self._assess(matches_claim=False)
+        self.assertEqual(r["recommendation"], "ESCALATE")
+
+    def test_the_reason_names_the_contradiction(self):
+        r = self._assess(matches_claim=False)
+        self.assertTrue(any("contradict" in x.lower() or "does not match" in x.lower()
+                            for x in r["reasons"]))
+
+    def test_a_contradiction_outranks_a_comfortable_exposure(self):
+        """Low exposure must not let a contradicted claim through."""
+        r = self._assess(matches_claim=False, disbursed_cumulative=100_000)
+        self.assertEqual(r["recommendation"], "ESCALATE")
+
+    def test_omitting_matches_claim_keeps_the_old_behaviour(self):
+        self.assertEqual(self._assess()["recommendation"], "RELEASE")
+
+
+class TestObservedStageIsNotOverwritten(unittest.TestCase):
+    """verify_construction_stage set result["stage"] = claimed_stage, always.
+
+    So the "verified" stage downstream was the borrower's claim rather than
+    anything observed, and the verification was cosmetic.
+    """
+
+    def test_the_reported_stage_is_what_was_seen_not_what_was_claimed(self):
+        import neev_pipeline.tools.visual_inspector_tool as vit
+
+        result = vit._finalise({"observed_stage": "plinth", "confidence": "high",
+                                "matches_claim": False}, claimed_stage="slab")
+        self.assertEqual(result["stage"], "plinth")
+        self.assertEqual(result["claimed_stage"], "slab")
+
+    def test_it_falls_back_to_the_claim_only_when_nothing_was_observed(self):
+        import neev_pipeline.tools.visual_inspector_tool as vit
+
+        result = vit._finalise({"confidence": "high", "matches_claim": True},
+                               claimed_stage="slab")
+        self.assertEqual(result["stage"], "slab")
+
+    def test_low_confidence_still_forces_human_review(self):
+        import neev_pipeline.tools.visual_inspector_tool as vit
+
+        result = vit._finalise({"confidence": "low"}, claimed_stage="slab")
+        self.assertTrue(result["needs_human_review"])
 
 
 class TestBoqChecks(unittest.TestCase):

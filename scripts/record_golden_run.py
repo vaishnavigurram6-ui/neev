@@ -105,11 +105,24 @@ async def capture(loan_id: str, boq: Path, photos: list[Path]) -> dict:
     from app.fixtures.loader import load_loan_facts
 
     facts = load_loan_facts(loan_id)
-    stage_claim = (
-        f"Claimed construction stage: {facts['stage']}. "
-        if photos
-        else "No site photos supplied; do not assess the construction stage. "
-    )
+    # verify_construction_stage takes local PATHS, not image parts -- so the
+    # paths have to be in the prompt or the agent cannot call the tool at all.
+    # Attaching the bytes inline instead would let it eyeball the photos and
+    # skip the tool, which loses STAGE_CHECKLIST: the grounding is the point.
+    if photos:
+        # One per line, not comma-joined: real filenames contain spaces and
+        # parentheses (WhatsApp exports do), and a comma-separated list of those
+        # is ambiguous about where each path ends.
+        listed = "\n".join(f"  {i + 1}. {p.resolve()}" for i, p in enumerate(photos))
+        stage_claim = (
+            f"Claimed construction stage: {facts['stage']}.\n"
+            f"Site photos are on local disk, one path per line:\n{listed}\n"
+            f"Pass those paths verbatim to verify_construction_stage as the "
+            f"image_paths list, with claimed_stage='{facts['stage']}'. Each line "
+            f"after its number is one complete path, spaces included.\n"
+        )
+    else:
+        stage_claim = "No site photos supplied; do not assess the construction stage. "
     parts = [
         types.Part.from_text(
             text=(
@@ -123,10 +136,9 @@ async def capture(loan_id: str, boq: Path, photos: list[Path]) -> dict:
         ),
         types.Part.from_bytes(data=boq.read_bytes(), mime_type="application/pdf"),
     ]
-    for photo in photos:
-        parts.append(
-            types.Part.from_bytes(data=photo.read_bytes(), mime_type="image/jpeg")
-        )
+    # Deliberately NOT attached inline: verify_construction_stage uploads them
+    # itself, so a second copy in the prompt would bill the same vision tokens
+    # twice and invite the agent to judge the images without the checklist.
 
     # The run is guarded, not merely followed. A tool that raises mid-pipeline
     # takes run_async down with it, and the first real capture died that way at

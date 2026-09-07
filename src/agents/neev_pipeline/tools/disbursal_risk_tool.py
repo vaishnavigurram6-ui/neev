@@ -17,6 +17,7 @@ def assess_tranche(
     sanctioned_amount: float,
     disbursed_cumulative: float,
     completed_value_estimate: float,
+    matches_claim: bool = True,
 ) -> dict:
     """Computes disbursement exposure and cost-to-complete gap; recommends
     RELEASE / HOLD / ESCALATE for the current tranche.
@@ -30,6 +31,10 @@ def assess_tranche(
         disbursed_cumulative: Amount already paid out incl. this point (INR).
         completed_value_estimate: Market value of the finished house (INR),
             from cost_estimation_agent, used for live LTV context.
+        matches_claim: Whether the site evidence actually supports what the
+            borrower claimed, from visual_inspector_agent. False means the
+            photos contradict the claim or the approved plan -- money must not
+            be released on evidence that disagrees with itself.
     Returns:
         dict with 'exposure_ratio', 'recommendation', 'cost_to_complete_gap',
         'live_ltv_pct', 'ltv_default_prior', 'reasons'.
@@ -76,8 +81,15 @@ def assess_tranche(
     live_ltv = (disbursed_cumulative / completed_value_estimate * 100
                 if completed_value_estimate else 0.0)
 
-    # Decision — confidence gate first, then exposure.
-    if stage_confidence == "low":
+    # Decision — evidence gates first, then exposure. Order matters: a
+    # comfortable exposure must never let contradicted evidence through, which
+    # is what happened on the first real capture of loan 1002.
+    if not matches_claim:
+        recommendation = "ESCALATE"
+        reasons.append("Site evidence contradicts the borrower's claim or the "
+                       "approved plan; no release until the discrepancy is "
+                       "explained. See the inspection notes.")
+    elif stage_confidence == "low":
         recommendation = "ESCALATE"
         reasons.append("Photo-evidence confidence is low; route to physical inspection "
                        "before any release decision.")
