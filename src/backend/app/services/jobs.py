@@ -154,7 +154,10 @@ class JobRegistry:
                     req.loan_id,
                     output,
                     source_filename=req.filename,
-                    mode="fixture",
+                    # The runner names its own provenance. Reading NEEV_MODE
+                    # here instead would put a second mode check in the
+                    # codebase; get_runner() is deliberately the only one.
+                    mode=getattr(runner, "mode", "fixture"),
                 )
         except Exception as exc:  # noqa: BLE001 - the run itself succeeded
             self._last_persist_error = str(exc)

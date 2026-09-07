@@ -44,7 +44,8 @@ LOAN_CONTRACTOR = {
 }
 
 PLOT_LABELS = {"1001": "Plot 47, Kompally"}
-BUILT_UP = {"1001": 1800, "1002": 1650}
+# built_up_sqft now lives in portfolio_rows.json, so scripts/record_golden_run.py
+# can read it without importing this module (which needs SQLAlchemy).
 
 # Tranche status for the golden case: T1/T2 paid, T3 held pending this decision.
 # Loan 1001's ledger. T1-T3 are PAID and the tranche under decision is T4.
@@ -122,7 +123,7 @@ def seed(reset: bool = False) -> dict[str, int]:
                     borrower_name=row["borrower"],
                     locality=row["locality"],
                     plot_label=PLOT_LABELS.get(loan_id),
-                    built_up_sqft=BUILT_UP.get(loan_id),
+                    built_up_sqft=row.get("built_up_sqft"),
                     sanctioned=tranches[0]["sanctioned"],
                     disbursed=row["disbursed"],
                     contractor_id=LOAN_CONTRACTOR.get(loan_id),

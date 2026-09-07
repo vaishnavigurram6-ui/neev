@@ -78,10 +78,20 @@ all 15 handoff screens. Verify with:
 
 ```bash
 python3 -m tests.test_offline                             # 28
-cd src/backend && .venv/bin/python -m pytest tests/ -q    # 115
+cd src/backend && .venv/bin/python -m pytest tests/ -q    # 154
 cd src/frontend && npm run verify                         # 4 checks
 ```
 
 The mapper layer (`src/backend/app/mappers/`) is the only presentation-aware
 code, and `app/services/runner.py::get_runner` is the only place that reads
-`NEEV_MODE`. Both properties are load-bearing — keep them.
+`NEEV_MODE`. Both properties are load-bearing — keep them. The second is now
+enforced by `test_no_service_but_the_runner_factory_reads_the_mode`; a runner
+declares its own `mode` so callers can record provenance without a second check.
+
+`app/services/pipeline_parse.py` turns raw ADK session state into a
+`PipelineOutput` — the spec §4.3 layer, no longer deferred. Both the live runner
+and `scripts/record_golden_run.py` go through it, which is what keeps a live run
+and a recorded one from drifting apart. It imports no Google library, so it is
+fully testable offline: `record_golden_run.py` saves raw state to `.golden_runs/`
+*before* parsing, and `--from-raw` replays a saved capture for free. One billed
+run, then as many parse iterations as it takes.

@@ -33,6 +33,10 @@ class BoqAnalysisRequest(BaseModel):
 
 @runtime_checkable
 class PipelineRunner(Protocol):
+    # How a run this runner produced should be filed. Lets the driver record
+    # provenance without a second NEEV_MODE check -- see get_runner's note.
+    mode: str
+
     # Declared `def`, not `async def`: both implementations are async
     # generators, whose type is a plain callable returning an AsyncIterator.
     # `async def run(...) -> AsyncIterator[...]` describes a coroutine that

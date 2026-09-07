@@ -1,0 +1,29 @@
+# Repo-root context, used by src/backend/Dockerfile (which needs both
+# src/backend/ and fixtures/, so its context has to be the root).
+.git
+.venv
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+node_modules
+**/node_modules
+src/frontend/.next
+src/frontend/out
+
+# Never bake secrets or a captured run into an image.
+.env
+.env.disabled-backup
+.env.local
+**/.env.local
+.golden_runs
+
+# Not needed at runtime.
+docs
+design_handoff_neev
+figures
+_to_delete
+.claude
+**/*.db
+**/*.db-journal
+**/.DS_Store
