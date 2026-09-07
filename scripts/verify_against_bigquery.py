@@ -31,7 +31,6 @@ BigQuery needs Application Default Credentials, which Cloud Shell already has.
 
 import argparse
 import sys
-import types
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -41,10 +40,21 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 
 def _make_gemini_unreachable() -> None:
-    """Replace google.genai with a stub that raises. Must run before imports.
+    """Fence the Gemini client without touching the `google` namespace package.
 
-    Mirrors tests/test_offline.py, inverted: that stubs both Google clients, this
-    stubs only the billed-per-token one and lets BigQuery reach real data.
+    `google` is a NAMESPACE package shared by google-genai, google-adk and
+    google-cloud-bigquery, which are separate distributions. An earlier version
+    of this did:
+
+        google = sys.modules.setdefault("google", types.ModuleType("google"))
+
+    which shadowed that namespace with a plain module carrying no __path__, so
+    `import google.adk` then failed with "No module named 'google.adk'". The bug
+    survived local testing because no google package was installed here at all.
+
+    So: import the real module and replace exactly one attribute -- Client, the
+    only thing that opens a billed connection. google.genai.types and everything
+    else stay intact, which matters because google.adk imports them.
     """
 
     class _Refuses:
@@ -53,18 +63,20 @@ def _make_gemini_unreachable() -> None:
 
         def __getattr__(self, name: str):
             raise RuntimeError(
-                f"Gemini was called ({name}). This script verifies the BigQuery "
-                "path only and must never bill a model."
+                f"Gemini was called ({name}). This script verifies the "
+                "BigQuery path only and must never bill a model."
             )
 
-    google = sys.modules.setdefault("google", types.ModuleType("google"))
-    genai = types.ModuleType("google.genai")
+    try:
+        from google import genai
+    except ImportError:
+        return  # google-genai is not installed, so there is nothing to fence
+
     genai.Client = _Refuses
-    sys.modules["google.genai"] = genai
-    google.genai = genai
 
 
 _make_gemini_unreachable()
+
 
 import boq_data  # noqa: E402
 from neev_pipeline.config import ENG_RATIOS, MAX_PAYMENT_PCT_BEFORE_SLAB  # noqa: E402
