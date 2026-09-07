@@ -29,3 +29,35 @@ wiring,Concealed wiring per point,pt,660,1.0,660,NO - check vs CPWD DSR 2023
 cpvc,CPVC concealed lines per bath set,set,10800,1.0,10800,NO - check vs CPWD DSR 2023
 emulsion,Interior emulsion 2 coats,sqm,135,1.0,135,NO - check vs CPWD DSR 2023
 weatherproof,Exterior weatherproof paint,sqm,150,1.0,150,NO - check vs CPWD DSR 2023
+earthwork excavation,Earthwork excavation ordinary soil,cum,260,0.97,252,NO - check vs CPWD DSR 2023
+digging of foundation,Earthwork excavation ordinary soil,cum,260,0.97,252,NO - check vs CPWD DSR 2023
+back filling,Backfilling with excavated earth,cum,150,0.95,142,NO - check vs CPWD DSR 2023
+refilling excavated,Backfilling with excavated earth,cum,150,0.95,142,NO - check vs CPWD DSR 2023
+river sand below,Sand filling under floors,cum,1350,1.0,1350,NO - check vs CPWD DSR 2023
+sand bed under,Sand filling under floors,cum,1350,1.0,1350,NO - check vs CPWD DSR 2023
+plain cement concrete,PCC 1:4:8 below footings,cum,5600,1.0,5600,NO - check vs CPWD DSR 2023
+lean concrete,PCC 1:4:8 below footings,cum,5600,1.0,5600,NO - check vs CPWD DSR 2023
+stone masonry,Size stone masonry CM 1:6,cum,4000,1.0,4000,NO - check vs CPWD DSR 2023
+rubble masonry,Size stone masonry CM 1:6,cum,4000,1.0,4000,NO - check vs CPWD DSR 2023
+damp proof course,DPC 50mm CC 1:2:4,sqm,320,1.0,320,NO - check vs CPWD DSR 2023
+reinforced cement concrete m25,RCC M25 incl. shuttering & curing,cum,8200,0.98,8036,NO - check vs CPWD DSR 2023
+m25 grade rcc,RCC M25 incl. shuttering & curing,cum,8200,0.98,8036,NO - check vs CPWD DSR 2023
+stair case,RCC M20 staircase,cum,8300,0.98,8134,NO - check vs CPWD DSR 2023
+brick masonry,230mm brick masonry CM 1:6,cum,5300,1.0,5300,NO - check vs CPWD DSR 2023
+brickwork in cm 1:6,230mm brick masonry CM 1:6,cum,5300,1.0,5300,NO - check vs CPWD DSR 2023
+external brick wall,230mm brick masonry CM 1:6,cum,5300,1.0,5300,NO - check vs CPWD DSR 2023
+brick partition,115mm partition CM 1:4,sqm,720,1.0,720,NO - check vs CPWD DSR 2023
+internal partition,115mm partition CM 1:4,sqm,720,1.0,720,NO - check vs CPWD DSR 2023
+partition wall,115mm partition CM 1:4,sqm,720,1.0,720,NO - check vs CPWD DSR 2023
+internal cement plaster,12mm internal plaster CM 1:6,sqm,180,1.0,180,NO - check vs CPWD DSR 2023
+inside wall plaster,12mm internal plaster CM 1:6,sqm,180,1.0,180,NO - check vs CPWD DSR 2023
+internal plastering,12mm internal plaster CM 1:6,sqm,180,1.0,180,NO - check vs CPWD DSR 2023
+external cement plaster,18mm external plaster CM 1:6,sqm,240,1.0,240,NO - check vs CPWD DSR 2023
+outside wall plaster,18mm external plaster CM 1:6,sqm,240,1.0,240,NO - check vs CPWD DSR 2023
+external plastering,18mm external plaster CM 1:6,sqm,240,1.0,240,NO - check vs CPWD DSR 2023
+wall tiles,Anti-skid ceramic tiles,sqm,820,1.0,820,NO - check vs CPWD DSR 2023
+toilet dado,Anti-skid ceramic tiles,sqm,820,1.0,820,NO - check vs CPWD DSR 2023
+vitrified tiles,Vitrified tile flooring 600x600,sqm,1050,1.0,1050,NO - check vs CPWD DSR 2023
+floor tiling,Vitrified tile flooring 600x600,sqm,1050,1.0,1050,NO - check vs CPWD DSR 2023
+exterior emulsion,Exterior weatherproof paint,sqm,150,1.0,150,NO - check vs CPWD DSR 2023
+outside weatherproof,Exterior weatherproof paint,sqm,150,1.0,150,NO - check vs CPWD DSR 2023

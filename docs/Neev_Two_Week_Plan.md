@@ -154,13 +154,13 @@ Grounding-layer accuracy over 40 synthetic BoQs
 BigQuery: real.  Gemini: unreachable by construction.
 
   defect type        planted  found  missed  false+   recall   prec.
-  RATE_OUTLIER            12     12       0       0    100%    100%
+  RATE_OUTLIER            17     17       0       0    100%    100%
   MISSING_SCOPE           14     14       0       0    100%    100%
   UNDERSPECIFIED           0      —       —       —      n/a     n/a
   FRONT_LOADED            18     18       0       0    100%    100%
   GST_SILENT              16     16       0       0    100%    100%
 
-  benchmark coverage   583/866 priced items (67%)
+  benchmark coverage   826/866 priced items (95%)
 ```
 
 Reproducible by a judge in thirty seconds, at zero cost. That is a far stronger
@@ -169,7 +169,7 @@ claim than any assertion about training.
 `UNDERSPECIFIED` is excluded deliberately: it is a judgement about wording, which
 only the model makes. Counting it as a tool miss would be dishonest.
 
-### Two findings the eval produced immediately
+### What the eval found on its first three runs
 
 **1. A real false-positive bug, now fixed.** `EXPECTED_SCOPE["external plaster"]`
 matched only the exact phrases `"external plaster"` and `"exterior plaster"`. An
@@ -179,21 +179,38 @@ precision was 35%. Ravi's fixture never caught it because external plaster is a
 seeded *omission* there, so the present-but-differently-worded case had never
 been exercised. Phrase lists widened in `config.py`; precision is now 100%.
 
-**2. Benchmark coverage is 67%, not the 70% Ravi suggested.** A third of priced
-items have no benchmark at all — and the top misses are not exotic:
+**2. Benchmark coverage was 67% — now 95%.** A third of priced items had no
+benchmark at all, and the misses were not exotic: `dpc` existed but not "damp
+proof course", `pcc` but not "plain cement concrete", `size stone` but not
+"stone masonry". Thirty-two alias rows later, coverage is **826 of 866 priced
+items**, and the only wordings still unmatched are the three anti-termite ones —
+deliberately, see below.
 
-```
-  17×  Damp proof course 50 mm, CC 1:2:4
-  16×  Stone masonry foundation CM 1:6
-  15×  Plain cement concrete 1:4:8 under footings
-  15×  Anti-termite treatment to foundation and plinth
-  15×  External cement plaster 18mm in CM 1:4, two coats
-```
+The cost of aliasing is duplicated rates: 62 rows over 30 distinct items. Two
+tests in `tests/test_offline.py` make that safe — rows sharing a description
+must agree on unit and `effective_rate`, and no wording may resolve to a
+benchmark in a *different unit*. That second one matters more than it sounds:
+`check_rate_deviation` divides a quote by a benchmark without ever checking the
+units agree, so a per-cum quote against a per-sqm benchmark yields a confident,
+meaningless deviation. It caught nine such routings on first run.
 
-Every one of those is a rate nobody checked. The table has 30 keywords and needs
-synonyms, not more rows — `dpc` exists but not "damp proof course", `pcc` exists
-but not "plain cement concrete". This is a **data** fix, it is free, and it is
-the highest-value remaining improvement to accuracy.
+**3. An invented benchmark is worse than no benchmark.** Adding an anti-termite
+rate looked like an easy coverage win. There is no CPWD DSR figure for it and no
+sourced market one, so the rate was a guess — and at ₹120/sqm it made
+`clean_boq.pdf`'s honest ₹95/sqm read as 21% *under* benchmark, flagging a
+document authored to have no rate defects. A pre-existing test caught it.
+
+The rows were removed. Anti-termite is caught by `EXPECTED_SCOPE` — is it
+present or absent? — which needs no rate at all. The analyst prompt already
+tells the model "never estimate a benchmark yourself"; the table should hold
+itself to the same rule. Those three wordings stay UNBENCHMARKED, which the
+pipeline supports explicitly.
+
+**Ravi's own BoQ is still 28 of 39**, and that is fine. Its remaining misses are
+all fittings and finishing — teak door frame, modular switches, DB with MCBs,
+EWC, wash basins, MS gate, site cleaning — whose rate depends on brand and
+model. The table benchmarks structural work. Say that if asked, rather than
+treating it as a gap.
 
 ---
 
@@ -207,13 +224,15 @@ All verified offline. No credits spent.
 | Batched deviation check | `tools/boq_analyst_tool.py` | `check_rate_deviations(list)` — 28 calls → 1. Singular stays as the pure, tested implementation |
 | Prompt caps tool calls | `agent.py` | "Use exactly five tool calls for the whole document… never per line item" |
 | Scope phrases widened | `config.py` | Fixes the false-positive bug above |
+| 32 benchmark aliases | `fixtures/rate_benchmarks.csv` | Coverage 67% → 95%; 30 → 62 rows |
+| Alias integrity + unit guards | `tests/test_offline.py` | Duplicated rates cannot silently diverge |
 | `--min-instances 0` | `scripts/deploy_cloudrun.sh` | Saves ₹2,530 |
 | Verifier uses the batched path | `scripts/verify_against_bigquery.py` | Exercises what the paid run will actually do |
 
 Behaviour is preserved: the verifier reports the same 28 matched items, 3 rate
 flags and 7 total flags as before, in 2 queries instead of 78.
 
-**Suites:** offline 35 · backend 158 · frontend verify clean.
+**Suites:** offline 38 · backend 158 · frontend verify clean.
 
 ---
 
@@ -267,6 +286,9 @@ python3 -m venv src/agents/.venv
 src/agents/.venv/bin/pip install -e src/agents
 
 # FREE — the grounding path against real BigQuery, Gemini unreachable
+# Reload the benchmark table first -- the 32 new aliases are CSV-only until then
+bash scripts/load_bigquery.sh
+
 src/agents/.venv/bin/python scripts/verify_against_bigquery.py
 
 # Then the paid captures
@@ -382,6 +404,10 @@ logging on every disbursement decision.
       fact that could still change this plan.
 - [ ] **Ask the organisers what counts as a deploy** — service, revision, or
       command. Changes your margin from zero to one.
-- [ ] **Widen `rate_benchmarks` synonyms** — free, and worth ~33% more coverage.
+- [x] **Widen `rate_benchmarks` synonyms** — done; coverage 67% → 95%.
+- [ ] **Reload `rate_benchmarks` into BigQuery.** The aliases live in the CSV and
+      have no effect until the table is replaced. `bash scripts/load_bigquery.sh`
+      does it, and a `bq load` is **not** a Cloud Run deploy — it costs you
+      nothing and consumes neither free deploy. Do this before Stage 3.
 - [ ] **Site photos** in `demo_assets/` — without them `inspection_result` is
       absent and the tranche screen's visual evidence stays authored.

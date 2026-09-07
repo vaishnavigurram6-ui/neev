@@ -24,6 +24,11 @@ PDFs are written only with --pdf, which needs reportlab (`pip install reportlab`
 Scoring needs neither reportlab nor the PDFs: it works off the manifest.
 """
 
+# tests/test_offline.py imports TEMPLATE from here and runs on system Python
+# 3.9, which cannot parse `dict | None` in a signature. Deferring annotations
+# keeps this module importable there without pinning it to the older syntax.
+from __future__ import annotations
+
 import argparse
 import csv
 import json
@@ -119,7 +124,7 @@ TEMPLATE = [
      "cum", 24, "brickwork"),
     ("", "Brickwork in CM 1:4 for internal partitions, 115mm",
      ["Half brick partition wall 115 mm CM 1:4", "Internal brick partition 4.5 inch"],
-     "cum", 8, "brickwork"),
+     "sqm", 40, "partition"),
     ("6. PLASTERING", "Internal cement plaster 12mm in CM 1:4",
      ["12 mm thick internal plastering CM 1:4", "Inside wall plaster 12mm"],
      "sqm", 178, "internal plaster"),
@@ -137,10 +142,10 @@ TEMPLATE = [
      "sqm", 56, "waterproofing"),
     ("9. ELECTRICAL", "Concealed electrical wiring with copper conductor per point",
      ["Internal concealed wiring, copper, per point", "Electrical points incl. conduit and wiring"],
-     "nos", 44, "electrical"),
+     "pt", 44, "wiring"),
     ("10. PLUMBING", "CPVC water supply lines concealed incl. fittings",
      ["Concealed CPVC plumbing lines with fittings", "Water supply piping CPVC, concealed"],
-     "nos", 17, "plumbing"),
+     "set", 4, "cpvc"),
     ("11. ANTI-TERMITE", "Anti-termite treatment to foundation and plinth",
      ["Pre-construction anti termite treatment", "Termite proofing to foundation trenches"],
      "sqm", 56, "anti-termite"),
@@ -157,12 +162,16 @@ DEFECT_KINDS = ["RATE_OUTLIER", "MISSING_SCOPE", "UNDERSPECIFIED", "FRONT_LOADED
 
 # Scope whose absence check_missing_scope is able to detect, and the template
 # rows that provide it. Planting a MISSING_SCOPE defect means deleting one.
+# Maps a TEMPLATE row's benchmark keyword to the EXPECTED_SCOPE name whose
+# absence check_missing_scope reports. They differ because the benchmark table
+# prices "wiring" and "cpvc" where the scope checker asks about "electrical"
+# and "plumbing" -- so this cannot be derived from the keyword alone.
 DROPPABLE = {
-    "waterproofing": "8. WATERPROOFING",
-    "anti-termite": "11. ANTI-TERMITE",
-    "external plaster": None,   # matched by description, not section
-    "electrical": "9. ELECTRICAL",
-    "plumbing": "10. PLUMBING",
+    "waterproofing": "waterproofing",
+    "anti-termite": "anti-termite",
+    "external plaster": "external plaster",
+    "wiring": "electrical",
+    "cpvc": "plumbing",
 }
 
 
@@ -198,7 +207,7 @@ def generate_one(seed: int, bench: dict) -> dict:
 
     dropped = set()
     if "MISSING_SCOPE" in kinds:
-        dropped.add(rng.choice(sorted(DROPPABLE)))
+        dropped.add(rng.choice(sorted(set(DROPPABLE.values()))))
 
     defects, items = [], []
     benchmarkable = [
@@ -280,10 +289,8 @@ def generate_one(seed: int, bench: dict) -> dict:
 
 
 def _scope_name(base: str, keyword: str) -> str:
-    """The scope label check_missing_scope would use for this row."""
-    if keyword == "external plaster":
-        return "external plaster"
-    return keyword if keyword in DROPPABLE else base
+    """The EXPECTED_SCOPE name this row provides, or the description if none."""
+    return DROPPABLE.get(keyword, base)
 
 
 def _payment_schedule(rng, front_load: bool) -> tuple[list, float]:

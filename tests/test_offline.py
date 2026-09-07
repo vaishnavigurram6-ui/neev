@@ -279,6 +279,89 @@ class TestBatchedDeviationCheck(unittest.TestCase):
         self.assertIn("UNBENCHMARKED", out["12.2"]["note"])
 
 
+class TestBenchmarkTableIntegrity(unittest.TestCase):
+    """rate_benchmarks.csv carries alias rows, so it needs two guards.
+
+    Aliases exist because a contractor writes "damp proof course" where the
+    table's keyword was only "dpc" -- 22 of 22 varied wordings went unbenchmarked
+    before they were added. The cost of aliasing is duplicated rates, and these
+    tests are what make that duplication safe.
+    """
+
+    @staticmethod
+    def _rows():
+        import csv
+        path = os.path.join(
+            os.path.dirname(__file__), "..", "fixtures", "rate_benchmarks.csv"
+        )
+        with open(path, newline="", encoding="utf-8") as handle:
+            return list(csv.DictReader(handle))
+
+    @staticmethod
+    def _synthetic_boqs():
+        sys.path.insert(
+            0, os.path.join(os.path.dirname(__file__), "..", "scripts")
+        )
+        import synthetic_boqs
+
+        return synthetic_boqs
+
+    @staticmethod
+    def _match(description, rows):
+        """The tool's rule: substring match on keyword, longest wins."""
+        hits = [r for r in rows if r["keyword"].lower() in description.lower()]
+        return max(hits, key=lambda r: len(r["keyword"])) if hits else None
+
+    def test_rows_sharing_a_description_agree_on_rate_and_unit(self):
+        """Otherwise which synonym a contractor used would change the benchmark."""
+        groups = {}
+        for row in self._rows():
+            groups.setdefault(row["description"], set()).add(
+                (row["unit"], row["effective_rate"])
+            )
+        divergent = {d: v for d, v in groups.items() if len(v) > 1}
+        self.assertEqual(divergent, {}, f"aliases disagree: {divergent}")
+
+    def test_no_wording_is_matched_to_a_benchmark_in_a_different_unit(self):
+        """The silent failure: comparing a per-cum quote to a per-sqm benchmark.
+
+        check_rate_deviation divides one by the other without ever checking that
+        the units agree, so a mismatch produces a confident, meaningless
+        deviation. This asserts the table cannot route a wording that way.
+        """
+        synthetic_boqs = self._synthetic_boqs()
+
+        rows = self._rows()
+        mismatched = []
+        for _section, base, alts, unit, _per_k, _kw in synthetic_boqs.TEMPLATE:
+            for wording in (base, *alts):
+                row = self._match(wording, rows)
+                if row and row["unit"] != unit:
+                    mismatched.append((wording, unit, row["keyword"], row["unit"]))
+        self.assertEqual(mismatched, [], f"unit mismatches: {mismatched}")
+
+    # Scope with no defensible rate anywhere. The table deliberately holds no
+    # anti-termite benchmark: there is none in CPWD DSR 2023 and no sourced
+    # market figure, and an invented one made the clean fixture's honest
+    # Rs 95/sqm read as 21% under benchmark. It is caught by EXPECTED_SCOPE
+    # (present or absent?), which needs no rate.
+    LEGITIMATELY_UNBENCHMARKED = ("termite",)
+
+    def test_every_realistic_wording_now_finds_a_benchmark(self):
+        """22 of 66 wordings found nothing before the aliases were added."""
+        synthetic_boqs = self._synthetic_boqs()
+
+        rows = self._rows()
+        unmatched = [
+            wording
+            for _s, base, alts, _u, _p, _k in synthetic_boqs.TEMPLATE
+            for wording in (base, *alts)
+            if self._match(wording, rows) is None
+            and not any(w in wording.lower() for w in self.LEGITIMATELY_UNBENCHMARKED)
+        ]
+        self.assertEqual(unmatched, [], f"still unbenchmarked: {unmatched}")
+
+
 class TestPipelineWiring(unittest.TestCase):
     def test_agent_module_imports_and_wires_five_agents(self):
         from neev_pipeline import agent

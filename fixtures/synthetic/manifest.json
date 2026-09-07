@@ -12,7 +12,7 @@
         "Digging of foundation trenches, ordinary soil",
         55.0,
         "cum",
-        5911
+        261
       ],
       [
         "",
@@ -20,7 +20,7 @@
         "Refilling excavated soil around foundation",
         35.6,
         "cum",
-        1952
+        137
       ],
       [
         "",
@@ -36,7 +36,7 @@
         "Lean concrete bed below foundation",
         9.4,
         "cum",
-        6491
+        5849
       ],
       [
         "",
@@ -44,7 +44,7 @@
         "Stone masonry foundation CM 1:6",
         23.5,
         "cum",
-        8447
+        4320
       ],
       [
         "",
@@ -68,7 +68,7 @@
         "M25 grade RCC — columns, beams, slab",
         31.6,
         "cum",
-        6245
+        8357
       ],
       [
         "",
@@ -92,13 +92,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         24.7,
         "cum",
-        3268
+        5225
       ],
       [
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        8.1,
+        40.7,
         "sqm",
         770
       ],
@@ -108,7 +108,7 @@
         "Inside wall plaster 12mm",
         186.8,
         "sqm",
-        4011
+        180
       ],
       [
         "",
@@ -146,7 +146,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        18.3,
+        4.3,
         "set",
         11536
       ],
@@ -202,7 +202,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 2599346,
+    "boq_total": 1384007,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -214,7 +214,7 @@
         "item": "14",
         "detail": "quoted 293 against benchmark 240 (+22%)",
         "planted_pct": 22,
-        "matched_keyword": "external plaster"
+        "matched_keyword": "external plastering"
       },
       {
         "type": "MISSING_SCOPE",
@@ -249,7 +249,7 @@
         "Back filling and ramming in layers",
         63.8,
         "cum",
-        8963
+        155
       ],
       [
         "",
@@ -257,7 +257,7 @@
         "Sand bed under floor slab",
         20.4,
         "cum",
-        2184
+        1304
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -273,7 +273,7 @@
         "Stone masonry foundation CM 1:6",
         43.5,
         "cum",
-        5331
+        4093
       ],
       [
         "",
@@ -297,7 +297,7 @@
         "M25 grade RCC — columns, beams, slab",
         63.6,
         "cum",
-        5959
+        8315
       ],
       [
         "",
@@ -305,7 +305,7 @@
         "Stair case RCC M25 incl. steps",
         6.5,
         "cum",
-        7846
+        7941
       ],
       [
         "4. REINFORCEMENT",
@@ -327,7 +327,7 @@
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        18.9,
+        94.5,
         "sqm",
         738
       ],
@@ -337,7 +337,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         420.1,
         "sqm",
-        949
+        170
       ],
       [
         "",
@@ -345,7 +345,7 @@
         "Outside wall plaster 18mm two coats",
         208.7,
         "sqm",
-        574
+        225
       ],
       [
         "7. FLOORING",
@@ -361,7 +361,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         44.9,
         "sqm",
-        2570
+        798
       ],
       [
         "8. WATERPROOFING",
@@ -375,7 +375,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        39.3,
+        9.3,
         "set",
         11683
       ],
@@ -401,7 +401,7 @@
         "Exterior emulsion weather coat, two coats",
         224.7,
         "sqm",
-        136
+        151
       ]
     ],
     "payment": [
@@ -431,7 +431,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 3877439,
+    "boq_total": 2623159,
     "defects": [
       {
         "type": "MISSING_SCOPE",
@@ -461,7 +461,7 @@
         "Back filling and ramming in layers",
         73.9,
         "cum",
-        4385
+        143
       ],
       [
         "",
@@ -469,7 +469,7 @@
         "Filling river sand below flooring 100 mm",
         24.5,
         "cum",
-        8090
+        1449
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -477,7 +477,7 @@
         "Plain cement concrete 1:4:8 under footings",
         19.9,
         "cum",
-        4652
+        5661
       ],
       [
         "",
@@ -485,7 +485,7 @@
         "Stone masonry foundation CM 1:6",
         54.7,
         "cum",
-        490
+        3741
       ],
       [
         "",
@@ -501,7 +501,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         28.1,
         "sqm",
-        5126
+        326
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -517,7 +517,7 @@
         "Stair case RCC M25 incl. steps",
         7.0,
         "cum",
-        8625
+        8730
       ],
       [
         "4. REINFORCEMENT",
@@ -533,13 +533,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         62.2,
         "cum",
-        2443
+        5145
       ],
       [
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        20.9,
+        104.6,
         "sqm",
         692
       ],
@@ -557,7 +557,7 @@
         "Outside wall plaster 18mm two coats",
         230.6,
         "sqm",
-        1398
+        228
       ],
       [
         "7. FLOORING",
@@ -643,7 +643,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 3809498,
+    "boq_total": 3353256,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -675,7 +675,7 @@
         "Digging of foundation trenches, ordinary soil",
         114.2,
         "cum",
-        6299
+        262
       ],
       [
         "",
@@ -683,7 +683,7 @@
         "Back filling and ramming in layers",
         69.7,
         "cum",
-        6999
+        150
       ],
       [
         "",
@@ -699,7 +699,7 @@
         "Lean concrete bed below foundation",
         18.6,
         "cum",
-        1528
+        5343
       ],
       [
         "",
@@ -707,7 +707,7 @@
         "Stone masonry foundation CM 1:6",
         45.2,
         "cum",
-        4649
+        4044
       ],
       [
         "",
@@ -731,7 +731,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         58.7,
         "cum",
-        473
+        7513
       ],
       [
         "",
@@ -755,13 +755,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         50.7,
         "cum",
-        340
+        4943
       ],
       [
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        17.3,
+        86.4,
         "sqm",
         779
       ],
@@ -771,7 +771,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         405.1,
         "sqm",
-        1848
+        173
       ],
       [
         "",
@@ -795,7 +795,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         45.5,
         "sqm",
-        4357
+        825
       ],
       [
         "8. WATERPROOFING",
@@ -817,7 +817,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        35.3,
+        8.3,
         "set",
         10805
       ],
@@ -843,7 +843,7 @@
         "Exterior emulsion weather coat, two coats",
         236.7,
         "sqm",
-        135
+        150
       ]
     ],
     "payment": [
@@ -873,7 +873,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 5011383,
+    "boq_total": 3461211,
     "defects": []
   },
   {
@@ -889,7 +889,7 @@
         "Digging of foundation trenches, ordinary soil",
         128.2,
         "cum",
-        4497
+        254
       ],
       [
         "",
@@ -897,7 +897,7 @@
         "Back filling and ramming in layers",
         80.7,
         "cum",
-        3435
+        140
       ],
       [
         "",
@@ -913,7 +913,7 @@
         "Lean concrete bed below foundation",
         20.5,
         "cum",
-        2813
+        5474
       ],
       [
         "",
@@ -937,7 +937,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         28.0,
         "sqm",
-        6816
+        336
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -945,7 +945,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         71.2,
         "cum",
-        8530
+        8690
       ],
       [
         "",
@@ -953,7 +953,7 @@
         "Stair case RCC M25 incl. steps",
         7.8,
         "cum",
-        7534
+        7626
       ],
       [
         "4. REINFORCEMENT",
@@ -969,13 +969,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         58.0,
         "cum",
-        4367
+        5331
       ],
       [
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        19.1,
+        95.4,
         "sqm",
         763
       ],
@@ -985,7 +985,7 @@
         "Inside wall plaster 12mm",
         407.8,
         "sqm",
-        7807
+        192
       ],
       [
         "7. FLOORING",
@@ -1023,7 +1023,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        38.5,
+        9.1,
         "set",
         10059
       ],
@@ -1079,7 +1079,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 7127258,
+    "boq_total": 2915617,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -1124,7 +1124,7 @@
         "Back filling and ramming in layers",
         60.2,
         "cum",
-        206
+        132
       ],
       [
         "",
@@ -1140,7 +1140,7 @@
         "Plain cement concrete 1:4:8 under footings",
         16.3,
         "cum",
-        5357
+        5733
       ],
       [
         "",
@@ -1148,7 +1148,7 @@
         "Random rubble masonry in cement mortar 1:6",
         44.5,
         "cum",
-        2906
+        3917
       ],
       [
         "",
@@ -1172,7 +1172,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         58.2,
         "cum",
-        8884
+        8742
       ],
       [
         "",
@@ -1196,13 +1196,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         46.7,
         "cum",
-        1137
+        5019
       ],
       [
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        17.0,
+        84.9,
         "sqm",
         735
       ],
@@ -1212,7 +1212,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         368.5,
         "sqm",
-        4254
+        181
       ],
       [
         "",
@@ -1258,7 +1258,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        31.7,
+        7.5,
         "set",
         10152
       ],
@@ -1284,7 +1284,7 @@
         "Exterior emulsion weather coat, two coats",
         186.5,
         "sqm",
-        136
+        151
       ]
     ],
     "payment": [
@@ -1314,7 +1314,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 4137648,
+    "boq_total": 2663461,
     "defects": []
   },
   {
@@ -1338,7 +1338,7 @@
         "Refilling excavated soil around foundation",
         34.5,
         "cum",
-        6641
+        149
       ],
       [
         "",
@@ -1346,7 +1346,7 @@
         "Sand bed under floor slab",
         10.2,
         "cum",
-        4039
+        1350
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -1410,13 +1410,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         26.0,
         "cum",
-        6899
+        5575
       ],
       [
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        9.3,
+        46.5,
         "sqm",
         713
       ],
@@ -1434,7 +1434,7 @@
         "Outside wall plaster 18mm two coats",
         117.2,
         "sqm",
-        4205
+        241
       ],
       [
         "7. FLOORING",
@@ -1464,7 +1464,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        19.1,
+        4.5,
         "set",
         10477
       ],
@@ -1520,7 +1520,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 2644536,
+    "boq_total": 1767689,
     "defects": [
       {
         "type": "RATE_OUTLIER",
@@ -1559,7 +1559,7 @@
         "Digging of foundation trenches, ordinary soil",
         129.2,
         "cum",
-        1447
+        240
       ],
       [
         "",
@@ -1567,15 +1567,15 @@
         "Back filling and ramming in layers",
         77.1,
         "cum",
-        1191
+        168
       ],
       [
         "",
         "3",
-        "Filling river sand below flooring 100 mm",
-        25.2,
+        "Sand bed under floor slab",
+        23.9,
         "cum",
-        4945
+        1258
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -1583,7 +1583,7 @@
         "Plain cement concrete 1:4:8 under footings",
         18.8,
         "cum",
-        4470
+        5643
       ],
       [
         "",
@@ -1591,7 +1591,7 @@
         "Stone masonry foundation CM 1:6",
         47.7,
         "cum",
-        1461
+        3812
       ],
       [
         "",
@@ -1639,13 +1639,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         58.4,
         "cum",
-        5162
+        5407
       ],
       [
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        19.3,
+        96.6,
         "sqm",
         768
       ],
@@ -1679,7 +1679,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         52.0,
         "sqm",
-        4173
+        822
       ],
       [
         "8. WATERPROOFING",
@@ -1701,7 +1701,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        43.2,
+        10.2,
         "set",
         10220
       ],
@@ -1757,8 +1757,15 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 3433417,
+    "boq_total": 2800409,
     "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "2",
+        "detail": "quoted 168 against benchmark 142 (+18%)",
+        "planted_pct": 18,
+        "matched_keyword": "back filling"
+      },
       {
         "type": "GST_SILENT",
         "item": "terms",
@@ -1787,7 +1794,7 @@
         "Refilling excavated soil around foundation",
         46.3,
         "cum",
-        7911
+        152
       ],
       [
         "",
@@ -1795,7 +1802,7 @@
         "Sand bed under floor slab",
         14.6,
         "cum",
-        6941
+        1421
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -1843,7 +1850,7 @@
         "Stair case RCC M25 incl. steps",
         4.0,
         "cum",
-        8363
+        8465
       ],
       [
         "4. REINFORCEMENT",
@@ -1859,13 +1866,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         35.1,
         "cum",
-        4192
+        5314
       ],
       [
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        10.8,
+        54.2,
         "sqm",
         694
       ],
@@ -1921,7 +1928,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        22.6,
+        5.3,
         "set",
         10981
       ],
@@ -1977,7 +1984,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 2467428,
+    "boq_total": 1907532,
     "defects": []
   },
   {
@@ -2009,7 +2016,7 @@
         "Sand bed under floor slab",
         16.5,
         "cum",
-        8971
+        1471
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -2017,7 +2024,7 @@
         "Lean concrete bed below foundation",
         13.6,
         "cum",
-        3649
+        5559
       ],
       [
         "",
@@ -2025,7 +2032,7 @@
         "Stone masonry foundation CM 1:6",
         36.1,
         "cum",
-        3441
+        3956
       ],
       [
         "",
@@ -2073,13 +2080,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         40.9,
         "cum",
-        348
+        4943
       ],
       [
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        14.1,
+        70.5,
         "sqm",
         673
       ],
@@ -2089,7 +2096,7 @@
         "Inside wall plaster 12mm",
         272.6,
         "sqm",
-        6896
+        189
       ],
       [
         "",
@@ -2097,7 +2104,7 @@
         "Outside wall plaster 18mm two coats",
         153.2,
         "sqm",
-        7847
+        257
       ],
       [
         "7. FLOORING",
@@ -2113,7 +2120,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         36.7,
         "sqm",
-        2295
+        794
       ],
       [
         "8. WATERPROOFING",
@@ -2183,7 +2190,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 5009918,
+    "boq_total": 2110425,
     "defects": [
       {
         "type": "RATE_OUTLIER",
@@ -2217,7 +2224,7 @@
         "Digging of foundation trenches, ordinary soil",
         101.1,
         "cum",
-        7098
+        266
       ],
       [
         "",
@@ -2225,7 +2232,7 @@
         "Refilling excavated soil around foundation",
         66.5,
         "cum",
-        2470
+        138
       ],
       [
         "",
@@ -2241,7 +2248,7 @@
         "Lean concrete bed below foundation",
         15.7,
         "cum",
-        5634
+        5761
       ],
       [
         "",
@@ -2265,7 +2272,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         25.3,
         "sqm",
-        7486
+        340
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -2273,7 +2280,7 @@
         "M25 grade RCC — columns, beams, slab",
         49.7,
         "cum",
-        2553
+        7817
       ],
       [
         "",
@@ -2281,7 +2288,7 @@
         "Stair case RCC M25 incl. steps",
         5.7,
         "cum",
-        8395
+        8497
       ],
       [
         "4. REINFORCEMENT",
@@ -2297,13 +2304,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         50.8,
         "cum",
-        8669
+        5745
       ],
       [
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        16.0,
+        80.0,
         "sqm",
         753
       ],
@@ -2313,7 +2320,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         350.9,
         "sqm",
-        2436
+        175
       ],
       [
         "",
@@ -2321,7 +2328,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         187.1,
         "sqm",
-        6921
+        253
       ],
       [
         "7. FLOORING",
@@ -2359,7 +2366,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        36.1,
+        8.5,
         "set",
         10108
       ],
@@ -2385,7 +2392,7 @@
         "Exterior emulsion weather coat, two coats",
         208.0,
         "sqm",
-        135
+        150
       ]
     ],
     "payment": [
@@ -2415,7 +2422,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 5607465,
+    "boq_total": 2427899,
     "defects": [
       {
         "type": "RATE_OUTLIER",
@@ -2452,7 +2459,7 @@
         "Back filling and ramming in layers",
         65.5,
         "cum",
-        4892
+        144
       ],
       [
         "",
@@ -2476,7 +2483,7 @@
         "Random rubble masonry in cement mortar 1:6",
         42.7,
         "cum",
-        2169
+        3863
       ],
       [
         "",
@@ -2500,7 +2507,7 @@
         "M25 grade RCC — columns, beams, slab",
         57.5,
         "cum",
-        4440
+        8093
       ],
       [
         "",
@@ -2508,7 +2515,7 @@
         "Stair case RCC M25 incl. steps",
         5.8,
         "cum",
-        7612
+        7705
       ],
       [
         "4. REINFORCEMENT",
@@ -2524,13 +2531,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         51.1,
         "cum",
-        8207
+        5701
       ],
       [
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        14.8,
+        74.2,
         "sqm",
         762
       ],
@@ -2540,7 +2547,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         348.3,
         "sqm",
-        1957
+        173
       ],
       [
         "",
@@ -2548,7 +2555,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         208.5,
         "sqm",
-        7112
+        253
       ],
       [
         "7. FLOORING",
@@ -2634,7 +2641,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 5093046,
+    "boq_total": 2930710,
     "defects": [
       {
         "type": "MISSING_SCOPE",
@@ -2645,10 +2652,10 @@
   },
   {
     "boq_id": "SYN-1013",
-    "locality": "Nizampet",
+    "locality": "Medchal",
     "built_up_sqft": 2450,
-    "firm": "AKSHAYA HOMES",
-    "client": "Mrs. P. Anjali",
+    "firm": "PRAGATI BUILDCON",
+    "client": "Mr. S. Reddy",
     "items": [
       [
         "1. EARTHWORK",
@@ -2664,159 +2671,159 @@
         "Back filling and ramming in layers",
         73.9,
         "cum",
-        5536
+        195
       ],
       [
         "",
         "3",
-        "Sand bed under floor slab",
-        23.8,
+        "Filling river sand below flooring 100 mm",
+        25.1,
         "cum",
-        2050
+        1271
       ],
       [
         "2. FOUNDATION & PLINTH",
         "4",
         "Plain cement concrete 1:4:8 under footings",
-        20.3,
+        19.0,
         "cum",
-        6180
+        5880
       ],
       [
         "",
         "5",
-        "Random rubble masonry in cement mortar 1:6",
-        55.2,
+        "Size stone masonry in CM 1:6 for foundation",
+        50.6,
         "cum",
-        3060
+        3946
       ],
       [
         "",
         "6",
         "Plinth beam concrete M20 with formwork",
-        12.7,
+        13.1,
         "cum",
-        7733
+        8420
       ],
       [
         "",
         "7",
-        "DPC layer above plinth level",
-        27.7,
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        27.6,
         "sqm",
-        303
+        305
       ],
       [
         "3. RCC SUPERSTRUCTURE",
         "8",
         "RCC M25 for columns, beams and roof slab",
-        70.7,
+        65.2,
         "cum",
-        8093
+        8666
       ],
       [
         "",
         "9",
-        "Stair case RCC M25 incl. steps",
-        7.0,
+        "Reinforced concrete M25 staircase waist slab",
+        7.4,
         "cum",
-        8580
+        7799
       ],
       [
         "4. REINFORCEMENT",
         "10",
         "TMT barsD, fabrication and placing",
-        6725.5,
+        6677.9,
         "kg",
-        69
+        68
       ],
       [
         "5. MASONRY",
         "11",
-        "External brick wall 9 inch, cement mortar 1:6",
-        56.0,
+        "Burnt clay brick masonry 230 mm in CM 1:6",
+        59.8,
         "cum",
-        4949
+        5672
       ],
       [
         "",
         "12",
-        "Internal brick partition 4.5 inch",
-        20.1,
+        "Half brick partition wall 115 mm CM 1:4",
+        98.3,
         "sqm",
-        728
+        759
       ],
       [
         "6. PLASTERING",
         "13",
         "12 mm thick internal plastering CM 1:4",
-        465.0,
+        435.8,
         "sqm",
-        191
+        180
       ],
       [
         "",
         "14",
-        "External cement plaster 18mm in CM 1:4, two coats",
-        238.1,
+        "Outside wall plaster 18mm two coats",
+        227.9,
         "sqm",
-        2640
+        233
       ],
       [
         "7. FLOORING",
         "15",
         "Vitrified tiles 2x2 ft laid on cement bed",
-        228.1,
+        218.0,
         "sqm",
-        1050
+        1056
       ],
       [
         "",
         "16",
-        "Toilet dado ceramic tiling",
-        52.1,
+        "Ceramic tile dado in toilets up to 7ft",
+        55.1,
         "sqm",
-        784
+        802
       ],
       [
         "8. WATERPROOFING",
         "17",
         "APP membrane waterproofing to terrace slab",
-        129.0,
+        131.9,
         "sqm",
-        613
+        650
       ],
       [
         "9. ELECTRICAL",
         "18",
         "Concealed electrical wiring with copper conductor per point",
-        108.6,
+        103.2,
         "pt",
-        658
+        712
       ],
       [
         "11. ANTI-TERMITE",
         "20",
-        "Pre-construction anti termite treatment",
-        137.9,
+        "Anti-termite treatment to foundation and plinth",
+        135.7,
         "sqm",
-        6293
+        833
       ],
       [
         "12. PAINTING",
         "21",
-        "Interior painting, emulsion, over putty",
-        466.2,
+        "Interior emulsion paint two coats over primer",
+        442.7,
         "sqm",
-        133
+        137
       ],
       [
         "",
         "22",
-        "Exterior weatherproof paint two coats",
-        236.8,
+        "Exterior emulsion weather coat, two coats",
+        261.8,
         "sqm",
-        145
+        146
       ]
     ],
     "payment": [
@@ -2826,11 +2833,11 @@
       ],
       [
         "On completion of foundation",
-        "12%"
+        "10%"
       ],
       [
         "On completion of plinth",
-        "6%"
+        "8%"
       ],
       [
         "On casting of roof slab",
@@ -2846,8 +2853,15 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 4388747,
+    "boq_total": 2773491,
     "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "2",
+        "detail": "quoted 195 against benchmark 142 (+37%)",
+        "planted_pct": 37,
+        "matched_keyword": "back filling"
+      },
       {
         "type": "UNDERSPECIFIED",
         "item": "10",
@@ -2886,7 +2900,7 @@
         "Back filling and ramming in layers",
         34.8,
         "cum",
-        4308
+        143
       ],
       [
         "",
@@ -2894,7 +2908,7 @@
         "Sand bed under floor slab",
         11.0,
         "cum",
-        7318
+        1430
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -2902,7 +2916,7 @@
         "Plain cement concrete 1:4:8 under footings",
         8.9,
         "cum",
-        1103
+        5300
       ],
       [
         "",
@@ -2964,7 +2978,7 @@
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        8.4,
+        42.1,
         "sqm",
         754
       ],
@@ -2974,7 +2988,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         196.9,
         "sqm",
-        2142
+        174
       ],
       [
         "",
@@ -2982,7 +2996,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         113.9,
         "sqm",
-        8898
+        261
       ],
       [
         "7. FLOORING",
@@ -3020,7 +3034,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        19.1,
+        4.5,
         "set",
         11195
       ],
@@ -3076,7 +3090,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 3475802,
+    "boq_total": 1794154,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -3106,7 +3120,7 @@
         "Refilling excavated soil around foundation",
         40.2,
         "cum",
-        5687
+        146
       ],
       [
         "",
@@ -3122,7 +3136,7 @@
         "Plain cement concrete 1:4:8 under footings",
         10.5,
         "cum",
-        7979
+        6000
       ],
       [
         "",
@@ -3130,7 +3144,7 @@
         "Stone masonry foundation CM 1:6",
         25.5,
         "cum",
-        5877
+        4133
       ],
       [
         "",
@@ -3154,7 +3168,7 @@
         "M25 grade RCC — columns, beams, slab",
         31.7,
         "cum",
-        2448
+        7802
       ],
       [
         "",
@@ -3178,13 +3192,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         32.1,
         "cum",
-        1138
+        5019
       ],
       [
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        10.7,
+        53.5,
         "sqm",
         771
       ],
@@ -3194,7 +3208,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         218.6,
         "sqm",
-        286
+        168
       ],
       [
         "7. FLOORING",
@@ -3210,7 +3224,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         29.4,
         "sqm",
-        754
+        771
       ],
       [
         "8. WATERPROOFING",
@@ -3232,7 +3246,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        21.3,
+        5.0,
         "set",
         10101
       ],
@@ -3288,7 +3302,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 1628262,
+    "boq_total": 1477622,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -3325,7 +3339,7 @@
         "Digging of foundation trenches, ordinary soil",
         96.6,
         "cum",
-        6003
+        261
       ],
       [
         "",
@@ -3341,7 +3355,7 @@
         "Filling river sand below flooring 100 mm",
         20.1,
         "cum",
-        6903
+        1420
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -3349,7 +3363,7 @@
         "Lean concrete bed below foundation",
         16.0,
         "cum",
-        5567
+        5754
       ],
       [
         "",
@@ -3357,7 +3371,7 @@
         "Stone masonry foundation CM 1:6",
         42.0,
         "cum",
-        1107
+        3786
       ],
       [
         "",
@@ -3373,7 +3387,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         23.4,
         "sqm",
-        2323
+        310
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -3381,7 +3395,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         56.7,
         "cum",
-        6736
+        8428
       ],
       [
         "",
@@ -3389,7 +3403,7 @@
         "Stair case RCC M25 incl. steps",
         6.0,
         "cum",
-        7735
+        7829
       ],
       [
         "4. REINFORCEMENT",
@@ -3411,7 +3425,7 @@
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        15.7,
+        78.4,
         "sqm",
         769
       ],
@@ -3421,7 +3435,7 @@
         "Inside wall plaster 12mm",
         370.3,
         "sqm",
-        4053
+        180
       ],
       [
         "",
@@ -3429,7 +3443,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         208.4,
         "sqm",
-        1945
+        231
       ],
       [
         "7. FLOORING",
@@ -3445,7 +3459,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         47.2,
         "sqm",
-        3634
+        814
       ],
       [
         "8. WATERPROOFING",
@@ -3467,7 +3481,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        31.4,
+        7.4,
         "set",
         11601
       ],
@@ -3493,7 +3507,7 @@
         "Exterior emulsion weather coat, two coats",
         202.7,
         "sqm",
-        147
+        163
       ]
     ],
     "payment": [
@@ -3523,7 +3537,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 5111546,
+    "boq_total": 2460129,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -3571,7 +3585,7 @@
         "Sand bed under floor slab",
         25.0,
         "cum",
-        5689
+        1390
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -3579,7 +3593,7 @@
         "Lean concrete bed below foundation",
         19.1,
         "cum",
-        5094
+        5706
       ],
       [
         "",
@@ -3587,7 +3601,7 @@
         "Stone masonry foundation CM 1:6",
         51.2,
         "cum",
-        856
+        3768
       ],
       [
         "",
@@ -3619,7 +3633,7 @@
         "Stair case RCC M25 incl. steps",
         6.9,
         "cum",
-        7986
+        8084
       ],
       [
         "4. REINFORCEMENT",
@@ -3641,7 +3655,7 @@
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        20.1,
+        100.3,
         "sqm",
         744
       ],
@@ -3651,7 +3665,7 @@
         "Inside wall plaster 12mm",
         415.1,
         "sqm",
-        4956
+        183
       ],
       [
         "7. FLOORING",
@@ -3667,7 +3681,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         57.6,
         "sqm",
-        1106
+        776
       ],
       [
         "8. WATERPROOFING",
@@ -3689,7 +3703,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        38.5,
+        9.1,
         "set",
         10116
       ],
@@ -3745,7 +3759,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 5265185,
+    "boq_total": 3081148,
     "defects": [
       {
         "type": "RATE_OUTLIER",
@@ -3779,7 +3793,7 @@
         "Digging of foundation trenches, ordinary soil",
         108.9,
         "cum",
-        6684
+        264
       ],
       [
         "",
@@ -3795,7 +3809,7 @@
         "Filling river sand below flooring 100 mm",
         21.0,
         "cum",
-        6818
+        1418
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -3811,7 +3825,7 @@
         "Random rubble masonry in cement mortar 1:6",
         48.2,
         "cum",
-        6114
+        4150
       ],
       [
         "",
@@ -3827,7 +3841,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         28.4,
         "sqm",
-        5429
+        328
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -3835,7 +3849,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         58.1,
         "cum",
-        8432
+        9482
       ],
       [
         "",
@@ -3859,13 +3873,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         55.7,
         "cum",
-        1514
+        5056
       ],
       [
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        18.8,
+        93.8,
         "sqm",
         684
       ],
@@ -3875,7 +3889,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         396.9,
         "sqm",
-        6121
+        187
       ],
       [
         "",
@@ -3883,7 +3897,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         204.8,
         "sqm",
-        4774
+        243
       ],
       [
         "7. FLOORING",
@@ -3899,7 +3913,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         49.9,
         "sqm",
-        1673
+        785
       ],
       [
         "8. WATERPROOFING",
@@ -3921,7 +3935,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        34.5,
+        8.1,
         "set",
         11655
       ],
@@ -3977,8 +3991,15 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 7022451,
+    "boq_total": 2644817,
     "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "8",
+        "detail": "quoted 9482 against benchmark 8036 (+18%)",
+        "planted_pct": 18,
+        "matched_keyword": "reinforced cement concrete m25"
+      },
       {
         "type": "UNDERSPECIFIED",
         "item": "10",
@@ -4004,7 +4025,7 @@
         "Digging of foundation trenches, ordinary soil",
         60.5,
         "cum",
-        8932
+        274
       ],
       [
         "",
@@ -4020,7 +4041,7 @@
         "Filling river sand below flooring 100 mm",
         10.8,
         "cum",
-        2485
+        1312
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -4028,7 +4049,7 @@
         "Plain cement concrete 1:4:8 under footings",
         8.2,
         "cum",
-        5944
+        5793
       ],
       [
         "",
@@ -4036,7 +4057,7 @@
         "Random rubble masonry in cement mortar 1:6",
         21.4,
         "cum",
-        7587
+        4257
       ],
       [
         "",
@@ -4052,7 +4073,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         12.2,
         "sqm",
-        1262
+        304
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -4068,7 +4089,7 @@
         "Stair case RCC M25 incl. steps",
         3.4,
         "cum",
-        8000
+        8097
       ],
       [
         "4. REINFORCEMENT",
@@ -4084,13 +4105,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         27.0,
         "cum",
-        7952
+        5676
       ],
       [
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        8.6,
+        43.2,
         "sqm",
         765
       ],
@@ -4100,7 +4121,7 @@
         "Inside wall plaster 12mm",
         204.2,
         "sqm",
-        8285
+        194
       ],
       [
         "",
@@ -4108,7 +4129,7 @@
         "Outside wall plaster 18mm two coats",
         114.4,
         "sqm",
-        1751
+        230
       ],
       [
         "7. FLOORING",
@@ -4138,7 +4159,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        19.5,
+        4.6,
         "set",
         10302
       ],
@@ -4194,14 +4215,14 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 3926263,
+    "boq_total": 1291260,
     "defects": [
       {
         "type": "RATE_OUTLIER",
         "item": "15",
         "detail": "quoted 1376 against benchmark 1050 (+31%)",
         "planted_pct": 31,
-        "matched_keyword": "vitrified tile"
+        "matched_keyword": "vitrified tiles"
       },
       {
         "type": "MISSING_SCOPE",
@@ -4231,7 +4252,7 @@
         "Refilling excavated soil around foundation",
         40.5,
         "cum",
-        5491
+        146
       ],
       [
         "",
@@ -4239,7 +4260,7 @@
         "Filling river sand below flooring 100 mm",
         12.3,
         "cum",
-        4812
+        1369
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -4247,7 +4268,7 @@
         "Plain cement concrete 1:4:8 under footings",
         10.8,
         "cum",
-        630
+        5252
       ],
       [
         "",
@@ -4279,7 +4300,7 @@
         "M25 grade RCC — columns, beams, slab",
         31.5,
         "cum",
-        4465
+        8097
       ],
       [
         "",
@@ -4303,13 +4324,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         32.0,
         "cum",
-        2240
+        5126
       ],
       [
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        10.7,
+        53.7,
         "sqm",
         675
       ],
@@ -4327,7 +4348,7 @@
         "Outside wall plaster 18mm two coats",
         117.7,
         "sqm",
-        3672
+        238
       ],
       [
         "7. FLOORING",
@@ -4365,7 +4386,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        19.9,
+        4.7,
         "set",
         10239
       ],
@@ -4421,7 +4442,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 2374460,
+    "boq_total": 1841526,
     "defects": []
   },
   {
@@ -4437,7 +4458,7 @@
         "Digging of foundation trenches, ordinary soil",
         70.6,
         "cum",
-        3799
+        251
       ],
       [
         "",
@@ -4461,7 +4482,7 @@
         "Lean concrete bed below foundation",
         10.3,
         "cum",
-        5890
+        5787
       ],
       [
         "",
@@ -4485,7 +4506,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         16.7,
         "sqm",
-        4128
+        320
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -4517,13 +4538,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         35.4,
         "cum",
-        3087
+        5207
       ],
       [
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        11.8,
+        58.9,
         "sqm",
         781
       ],
@@ -4533,7 +4554,7 @@
         "Inside wall plaster 12mm",
         249.1,
         "sqm",
-        4574
+        182
       ],
       [
         "",
@@ -4627,7 +4648,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 3010995,
+    "boq_total": 1713638,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -4667,7 +4688,7 @@
         "Back filling and ramming in layers",
         40.4,
         "cum",
-        8923
+        155
       ],
       [
         "",
@@ -4675,7 +4696,7 @@
         "Filling river sand below flooring 100 mm",
         13.4,
         "cum",
-        682
+        1267
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -4683,7 +4704,7 @@
         "Plain cement concrete 1:4:8 under footings",
         11.2,
         "cum",
-        2650
+        5457
       ],
       [
         "",
@@ -4691,7 +4712,7 @@
         "Stone masonry foundation CM 1:6",
         28.8,
         "cum",
-        1291
+        3799
       ],
       [
         "",
@@ -4723,7 +4744,7 @@
         "Stair case RCC M25 incl. steps",
         4.0,
         "cum",
-        8521
+        8624
       ],
       [
         "4. REINFORCEMENT",
@@ -4745,7 +4766,7 @@
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        11.5,
+        57.6,
         "sqm",
         730
       ],
@@ -4755,7 +4776,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         237.4,
         "sqm",
-        1208
+        171
       ],
       [
         "",
@@ -4763,7 +4784,7 @@
         "Outside wall plaster 18mm two coats",
         141.7,
         "sqm",
-        8397
+        259
       ],
       [
         "7. FLOORING",
@@ -4801,7 +4822,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        22.7,
+        5.3,
         "set",
         10411
       ],
@@ -4827,7 +4848,7 @@
         "Exterior emulsion weather coat, two coats",
         135.2,
         "sqm",
-        130
+        144
       ]
     ],
     "payment": [
@@ -4857,7 +4878,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 3808439,
+    "boq_total": 2021187,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -4892,7 +4913,7 @@
         "Refilling excavated soil around foundation",
         74.1,
         "cum",
-        3369
+        140
       ],
       [
         "",
@@ -4900,7 +4921,7 @@
         "Filling river sand below flooring 100 mm",
         24.2,
         "cum",
-        783
+        1270
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -4908,7 +4929,7 @@
         "Lean concrete bed below foundation",
         18.9,
         "cum",
-        8591
+        6062
       ],
       [
         "",
@@ -4916,7 +4937,7 @@
         "Stone masonry foundation CM 1:6",
         51.5,
         "cum",
-        1682
+        3828
       ],
       [
         "",
@@ -4932,7 +4953,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         28.5,
         "sqm",
-        4268
+        321
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -4940,7 +4961,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         68.8,
         "cum",
-        4340
+        8078
       ],
       [
         "",
@@ -4948,7 +4969,7 @@
         "Stair case RCC M25 incl. steps",
         7.0,
         "cum",
-        8745
+        8851
       ],
       [
         "4. REINFORCEMENT",
@@ -4970,7 +4991,7 @@
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        19.8,
+        99.1,
         "sqm",
         717
       ],
@@ -4988,7 +5009,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         259.5,
         "sqm",
-        8979
+        293
       ],
       [
         "7. FLOORING",
@@ -5026,7 +5047,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        43.4,
+        10.2,
         "set",
         11719
       ],
@@ -5082,8 +5103,15 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 5857677,
+    "boq_total": 3252112,
     "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "14",
+        "detail": "quoted 293 against benchmark 240 (+22%)",
+        "planted_pct": 22,
+        "matched_keyword": "external cement plaster"
+      },
       {
         "type": "FRONT_LOADED",
         "item": "payment schedule",
@@ -5109,7 +5137,7 @@
         "Digging of foundation trenches, ordinary soil",
         52.5,
         "cum",
-        4713
+        255
       ],
       [
         "",
@@ -5117,7 +5145,7 @@
         "Back filling and ramming in layers",
         35.8,
         "cum",
-        3446
+        140
       ],
       [
         "",
@@ -5133,7 +5161,7 @@
         "Plain cement concrete 1:4:8 under footings",
         8.2,
         "cum",
-        1565
+        5347
       ],
       [
         "",
@@ -5141,7 +5169,7 @@
         "Random rubble masonry in cement mortar 1:6",
         22.9,
         "cum",
-        4819
+        4056
       ],
       [
         "",
@@ -5189,13 +5217,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         27.9,
         "cum",
-        1000
+        5006
       ],
       [
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        8.3,
+        41.3,
         "sqm",
         748
       ],
@@ -5205,7 +5233,7 @@
         "Inside wall plaster 12mm",
         180.9,
         "sqm",
-        8625
+        195
       ],
       [
         "",
@@ -5213,7 +5241,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         118.3,
         "sqm",
-        389
+        224
       ],
       [
         "7. FLOORING",
@@ -5229,7 +5257,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         23.6,
         "sqm",
-        7908
+        878
       ],
       [
         "8. WATERPROOFING",
@@ -5251,7 +5279,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        19.8,
+        4.7,
         "set",
         11300
       ],
@@ -5307,7 +5335,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 3409149,
+    "boq_total": 1325696,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -5342,7 +5370,7 @@
         "Back filling and ramming in layers",
         52.6,
         "cum",
-        3580
+        141
       ],
       [
         "",
@@ -5350,7 +5378,7 @@
         "Filling river sand below flooring 100 mm",
         16.4,
         "cum",
-        3352
+        1333
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -5358,7 +5386,7 @@
         "Lean concrete bed below foundation",
         12.8,
         "cum",
-        812
+        5270
       ],
       [
         "",
@@ -5414,13 +5442,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         40.6,
         "cum",
-        6891
+        5574
       ],
       [
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        13.6,
+        68.1,
         "sqm",
         690
       ],
@@ -5430,7 +5458,7 @@
         "Inside wall plaster 12mm",
         316.6,
         "sqm",
-        513
+        168
       ],
       [
         "",
@@ -5476,7 +5504,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        28.1,
+        6.6,
         "set",
         11374
       ],
@@ -5502,7 +5530,7 @@
         "Exterior emulsion weather coat, two coats",
         170.7,
         "sqm",
-        139
+        154
       ]
     ],
     "payment": [
@@ -5532,7 +5560,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 2437492,
+    "boq_total": 1913479,
     "defects": []
   },
   {
@@ -5548,7 +5576,7 @@
         "Digging of foundation trenches, ordinary soil",
         54.0,
         "cum",
-        5271
+        258
       ],
       [
         "",
@@ -5556,7 +5584,7 @@
         "Refilling excavated soil around foundation",
         33.8,
         "cum",
-        4952
+        144
       ],
       [
         "",
@@ -5564,7 +5592,7 @@
         "Sand bed under floor slab",
         11.4,
         "cum",
-        1180
+        1280
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -5572,7 +5600,7 @@
         "Plain cement concrete 1:4:8 under footings",
         9.0,
         "cum",
-        2792
+        5472
       ],
       [
         "",
@@ -5604,7 +5632,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         31.5,
         "cum",
-        1722
+        7696
       ],
       [
         "",
@@ -5634,7 +5662,7 @@
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        8.6,
+        43.2,
         "sqm",
         725
       ],
@@ -5644,7 +5672,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         200.8,
         "sqm",
-        3343
+        178
       ],
       [
         "",
@@ -5652,7 +5680,7 @@
         "Outside wall plaster 18mm two coats",
         114.2,
         "sqm",
-        2623
+        234
       ],
       [
         "7. FLOORING",
@@ -5690,7 +5718,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        19.7,
+        4.6,
         "set",
         10143
       ],
@@ -5716,7 +5744,7 @@
         "Exterior emulsion weather coat, two coats",
         105.2,
         "sqm",
-        140
+        156
       ]
     ],
     "payment": [
@@ -5746,7 +5774,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 2614574,
+    "boq_total": 1360055,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -5781,7 +5809,7 @@
         "Refilling excavated soil around foundation",
         32.6,
         "cum",
-        8122
+        153
       ],
       [
         "",
@@ -5789,7 +5817,7 @@
         "Sand bed under floor slab",
         10.8,
         "cum",
-        5826
+        1394
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -5805,7 +5833,7 @@
         "Stone masonry foundation CM 1:6",
         23.4,
         "cum",
-        5288
+        4090
       ],
       [
         "",
@@ -5821,7 +5849,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         13.6,
         "sqm",
-        3520
+        317
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -5829,7 +5857,7 @@
         "M25 grade RCC — columns, beams, slab",
         27.7,
         "cum",
-        5438
+        8239
       ],
       [
         "",
@@ -5837,7 +5865,7 @@
         "Stair case RCC M25 incl. steps",
         3.1,
         "cum",
-        8149
+        8249
       ],
       [
         "4. REINFORCEMENT",
@@ -5859,7 +5887,7 @@
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        8.7,
+        43.7,
         "sqm",
         781
       ],
@@ -5869,7 +5897,7 @@
         "Inside wall plaster 12mm",
         183.4,
         "sqm",
-        1551
+        172
       ],
       [
         "",
@@ -5877,7 +5905,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         113.2,
         "sqm",
-        2809
+        235
       ],
       [
         "7. FLOORING",
@@ -5893,7 +5921,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         26.0,
         "sqm",
-        3001
+        804
       ],
       [
         "8. WATERPROOFING",
@@ -5915,7 +5943,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        19.4,
+        4.6,
         "set",
         10123
       ],
@@ -5971,7 +5999,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 2768142,
+    "boq_total": 1742898,
     "defects": []
   },
   {
@@ -6003,7 +6031,7 @@
         "Sand bed under floor slab",
         25.0,
         "cum",
-        942
+        1274
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -6035,7 +6063,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         28.1,
         "sqm",
-        4829
+        325
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -6043,7 +6071,7 @@
         "M25 grade RCC — columns, beams, slab",
         68.1,
         "cum",
-        2838
+        7859
       ],
       [
         "",
@@ -6067,13 +6095,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         56.6,
         "cum",
-        6757
+        5561
       ],
       [
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        18.3,
+        91.6,
         "sqm",
         719
       ],
@@ -6083,7 +6111,7 @@
         "Inside wall plaster 12mm",
         420.2,
         "sqm",
-        4420
+        181
       ],
       [
         "",
@@ -6091,7 +6119,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         249.4,
         "sqm",
-        4319
+        241
       ],
       [
         "7. FLOORING",
@@ -6129,7 +6157,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        40.0,
+        9.4,
         "set",
         10813
       ],
@@ -6185,7 +6213,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 5944774,
+    "boq_total": 3024292,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -6219,7 +6247,7 @@
         "Digging of foundation trenches, ordinary soil",
         98.3,
         "cum",
-        4655
+        255
       ],
       [
         "",
@@ -6227,7 +6255,7 @@
         "Refilling excavated soil around foundation",
         59.2,
         "cum",
-        2465
+        138
       ],
       [
         "",
@@ -6235,7 +6263,7 @@
         "Filling river sand below flooring 100 mm",
         17.6,
         "cum",
-        8682
+        1464
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -6251,7 +6279,7 @@
         "Stone masonry foundation CM 1:6",
         38.0,
         "cum",
-        3055
+        3928
       ],
       [
         "",
@@ -6267,7 +6295,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         20.6,
         "sqm",
-        6316
+        333
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -6299,13 +6327,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         41.2,
         "cum",
-        5176
+        5408
       ],
       [
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        15.5,
+        77.7,
         "sqm",
         700
       ],
@@ -6315,7 +6343,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         339.0,
         "sqm",
-        8843
+        196
       ],
       [
         "",
@@ -6323,7 +6351,7 @@
         "Outside wall plaster 18mm two coats",
         189.7,
         "sqm",
-        5901
+        248
       ],
       [
         "7. FLOORING",
@@ -6339,7 +6367,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         36.8,
         "sqm",
-        259
+        763
       ],
       [
         "9. ELECTRICAL",
@@ -6353,7 +6381,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        31.2,
+        7.3,
         "set",
         10420
       ],
@@ -6379,7 +6407,7 @@
         "Exterior emulsion weather coat, two coats",
         192.1,
         "sqm",
-        131
+        145
       ]
     ],
     "payment": [
@@ -6409,7 +6437,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 7748138,
+    "boq_total": 2782336,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -6449,7 +6477,7 @@
         "Refilling excavated soil around foundation",
         35.5,
         "cum",
-        4149
+        142
       ],
       [
         "",
@@ -6465,7 +6493,7 @@
         "Lean concrete bed below foundation",
         8.3,
         "cum",
-        312
+        5219
       ],
       [
         "",
@@ -6473,7 +6501,7 @@
         "Random rubble masonry in cement mortar 1:6",
         24.4,
         "cum",
-        6970
+        4212
       ],
       [
         "",
@@ -6527,7 +6555,7 @@
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        9.2,
+        45.8,
         "sqm",
         698
       ],
@@ -6545,7 +6573,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         102.0,
         "sqm",
-        2958
+        235
       ],
       [
         "7. FLOORING",
@@ -6561,7 +6589,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         23.6,
         "sqm",
-        5207
+        837
       ],
       [
         "8. WATERPROOFING",
@@ -6575,7 +6603,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        17.3,
+        4.1,
         "set",
         10073
       ],
@@ -6631,7 +6659,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 1873348,
+    "boq_total": 1216238,
     "defects": [
       {
         "type": "MISSING_SCOPE",
@@ -6666,7 +6694,7 @@
         "Refilling excavated soil around foundation",
         34.8,
         "cum",
-        8314
+        153
       ],
       [
         "",
@@ -6674,7 +6702,7 @@
         "Filling river sand below flooring 100 mm",
         11.5,
         "cum",
-        4206
+        1354
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -6744,7 +6772,7 @@
         "",
         "12",
         "Internal brick partition 4.5 inch",
-        8.6,
+        43.0,
         "sqm",
         777
       ],
@@ -6762,7 +6790,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         109.4,
         "sqm",
-        1219
+        228
       ],
       [
         "7. FLOORING",
@@ -6800,7 +6828,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        19.0,
+        4.5,
         "set",
         10867
       ],
@@ -6826,7 +6854,7 @@
         "Exterior emulsion weather coat, two coats",
         118.1,
         "sqm",
-        132
+        147
       ]
     ],
     "payment": [
@@ -6856,7 +6884,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 2384566,
+    "boq_total": 1830279,
     "defects": []
   },
   {
@@ -6888,7 +6916,7 @@
         "Filling river sand below flooring 100 mm",
         21.6,
         "cum",
-        1343
+        1284
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -6896,7 +6924,7 @@
         "Plain cement concrete 1:4:8 under footings",
         16.9,
         "cum",
-        4768
+        5673
       ],
       [
         "",
@@ -6904,7 +6932,7 @@
         "Stone masonry foundation CM 1:6",
         49.0,
         "cum",
-        5227
+        4086
       ],
       [
         "",
@@ -6920,7 +6948,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         24.5,
         "sqm",
-        7569
+        340
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -6958,7 +6986,7 @@
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        17.6,
+        88.1,
         "sqm",
         775
       ],
@@ -6976,7 +7004,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         215.3,
         "sqm",
-        8805
+        261
       ],
       [
         "7. FLOORING",
@@ -7014,7 +7042,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        39.5,
+        9.3,
         "set",
         10884
       ],
@@ -7070,14 +7098,14 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 5702948,
+    "boq_total": 3370366,
     "defects": [
       {
         "type": "RATE_OUTLIER",
         "item": "11",
         "detail": "quoted 6254 against benchmark 5300 (+18%)",
         "planted_pct": 18,
-        "matched_keyword": "brick wall"
+        "matched_keyword": "external brick wall"
       },
       {
         "type": "FRONT_LOADED",
@@ -7128,7 +7156,7 @@
         "Plain cement concrete 1:4:8 under footings",
         12.3,
         "cum",
-        4414
+        5637
       ],
       [
         "",
@@ -7152,7 +7180,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         19.2,
         "sqm",
-        3083
+        314
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -7160,7 +7188,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         44.9,
         "cum",
-        4259
+        8067
       ],
       [
         "",
@@ -7190,7 +7218,7 @@
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        13.5,
+        67.3,
         "sqm",
         677
       ],
@@ -7200,7 +7228,7 @@
         "Inside wall plaster 12mm",
         287.8,
         "sqm",
-        4889
+        183
       ],
       [
         "",
@@ -7208,7 +7236,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         161.2,
         "sqm",
-        5373
+        246
       ],
       [
         "7. FLOORING",
@@ -7246,7 +7274,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        26.6,
+        6.3,
         "set",
         11674
       ],
@@ -7302,7 +7330,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 4499653,
+    "boq_total": 2251091,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -7360,7 +7388,7 @@
         "Lean concrete bed below foundation",
         8.4,
         "cum",
-        4279
+        5623
       ],
       [
         "",
@@ -7392,7 +7420,7 @@
         "M25 grade RCC — columns, beams, slab",
         29.0,
         "cum",
-        264
+        7483
       ],
       [
         "",
@@ -7400,7 +7428,7 @@
         "Stair case RCC M25 incl. steps",
         3.6,
         "cum",
-        7808
+        7903
       ],
       [
         "4. REINFORCEMENT",
@@ -7416,13 +7444,13 @@
         "Brickwork in CM 1:6 for external walls, 230mm",
         26.9,
         "cum",
-        5545
+        5444
       ],
       [
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        8.9,
+        44.6,
         "sqm",
         747
       ],
@@ -7478,7 +7506,7 @@
         "10. PLUMBING",
         "19",
         "Concealed CPVC plumbing lines with fittings",
-        20.0,
+        4.7,
         "set",
         11681
       ],
@@ -7534,14 +7562,14 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 1510061,
+    "boq_total": 1576275,
     "defects": [
       {
         "type": "RATE_OUTLIER",
         "item": "13",
         "detail": "quoted 247 against benchmark 180 (+37%)",
         "planted_pct": 37,
-        "matched_keyword": "internal plaster"
+        "matched_keyword": "internal plastering"
       },
       {
         "type": "FRONT_LOADED",
@@ -7576,7 +7604,7 @@
         "Back filling and ramming in layers",
         78.3,
         "cum",
-        2422
+        138
       ],
       [
         "",
@@ -7592,7 +7620,7 @@
         "Lean concrete bed below foundation",
         19.1,
         "cum",
-        6040
+        5803
       ],
       [
         "",
@@ -7600,7 +7628,7 @@
         "Random rubble masonry in cement mortar 1:6",
         55.2,
         "cum",
-        3615
+        3968
       ],
       [
         "",
@@ -7616,7 +7644,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         27.2,
         "sqm",
-        1932
+        308
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -7632,7 +7660,7 @@
         "Stair case RCC M25 incl. steps",
         7.6,
         "cum",
-        7914
+        8010
       ],
       [
         "4. REINFORCEMENT",
@@ -7654,7 +7682,7 @@
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        18.6,
+        93.1,
         "sqm",
         762
       ],
@@ -7664,7 +7692,7 @@
         "Internal cement plaster 12mm in CM 1:4",
         458.1,
         "sqm",
-        2481
+        175
       ],
       [
         "",
@@ -7672,7 +7700,7 @@
         "External cement plaster 18mm in CM 1:4, two coats",
         256.8,
         "sqm",
-        3606
+        238
       ],
       [
         "7. FLOORING",
@@ -7710,7 +7738,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        44.4,
+        10.5,
         "set",
         10813
       ],
@@ -7766,7 +7794,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 6363762,
+    "boq_total": 3925367,
     "defects": [
       {
         "type": "UNDERSPECIFIED",
@@ -7777,10 +7805,10 @@
   },
   {
     "boq_id": "SYN-1036",
-    "locality": "Bachupally",
+    "locality": "Uppal",
     "built_up_sqft": 2200,
-    "firm": "LAKSHMI CONSTRUCTIONS",
-    "client": "Mrs. P. Anjali",
+    "firm": "NAVYA INFRA",
+    "client": "Mr. S. Reddy",
     "items": [
       [
         "1. EARTHWORK",
@@ -7796,7 +7824,7 @@
         "Refilling excavated soil around foundation",
         69.5,
         "cum",
-        1125
+        134
       ],
       [
         "",
@@ -7804,159 +7832,159 @@
         "Sand bed under floor slab",
         21.2,
         "cum",
-        4410
+        1768
       ],
       [
         "2. FOUNDATION & PLINTH",
         "4",
-        "PCC 1:4:8 with 40mm aggregate below footings",
-        18.4,
+        "Plain cement concrete 1:4:8 under footings",
+        18.8,
         "cum",
-        6065
+        5325
       ],
       [
         "",
         "5",
         "Stone masonry foundation CM 1:6",
-        43.5,
+        46.8,
         "cum",
-        398
+        4265
       ],
       [
         "",
         "6",
         "RCC M20 for plinth beam incl. shuttering",
-        10.6,
+        10.4,
         "cum",
-        7950
+        8380
       ],
       [
         "",
         "7",
-        "Damp proof course 50 mm, CC 1:2:4",
-        25.7,
+        "DPC 50mm thick CC 1:2:4 over plinth",
+        27.8,
         "sqm",
-        3078
+        311
       ],
       [
         "3. RCC SUPERSTRUCTURE",
         "8",
         "RCC M25 for columns, beams and roof slab",
-        63.4,
+        57.8,
         "cum",
-        7815
+        7508
       ],
       [
         "",
         "9",
-        "Reinforced concrete M25 staircase waist slab",
-        7.0,
+        "RCC M25 for staircase and landing",
+        6.4,
         "cum",
-        7982
+        7933
       ],
       [
         "4. REINFORCEMENT",
         "10",
-        "TMT bars Fe500D, fabrication and placing",
-        6132.9,
+        "Steel reinforcement TMT Fe 500 incl. binding",
+        5699.1,
         "kg",
-        76
+        75
       ],
       [
         "5. MASONRY",
         "11",
-        "Burnt clay brick masonry 230 mm in CM 1:6",
-        56.4,
+        "External brick wall 9 inch, cement mortar 1:6",
+        55.2,
         "cum",
-        905
+        5745
       ],
       [
         "",
         "12",
         "Half brick partition wall 115 mm CM 1:4",
-        17.2,
+        94.0,
         "sqm",
-        754
+        679
       ],
       [
         "6. PLASTERING",
         "13",
-        "Inside wall plaster 12mm",
-        362.6,
+        "12 mm thick internal plastering CM 1:4",
+        382.2,
         "sqm",
-        5752
+        189
       ],
       [
         "",
         "14",
-        "18 mm external plastering, sponge finish",
-        207.1,
+        "Outside wall plaster 18mm two coats",
+        203.7,
         "sqm",
-        235
+        247
       ],
       [
         "7. FLOORING",
         "15",
-        "Vitrified tile flooring 600x600 incl. skirting",
-        187.0,
+        "Vitrified tiles 2x2 ft laid on cement bed",
+        184.3,
         "sqm",
-        1002
+        1030
       ],
       [
         "",
         "16",
-        "Toilet dado ceramic tiling",
-        50.4,
+        "Ceramic tile dado in toilets up to 7ft",
+        46.2,
         "sqm",
-        875
+        783
       ],
       [
         "8. WATERPROOFING",
         "17",
-        "APP membrane waterproofing to terrace slab",
-        117.6,
+        "Terrace and sunk waterproofing treatment",
+        128.3,
         "sqm",
-        609
+        661
       ],
       [
         "9. ELECTRICAL",
         "18",
-        "Concealed electrical wiring with copper conductor per point",
-        100.1,
+        "Internal concealed wiring, copper, per point",
+        92.4,
         "pt",
-        660
+        648
       ],
       [
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        36.3,
+        9.1,
         "set",
-        10298
+        10793
       ],
       [
         "11. ANTI-TERMITE",
         "20",
-        "Termite proofing to foundation trenches",
-        115.2,
+        "Anti-termite treatment to foundation and plinth",
+        119.7,
         "sqm",
-        1212
+        1492
       ],
       [
         "12. PAINTING",
         "21",
         "Interior painting, emulsion, over putty",
-        388.5,
+        366.1,
         "sqm",
-        141
+        128
       ],
       [
         "",
         "22",
-        "Exterior weatherproof paint two coats",
-        228.0,
+        "Outside weatherproof painting",
+        218.3,
         "sqm",
-        153
+        156
       ]
     ],
     "payment": [
@@ -7986,8 +8014,15 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 4678115,
+    "boq_total": 2612471,
     "defects": [
+      {
+        "type": "RATE_OUTLIER",
+        "item": "3",
+        "detail": "quoted 1768 against benchmark 1350 (+31%)",
+        "planted_pct": 31,
+        "matched_keyword": "sand bed under"
+      },
       {
         "type": "FRONT_LOADED",
         "item": "payment schedule",
@@ -8045,7 +8080,7 @@
         "Random rubble masonry in cement mortar 1:6",
         27.2,
         "cum",
-        7617
+        4259
       ],
       [
         "",
@@ -8061,7 +8096,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         15.6,
         "sqm",
-        8034
+        343
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -8093,13 +8128,13 @@
         "Burnt clay brick masonry 230 mm in CM 1:6",
         29.8,
         "cum",
-        8994
+        5776
       ],
       [
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        9.7,
+        48.3,
         "sqm",
         708
       ],
@@ -8117,7 +8152,7 @@
         "Outside wall plaster 18mm two coats",
         116.5,
         "sqm",
-        7790
+        256
       ],
       [
         "7. FLOORING",
@@ -8155,7 +8190,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        19.9,
+        4.7,
         "set",
         11157
       ],
@@ -8211,7 +8246,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 3191512,
+    "boq_total": 1864330,
     "defects": [
       {
         "type": "RATE_OUTLIER",
@@ -8264,7 +8299,7 @@
         "Plain cement concrete 1:4:8 under footings",
         9.6,
         "cum",
-        1001
+        5290
       ],
       [
         "",
@@ -8272,7 +8307,7 @@
         "Stone masonry foundation CM 1:6",
         24.4,
         "cum",
-        5756
+        4124
       ],
       [
         "",
@@ -8288,7 +8323,7 @@
         "Damp proof course 50 mm, CC 1:2:4",
         16.2,
         "sqm",
-        3649
+        318
       ],
       [
         "3. RCC SUPERSTRUCTURE",
@@ -8296,7 +8331,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         35.8,
         "cum",
-        804
+        7562
       ],
       [
         "",
@@ -8304,7 +8339,7 @@
         "Stair case RCC M25 incl. steps",
         3.7,
         "cum",
-        7700
+        7794
       ],
       [
         "4. REINFORCEMENT",
@@ -8326,7 +8361,7 @@
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        10.5,
+        52.3,
         "sqm",
         776
       ],
@@ -8382,7 +8417,7 @@
         "10. PLUMBING",
         "19",
         "Water supply piping CPVC, concealed",
-        21.0,
+        4.9,
         "set",
         10504
       ],
@@ -8438,7 +8473,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 1812239,
+    "boq_total": 1865237,
     "defects": []
   },
   {
@@ -8478,7 +8513,7 @@
         "Plain cement concrete 1:4:8 under footings",
         11.5,
         "cum",
-        5686
+        5767
       ],
       [
         "",
@@ -8486,7 +8521,7 @@
         "Random rubble masonry in cement mortar 1:6",
         30.6,
         "cum",
-        2632
+        3897
       ],
       [
         "",
@@ -8540,7 +8575,7 @@
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        10.7,
+        53.7,
         "sqm",
         703
       ],
@@ -8550,7 +8585,7 @@
         "Inside wall plaster 12mm",
         241.5,
         "sqm",
-        4355
+        181
       ],
       [
         "",
@@ -8558,7 +8593,7 @@
         "Outside wall plaster 18mm two coats",
         136.4,
         "sqm",
-        7598
+        255
       ],
       [
         "7. FLOORING",
@@ -8574,7 +8609,7 @@
         "Wall tiles in bathrooms up to 7 feet",
         29.4,
         "sqm",
-        7561
+        872
       ],
       [
         "8. WATERPROOFING",
@@ -8596,7 +8631,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        24.4,
+        5.7,
         "set",
         10888
       ],
@@ -8652,7 +8687,7 @@
       ]
     ],
     "gst_stated": true,
-    "boq_total": 4498130,
+    "boq_total": 2158131,
     "defects": [
       {
         "type": "RATE_OUTLIER",
@@ -8676,7 +8711,7 @@
         "Digging of foundation trenches, ordinary soil",
         87.9,
         "cum",
-        3455
+        249
       ],
       [
         "",
@@ -8684,7 +8719,7 @@
         "Refilling excavated soil around foundation",
         51.4,
         "cum",
-        2537
+        138
       ],
       [
         "",
@@ -8692,7 +8727,7 @@
         "Filling river sand below flooring 100 mm",
         17.4,
         "cum",
-        8240
+        1453
       ],
       [
         "2. FOUNDATION & PLINTH",
@@ -8708,7 +8743,7 @@
         "Random rubble masonry in cement mortar 1:6",
         39.3,
         "cum",
-        2330
+        3875
       ],
       [
         "",
@@ -8732,7 +8767,7 @@
         "Reinforced cement concrete M25 for slab and beams",
         47.6,
         "cum",
-        5299
+        8219
       ],
       [
         "",
@@ -8740,7 +8775,7 @@
         "Stair case RCC M25 incl. steps",
         5.4,
         "cum",
-        8705
+        8811
       ],
       [
         "4. REINFORCEMENT",
@@ -8762,7 +8797,7 @@
         "",
         "12",
         "Brickwork in CM 1:4 for internal partitions, 115mm",
-        14.5,
+        72.3,
         "sqm",
         713
       ],
@@ -8818,7 +8853,7 @@
         "10. PLUMBING",
         "19",
         "CPVC water supply lines concealed incl. fittings",
-        31.9,
+        7.5,
         "set",
         11570
       ],
@@ -8874,7 +8909,7 @@
       ]
     ],
     "gst_stated": false,
-    "boq_total": 3215332,
+    "boq_total": 2651308,
     "defects": [
       {
         "type": "GST_SILENT",
