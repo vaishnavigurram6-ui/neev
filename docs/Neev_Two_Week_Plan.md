@@ -306,9 +306,18 @@ state is saved in `.golden_runs/`; fix the parse layer and replay with
 ### Stage 4 — Generate and score the synthetic set · Day 2 · ₹0
 
 ```bash
-src/backend/.venv/bin/python scripts/synthetic_boqs.py generate --count 40
+# Manifest only -- deterministic, committed, and all `score` needs
+src/agents/.venv/bin/python scripts/synthetic_boqs.py generate --count 40
 src/agents/.venv/bin/python scripts/synthetic_boqs.py score
+
+# Optional: render the documents, if you want a second real PDF to upload
+src/agents/.venv/bin/pip install reportlab
+src/agents/.venv/bin/python scripts/synthetic_boqs.py generate --count 40 --pdf
 ```
+
+The PDFs are git-ignored on purpose: reportlab embeds a `CreationDate`, so their
+bytes churn on every run. `manifest.json` is the source of truth and is
+byte-identical across runs, so the score table is reproducible exactly.
 
 **Gate:** a precision/recall table you are willing to put in the submission.
 Widen `rate_benchmarks` synonyms and re-score until coverage stops embarrassing

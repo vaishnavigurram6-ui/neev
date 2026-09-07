@@ -345,10 +345,6 @@ def cmd_generate(args) -> int:
 
 def _write_pdfs(boqs: list[dict]) -> int:
     try:
-        from make_sample_boq import build_pdf  # noqa: F401
-    except ImportError:
-        pass
-    try:
         from reportlab.lib.pagesizes import A4  # noqa: F401
     except ImportError:
         print("  reportlab not installed — skipping PDFs (pip install reportlab)", file=sys.stderr)
