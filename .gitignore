@@ -36,8 +36,7 @@ _to_delete/
 # Editor swap files.
 *.sw[a-p]
 
-# Synthetic BoQ PDFs. Regenerate with `scripts/synthetic_boqs.py generate --pdf`
-# (needs reportlab). Not committed: reportlab embeds a CreationDate, so the
-# bytes churn on every run. manifest.json IS deterministic and is the source of
-# truth -- scoring reads it and needs no PDFs at all.
-fixtures/synthetic/*.pdf
+# Synthetic BoQ PDFs ARE committed (owner's call, 2026-09-07), so Cloud Shell
+# and a judge get the documents without installing reportlab. Safe to track
+# because scripts/synthetic_boqs.py sets rl_config.invariant, which fixes the
+# CreationDate and document id -- regenerating produces identical bytes.

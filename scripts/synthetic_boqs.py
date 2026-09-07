@@ -366,6 +366,13 @@ def _write_pdfs(boqs: list[dict]) -> int:
         print("  reportlab not installed — skipping PDFs (pip install reportlab)", file=sys.stderr)
         return 0
 
+    # Deterministic output: reportlab otherwise stamps a CreationDate and a
+    # random document id into every file, so regenerating 40 committed PDFs
+    # would churn all 40 for no content change. `invariant` fixes both.
+    from reportlab import rl_config
+
+    rl_config.invariant = 1
+
     import boq_data
 
     written = 0
