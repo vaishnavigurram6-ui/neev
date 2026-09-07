@@ -140,3 +140,32 @@ async def test_a_failing_run_still_terminates_the_stream(monkeypatch):
     assert isinstance(events[-1], DoneEvent)
     assert job.status == "error"
     assert "exploded" in (job.error or "")
+
+
+def test_each_runner_declares_the_provenance_its_runs_are_filed_under():
+    """pipeline_mode is the only provenance a stored revision carries.
+
+    Hardcoding "fixture" was harmless while the live runner returned no output.
+    Now that it returns a parsed PipelineOutput, a live run would be filed as a
+    fixture one -- and nothing downstream could tell a real analysis from a
+    replay. The runner carries it so that get_runner() stays the only place in
+    the codebase that reads NEEV_MODE.
+    """
+    from app.services.fixture_runner import FixtureRunner
+    from app.services.live_runner import AdkPipelineRunner
+
+    assert FixtureRunner().mode == "fixture"
+    assert AdkPipelineRunner().mode == "live"
+
+
+def test_no_service_but_the_runner_factory_reads_the_mode():
+    """The invariant CLAUDE.md calls load-bearing, enforced instead of trusted."""
+    import pathlib
+
+    services = pathlib.Path(__file__).resolve().parents[1] / "app" / "services"
+    readers = sorted(
+        path.name
+        for path in services.glob("*.py")
+        if "neev_mode" in path.read_text(encoding="utf-8")
+    )
+    assert readers == ["runner.py"]

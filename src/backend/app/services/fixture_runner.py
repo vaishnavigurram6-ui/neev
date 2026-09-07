@@ -15,6 +15,8 @@ from app.services.runner import BoqAnalysisRequest
 
 
 class FixtureRunner:
+    mode = "fixture"
+
     def __init__(self, step_delay_s: float = 0.9) -> None:
         # Pacing only. Set to 0 in tests so the suite stays instant.
         self.step_delay_s = step_delay_s

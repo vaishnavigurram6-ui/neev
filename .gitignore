@@ -27,3 +27,11 @@ _to_delete/
 
 # Batch agent worktrees — branches live on the remote, these are scratch
 .claude/worktrees/
+
+# Raw captured pipeline runs. Saved before parsing so a billed run survives a
+# validation failure (scripts/record_golden_run.py --from-raw). May hold model
+# output verbatim, so it stays local.
+.golden_runs/
+
+# Editor swap files.
+*.sw[a-p]

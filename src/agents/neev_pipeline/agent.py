@@ -61,7 +61,14 @@ cost_estimation_agent = Agent(
         "completed_value_estimate (median market ₹/sqft x built-up area). "
         "Report sanction_gap = sanctioned_amount - expected_total_cost when the "
         "sanctioned amount is provided. Use only tool-returned numbers.\n"
-        "Output JSON: {expected_total_cost, completed_value_estimate, sanction_gap}."
+        "Then account for WHERE the gap comes from, as `sections`: one entry per "
+        "work section that differs, {name, quoted, market, delta}, delta = "
+        "quoted - market. A negative delta means the BoQ is under-provisioned "
+        "for that section. Cover only sections you can source from "
+        "{boq_findings} or the tool — omit the array rather than estimate one, "
+        "and never let the entries contradict expected_total_cost.\n"
+        "Output JSON: {expected_total_cost, completed_value_estimate, "
+        "sanction_gap, sections}."
     ),
     tools=[estimate_construction_cost],
     output_key="cost_estimate",

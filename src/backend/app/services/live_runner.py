@@ -19,6 +19,7 @@ from typing import AsyncIterator
 from app.core.settings import assert_billed_calls_permitted
 from app.schemas.events import DoneEvent, PhaseEvent, PipelineEvent
 from app.schemas.pipeline import PipelineOutput
+from app.services.pipeline_parse import parse_state
 from app.services.runner import BoqAnalysisRequest
 
 # Which display phase each ADK tool call advances (spec §5.2).
@@ -41,6 +42,14 @@ PHASE_NAMES: list[str] = [
 
 class AdkPipelineRunner:
     """Drives the real five-agent SequentialAgent through an InMemoryRunner."""
+
+    mode = "live"
+
+    def __init__(self) -> None:
+        # Set once run() completes; read by final_output(). One runner instance
+        # serves one analysis, which is how JobRegistry uses it.
+        self._last_state: dict | None = None
+        self.last_parse_errors: dict[str, str] = {}
 
     async def run(self, req: BoqAnalysisRequest) -> AsyncIterator[PipelineEvent]:
         assert_billed_calls_permitted()
@@ -95,6 +104,15 @@ class AdkPipelineRunner:
                 started.add(phase)
                 yield PhaseEvent(index=phase, status="running", name=PHASE_NAMES[phase])
 
+        # Read the session back before yielding the terminal event: _drive()
+        # calls final_output() as soon as run() is exhausted, so the state has
+        # to be in hand by then.
+        self._last_state = (
+            await runner.session_service.get_session(
+                app_name="neev", user_id=session.user_id, session_id=session.id
+            )
+        ).state
+
         # Settle every phase still open, the last one included.
         for index in range(len(PHASE_NAMES)):
             if index not in finished:
@@ -104,15 +122,25 @@ class AdkPipelineRunner:
         yield DoneEvent(redirect=f"/owner/loans/{req.loan_id}/boq")
 
     def final_output(self, req: BoqAnalysisRequest) -> PipelineOutput | None:
-        """Not yet implemented — returns None, so nothing is persisted.
+        """The run's five output_key values, parsed into a PipelineOutput.
 
-        The five output_key values live in the ADK session state as raw model
-        TEXT, not dicts (golden_run.py verifies them by substring matching). So
-        this needs the parse-and-validate layer with a repair path that spec
-        §4.3 describes and §4.4a deferred. Until that exists, returning None is
-        the honest answer: better to store nothing than to store a guess.
+        The values live in ADK session state as raw model TEXT, not dicts, so
+        they go through app.services.pipeline_parse — the same layer
+        scripts/record_golden_run.py uses, which is what keeps a live run and a
+        recorded one from drifting apart.
+
+        None when anything required failed to parse: better to store nothing
+        than to store a guess. The failure is kept on `last_parse_errors` so the
+        caller can log which output_key was at fault rather than a bare None.
         """
-        return None
+        state = self._last_state
+        if state is None:
+            self.last_parse_errors = {"session": "no run has completed"}
+            return None
+
+        result = parse_state(state)
+        self.last_parse_errors = result.errors
+        return result.output
 
 
 def _tool_calls(event: object) -> list[str]:

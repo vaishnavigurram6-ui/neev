@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# Deploy Neev to Cloud Run: backend first, then the frontend pointed at it.
+#
+# Run this yourself -- it calls `gcloud`, which the CLAUDE.md dry-run rules keep
+# out of agent hands. Nothing here bills Gemini or BigQuery: both services
+# deploy in NEEV_MODE=fixture, serving whatever is in
+# src/backend/app/fixtures/. Capture real runs first (see
+# scripts/record_golden_run.py) and the deployed app serves real figures.
+#
+#   bash scripts/deploy_cloudrun.sh
+#
+# Prerequisites, once per project:
+#   gcloud auth login
+#   gcloud config set project buildguard-ai-2026
+#   gcloud services enable run.googleapis.com cloudbuild.googleapis.com \
+#       artifactregistry.googleapis.com
+set -euo pipefail
+
+PROJECT="${GOOGLE_CLOUD_PROJECT:-buildguard-ai-2026}"
+REGION="${REGION:-asia-south1}"
+BACKEND="${BACKEND_SERVICE:-neev-api}"
+FRONTEND="${FRONTEND_SERVICE:-neev-web}"
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+echo "Project : $PROJECT"
+echo "Region  : $REGION"
+echo
+
+# --- backend -----------------------------------------------------------------
+# Context is the repo root, because the image needs both src/backend/ and
+# fixtures/ (the seed reads fixtures/draw_schedule.csv via a repo-root path).
+# `gcloud run deploy --source` builds with the Dockerfile at the root of the
+# context, which is why ./Dockerfile is the backend's and the frontend keeps its
+# own under src/frontend/.
+#
+# min/max-instances=1 is not a cost tweak, it is a correctness requirement:
+# SQLite lives on the instance's own disk, so two instances would serve two
+# different databases and a decision written on one would be invisible to the
+# other. One instance, seeded at start.
+echo "==> Building and deploying $BACKEND"
+gcloud run deploy "$BACKEND" \
+  --project "$PROJECT" \
+  --region "$REGION" \
+  --source . \
+  --allow-unauthenticated \
+  --min-instances 1 \
+  --max-instances 1 \
+  --memory 1Gi \
+  --timeout 300 \
+  --set-env-vars NEEV_MODE=fixture
+
+API_URL="$(gcloud run services describe "$BACKEND" \
+  --project "$PROJECT" --region "$REGION" --format='value(status.url)')"
+echo "Backend URL: $API_URL"
+
+# Fail here rather than deploying a frontend pointed at a broken API.
+echo "==> Checking $API_URL/api/health"
+curl -fsS "$API_URL/api/health" && echo
+
+# --- frontend ----------------------------------------------------------------
+# NEEV_API_BASE is server-side only: lib/api.ts imports 'server-only' and the
+# variable has no NEXT_PUBLIC_ prefix, so the browser never learns the backend's
+# address and every call is a server-to-server hop inside Cloud Run. That is
+# also why no CORS configuration is needed.
+echo "==> Building and deploying $FRONTEND"
+gcloud run deploy "$FRONTEND" \
+  --project "$PROJECT" \
+  --region "$REGION" \
+  --source src/frontend \
+  --allow-unauthenticated \
+  --min-instances 0 \
+  --memory 1Gi \
+  --set-env-vars "NEEV_API_BASE=$API_URL"
+
+WEB_URL="$(gcloud run services describe "$FRONTEND" \
+  --project "$PROJECT" --region "$REGION" --format='value(status.url)')"
+
+echo
+echo "──────────────────────────────────────────────────────────────"
+echo "  Neev is live:  $WEB_URL"
+echo "  API:           $API_URL"
+echo "──────────────────────────────────────────────────────────────"
+echo
+echo "Sign in with any 10-digit number. 'Home owner' lands on loan 1001;"
+echo "'Bank officer' opens the portfolio. Auth is a demo session, not a"
+echo "credential -- see src/backend/app/api/deps.py."

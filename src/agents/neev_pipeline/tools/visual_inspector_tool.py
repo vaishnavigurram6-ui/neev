@@ -9,7 +9,18 @@ from google import genai
 
 from ..config import GEMINI_MODEL
 
-client = genai.Client()  # reads GOOGLE_API_KEY from environment / .env
+# Lazy, like the BigQuery clients in the sibling tools. At module scope this
+# constructed a Gemini client on import, so `import neev_pipeline.agent` died
+# without a key -- which is exactly what the backend's live runner does, and
+# what scripts/record_golden_run.py does before it has read its arguments.
+_genai = None
+
+
+def _client():
+    global _genai
+    if _genai is None:
+        _genai = genai.Client()  # reads GOOGLE_API_KEY from environment / .env
+    return _genai
 
 # Observable, checkable milestones per stage — grounds the model in specifics
 # instead of asking it to guess a free-form percentage.
@@ -108,8 +119,8 @@ Respond ONLY in JSON:
 }}
 """
 
-    image_files = [client.files.upload(file=p) for p in image_paths]
-    response = client.models.generate_content(
+    image_files = [_client().files.upload(file=p) for p in image_paths]
+    response = _client().models.generate_content(
         model=GEMINI_MODEL,
         contents=[prompt, *image_files],
     )
