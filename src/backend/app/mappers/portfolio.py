@@ -31,10 +31,10 @@ ACTION_TONE = {
 def to_portfolio(loans: list[models.Loan]) -> PortfolioView:
     ordered = sorted(loans, key=lambda loan: loan.hotlist_rank)
 
-    hold = [loan for loan in ordered if loan.recommendation == "HOLD"]
+    hold = [loan for loan in ordered if loan.recommendation in {"HOLD", "ESCALATE", "INSPECT"}]
     capital_at_risk = -sum(
         loan.cost_to_complete_gap
-        for loan in hold
+        for loan in ordered
         if loan.cost_to_complete_gap and loan.cost_to_complete_gap < 0
     )
 
@@ -50,22 +50,22 @@ def to_portfolio(loans: list[models.Loan]) -> PortfolioView:
             label="NEEDS ACTION",
             value=len(hold),
             value_kind="count",
-            sub="Paid ahead of verified progress",
+            sub="Hold, escalation or inspection required",
             tone="danger",
         ),
         StatCardView(
-            label="CAPITAL AT RISK",
+            label="COMPLETION FUNDING SHORTFALL",
             value=capital_at_risk,
             value_kind="money",
-            sub=f"Disbursed beyond value in place, {len(hold)} loans",
+            sub="Sum of negative cost-to-complete gaps; not over-disbursement",
             tone="danger",
         ),
         StatCardView(
             label="SITE VISITS SAVED",
-            value="22 of 34",
+            value="Not measured",
             value_kind="text",
-            sub="Fast-tracked where photos, BoQ and draws agree",
-            tone="success",
+            sub="No visit-savings audit has been recorded",
+            tone="neutral",
         ),
     ]
 

@@ -8,11 +8,16 @@ stops pre-formatted money entering the API (spec 5.1a).
 from datetime import date
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel as PydanticBaseModel, ConfigDict, Field
 
 from app.schemas.pipeline import Tone
 
 ValueKind = Literal["money", "money_compact", "count", "pct", "ratio", "text"]
+
+
+class BaseModel(PydanticBaseModel):
+    # Response serialization includes defaults. Tell OpenAPI the actual wire shape.
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)
 
 
 class StatCardView(BaseModel):
@@ -57,6 +62,8 @@ class PaymentStageView(BaseModel):
 
 class BoqReviewView(BaseModel):
     loan_id: str
+    analysis_mode: str = "unknown"
+    provenance: dict[str, str] = Field(default_factory=dict)
     borrower: str
     contractor: str | None
     received_on: date | None
@@ -101,6 +108,7 @@ class SanctionOptionView(BaseModel):
 
 class SanctionCheckView(BaseModel):
     loan_id: str
+    provenance: dict[str, str] = Field(default_factory=dict)
     bars: list[SanctionBarView]
     shortfall: float
     sections: list[SanctionSectionView]

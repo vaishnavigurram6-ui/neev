@@ -86,6 +86,7 @@ class BoqRevision(Base):
     # Pipeline provenance, unused by any screen. Stored so a live run has a home.
     pipeline_mode: Mapped[str] = mapped_column(String(16), default="fixture")
     raw_output: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source_artifact: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     loan: Mapped[Loan] = relationship(back_populates="revisions")
     line_items: Mapped[list["LineItem"]] = relationship(
@@ -94,6 +95,7 @@ class BoqRevision(Base):
     flags: Mapped[list["Flag"]] = relationship(
         back_populates="revision", cascade="all, delete-orphan"
     )
+    questions: Mapped[list["Question"]] = relationship(back_populates="revision")
 
 
 class LineItem(Base):
@@ -138,6 +140,7 @@ class Question(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     loan_id: Mapped[str] = mapped_column(ForeignKey("loans.id"))
+    revision_id: Mapped[int | None] = mapped_column(ForeignKey("boq_revisions.id"), nullable=True)
     number: Mapped[int] = mapped_column(Integer)
     text: Mapped[str] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(16), default="draft")  # draft|sent|replied
@@ -145,6 +148,7 @@ class Question(Base):
     reply: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     loan: Mapped[Loan] = relationship(back_populates="questions")
+    revision: Mapped[BoqRevision | None] = relationship(back_populates="questions")
 
 
 class Tranche(Base):
@@ -159,6 +163,8 @@ class Tranche(Base):
     status: Mapped[str] = mapped_column(String(16), default="upcoming")  # paid|on_hold|upcoming
     inspection_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     observed_stage: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    claimed_stage: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    assessment_revision_id: Mapped[int | None] = mapped_column(ForeignKey("boq_revisions.id"), nullable=True)
 
     # Pipeline fields. Not all are shown; all are stored.
     verified_value: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -227,3 +233,16 @@ class Decision(Base):
     evidence_snapshot: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     tranche: Mapped[Tranche] = relationship(back_populates="decision")
+
+
+class DecisionEvent(Base):
+    """Append-only audit trail. Decision remains the latest-state projection."""
+    __tablename__ = "decision_events"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    tranche_id: Mapped[int] = mapped_column(ForeignKey("tranches.id"))
+    idempotency_key: Mapped[str] = mapped_column(String(200), unique=True)
+    action: Mapped[str] = mapped_column(String(16))
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    decided_by: Mapped[str] = mapped_column(String(120))
+    decided_at: Mapped[datetime] = mapped_column(DateTime)
+    evidence_snapshot: Mapped[str] = mapped_column(Text)

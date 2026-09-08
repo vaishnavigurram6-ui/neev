@@ -19,6 +19,7 @@ from app.api.deps import (
     encode_cookie,
 )
 from app.db import models
+from app.core.settings import get_settings
 
 router = APIRouter(prefix="/api", tags=["auth"])
 
@@ -62,6 +63,8 @@ def owner_sub(loan: models.Loan | None) -> str:
 
 @router.post("/auth/session", response_model=LoginResponse)
 def create_session(body: LoginRequest, response: Response, db: DbSession) -> LoginResponse:
+    if not get_settings().neev_demo_auth:
+        raise HTTPException(403, "Demo sign-in is disabled. A verified identity provider is required.")
     if body.role == "bank":
         loan_id, name = BANK_LOAN_SLOT, BANK_NAME
     else:

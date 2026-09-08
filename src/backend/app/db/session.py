@@ -45,6 +45,8 @@ def init_db() -> None:
     from app.db.models import Base
 
     Base.metadata.create_all(bind=engine)
+    from app.db.migrations import upgrade
+    upgrade(engine)
 
 
 def get_session() -> Iterator[Session]:

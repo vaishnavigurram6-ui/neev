@@ -15,6 +15,8 @@ from app.api.deps import AuthorizedLoan, DbSession
 from app.db import models
 from app.mappers.loan import to_build_progress, to_loan_summary
 from app.schemas.views import BuildProgressView, LoanSummaryView
+from app.services.artifacts import read_upload, store_artifact
+from typing import Literal
 
 router = APIRouter(prefix="/api/loans", tags=["loans"])
 
@@ -46,13 +48,15 @@ def send_questions(loan: AuthorizedLoan, db: DbSession) -> QuestionsSentResponse
     contractor — the number the screen says it sent, both times.
     """
     now = datetime.now(timezone.utc).replace(tzinfo=None)
-    for question in loan.questions:
+    revision = max(loan.revisions, key=lambda r: r.rev, default=None)
+    questions = revision.questions if revision else []
+    for question in questions:
         if question.status == "draft":
             question.status = "sent"
             question.sent_at = now
     db.commit()
     return QuestionsSentResponse(
-        sent=sum(1 for q in loan.questions if q.status in ("sent", "replied"))
+        sent=sum(1 for q in questions if q.status in ("sent", "replied"))
     )
 
 
@@ -66,7 +70,7 @@ async def report_milestone(
     loan: AuthorizedLoan,
     db: DbSession,
     photos: list[UploadFile],
-    stage: str | None = Form(default=None),
+    stage: Literal["foundation", "plinth", "slab", "brickwork_roof", "finishing"] | None = Form(default=None),
     note: str | None = Form(default=None),
 ) -> MilestoneResponse:
     """A borrower reporting progress: a stage, some photos, an optional note.
@@ -81,14 +85,15 @@ async def report_milestone(
     record cannot afford.
     """
     uploaded = [photo for photo in photos if photo.filename]
-    if not uploaded:
+    if not uploaded or len(uploaded) > 6:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Reporting a milestone needs at least one photo.",
+            detail="Reporting a milestone needs 1 to 6 photos.",
         )
 
     tranche = _current_tranche(loan)
-    for photo in uploaded:
+    validated = [(photo, await read_upload(photo, image_only=True)) for photo in uploaded]
+    for photo, (data, _mime) in validated:
         db.add(
             models.Photo(
                 tranche_id=tranche.id,
@@ -100,12 +105,15 @@ async def report_milestone(
                 caption=note or photo.filename,
                 # No blob store in this phase. The row records that a photo
                 # arrived and under which slot; the bytes are not kept.
-                stored_path=None,
+                stored_path=store_artifact(data),
                 taken_at=None,
             )
         )
     if stage:
-        tranche.observed_stage = stage
+        tranche.claimed_stage = stage
+    tranche.needs_human_review = True
+    tranche.recommendation = "ESCALATE"
+    loan.recommendation = "ESCALATE"
     db.commit()
     return MilestoneResponse(tranche=tranche.number, photos=len(uploaded))
 

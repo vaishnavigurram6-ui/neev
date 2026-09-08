@@ -275,6 +275,7 @@ def parse_state(state: dict, *, base: dict | None = None) -> ParseResult:
     """
     base = base or {}
     result = ParseResult()
+    provenance = {}
 
     for key in OUTPUT_KEY_MODELS:
         raw = state.get(key)
@@ -307,10 +308,16 @@ def parse_state(state: dict, *, base: dict | None = None) -> ParseResult:
         # this allow-list exists to preserve.
         captured = {k: v for k, v in captured.items() if k not in unspoken}
         result.parsed[key] = {**carried, **captured}
+        provenance[key] = "captured"
+        for field_name in carried:
+            provenance[f"{key}.{field_name}"] = "authored fallback"
 
     for key in UNOWNED_KEYS:
         if key in base:
             result.parsed[key] = base[key]
+            provenance[key] = "authored fallback"
+
+    result.parsed["provenance"] = provenance
 
     if not result.errors:
         try:

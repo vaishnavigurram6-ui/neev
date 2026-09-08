@@ -31,6 +31,11 @@ OWNER_LOGIN = {"role": "owner", "phone": "9999999999", "loan_id": "1001"}
 BANK_LOGIN = {"role": "bank", "phone": "9812345678"}
 
 
+@pytest.fixture(autouse=True)
+def _authenticated_reads(client):
+    _login(client, BANK_LOGIN)
+
+
 def _login(client, payload=None):
     response = client.post("/api/auth/session", json=payload or OWNER_LOGIN)
     assert response.status_code == 200, response.text
@@ -48,12 +53,13 @@ def test_posting_a_session_sets_the_cookie_the_frontend_parses(client):
     # The frontend's readSession() splits on ":" — role:loanId:name. Keeping
     # this exact shape is what lets Next.js middleware read the session.
     raw = client.cookies["neev_session"]
-    role, loan_id, name = raw.split(":")
+    role, loan_id, name = raw.split(":")[:3]
     assert (role, loan_id) == ("owner", "1001")
     assert name == "Ravi%20Kumar"
 
 
 def test_me_is_401_without_a_session(client):
+    client.cookies.clear()
     assert client.get("/api/me").status_code == 401
 
 
@@ -80,6 +86,7 @@ def test_deleting_the_session_clears_it(client):
 
 
 def test_a_malformed_cookie_is_no_session_not_a_crash(client):
+    client.cookies.clear()
     client.cookies.set("neev_session", "wizard:1001:Ravi")
     assert client.get("/api/me").status_code == 401
 
@@ -92,8 +99,9 @@ def test_a_bad_phone_is_rejected(client):
 def test_a_forged_name_in_the_cookie_does_not_become_the_borrowers(client):
     # The cookie is client input. /api/me answers from the loan record, so a
     # doctored cookie cannot make the console greet someone else's name.
+    client.cookies.clear()
     client.cookies.set("neev_session", "owner:1001:Mallory")
-    assert client.get("/api/me").json()["name"] == "Ravi Kumar"
+    assert client.get("/api/me").status_code == 401
 
 
 def test_an_owner_session_for_an_unknown_loan_is_rejected(client):
@@ -269,9 +277,10 @@ def test_progress_for_an_unknown_loan_is_404(client):
 
 
 def test_reporting_a_milestone_stores_the_photos(client):
+    from tests.test_review_lifecycle import image_bytes
     files = [
-        ("photos", ("front.jpg", b"\xff\xd8\xff-not-really-a-jpeg", "image/jpeg")),
-        ("photos", ("slab.jpg", b"\xff\xd8\xff-nor-is-this", "image/jpeg")),
+        ("photos", ("front.png", image_bytes(), "image/png")),
+        ("photos", ("slab.png", image_bytes(), "image/png")),
     ]
     response = client.post("/api/loans/1001/milestones", files=files, data={"stage": "slab"})
     assert response.status_code == 200, response.text
@@ -306,7 +315,7 @@ def _sse_events(client, job_id):
 def test_uploading_a_boq_returns_a_job_whose_stream_ends_in_done(client, instant_pipeline):
     response = client.post(
         "/api/loans/1001/boq",
-        files={"file": ("sample_boq.pdf", b"%PDF-1.4 pretend", "application/pdf")},
+        files={"file": ("sample_boq.pdf", b"%PDF-1.4 test\n%%EOF", "application/pdf")},
     )
     assert response.status_code == 200, response.text
     job_id = response.json()["job_id"]
@@ -323,7 +332,7 @@ def test_uploading_a_boq_returns_a_job_whose_stream_ends_in_done(client, instant
 def test_uploading_to_an_unknown_loan_is_404(client, instant_pipeline):
     response = client.post(
         "/api/loans/9999/boq",
-        files={"file": ("sample_boq.pdf", b"%PDF-1.4 pretend", "application/pdf")},
+        files={"file": ("sample_boq.pdf", b"%PDF-1.4 test\n%%EOF", "application/pdf")},
     )
     assert response.status_code == 404
 
@@ -347,16 +356,16 @@ def test_a_crashed_run_emits_an_error_event_before_done(client, monkeypatch):
 
     job_id = client.post(
         "/api/loans/1001/boq",
-        files={"file": ("sample_boq.pdf", b"%PDF-1.4 pretend", "application/pdf")},
+        files={"file": ("sample_boq.pdf", b"%PDF-1.4 test\n%%EOF", "application/pdf")},
     ).json()["job_id"]
 
     events = _sse_events(client, job_id)
     assert [event["type"] for event in events] == ["error", "done"]
-    assert "exploded" in events[0]["message"]
+    assert "RuntimeError" in events[0]["message"]
 
     status = client.get(f"/api/jobs/{job_id}").json()
     assert status["status"] == "error"
-    assert "exploded" in status["error"]
+    assert "RuntimeError" in status["error"]
 
 
 def test_job_status_for_an_unknown_job_is_404(client):

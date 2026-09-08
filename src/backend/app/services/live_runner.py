@@ -14,6 +14,7 @@ screen's five phases are all sub-steps inside boq_analyst — they are NOT the f
 agents, contrary to the handoff README. The tool-call -> phase map is spec §5.2.
 """
 
+import json
 from typing import AsyncIterator
 
 from app.core.settings import assert_billed_calls_permitted
@@ -24,6 +25,8 @@ from app.services.runner import BoqAnalysisRequest
 
 # Which display phase each ADK tool call advances (spec §5.2).
 TOOL_TO_PHASE: dict[str, int] = {
+    "lookup_benchmark_rates": 1,
+    "check_rate_deviations": 1,
     "lookup_benchmark_rate": 1,
     "check_rate_deviation": 1,
     "check_missing_scope": 2,
@@ -53,9 +56,12 @@ class AdkPipelineRunner:
 
     async def run(self, req: BoqAnalysisRequest) -> AsyncIterator[PipelineEvent]:
         assert_billed_calls_permitted()
+        from app.services.artifacts import read_artifact
+        if not req.artifact_path:
+            raise ValueError("Live analysis requires a stored BoQ artifact.")
+        document = read_artifact(req.artifact_path)
 
-        # Imported here, not at module scope: the backend venv has no ADK, and
-        # importing neev_pipeline constructs a Gemini client at module load.
+        # Imported here, not at module scope: the fixture backend has no ADK.
         from google.adk.runners import InMemoryRunner  # noqa: PLC0415
         from google.genai import types  # noqa: PLC0415
         from neev_pipeline.agent import root_agent  # noqa: PLC0415
@@ -73,11 +79,25 @@ class AdkPipelineRunner:
                         f"Analyse the attached Bill of Quantities for loan {req.loan_id}. "
                         f"Location: {req.locality}. "
                         f"Built-up area: {req.built_up_sqft} sqft. "
-                        f"Sanctioned amount: {req.sanctioned}."
+                        f"Sanctioned amount: {req.sanctioned}. "
+                        f"Disbursed cumulative: {req.disbursed}. "
+                        f"Requested amount: {req.requested_amount}. "
+                        f"Claimed stage: {req.claimed_stage}. "
+                        f"Site photo paths for verify_construction_stage: {json.dumps(req.photo_paths)}. "
+                        "No site photos means inspection is not_assessed and human review is required."
                     )
-                )
+                ),
+                types.Part.from_bytes(data=document, mime_type=req.content_type),
             ],
         )
+        # Site evidence paths are server-generated references, never user paths.
+        from io import BytesIO
+        from PIL import Image
+        for reference in req.photo_paths:
+            data = read_artifact(reference)
+            with Image.open(BytesIO(data)) as image:
+                mime = Image.MIME[image.format]
+            message.parts.append(types.Part.from_bytes(data=data, mime_type=mime))
 
         # Started and finished are tracked separately. Conflating them marks a
         # phase finished the moment it starts, which leaves the last phase

@@ -16,6 +16,12 @@
 #       artifactregistry.googleapis.com
 set -euo pipefail
 
+if [ "${NEEV_DEPLOY_SANDBOX:-0}" != "1" ]; then
+  echo "Refusing deployment: this build has demo login and ephemeral data only."
+  echo "After owner approval, explicitly set NEEV_DEPLOY_SANDBOX=1 for synthetic-data demos."
+  exit 1
+fi
+
 PROJECT="${GOOGLE_CLOUD_PROJECT:-buildguard-ai-2026}"
 REGION="${REGION:-asia-south1}"
 BACKEND="${BACKEND_SERVICE:-neev-api}"
@@ -55,7 +61,7 @@ gcloud run deploy "$BACKEND" \
   --max-instances 1 \
   --memory 1Gi \
   --timeout 300 \
-  --set-env-vars NEEV_MODE=fixture
+  --set-env-vars NEEV_MODE=fixture,NEEV_DEMO_AUTH=true
 
 API_URL="$(gcloud run services describe "$BACKEND" \
   --project "$PROJECT" --region "$REGION" --format='value(status.url)')"

@@ -88,7 +88,7 @@ DEFAULT_RISK_TRANCHE = 3
 
 def _tables_in_delete_order() -> list:
     return [
-        models.Decision, models.Photo, models.Tranche, models.Flag, models.LineItem,
+        models.DecisionEvent, models.Decision, models.Photo, models.Tranche, models.Flag, models.LineItem,
         models.Question, models.ChangeOrder, models.BoqRevision, models.Loan, models.Contractor,
     ]
 
@@ -249,7 +249,8 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
             ],
             start=1,
         ):
-            db.add(models.Question(loan_id=loan_id, number=number, text=text, status="draft"))
+            db.add(models.Question(loan_id=loan_id, revision_id=revision.id,
+                                  number=number, text=text, status="draft"))
 
     risk = output.risk_assessment
     inspection = output.inspection_result

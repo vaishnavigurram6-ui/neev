@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session
 
 from app.db import models
 from app.schemas.pipeline import PipelineOutput
+from app.services.runner import BoqAnalysisRequest
 
 # Which BoQ Review group each flag belongs under.
 #
@@ -57,6 +58,7 @@ def store_revision(
     *,
     source_filename: str | None = None,
     mode: str = "fixture",
+    request: BoqAnalysisRequest | None = None,
 ) -> models.BoqRevision:
     """Append a new revision for `loan_id` carrying `output`.
 
@@ -64,6 +66,9 @@ def store_revision(
     which is what the Rev 1 / Rev 2 routes expect.
     """
     findings = output.boq_findings
+    loan = db.get(models.Loan, loan_id)
+    if loan is None:
+        raise ValueError("Analysis loan does not exist.")
 
     next_rev = (
         db.scalar(
@@ -84,6 +89,7 @@ def store_revision(
         item_count=len(findings.line_items),
         pipeline_mode=mode,
         raw_output=output.model_dump_json(),
+        source_artifact=request.artifact_path if request else None,
     )
     db.add(revision)
     db.flush()
@@ -120,6 +126,36 @@ def store_revision(
                 expected_amount=flag.expected_amount,
             )
         )
+
+    questions = list(dict.fromkeys(f.question for f in findings.flags if f.question.strip()))
+    for number, text in enumerate(questions, 1):
+        db.add(models.Question(loan_id=loan_id, revision_id=revision.id,
+                              number=number, text=text, status="draft"))
+
+    # A result updates only the tranche named by its request. Never infer which
+    # draw was assessed from an unrelated latest revision or the highest number.
+    tranche = next((t for t in loan.tranches
+                    if request and t.number == request.tranche_number), None)
+    risk, inspection = output.risk_assessment, output.inspection_result
+    if tranche is not None:
+        tranche.assessment_revision_id = revision.id
+        tranche.owner_view = output.explanation.owner_view
+        tranche.officer_view = output.explanation.officer_view
+        tranche.needs_human_review = inspection.needs_human_review if inspection else True
+        tranche.confidence = inspection.confidence if inspection else None
+        tranche.observed_stage = inspection.stage if inspection else None
+        tranche.recommendation = risk.recommendation if risk else "ESCALATE"
+        tranche.verified_value = int(risk.verified_value) if risk else None
+        tranche.exposure_ratio = risk.exposure_ratio if risk else None
+        tranche.exposure_undefined = risk.exposure_undefined if risk else True
+        tranche.cost_to_complete = int(risk.cost_to_complete) if risk and risk.cost_to_complete is not None else None
+        tranche.cost_to_complete_gap = int(risk.cost_to_complete_gap) if risk else None
+        loan.exposure_ratio = tranche.exposure_ratio
+        loan.exposure_undefined = tranche.exposure_undefined
+        loan.cost_to_complete_gap = tranche.cost_to_complete_gap
+        loan.recommendation = tranche.recommendation
+        loan.seen_on_site = tranche.observed_stage
+        loan.behind_schedule = not inspection.matches_claim if inspection else True
 
     db.commit()
     db.refresh(revision)

@@ -7,7 +7,7 @@ schema, or component changes.
 
 from typing import AsyncIterator, Protocol, runtime_checkable
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.core.settings import Settings, assert_billed_calls_permitted, get_settings
 from app.schemas.events import PipelineEvent
@@ -27,8 +27,14 @@ class BoqAnalysisRequest(BaseModel):
     content_type: str
     size_bytes: int
     locality: str = "Kompally, Hyderabad"
-    built_up_sqft: int | None = None
+    built_up_sqft: int | None = Field(default=None, gt=0)
     sanctioned: int | None = None
+    artifact_path: str | None = None
+    disbursed: int = 0
+    tranche_number: int | None = None
+    claimed_stage: str = "not_assessed"
+    requested_amount: int = 0
+    photo_paths: list[str] = Field(default_factory=list)
 
 
 @runtime_checkable
@@ -43,6 +49,10 @@ class PipelineRunner(Protocol):
     # returns an iterator instead, which neither runner satisfies.
     def run(self, req: BoqAnalysisRequest) -> AsyncIterator[PipelineEvent]:
         """Yield progress events as the analysis proceeds, ending with DoneEvent."""
+        ...
+
+    def final_output(self, req: BoqAnalysisRequest) -> PipelineOutput | None:
+        """A validated result, or None when the run cannot be persisted."""
         ...
 
 

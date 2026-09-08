@@ -22,7 +22,11 @@ Money is stored as a number of rupees, never as a formatted string.
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel as PydanticBaseModel, ConfigDict, Field, model_validator
+
+
+class BaseModel(PydanticBaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
 
 FlagType = Literal[
     "RATE_OUTLIER",
@@ -95,13 +99,21 @@ class CostSection(BaseModel):
     delta: float
     quoted_note: str | None = None
 
+    @model_validator(mode="after")
+    def reconcile_delta(self):
+        # Positive = added cost; negative = potential saving. Derive, never
+        # trust a model's sign or mutate the original captured evidence file.
+        if self.quoted is not None and self.market is not None:
+            self.delta = self.market - self.quoted
+        return self
+
 
 class InspectionResult(BaseModel):
     stage: str
     confidence: Literal["high", "medium", "low"]
     matches_claim: bool
     evidence_notes: list[str] = Field(default_factory=list)
-    needs_human_review: bool = False
+    needs_human_review: bool = True
     geotag_match: bool | None = None
     timestamp_ok: bool | None = None
     same_angle: bool | None = None
@@ -112,6 +124,7 @@ class RiskAssessment(BaseModel):
     # not valid JSON, so it is never serialised as a number.
     exposure_ratio: float | None = None
     exposure_undefined: bool = False
+    projected_exposure_ratio: float | None = None
     recommendation: Literal["RELEASE", "HOLD", "ESCALATE", "INSPECT"]
     pct_complete: float
     verified_value: float
@@ -140,6 +153,19 @@ class PipelineOutput(BaseModel):
     risk_assessment: RiskAssessment | None = None
     explanation: Explanation
     payment_schedule: list[PaymentStage] = Field(default_factory=list)
+    provenance: dict[str, str] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def enforce_evidence_gate(self):
+        inspection, risk = self.inspection_result, self.risk_assessment
+        if risk and risk.recommendation == "RELEASE" and (
+            not inspection or inspection.needs_human_review
+            or not inspection.matches_claim or inspection.confidence == "low"
+            or inspection.stage not in {"foundation", "plinth", "slab", "brickwork_roof", "finishing"}
+        ):
+            risk.recommendation = "ESCALATE"
+            risk.reasons.append("Release blocked: inspection evidence requires human review.")
+        return self
 
 
 CostEstimate.model_rebuild()

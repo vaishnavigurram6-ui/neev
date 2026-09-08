@@ -419,9 +419,11 @@ def cmd_score(args) -> int:
         found = set()
 
         priced = [(i, d, r) for _s, i, d, _q, _u, r in boq["items"] if r]
+        units = {i: u for _s, i, _d, _q, u, _r in boq["items"]}
         benchmarks = lookup_benchmark_rates([d for _i, d, _r in priced])
         deviations = check_rate_deviations([
-            {"item": i, "boq_rate": r, "benchmark_rate": benchmarks[d].get("benchmark_rate")}
+            {"item": i, "boq_rate": r, "benchmark_rate": benchmarks[d].get("benchmark_rate"),
+             "unit": units[i], "benchmark_unit": benchmarks[d].get("unit")}
             for i, d, r in priced
         ])
 

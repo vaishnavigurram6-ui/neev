@@ -4,6 +4,7 @@
 // accidental client import would inline the fallback and have the viewer's own
 // browser call 127.0.0.1:8000. Better a build error than a silent one.
 import 'server-only';
+import { cookies } from 'next/headers';
 
 export const API_BASE = process.env.NEEV_API_BASE ?? 'http://127.0.0.1:8000';
 
@@ -27,14 +28,18 @@ export class ApiError extends Error {
 // which the screens already render as an error state with a retry.
 const REQUEST_TIMEOUT_MS = 8000;
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(path: string, init?: RequestInit, onResponse?: (response: Response) => Promise<void>): Promise<T> {
   const method = init?.method ?? 'GET';
+  const cookie = (await cookies()).get('neev_session');
+  const headers = new Headers(init?.headers);
+  headers.set('content-type', 'application/json');
+  if (cookie) headers.set('cookie', `neev_session=${cookie.value}`);
 
   let response: Response;
   try {
     response = await fetch(`${API_BASE}${path}`, {
       ...init,
-      headers: { 'content-type': 'application/json', ...(init?.headers ?? {}) },
+      headers,
       // Loan data is private and changes on every decision; never cache it.
       cache: 'no-store',
       signal: init?.signal ?? AbortSignal.timeout(REQUEST_TIMEOUT_MS),
@@ -55,6 +60,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     throw new ApiError(`${method} ${path} failed: ${response.status}`, response.status, text);
   }
+  if (onResponse) await onResponse(response);
 
   // A 204, or any successful empty body, is a valid response — not a parse
   // failure. `undefined as T` keeps `apiPost<void>` honest.
@@ -71,11 +77,19 @@ export function apiGet<T>(path: string): Promise<T> {
   return request<T>(path);
 }
 
-/** `headers` exists for the one thing a server-to-server call cannot infer: who
- *  is calling. Reads are open in this phase, but a write that goes into the loan
- *  file under somebody's name is not — `POST /api/loans/{id}/tranches/{n}/decision`
- *  answers 401 without a session — so the caller forwards the request's own
- *  `neev_session` cookie. Added by plan Task 18; no other endpoint needs it yet. */
+/** Only the backend issues sessions. No offline or client-authored fallback. */
+export function apiLogin<T>(body: unknown): Promise<T> {
+  return request<T>('/api/auth/session', { method: 'POST', body: JSON.stringify(body) }, async (response) => {
+    const value = response.headers.get('set-cookie')?.match(/(?:^|,\s*)neev_session=([^;]+)/)?.[1];
+    if (!value) throw new ApiError('Backend did not issue a session', 502);
+    (await cookies()).set('neev_session', value, {
+      httpOnly: true, sameSite: 'lax', path: '/', maxAge: 43200,
+      secure: process.env.NODE_ENV === 'production',
+    });
+  });
+}
+
+/** All reads and writes forward the caller's session; headers may carry idempotency keys. */
 export function apiPost<T>(
   path: string,
   body?: unknown,

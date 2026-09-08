@@ -1,5 +1,12 @@
 # Neev — Implementation Plan
 
+> **2026-09-08 status:** this is the historical agent/demo plan, not a claim of
+> production readiness. The three-package app is implemented; current safety fixes
+> and outstanding live/production gates are in [Review remediation](Review_Remediation.md).
+> The app accepts PDF/JPEG/PNG/WebP, not spreadsheets. Benchmark rates remain
+> provisional until independently verified. Gemini runs and deployments still
+> require the owner's specific approval.
+
 *From current state (4-agent pipeline in adk web, Gemini API-key auth, BigQuery loaded, shared config.py) to demo-ready. Each step lists input → output so nothing is ambiguous at build time. Estimated effort: ~2 working days.*
 
 ---

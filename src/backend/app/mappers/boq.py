@@ -97,10 +97,10 @@ def to_boq_review(
         rev=revision.rev,
         cards=cards,
         groups=flagged,
-        all_groups=flagged,  # "All" adds unflagged rows once a full BoQ is stored
+        all_groups=_all_items(revision),
         questions=[
             QuestionView(number=q.number, text=q.text, status=q.status)
-            for q in sorted(loan.questions, key=lambda q: q.number)
+            for q in sorted(revision.questions, key=lambda q: q.number)
         ],
         boq_total=float(revision.boq_total),
         payment_schedule=[
@@ -125,6 +125,22 @@ def _gst_stated(estimate) -> bool:
         "GST" in section.name.upper() and section.quoted is None
         for section in estimate.sections
     )
+
+
+def _all_items(revision: models.BoqRevision) -> list[FlagGroupView]:
+    """One row per actual document item. Absence of a flag is not a match."""
+    buckets: dict[str, list[FlagRowView]] = {}
+    for item in revision.line_items:
+        flags = [f for f in revision.flags if f.item == item.item_id]
+        label = " · ".join(dict.fromkeys(f.label for f in flags)) or "Not assessed"
+        tone = next((t for t in ("danger", "warn", "neutral", "success")
+                     if any(f.tone == t for f in flags)), "neutral")
+        buckets.setdefault(item.section or "DOCUMENT ITEMS", []).append(FlagRowView(
+            item=item.item_id, desc=item.desc, qty=item.qty, unit=item.unit,
+            rate=item.rate, amount=item.amount, label=label, tone=tone,
+            note="\n".join(f.evidence for f in flags) or "No item-level assessment recorded; not a verified benchmark match.",
+        ))
+    return [FlagGroupView(name=name, items=items) for name, items in buckets.items()]
 
 
 def _group(flags: list[models.Flag]) -> list[FlagGroupView]:

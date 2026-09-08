@@ -46,7 +46,8 @@ def _ways_forward(
     # Route 1 exists only if something is actually over-priced. The negative
     # section deltas are the amounts the re-pricing hands back, so their sum is
     # a real figure rather than an estimate.
-    negotiable = -sum(s.delta for s in estimate.sections if s.delta < 0)
+    negotiable = sum(max(0, s.quoted - s.market) for s in estimate.sections
+                     if s.quoted is not None and s.market is not None)
     flagged = [f for f in revision.flags if f.type in ("RATE_OUTLIER", "UNDERSPECIFIED")]
     if flagged:
         options.append(
@@ -110,7 +111,7 @@ def to_sanction_check(
     quote = float(revision.boq_total)
     realistic = float(estimate.expected_total_cost)
     sanctioned = float(loan.sanctioned)
-    largest = max(quote, realistic, sanctioned)
+    largest = max(quote, realistic, sanctioned, 1)
 
     bars = [
         SanctionBarView(
@@ -124,7 +125,7 @@ def to_sanction_check(
             label=f"Realistic cost at {loan.locality} rates",
             value=realistic,
             pct_of_max=realistic / largest,
-            sub="Quote re-priced + missing scope added back (plaster, waterproofing, GST risk)",
+            sub="Construction-cost estimate; benchmark coverage and omitted scope may be incomplete",
             tone="neutral",
         ),
         SanctionBarView(
@@ -143,7 +144,8 @@ def to_sanction_check(
             quoted_note=section.quoted_note,
             market=section.market,
             delta=section.delta,
-            tone="success" if section.delta < 0 else "danger",
+            tone=("neutral" if section.quoted is None or section.market is None or section.delta == 0
+                  else "success" if section.delta < 0 else "danger"),
         )
         for section in estimate.sections
     ]

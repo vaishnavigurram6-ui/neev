@@ -107,7 +107,7 @@ async def test_streaming_an_unknown_job_raises_keyerror():
 
 
 @pytest.mark.asyncio
-async def test_create_drives_a_real_run_to_completion(monkeypatch):
+async def test_create_drives_a_real_run_to_completion(monkeypatch, seeded_db):
     import app.services.jobs as jobs_module
     from app.services.fixture_runner import FixtureRunner
 
@@ -139,7 +139,7 @@ async def test_a_failing_run_still_terminates_the_stream(monkeypatch):
     events = [event async for event in registry.stream(job.id)]
     assert isinstance(events[-1], DoneEvent)
     assert job.status == "error"
-    assert "exploded" in (job.error or "")
+    assert "RuntimeError" in (job.error or "")
 
 
 def test_each_runner_declares_the_provenance_its_runs_are_filed_under():

@@ -35,6 +35,7 @@ def _block_network(monkeypatch):
 @pytest.fixture(autouse=True)
 def _force_fixture_mode(monkeypatch):
     monkeypatch.setenv("NEEV_MODE", "fixture")
+    monkeypatch.setenv("NEEV_DEMO_AUTH", "true")
     monkeypatch.delenv("NEEV_ALLOW_BILLED_CALLS", raising=False)
     from app.core.settings import get_settings
 
@@ -47,6 +48,7 @@ def _force_fixture_mode(monkeypatch):
 def seeded_db(tmp_path, monkeypatch):
     """Point the engine at a throwaway file and seed the whole book into it."""
     monkeypatch.setenv("DATABASE_URL", f"sqlite:///{tmp_path / 'api.db'}")
+    monkeypatch.setenv("ARTIFACT_DIR", str(tmp_path / "artifacts"))
     from app.core.settings import get_settings
 
     get_settings.cache_clear()
@@ -88,3 +90,10 @@ def client(seeded_db):
 
     with TestClient(app) as test_client:
         yield test_client
+
+
+@pytest.fixture
+def signed_client(client):
+    """Explicitly authenticated route fixture; anonymous tests retain client."""
+    assert client.post("/api/auth/session", json={"role": "bank", "phone": "9999999999"}).status_code == 200
+    return client

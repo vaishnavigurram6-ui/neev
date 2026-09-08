@@ -9,8 +9,10 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check:hex": "node scripts/check-no-raw-hex.mjs",
-    "gen:types": "cd ../backend && .venv/bin/python scripts/export_openapi.py && cd ../frontend && npx --yes openapi-typescript openapi.json -o lib/api-types.ts",
-    "verify": "npm run typecheck && npm run lint && npm run check:hex && npm run build"
+    "gen:types": "cd ../backend && .venv/bin/python scripts/export_openapi.py",
+    "verify": "npm run check:types && npm run typecheck && npm test && npm run lint && npm run check:hex && npm run build",
+    "check:types": "cd ../backend && .venv/bin/python scripts/export_openapi.py --check",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "next": "16.3.3",

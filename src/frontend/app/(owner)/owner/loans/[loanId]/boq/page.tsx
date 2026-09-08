@@ -91,7 +91,7 @@ const COPY = {
   withContractor: 'your contractor',
   sendNote: 'Neev does not message anyone for you — copy the text below and send it yourself.',
 
-  attention: '{flagged} of {total} items need your attention',
+  attention: '{flagged} findings across a {total}-item document',
   toggleLabel: 'Which BoQ lines to show',
   flagged: 'Flagged',
   all: 'All {n}',
@@ -103,11 +103,11 @@ const COPY = {
   tableCaption:
     'Every BoQ line that needs your attention, grouped by section: the line’s own figures, what the local benchmark says, and the flag raised against it.',
   emptyTable: 'Nothing on this contract needs your attention.',
-  matched: '{n} items matched local benchmarks',
+  matched: '{n} document items have no recorded finding; this does not verify their rates',
   showAll: 'Show all',
   showFlagged: 'Show flagged only',
   allNote:
-    'Only the {flagged} flagged lines are stored in this build, so this list is the same one. The other {matched} matched their {locality} benchmarks line for line.',
+    'Some document items are missing from the stored analysis. Do not treat them as benchmark matches.',
 
   payTitle: 'Payment schedule',
   frontLoaded: 'Front-loaded',
@@ -253,7 +253,8 @@ export default async function BoqReviewPage({
   // every flag — but that is the mapper silently losing a row, and papering over
   // it here would hide it. Reported to the mapper's owner.
   const flaggedCount = countRows(boq.groups);
-  const matchedCount = Math.max(boq.item_count - flaggedCount, 0);
+  const flaggedItems = new Set(boq.groups.flatMap((group) => group.items.map((item) => item.item)));
+  const matchedCount = boq.all_groups.flatMap((group) => group.items).filter((item) => !flaggedItems.has(item.item)).length;
   const otherView = view === 'all' ? 'flagged' : 'all';
 
   // The schedule is judged once — by the API, whose own DUE BEFORE SLAB card is
@@ -266,6 +267,10 @@ export default async function BoqReviewPage({
 
   return (
     <div className="flex flex-col gap-5">
+      <p className="text-sm text-sub">
+        {boq.analysis_mode === 'fixture' ? 'Demo replay — this report does not analyze the uploaded document. ' : 'Stored analysis. '}
+        Benchmarks are provisional; CPWD verification is pending. Unflagged does not mean verified.
+      </p>
       <PageHeader
         eyebrow={COPY.eyebrow}
         title={COPY.title}

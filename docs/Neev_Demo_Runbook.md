@@ -6,6 +6,13 @@ so nothing can bill even by accident.*
 
 ## Start it
 
+**Safety update (2026-09-08):** see [Review remediation](Review_Remediation.md).
+The dev script explicitly enables sandbox login; direct backend starts need
+NEEV_DEMO_AUTH=true. Uploaded documents are retained, but fixture mode replays
+the sample rather than analyzing the upload. Rates are provisional, not verified
+CPWD authority. All-items now includes every document item; question counts follow
+the selected revision. Existing local state is preserved rather than reset.
+
 ```bash
 bash scripts/dev.sh
 ```

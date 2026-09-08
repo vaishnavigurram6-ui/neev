@@ -12,13 +12,8 @@
 // the event union. The screen consumes exactly what `app/api/routes/jobs.py`
 // publishes.
 //
-// WHAT IT DOES ADD IS THE GATE. `proxy.ts` matches only `/owner/*` and `/bank/*`,
-// so nothing gates `/api/*`; and the backend deliberately lets an anonymous
-// request read, on the stated grounds that "the frontend's middleware already
-// gates" it (src/backend/app/api/deps.py). This relay is the first thing to make
-// a backend path reachable from a browser, so it is where that sentence has to
-// be made true again — otherwise a job id would be a bearer token for another
-// borrower's findings.
+// Both this relay and the backend enforce session and owner/loan authorization;
+// knowing a job id alone never grants access to another borrower's findings.
 import { isLoanId } from '@/components/owner/loan-facts';
 import { API_BASE, ApiError, apiGet } from '@/lib/api';
 import { readSession } from '@/lib/session';
@@ -100,6 +95,9 @@ export async function GET(
       }
     } catch (cause) {
       if (!(cause instanceof ApiError)) throw cause;
+      if (cause.status === 401 || cause.status === 403) {
+        return new Response('Session cannot access this job.', { status: cause.status });
+      }
       // 404 — the backend has never heard of this job, usually a page reloaded
       // after a restart. Let it through: the stream itself answers with a
       // terminal `done` pointing somewhere real, which is better than a bare 404
@@ -127,6 +125,9 @@ export async function GET(
   }
 
   if (!upstream.ok || upstream.body === null) {
+    if (upstream.status === 401 || upstream.status === 403) {
+      return new Response('Session cannot access this job.', { status: upstream.status });
+    }
     return retryLater(`backend answered ${upstream.status}`);
   }
 

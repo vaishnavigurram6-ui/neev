@@ -1,0 +1,2817 @@
+{
+  "components": {
+    "schemas": {
+      "Body_report_milestone_api_loans__loan_id__milestones_post": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "photos": {
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Photos",
+            "type": "array"
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "enum": [
+                  "foundation",
+                  "plinth",
+                  "slab",
+                  "brickwork_roof",
+                  "finishing"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stage"
+          }
+        },
+        "required": [
+          "photos"
+        ],
+        "title": "Body_report_milestone_api_loans__loan_id__milestones_post",
+        "type": "object"
+      },
+      "Body_upload_boq_api_loans__loan_id__boq_post": {
+        "properties": {
+          "built_up_sqft": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Built Up Sqft"
+          },
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_boq_api_loans__loan_id__boq_post",
+        "type": "object"
+      },
+      "BoqReviewView": {
+        "properties": {
+          "all_groups": {
+            "items": {
+              "$ref": "#/components/schemas/FlagGroupView"
+            },
+            "title": "All Groups",
+            "type": "array"
+          },
+          "amount_before_slab": {
+            "title": "Amount Before Slab",
+            "type": "number"
+          },
+          "analysis_mode": {
+            "default": "unknown",
+            "title": "Analysis Mode",
+            "type": "string"
+          },
+          "boq_total": {
+            "title": "Boq Total",
+            "type": "number"
+          },
+          "borrower": {
+            "title": "Borrower",
+            "type": "string"
+          },
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/StatCardView"
+            },
+            "title": "Cards",
+            "type": "array"
+          },
+          "contractor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contractor"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/FlagGroupView"
+            },
+            "title": "Groups",
+            "type": "array"
+          },
+          "gst_stated": {
+            "title": "Gst Stated",
+            "type": "boolean"
+          },
+          "item_count": {
+            "title": "Item Count",
+            "type": "integer"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "payment_schedule": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentStageView"
+            },
+            "title": "Payment Schedule",
+            "type": "array"
+          },
+          "pct_before_slab": {
+            "title": "Pct Before Slab",
+            "type": "number"
+          },
+          "provenance": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Provenance",
+            "type": "object"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionView"
+            },
+            "title": "Questions",
+            "type": "array"
+          },
+          "received_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Received On"
+          },
+          "rev": {
+            "title": "Rev",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "loan_id",
+          "analysis_mode",
+          "provenance",
+          "borrower",
+          "contractor",
+          "received_on",
+          "item_count",
+          "rev",
+          "cards",
+          "groups",
+          "all_groups",
+          "questions",
+          "payment_schedule",
+          "boq_total",
+          "pct_before_slab",
+          "amount_before_slab",
+          "gst_stated"
+        ],
+        "title": "BoqReviewView",
+        "type": "object"
+      },
+      "BuildProgressView": {
+        "properties": {
+          "borrower": {
+            "title": "Borrower",
+            "type": "string"
+          },
+          "current_stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Stage"
+          },
+          "disbursed": {
+            "title": "Disbursed",
+            "type": "number"
+          },
+          "last_verified_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Verified On"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "locality": {
+            "title": "Locality",
+            "type": "string"
+          },
+          "paused": {
+            "title": "Paused",
+            "type": "boolean"
+          },
+          "phases": {
+            "items": {
+              "$ref": "#/components/schemas/PhaseHistoryView"
+            },
+            "title": "Phases",
+            "type": "array"
+          },
+          "plot_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plot Label"
+          },
+          "sanctioned": {
+            "title": "Sanctioned",
+            "type": "number"
+          },
+          "shortfall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shortfall"
+          },
+          "standing": {
+            "items": {
+              "$ref": "#/components/schemas/StandingRowView"
+            },
+            "title": "Standing",
+            "type": "array"
+          },
+          "steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "tranches": {
+            "items": {
+              "$ref": "#/components/schemas/ProgressTrancheView"
+            },
+            "title": "Tranches",
+            "type": "array"
+          }
+        },
+        "required": [
+          "loan_id",
+          "borrower",
+          "locality",
+          "plot_label",
+          "sanctioned",
+          "disbursed",
+          "current_stage",
+          "last_verified_on",
+          "paused",
+          "tranches",
+          "standing",
+          "steps",
+          "shortfall",
+          "phases"
+        ],
+        "title": "BuildProgressView",
+        "type": "object"
+      },
+      "ContractorRowView": {
+        "properties": {
+          "flags_per_boq": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flags Per Boq"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "overrun_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overrun Pct"
+          },
+          "sites": {
+            "title": "Sites",
+            "type": "integer"
+          },
+          "sites_gone_quiet": {
+            "title": "Sites Gone Quiet",
+            "type": "integer"
+          },
+          "tier": {
+            "title": "Tier",
+            "type": "string"
+          },
+          "tone": {
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          },
+          "underspecified_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Underspecified Share"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "meta",
+          "sites",
+          "flags_per_boq",
+          "underspecified_share",
+          "overrun_pct",
+          "sites_gone_quiet",
+          "tier",
+          "tone"
+        ],
+        "title": "ContractorRowView",
+        "type": "object"
+      },
+      "ContractorScorecardView": {
+        "properties": {
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ContractorRowView"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rows"
+        ],
+        "title": "ContractorScorecardView",
+        "type": "object"
+      },
+      "DecisionRequest": {
+        "properties": {
+          "action": {
+            "enum": [
+              "RELEASE",
+              "HOLD",
+              "ESCALATE"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "DecisionRequest",
+        "type": "object"
+      },
+      "DecisionResponse": {
+        "properties": {
+          "action": {
+            "enum": [
+              "RELEASE",
+              "HOLD",
+              "ESCALATE"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "decided_at": {
+            "format": "date-time",
+            "title": "Decided At",
+            "type": "string"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "tranche": {
+            "title": "Tranche",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "loan_id",
+          "tranche",
+          "action",
+          "decided_at"
+        ],
+        "title": "DecisionResponse",
+        "type": "object"
+      },
+      "EvidenceChipView": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "tone": {
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "tone"
+        ],
+        "title": "EvidenceChipView",
+        "type": "object"
+      },
+      "FlagGroupView": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FlagRowView"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "items"
+        ],
+        "title": "FlagGroupView",
+        "type": "object"
+      },
+      "FlagRowView": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "desc": {
+            "title": "Desc",
+            "type": "string"
+          },
+          "expected_amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Amount"
+          },
+          "expected_qty": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Qty"
+          },
+          "expected_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Unit"
+          },
+          "item": {
+            "title": "Item",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "qty": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qty"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          },
+          "tone": {
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "required": [
+          "item",
+          "desc",
+          "qty",
+          "unit",
+          "rate",
+          "amount",
+          "expected_qty",
+          "expected_unit",
+          "expected_amount",
+          "note",
+          "label",
+          "tone"
+        ],
+        "title": "FlagRowView",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "JobStatusResponse": {
+        "properties": {
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "loan_id",
+          "status",
+          "error"
+        ],
+        "title": "JobStatusResponse",
+        "type": "object"
+      },
+      "LoanSummaryView": {
+        "description": "The loan itself \u2014 what every owner and bank header needs to name it.\n\nDeliberately not screen-shaped: it carries the loan's own facts, and each\nscreen picks the subset it renders.",
+        "properties": {
+          "borrower": {
+            "title": "Borrower",
+            "type": "string"
+          },
+          "built_up_sqft": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Built Up Sqft"
+          },
+          "contractor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contractor"
+          },
+          "current_stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Stage"
+          },
+          "disbursed": {
+            "title": "Disbursed",
+            "type": "number"
+          },
+          "exposure": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exposure"
+          },
+          "gap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gap"
+          },
+          "latest_rev": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Rev"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "locality": {
+            "title": "Locality",
+            "type": "string"
+          },
+          "plot_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plot Label"
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommendation"
+          },
+          "sanctioned": {
+            "title": "Sanctioned",
+            "type": "number"
+          },
+          "tranche_count": {
+            "title": "Tranche Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "loan_id",
+          "borrower",
+          "locality",
+          "plot_label",
+          "built_up_sqft",
+          "sanctioned",
+          "disbursed",
+          "contractor",
+          "latest_rev",
+          "recommendation",
+          "exposure",
+          "gap",
+          "current_stage",
+          "tranche_count"
+        ],
+        "title": "LoanSummaryView",
+        "type": "object"
+      },
+      "LoginRequest": {
+        "properties": {
+          "loan_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Loan Id"
+          },
+          "phone": {
+            "pattern": "^\\d{10}$",
+            "title": "Phone",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "owner",
+              "bank"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "phone"
+        ],
+        "title": "LoginRequest",
+        "type": "object"
+      },
+      "LoginResponse": {
+        "properties": {
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "owner",
+              "bank"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "loan_id",
+          "name"
+        ],
+        "title": "LoginResponse",
+        "type": "object"
+      },
+      "MathRowView": {
+        "properties": {
+          "calc": {
+            "title": "Calc",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Result"
+          },
+          "result_kind": {
+            "enum": [
+              "money",
+              "money_compact",
+              "count",
+              "pct",
+              "ratio",
+              "text"
+            ],
+            "title": "Result Kind",
+            "type": "string"
+          },
+          "tone": {
+            "default": "neutral",
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "calc",
+          "result",
+          "result_kind",
+          "tone"
+        ],
+        "title": "MathRowView",
+        "type": "object"
+      },
+      "MeResponse": {
+        "properties": {
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "owner",
+              "bank"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "sub": {
+            "title": "Sub",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "loan_id",
+          "name",
+          "sub"
+        ],
+        "title": "MeResponse",
+        "type": "object"
+      },
+      "MilestoneResponse": {
+        "properties": {
+          "photos": {
+            "title": "Photos",
+            "type": "integer"
+          },
+          "tranche": {
+            "title": "Tranche",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tranche",
+          "photos"
+        ],
+        "title": "MilestoneResponse",
+        "type": "object"
+      },
+      "PaymentStageView": {
+        "properties": {
+          "before_slab": {
+            "title": "Before Slab",
+            "type": "boolean"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "pct": {
+            "title": "Pct",
+            "type": "number"
+          }
+        },
+        "required": [
+          "label",
+          "pct",
+          "before_slab"
+        ],
+        "title": "PaymentStageView",
+        "type": "object"
+      },
+      "PhaseDecisionView": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "decided_at": {
+            "format": "date",
+            "title": "Decided At",
+            "type": "string"
+          },
+          "decided_by": {
+            "title": "Decided By",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "tone": {
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action",
+          "tone",
+          "decided_by",
+          "decided_at",
+          "note"
+        ],
+        "title": "PhaseDecisionView",
+        "type": "object"
+      },
+      "PhaseHistoryView": {
+        "description": "One build phase, after the fact: claimed, seen, decided.\n\nRead by both Build Progress (the owner's account of their build) and Tranche\nDecision (the lender's audit trail), from one mapper, so the two cannot tell\ndifferent stories about the same phase.",
+        "properties": {
+          "claimed_stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claimed Stage"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhaseDecisionView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "disbursed_cum": {
+            "title": "Disbursed Cum",
+            "type": "number"
+          },
+          "evidence_notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Notes",
+            "type": "array"
+          },
+          "exposure": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exposure"
+          },
+          "exposure_undefined": {
+            "default": false,
+            "title": "Exposure Undefined",
+            "type": "boolean"
+          },
+          "inspected_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspected On"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "milestone": {
+            "title": "Milestone",
+            "type": "string"
+          },
+          "needs_human_review": {
+            "default": false,
+            "title": "Needs Human Review",
+            "type": "boolean"
+          },
+          "observed_by_neev": {
+            "title": "Observed By Neev",
+            "type": "boolean"
+          },
+          "observed_stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Stage"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoView"
+            },
+            "title": "Photos",
+            "type": "array"
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommendation"
+          },
+          "released_amount": {
+            "title": "Released Amount",
+            "type": "number"
+          },
+          "status": {
+            "enum": [
+              "paid",
+              "on_hold",
+              "upcoming"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_label": {
+            "title": "Status Label",
+            "type": "string"
+          },
+          "tone": {
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          },
+          "tranche_number": {
+            "title": "Tranche Number",
+            "type": "integer"
+          },
+          "verified_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified Value"
+          }
+        },
+        "required": [
+          "tranche_number",
+          "milestone",
+          "label",
+          "status",
+          "status_label",
+          "tone",
+          "inspected_on",
+          "claimed_stage",
+          "observed_stage",
+          "observed_by_neev",
+          "photos",
+          "evidence_notes",
+          "confidence",
+          "needs_human_review",
+          "verified_value",
+          "exposure",
+          "exposure_undefined",
+          "released_amount",
+          "disbursed_cum",
+          "recommendation",
+          "decision"
+        ],
+        "title": "PhaseHistoryView",
+        "type": "object"
+      },
+      "PhotoView": {
+        "properties": {
+          "caption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caption"
+          },
+          "chips": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceChipView"
+            },
+            "title": "Chips",
+            "type": "array"
+          },
+          "slot_key": {
+            "title": "Slot Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slot_key",
+          "caption",
+          "chips"
+        ],
+        "title": "PhotoView",
+        "type": "object"
+      },
+      "PortfolioRowView": {
+        "properties": {
+          "action_label": {
+            "title": "Action Label",
+            "type": "string"
+          },
+          "behind_schedule": {
+            "title": "Behind Schedule",
+            "type": "boolean"
+          },
+          "borrower": {
+            "title": "Borrower",
+            "type": "string"
+          },
+          "disbursed": {
+            "title": "Disbursed",
+            "type": "number"
+          },
+          "exposure": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exposure"
+          },
+          "gap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gap"
+          },
+          "gap_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gap Note"
+          },
+          "href": {
+            "title": "Href",
+            "type": "string"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "locality": {
+            "title": "Locality",
+            "type": "string"
+          },
+          "paid_up_to": {
+            "title": "Paid Up To",
+            "type": "string"
+          },
+          "seen_on_site": {
+            "title": "Seen On Site",
+            "type": "string"
+          },
+          "tone": {
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loan_id",
+          "borrower",
+          "locality",
+          "paid_up_to",
+          "seen_on_site",
+          "behind_schedule",
+          "disbursed",
+          "exposure",
+          "gap",
+          "gap_note",
+          "action_label",
+          "tone",
+          "href"
+        ],
+        "title": "PortfolioRowView",
+        "type": "object"
+      },
+      "PortfolioView": {
+        "properties": {
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/StatCardView"
+            },
+            "title": "Cards",
+            "type": "array"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PortfolioRowView"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "cards",
+          "rows"
+        ],
+        "title": "PortfolioView",
+        "type": "object"
+      },
+      "ProgressTrancheView": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "state": {
+            "enum": [
+              "done",
+              "current",
+              "todo"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "status_label": {
+            "title": "Status Label",
+            "type": "string"
+          },
+          "sub": {
+            "title": "Sub",
+            "type": "string"
+          },
+          "tone": {
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "name",
+          "sub",
+          "amount",
+          "status_label",
+          "tone",
+          "state"
+        ],
+        "title": "ProgressTrancheView",
+        "type": "object"
+      },
+      "QuestionView": {
+        "properties": {
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "text",
+          "status"
+        ],
+        "title": "QuestionView",
+        "type": "object"
+      },
+      "QuestionsSentResponse": {
+        "properties": {
+          "sent": {
+            "title": "Sent",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sent"
+        ],
+        "title": "QuestionsSentResponse",
+        "type": "object"
+      },
+      "SanctionBarView": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "pct_of_max": {
+            "title": "Pct Of Max",
+            "type": "number"
+          },
+          "sub": {
+            "title": "Sub",
+            "type": "string"
+          },
+          "tone": {
+            "default": "neutral",
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "label",
+          "value",
+          "pct_of_max",
+          "sub",
+          "tone"
+        ],
+        "title": "SanctionBarView",
+        "type": "object"
+      },
+      "SanctionCheckView": {
+        "properties": {
+          "bars": {
+            "items": {
+              "$ref": "#/components/schemas/SanctionBarView"
+            },
+            "title": "Bars",
+            "type": "array"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/SanctionOptionView"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "provenance": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Provenance",
+            "type": "object"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/SanctionSectionView"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "shortfall": {
+            "title": "Shortfall",
+            "type": "number"
+          }
+        },
+        "required": [
+          "loan_id",
+          "provenance",
+          "bars",
+          "shortfall",
+          "sections",
+          "options"
+        ],
+        "title": "SanctionCheckView",
+        "type": "object"
+      },
+      "SanctionOptionView": {
+        "properties": {
+          "desc": {
+            "title": "Desc",
+            "type": "string"
+          },
+          "saves_label": {
+            "title": "Saves Label",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "saves_label",
+          "desc"
+        ],
+        "title": "SanctionOptionView",
+        "type": "object"
+      },
+      "SanctionSectionView": {
+        "properties": {
+          "delta": {
+            "title": "Delta",
+            "type": "number"
+          },
+          "market": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Market"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "quoted": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quoted"
+          },
+          "quoted_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quoted Note"
+          },
+          "tone": {
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "quoted",
+          "quoted_note",
+          "market",
+          "delta",
+          "tone"
+        ],
+        "title": "SanctionSectionView",
+        "type": "object"
+      },
+      "StageView": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "done",
+              "current",
+              "todo"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "sub": {
+            "title": "Sub",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "sub",
+          "state"
+        ],
+        "title": "StageView",
+        "type": "object"
+      },
+      "StandingRowView": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "tone": {
+            "default": "neutral",
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Value"
+          },
+          "value_kind": {
+            "default": "money",
+            "enum": [
+              "money",
+              "money_compact",
+              "count",
+              "pct",
+              "ratio",
+              "text"
+            ],
+            "title": "Value Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value",
+          "value_kind",
+          "tone"
+        ],
+        "title": "StandingRowView",
+        "type": "object"
+      },
+      "StatCardView": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "sub": {
+            "title": "Sub",
+            "type": "string"
+          },
+          "tone": {
+            "default": "neutral",
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Value"
+          },
+          "value_kind": {
+            "enum": [
+              "money",
+              "money_compact",
+              "count",
+              "pct",
+              "ratio",
+              "text"
+            ],
+            "title": "Value Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value",
+          "value_kind",
+          "sub",
+          "tone"
+        ],
+        "title": "StatCardView",
+        "type": "object"
+      },
+      "TrancheDecisionView": {
+        "properties": {
+          "borrower": {
+            "title": "Borrower",
+            "type": "string"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "exposure": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exposure"
+          },
+          "exposure_undefined": {
+            "title": "Exposure Undefined",
+            "type": "boolean"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "locality": {
+            "title": "Locality",
+            "type": "string"
+          },
+          "math": {
+            "items": {
+              "$ref": "#/components/schemas/MathRowView"
+            },
+            "title": "Math",
+            "type": "array"
+          },
+          "milestone": {
+            "title": "Milestone",
+            "type": "string"
+          },
+          "needs_human_review": {
+            "title": "Needs Human Review",
+            "type": "boolean"
+          },
+          "officer_view": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Officer View"
+          },
+          "owner_view": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner View"
+          },
+          "phases": {
+            "items": {
+              "$ref": "#/components/schemas/PhaseHistoryView"
+            },
+            "title": "Phases",
+            "type": "array"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoView"
+            },
+            "title": "Photos",
+            "type": "array"
+          },
+          "recommendation": {
+            "title": "Recommendation",
+            "type": "string"
+          },
+          "recommendation_tone": {
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Recommendation Tone",
+            "type": "string"
+          },
+          "request_amount": {
+            "title": "Request Amount",
+            "type": "number"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/StageView"
+            },
+            "title": "Stages",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "tranche_number": {
+            "title": "Tranche Number",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "loan_id",
+          "borrower",
+          "locality",
+          "tranche_number",
+          "milestone",
+          "status",
+          "request_amount",
+          "recommendation",
+          "recommendation_tone",
+          "exposure",
+          "exposure_undefined",
+          "needs_human_review",
+          "confidence",
+          "stages",
+          "math",
+          "photos",
+          "owner_view",
+          "officer_view",
+          "phases"
+        ],
+        "title": "TrancheDecisionView",
+        "type": "object"
+      },
+      "UploadAccepted": {
+        "properties": {
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "loan_id"
+        ],
+        "title": "UploadAccepted",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Serves pipeline-shaped loan data to the Neev owner and bank consoles.",
+    "title": "Neev API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/auth/session": {
+      "delete": {
+        "operationId": "delete_session_api_auth_session_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Delete Session",
+        "tags": [
+          "auth"
+        ]
+      },
+      "post": {
+        "operationId": "create_session_api_auth_session_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Session",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/contractors": {
+      "get": {
+        "description": "Bank-only: this is the lender's private view of its own builders.",
+        "operationId": "contractors_api_contractors_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractorScorecardView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Contractors",
+        "tags": [
+          "contractors"
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Health Api Health Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/api/jobs/{job_id}": {
+      "get": {
+        "description": "Why a run failed, for a client that missed the stream's error event.",
+        "operationId": "job_status_api_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobStatusResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Job Status",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/jobs/{job_id}/events": {
+      "get": {
+        "operationId": "job_events_api_jobs__job_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Job Events",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}": {
+      "get": {
+        "operationId": "loan_summary_api_loans__loan_id__get",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanSummaryView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Loan Summary",
+        "tags": [
+          "loans"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/boq": {
+      "post": {
+        "operationId": "upload_boq_api_loans__loan_id__boq_post",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_boq_api_loans__loan_id__boq_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Boq",
+        "tags": [
+          "boq"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/boq/latest": {
+      "get": {
+        "operationId": "boq_latest_api_loans__loan_id__boq_latest_get",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoqReviewView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Boq Latest",
+        "tags": [
+          "boq"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/boq/rev/{rev}": {
+      "get": {
+        "operationId": "boq_revision_api_loans__loan_id__boq_rev__rev__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rev",
+            "required": true,
+            "schema": {
+              "title": "Rev",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoqReviewView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Boq Revision",
+        "tags": [
+          "boq"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/milestones": {
+      "post": {
+        "description": "A borrower reporting progress: a stage, some photos, an optional note.\n\nThe photos attach to the tranche currently under review, which is the one\nwhose release they are evidence for.\n\nEvery field this endpoint cannot actually establish is left null: the\ngeotag, timestamp and same-angle flags, which the visual inspector fills in\nlive mode, and `taken_at` \u2014 upload time is not capture time, and writing it\ninto an evidence trail as though it were would be the one lie a verification\nrecord cannot afford.",
+        "operationId": "report_milestone_api_loans__loan_id__milestones_post",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_report_milestone_api_loans__loan_id__milestones_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestoneResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Report Milestone",
+        "tags": [
+          "loans"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/progress": {
+      "get": {
+        "operationId": "build_progress_api_loans__loan_id__progress_get",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildProgressView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Build Progress",
+        "tags": [
+          "loans"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/questions/send": {
+      "post": {
+        "description": "Marks the drafted questions sent.\n\nIdempotent: a second click does not re-stamp `sent_at` on a question already\nsent, and the count returned is how many questions are now with the\ncontractor \u2014 the number the screen says it sent, both times.",
+        "operationId": "send_questions_api_loans__loan_id__questions_send_post",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionsSentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Send Questions",
+        "tags": [
+          "loans"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/sanction-check": {
+      "get": {
+        "operationId": "sanction_check_api_loans__loan_id__sanction_check_get",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SanctionCheckView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sanction Check",
+        "tags": [
+          "boq"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/tranches/{tranche_number}": {
+      "get": {
+        "description": "The officer's view of one tranche. Bank-only: it carries the officer's\nnarrative alongside the borrower's.",
+        "operationId": "tranche_decision_api_loans__loan_id__tranches__tranche_number__get",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1-based tranche number.",
+            "in": "path",
+            "name": "tranche_number",
+            "required": true,
+            "schema": {
+              "description": "1-based tranche number.",
+              "minimum": 1,
+              "title": "Tranche Number",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrancheDecisionView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Tranche Decision",
+        "tags": [
+          "tranches"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/tranches/{tranche_number}/decision": {
+      "post": {
+        "description": "Append an audit event and update the latest-state projection atomically.\n\nClients can deduplicate retries using Idempotency-Key. Reusing a key with a\ndifferent payload is a conflict; an unkeyed submission is a new decision.",
+        "operationId": "decide_api_loans__loan_id__tranches__tranche_number__decision_post",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1-based tranche number.",
+            "in": "path",
+            "name": "tranche_number",
+            "required": true,
+            "schema": {
+              "description": "1-based tranche number.",
+              "minimum": 1,
+              "title": "Tranche Number",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecisionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Decide",
+        "tags": [
+          "tranches"
+        ]
+      }
+    },
+    "/api/me": {
+      "get": {
+        "operationId": "me_api_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Me",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/portfolio": {
+      "get": {
+        "operationId": "portfolio_api_portfolio_get",
+        "parameters": [
+          {
+            "description": "Which rows to return.",
+            "in": "query",
+            "name": "filter",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "description": "Which rows to return.",
+              "enum": [
+                "all",
+                "needs_action",
+                "on_track"
+              ],
+              "title": "Filter",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Portfolio",
+        "tags": [
+          "portfolio"
+        ]
+      }
+    }
+  }
+}

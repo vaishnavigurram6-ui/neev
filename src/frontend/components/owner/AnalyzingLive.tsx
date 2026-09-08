@@ -31,10 +31,9 @@ import { useEffect, useReducer, useRef, useState } from 'react';
 import {
   parsePipelineEvent,
   safeRedirect,
-  type FindingEvent,
+  reduce,
+  EMPTY,
   type PhaseEvent,
-  type PipelineEvent,
-  type RunProgressEvent,
 } from './analyzing-events';
 import type { LoanFacts } from './loan-facts';
 import Card from '@/components/ui/Card';
@@ -102,57 +101,6 @@ const PHASE_STATUS_TEXT: Record<PhaseEvent['status'], string> = {
   running: 'text-action',
   queued: 'text-faint',
 };
-
-interface RunState {
-  /** Keyed by `index` and rendered in index order: a phase is emitted twice,
-   *  once running and once done, and the second must replace the first. */
-  phases: PhaseEvent[];
-  findings: FindingEvent[];
-  progress: RunProgressEvent | null;
-  /** Set by `ErrorEvent`. Latches: once a run has reported a failure, the
-   *  terminal `done` that follows must not be treated as success. */
-  failure: string | null;
-  failureRedirect: string | null;
-  /** The terminal `done` has arrived. */
-  finished: boolean;
-}
-
-const EMPTY: RunState = {
-  phases: [],
-  findings: [],
-  progress: null,
-  failure: null,
-  failureRedirect: null,
-  finished: false,
-};
-
-type Action = { kind: 'event'; event: PipelineEvent } | { kind: 'reset' };
-
-function reduce(state: RunState, action: Action): RunState {
-  if (action.kind === 'reset') return EMPTY;
-  const event = action.event;
-
-  switch (event.type) {
-    case 'phase': {
-      const phases = state.phases.filter((phase) => phase.index !== event.index);
-      phases.push(event);
-      phases.sort((a, b) => a.index - b.index);
-      return { ...state, phases };
-    }
-    case 'finding':
-      return { ...state, findings: [...state.findings, event] };
-    case 'progress':
-      return { ...state, progress: event };
-    case 'error':
-      return {
-        ...state,
-        failure: event.message,
-        failureRedirect: safeRedirect(event.redirect),
-      };
-    case 'done':
-      return { ...state, finished: true };
-  }
-}
 
 type Connection = 'connecting' | 'open' | 'retrying' | 'lost';
 

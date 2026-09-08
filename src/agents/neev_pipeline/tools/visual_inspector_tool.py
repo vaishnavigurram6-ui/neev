@@ -27,6 +27,13 @@ def _mime_for(path: str) -> str:
     is treated as JPEG, which is what a phone or a WhatsApp export produces.
     """
     guessed, _ = mimetypes.guess_type(str(path))
+    if not guessed and pathlib.Path(path).is_file():
+        with pathlib.Path(path).open("rb") as handle:
+            header = handle.read(12)
+        if header.startswith(b"\x89PNG\r\n\x1a\n"):
+            return "image/png"
+        if header.startswith(b"RIFF") and header[8:12] == b"WEBP":
+            return "image/webp"
     return guessed if (guessed or "").startswith("image/") else "image/jpeg"
 
 
@@ -77,7 +84,7 @@ def verify_construction_stage(image_paths: list[str], claimed_stage: str,
     and flags low-confidence results for human review instead of auto-deciding.
 
     Args:
-        image_paths: Local paths or GCS URIs to 2-3 site photos (multiple
+        image_paths: Local paths to 2-3 site photos (multiple
             angles increase reliability over a single photo).
         claimed_stage: Stage the borrower claims — one of foundation, plinth,
             slab, brickwork_roof, finishing.
@@ -88,6 +95,9 @@ def verify_construction_stage(image_paths: list[str], claimed_stage: str,
         'matches_claim', 'plan_consistency', 'confidence',
         'needs_human_review', 'notes'.
     """
+    if not image_paths:
+        return _finalise({"confidence": "low", "needs_human_review": True,
+                          "notes": "No site photos supplied."}, claimed_stage)
     if claimed_stage not in STAGE_CHECKLIST:
         raise ValueError(
             f"Unknown stage '{claimed_stage}'. Must be one of {list(STAGE_CHECKLIST)}")
@@ -123,6 +133,7 @@ confident, set "needs_human_review" to true rather than guessing.
 
 Respond ONLY in JSON:
 {{
+  "observed_stage": "foundation / plinth / slab / brickwork_roof / finishing / not_assessed",
   "checklist_results": {{"<item>": "CLEARLY VISIBLE / PARTIALLY VISIBLE / NOT VISIBLE"}},
   "completion_band": "0-25% | 25-50% | 50-75% | 75-100%",
   "matches_claim": true,
@@ -162,16 +173,26 @@ def _finalise(result: dict, claimed_stage: str) -> dict:
     `stage` used to be assigned claimed_stage unconditionally, which meant the
     stage every downstream calculation trusted was the borrower's claim rather
     than anything observed -- the verification was cosmetic. It now reports what
-    was seen, and falls back to the claim only when the model named no stage.
+    was seen, and requires human review when no valid observation is supplied.
     """
     result = dict(result)
 
-    # Belt-and-braces: force human review on low confidence even if the model
-    # forgot to flag it.
-    if result.get("confidence") == "low":
-        result["needs_human_review"] = True
-
     observed = result.get("observed_stage") or result.get("stage")
-    result["stage"] = observed or claimed_stage
+    valid = observed in STAGE_CHECKLIST
+    confidence = result.get("confidence")
+    if confidence == "med":
+        confidence = "medium"
+    if confidence not in ("high", "medium", "low"):
+        confidence = "low"
+    result["confidence"] = confidence
+    result["stage"] = observed if valid else "not_assessed"
+    result["matches_claim"] = (
+        valid and observed == claimed_stage and result.get("matches_claim") is True
+        and result.get("plan_consistency") != "inconsistent"
+    )
+    result["needs_human_review"] = (
+        result.get("needs_human_review") is not False or not valid
+        or confidence == "low" or not result["matches_claim"]
+    )
     result["claimed_stage"] = claimed_stage
     return result

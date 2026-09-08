@@ -1,24 +1,17 @@
 """Request-scoped dependencies: the database, the session, and the loan.
 
-Auth is a mocked session with a real boundary. The cookie is fake — no OTP, no
-signature — but the dependency, the 401, and the owner/loan check are real, so
-dropping in genuine auth later means replacing `_parse_cookie` and nothing else.
-
-The cookie's wire format is `role:loan_id:percent-encoded-name`, which is what
-`src/frontend/lib/session.ts` and `src/frontend/proxy.ts` already parse. Any
-change here is a change there.
-
-TO RECONCILE (frontend side, Task 14): the two readers derive different text
-from the same cookie. `readSession()` renders the officer's sub-line as
-"Credit officer · Retail assets" and defaults an unnamed owner to "Ravi Kumar";
-this module uses the Contractor Scorecard mockup's "Credit officer · Hyderabad"
-and defaults to "Owner". The mockups are authoritative on copy, so the frontend
-is the side to change. `decodeURIComponent` also throws on a lone "%" where
-Python's `unquote` does not, so a mangled cookie is a session here and no
-session there — harmless while the two agree on role and loan id, but the
-divergence is worth closing when the cookie stops being a mock.
+Sessions are signed, expiring sandbox sessions; login requires NEEV_DEMO_AUTH.
+Every private API read/write requires a session and resource authorization.
+This is NOT production identity verification: sandbox login still accepts a
+chosen role and loan. A real identity provider remains a deployment gate.
+Cookies contain role:loan:name:expiry:signature. Next.js obtains verified
+identity from /api/me; its edge cookie parsing is only a navigation hint.
 """
 
+import hashlib
+import hmac
+import secrets
+import time
 from typing import Annotated, Iterator, Literal
 from urllib.parse import quote, unquote
 
@@ -30,6 +23,7 @@ from app.db import models
 from app.db.session import get_session
 
 SESSION_COOKIE = "neev_session"
+_SESSION_KEY = secrets.token_bytes(32)  # single-process sandbox; restart signs everyone out
 
 Role = Literal["owner", "bank"]
 
@@ -61,12 +55,14 @@ DbSession = Annotated[Session, Depends(get_db)]
 
 
 def encode_cookie(role: Role, loan_id: str, name: str) -> str:
-    """`role:loan_id:name`, with the name percent-encoded.
+    """Signed `role:loan_id:name:expiry:signature`, with the name percent-encoded.
 
     The name is encoded because it is the only field that can contain a colon
     or a non-ASCII character, and the frontend splits on ":" before decoding.
     """
-    return f"{role}:{loan_id}:{quote(name, safe='')}"
+    payload = f"{role}:{loan_id}:{quote(name, safe='')}:{int(time.time()) + 43200}"
+    signature = hmac.new(_SESSION_KEY, payload.encode(), hashlib.sha256).hexdigest()
+    return f"{payload}:{signature}"
 
 
 def _parse_cookie(raw: str | None) -> SessionUser | None:
@@ -79,6 +75,16 @@ def _parse_cookie(raw: str | None) -> SessionUser | None:
     """
     if not raw:
         return None
+    parts = raw.rsplit(":", 2)
+    if len(parts) != 3:
+        return None
+    claims, expires, signature = parts
+    expected = hmac.new(_SESSION_KEY, f"{claims}:{expires}".encode(), hashlib.sha256).hexdigest()
+    if not signature.isascii() or not hmac.compare_digest(signature, expected):
+        return None
+    if not expires.isdigit() or int(expires) <= time.time():
+        return None
+    raw = claims
     role, _, rest = raw.partition(":")
     if role not in ("owner", "bank"):
         return None
@@ -130,17 +136,9 @@ def get_loan(loan_id: LoanId, db: DbSession) -> models.Loan:
 CurrentLoan = Annotated[models.Loan, Depends(get_loan)]
 
 
-def get_authorized_loan(loan: CurrentLoan, user: OptionalUser) -> models.Loan:
-    """The owner/loan boundary, exercised even though the session is mocked.
-
-    Role alone is not authorization: an owner signed in for loan 1001 must not
-    read loan 1002. A bank officer legitimately reads any loan in the book, so
-    the check is owner-side only. An anonymous request is allowed through to the
-    same data the frontend's middleware already gates — the cookie is not a
-    credential in this phase, and pretending otherwise would only mean the
-    reader's own browser could forge it.
-    """
-    if user is not None and user.role == "owner" and user.loan_id != loan.id:
+def get_authorized_loan(user: CurrentUser, loan: CurrentLoan) -> models.Loan:
+    """Authenticated owners see only their loan; officers can read the book."""
+    if user.role == "owner" and user.loan_id != loan.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"This session is signed in for loan {user.loan_id}.",
@@ -151,16 +149,9 @@ def get_authorized_loan(loan: CurrentLoan, user: OptionalUser) -> models.Loan:
 AuthorizedLoan = Annotated[models.Loan, Depends(get_authorized_loan)]
 
 
-def require_bank_reader(user: OptionalUser) -> SessionUser | None:
-    """The bank's own screens: the whole book, and the builders behind it.
-
-    An owner session is refused outright — the hotlist names every borrower in
-    the book, so letting one borrower's session read it would undo the
-    owner/loan boundary `get_authorized_loan` enforces one loan at a time.
-    Anonymous is allowed through, for the same reason loan reads are (see the
-    module docstring in app/api/__init__.py).
-    """
-    if user is not None and user.role != "bank":
+def require_bank_reader(user: CurrentUser) -> SessionUser:
+    """The lender-only book and builder screens reject owners and anonymous readers."""
+    if user.role != "bank":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="This view is for lenders. Your session is a borrower's.",
@@ -168,18 +159,11 @@ def require_bank_reader(user: OptionalUser) -> SessionUser | None:
     return user
 
 
-BankReader = Annotated[SessionUser | None, Depends(require_bank_reader)]
+BankReader = Annotated[SessionUser, Depends(require_bank_reader)]
 
 
 def require_bank_officer(user: CurrentUser) -> SessionUser:
-    """A real bank session, required. Used for writes, not reads.
-
-    Reads are open in this phase because the cookie is not yet a credential.
-    A write is different: a tranche decision goes into the loan file under
-    somebody's name, so it needs a session to attribute it to and that session
-    has to be a lender's. Without this an owner could release their own tranche
-    and be recorded as the officer who approved it.
-    """
+    """Only an authenticated lender can record a credit decision."""
     if user.role != "bank":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

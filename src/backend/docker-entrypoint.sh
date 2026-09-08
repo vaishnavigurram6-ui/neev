@@ -6,10 +6,9 @@ set -e
 
 cd /app/src/backend
 
-# --reset is safe and wanted here: the filesystem is ephemeral, so this is a
-# fresh database on every cold start, not a destructive act on a real one.
-echo "Seeding ${DATABASE_URL:-sqlite:///./neev.db} ..."
-python -m app.db.seed --reset
+# Initialize/migrate and seed only an empty book. Never reset a mounted database.
+echo "Initializing demo database ..."
+python -m app.db.seed
 
 # Cloud Run injects PORT and expects the container to listen on it.
 echo "Serving on :${PORT:-8080} (NEEV_MODE=${NEEV_MODE:-fixture})"

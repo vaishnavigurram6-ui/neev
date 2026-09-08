@@ -108,10 +108,12 @@ def check_benchmarks(items: list[tuple]) -> tuple[list[dict], int]:
     _rule("1 · rate_benchmarks — every line item, one query, against real BigQuery")
 
     priced = [(i, d, r) for _s, i, d, _q, _u, r in items if r]
+    units = {i: u for _s, i, _d, _q, u, _r in items}
     benchmarks = lookup_benchmark_rates([d for _i, d, _r in priced])
 
     quotes = [
-        {"item": i, "boq_rate": r, "benchmark_rate": benchmarks[d].get("benchmark_rate")}
+        {"item": i, "boq_rate": r, "benchmark_rate": benchmarks[d].get("benchmark_rate"),
+         "unit": units[i], "benchmark_unit": benchmarks[d].get("unit")}
         for i, d, r in priced
     ]
     deviations = check_rate_deviations(quotes)
@@ -123,9 +125,12 @@ def check_benchmarks(items: list[tuple]) -> tuple[list[dict], int]:
             print(f"  ---   {item_id:<5} no benchmark  · {desc[:46]}")
             continue
 
-        matched += 1
-        benchmark = entry["benchmark_rate"]
         deviation = deviations[item_id]
+        if not deviation.get("assessable"):
+            print(f"  ---   {item_id:<5} units cannot be compared")
+            continue
+        matched += 1
+        benchmark = deviation["benchmark_rate"]
         marker = "FLAG" if deviation.get("flag") else " ok "
         print(
             f"  {marker}  {item_id:<5} quoted {rate:>7,.0f} vs "

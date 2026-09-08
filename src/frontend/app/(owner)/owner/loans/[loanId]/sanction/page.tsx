@@ -237,8 +237,12 @@ export default async function SanctionCheckPage({
   return (
     <div className="flex flex-col gap-5">
       {header(
-        `Your BoQ scope, re-priced at today's ${loan.locality} rates — before any money moves.`
+        `Construction-cost estimate for ${loan.locality}; provisional benchmarks, not a lending approval.`
       )}
+      <p className="text-sm text-sub">
+        Section provenance: {view.provenance['cost_estimate.sections'] ?? view.provenance.cost_estimate ?? 'legacy record — field provenance unavailable'}.
+        Positive deltas are added cost; negative deltas are potential savings.
+      </p>
 
       <div className="flex items-start gap-5">
         {/* min-w-0 so the gap table scrolls inside its own container instead of

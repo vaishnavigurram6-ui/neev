@@ -91,7 +91,12 @@ def _install_stubs():
 _install_stubs()
 
 from neev_pipeline import config  # noqa: E402
-from neev_pipeline.tools.disbursal_risk_tool import assess_tranche  # noqa: E402
+from neev_pipeline.tools.disbursal_risk_tool import assess_tranche as _assess_tranche  # noqa: E402
+
+
+def assess_tranche(**inputs):
+    # These legacy arithmetic cases explicitly assume reviewed evidence.
+    return _assess_tranche(**({"needs_human_review": False} | inputs))
 from neev_pipeline.tools.boq_analyst_tool import (  # noqa: E402
     check_rate_deviation,
     check_steel_rcc_ratio,
@@ -193,8 +198,6 @@ class TestUnverifiableStage(unittest.TestCase):
     """
 
     def _assess(self, stage, confidence="high"):
-        from neev_pipeline.tools.disbursal_risk_tool import assess_tranche
-
         return assess_tranche(
             expected_total_cost=3_235_794,
             observed_stage=stage,
@@ -238,8 +241,6 @@ class TestEvidenceContradictingTheClaim(unittest.TestCase):
     """
 
     def _assess(self, **over):
-        from neev_pipeline.tools.disbursal_risk_tool import assess_tranche
-
         kwargs = dict(
             expected_total_cost=2_966_145,
             observed_stage="slab",
@@ -288,12 +289,13 @@ class TestObservedStageIsNotOverwritten(unittest.TestCase):
         self.assertEqual(result["stage"], "plinth")
         self.assertEqual(result["claimed_stage"], "slab")
 
-    def test_it_falls_back_to_the_claim_only_when_nothing_was_observed(self):
+    def test_missing_observation_requires_inspection(self):
         import neev_pipeline.tools.visual_inspector_tool as vit
 
         result = vit._finalise({"confidence": "high", "matches_claim": True},
                                claimed_stage="slab")
-        self.assertEqual(result["stage"], "slab")
+        self.assertEqual(result["stage"], "not_assessed")
+        self.assertTrue(result["needs_human_review"])
 
     def test_low_confidence_still_forces_human_review(self):
         import neev_pipeline.tools.visual_inspector_tool as vit
@@ -311,8 +313,6 @@ class TestCostToCompleteIsReported(unittest.TestCase):
     """
 
     def _assess(self, **over):
-        from neev_pipeline.tools.disbursal_risk_tool import assess_tranche
-
         kwargs = dict(
             expected_total_cost=3_235_794,
             observed_stage="slab",
@@ -528,8 +528,8 @@ class TestBatchedDeviationCheck(unittest.TestCase):
         from neev_pipeline.tools.boq_analyst_tool import check_rate_deviations
 
         out = check_rate_deviations([
-            {"item": "3.1", "boq_rate": 9800, "benchmark_rate": 8036},
-            {"item": "1.1", "boq_rate": 285, "benchmark_rate": 252},
+            {"item": "3.1", "boq_rate": 9800, "benchmark_rate": 8036, "unit": "cum", "benchmark_unit": "cum"},
+            {"item": "1.1", "boq_rate": 285, "benchmark_rate": 252, "unit": "cum", "benchmark_unit": "cum"},
         ])
         self.assertTrue(out["3.1"]["flag"])
         self.assertEqual(sorted(out), ["1.1", "3.1"])

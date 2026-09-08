@@ -138,6 +138,41 @@ export function parsePipelineEvent(raw: string): PipelineEvent | null {
  *  than a path. Same-origin absolute paths only; anything else is refused and
  *  the caller falls back to a route it chose itself. */
 export function safeRedirect(target: string | null): string | null {
-  if (target === null) return null;
-  return /^\/(?![\\/])/.test(target) ? target : null;
+  if (target === null || !/^\/(?![\\/])/.test(target)) return null;
+  // URL parsers remove tabs/newlines before interpreting the authority. Check
+  // the normalized origin too, so a disguised protocol-relative URL is refused.
+  try {
+    return new URL(target, 'https://neev.invalid').origin === 'https://neev.invalid' ? target : null;
+  } catch {
+    return null;
+  }
+}
+
+export interface RunState {
+  phases: PhaseEvent[];
+  findings: FindingEvent[];
+  progress: RunProgressEvent | null;
+  failure: string | null;
+  failureRedirect: string | null;
+  finished: boolean;
+}
+
+export const EMPTY: RunState = {
+  phases: [], findings: [], progress: null, failure: null,
+  failureRedirect: null, finished: false,
+};
+
+export function reduce(state: RunState, action: { kind: 'event'; event: PipelineEvent } | { kind: 'reset' }): RunState {
+  if (action.kind === 'reset') return EMPTY;
+  const event = action.event;
+  switch (event.type) {
+    case 'phase': {
+      const phases = [...state.phases.filter((phase) => phase.index !== event.index), event];
+      return { ...state, phases: phases.sort((a, b) => a.index - b.index) };
+    }
+    case 'finding': return { ...state, findings: [...state.findings, event] };
+    case 'progress': return { ...state, progress: event };
+    case 'error': return { ...state, failure: event.message, failureRedirect: safeRedirect(event.redirect) };
+    case 'done': return { ...state, finished: true };
+  }
 }

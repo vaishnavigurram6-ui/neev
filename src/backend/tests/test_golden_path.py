@@ -92,7 +92,7 @@ def test_the_golden_path(client, beat):
     assert boq["rev"] >= 2, "a completed analysis must leave a revision behind"
 
     sent = client.post("/api/loans/1001/questions/send")
-    assert sent.status_code == 200 and sent.json()["sent"] == 4
+    assert sent.status_code == 200 and sent.json()["sent"] == len(boq["questions"])
 
     # ---- Beat 3: will the sanction actually finish the house? ----------------
     sanction = client.get("/api/loans/1001/sanction-check").json()

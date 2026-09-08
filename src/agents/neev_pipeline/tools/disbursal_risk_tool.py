@@ -2,6 +2,8 @@
 # Pure arithmetic — no LLM inside the math, no nested dicts (flat scalar
 # params avoid the KeyError class of failures when the model builds the call).
 
+import math
+
 from ..config import (
     MILESTONE_ORDER,
     cumulative_weight,
@@ -18,6 +20,8 @@ def assess_tranche(
     disbursed_cumulative: float,
     completed_value_estimate: float,
     matches_claim: bool = True,
+    needs_human_review: bool = True,
+    requested_amount: float = 0.0,
 ) -> dict:
     """Computes disbursement exposure and cost-to-complete gap; recommends
     RELEASE / HOLD / ESCALATE for the current tranche.
@@ -40,6 +44,10 @@ def assess_tranche(
         'live_ltv_pct', 'ltv_default_prior', 'reasons'.
     """
     reasons = []
+    for value in (expected_total_cost, sanctioned_amount, disbursed_cumulative,
+                  completed_value_estimate, requested_amount):
+        if not math.isfinite(value) or value < 0:
+            raise ValueError("Financial inputs must be finite and non-negative.")
 
     # An unverifiable stage is not an error, it is an answer. With no usable
     # photo the inspector reports something outside MILESTONE_ORDER, and
@@ -52,6 +60,7 @@ def assess_tranche(
                     if completed_value_estimate else 0.0)
         return {
             "exposure_ratio": None,
+            "projected_exposure_ratio": None,
             "exposure_undefined": True,
             "recommendation": "INSPECT",
             "pct_complete": 0.0,
@@ -75,6 +84,8 @@ def assess_tranche(
     verified_value = expected_total_cost * pct_complete
 
     exposure = disbursed_cumulative / verified_value if verified_value else float("inf")
+    projected = ((disbursed_cumulative + requested_amount) / verified_value
+                 if verified_value else float("inf"))
 
     remaining_cost = expected_total_cost * (1 - pct_complete)
     remaining_funds = sanctioned_amount - disbursed_cumulative
@@ -91,15 +102,16 @@ def assess_tranche(
         reasons.append("Site evidence contradicts the borrower's claim or the "
                        "approved plan; no release until the discrepancy is "
                        "explained. See the inspection notes.")
-    elif stage_confidence == "low":
+    elif needs_human_review or stage_confidence not in ("high", "medium", "med"):
         recommendation = "ESCALATE"
-        reasons.append("Photo-evidence confidence is low; route to physical inspection "
+        reasons.append("Evidence requires human review or confidence is insufficient; route to physical inspection "
                        "before any release decision.")
-    elif exposure > EXPOSURE_HOLD_THRESHOLD:
+    elif projected > EXPOSURE_HOLD_THRESHOLD or disbursed_cumulative + requested_amount > sanctioned_amount:
         recommendation = "HOLD"
-        reasons.append(f"Disbursed (₹{disbursed_cumulative:,.0f}) exceeds verified "
-                       f"value in place (₹{verified_value:,.0f}); exposure "
-                       f"{exposure:.2f} > {EXPOSURE_HOLD_THRESHOLD}.")
+        reasons.append(f"Disbursed plus requested (₹{disbursed_cumulative + requested_amount:,.0f}) "
+                       f"must fit verified value (₹{verified_value:,.0f}); exposure "
+                       f"after the requested release {projected:.2f}; "
+                       "the release must fit both verified value and sanction.")
     else:
         recommendation = "RELEASE"
         reasons.append(f"Exposure {exposure:.2f} within threshold; verified stage "
@@ -111,10 +123,11 @@ def assess_tranche(
                        f"owner should re-scope now.")
 
     return {
-        "exposure_ratio": round(exposure, 2),
+        "exposure_ratio": round(exposure, 2) if math.isfinite(exposure) else None,
+        "projected_exposure_ratio": round(projected, 2) if math.isfinite(projected) else None,
         # Present on both return paths so a caller never has to guess whether
         # the key exists; RiskAssessment declares it either way.
-        "exposure_undefined": False,
+        "exposure_undefined": not math.isfinite(exposure),
         "recommendation": recommendation,
         "pct_complete": pct_complete,
         "verified_value": round(verified_value, 0),

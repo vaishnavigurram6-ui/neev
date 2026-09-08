@@ -45,9 +45,10 @@ def to_phase_history(loan: models.Loan) -> list[PhaseHistoryView]:
                 status_label=STATUS_LABEL[status],
                 tone=STATUS_TONE[status],  # type: ignore[arg-type]
                 inspected_on=tranche.inspection_date,
-                claimed_stage=tranche.milestone,
+                claimed_stage=tranche.claimed_stage or tranche.milestone,
                 observed_stage=tranche.observed_stage,
-                observed_by_neev=bool(tranche.photos),
+                observed_by_neev=bool(tranche.confidence and tranche.observed_stage
+                                      and tranche.observed_stage != "not_assessed"),
                 photos=[
                     PhotoView(slot_key=p.slot_key, caption=p.caption, chips=_chips(p))
                     for p in tranche.photos

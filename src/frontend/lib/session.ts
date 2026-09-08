@@ -1,7 +1,7 @@
 // Auth is a mocked session with a real boundary: the cookie is fake, but the
 // middleware redirect and the backend's get_current_user dependency are real, so
 // OTP drops in later without touching any screen.
-import { cookies } from 'next/headers';
+import { apiGet, ApiError } from './api';
 
 export const SESSION_COOKIE = 'neev_session';
 
@@ -20,23 +20,11 @@ export interface Session {
  *  lone `%`, and thrown from a layout that surfaces as a 500 error boundary on
  *  every route instead of a redirect to /login. */
 export async function readSession(): Promise<Session | null> {
-  const raw = (await cookies()).get(SESSION_COOKIE)?.value;
-  if (!raw) return null;
-  const [role, loanId, ...nameParts] = raw.split(':');
-  if (role !== 'owner' && role !== 'bank') return null;
-  if (!loanId) return null;
-
-  let name: string;
   try {
-    name = decodeURIComponent(nameParts.join(':'));
-  } catch {
-    return null;
+    const user = await apiGet<{ role: Role; loan_id: string; name: string; sub: string }>('/api/me');
+    return { role: user.role, loanId: user.loan_id, name: user.name, sub: user.sub };
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) return null;
+    throw error;
   }
-
-  return {
-    role,
-    loanId,
-    name: name || (role === 'owner' ? 'Ravi Kumar' : 'Credit officer'),
-    sub: role === 'owner' ? 'Owner · Plot 47, Kompally' : 'Credit officer · Retail assets',
-  };
 }

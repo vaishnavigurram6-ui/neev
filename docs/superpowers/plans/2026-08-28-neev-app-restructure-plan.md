@@ -1,5 +1,10 @@
 # Neev App Restructure Implementation Plan
 
+> **2026-09-08 review update:** historical completion below covers the demo only.
+> Current fixes and outstanding live/production gates are tracked in
+> [Review remediation](../../Review_Remediation.md). Its financial, evidence,
+> auth and persistence rules supersede conflicting mockup-era assumptions here.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Turn the Neev repo into a three-package application — the relocated ADK pipeline, a FastAPI backend serving pipeline-shaped fixture data, and a Next.js frontend that builds the 15 `design_handoff_neev` screens — without making a single billed Google API call.

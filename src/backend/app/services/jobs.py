@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from typing import AsyncIterator, Literal
 
 from app.schemas.events import DoneEvent, ErrorEvent, PipelineEvent
-from app.services.runner import BoqAnalysisRequest, get_runner
+from app.services.runner import BoqAnalysisRequest, PipelineRunner, get_runner
 
 # Cap on retained jobs. Each holds its full event list for replay, so an
 # unbounded registry is a slow leak in a long-lived process. Oldest completed
@@ -83,16 +83,22 @@ class JobRegistry:
         try:
             runner = get_runner()
             async for event in runner.run(req):
-                job.publish(event)
+                if isinstance(event, ErrorEvent):
+                    raise RuntimeError("Pipeline reported an analysis failure.")
+                if not isinstance(event, DoneEvent):
+                    job.publish(event)
             self._persist(runner, req)
+            job.publish(DoneEvent(redirect=f"/owner/loans/{job.loan_id}/boq"))
             job.status = "done"
         except Exception as exc:  # noqa: BLE001 - recorded on the job, never raised at the client
-            job.error = str(exc)
+            # Exceptions can contain SQL parameters, document text or credentials.
+            # Keep client-visible failure messages independent of raw exceptions.
+            job.error = f"Analysis could not be saved ({type(exc).__name__}). Please retry."
             redirect = f"/owner/loans/{job.loan_id}/boq"
             # Say the run failed, then still terminate the stream. Publishing
             # ErrorEvent first means a client that understands it can show the
             # failure; one that does not simply follows the redirect as before.
-            job.publish(ErrorEvent(message=str(exc), redirect=redirect))
+            job.publish(ErrorEvent(message=job.error, redirect=redirect))
             # Publish the terminal event BEFORE flipping status: a subscriber
             # that is caught up returns as soon as status stops being
             # "running", so a status set first would strand it with no
@@ -129,38 +135,22 @@ class JobRegistry:
             await job.wait_for_update()
 
 
-    def _persist(self, runner: object, req: BoqAnalysisRequest) -> None:
-        """Store the finished run as a new BoqRevision.
+    def _persist(self, runner: PipelineRunner, req: BoqAnalysisRequest) -> None:
+        """Validate and commit before the driver publishes terminal success."""
+        from app.schemas.pipeline import PipelineOutput
+        from app.db.session import SessionLocal
+        from app.services.persistence import store_revision
 
-        Without this a completed analysis left the loan at whatever revision the
-        seed gave it, and the loans with no seeded revision redirected to a BoQ
-        page that 404'd. A runner that cannot supply a final output returns None
-        and nothing is stored.
-
-        Imported inside the method so the services layer keeps no import-time
-        dependency on the DB layer, and a failure to store never fails the run —
-        the events have already been delivered.
-        """
-        output = getattr(runner, "final_output", lambda _req: None)(req)
+        output = runner.final_output(req)
         if output is None:
-            return
-        try:
-            from app.db.session import SessionLocal
-            from app.services.persistence import store_revision
-
-            with SessionLocal() as db:
-                store_revision(
-                    db,
-                    req.loan_id,
-                    output,
-                    source_filename=req.filename,
-                    # The runner names its own provenance. Reading NEEV_MODE
-                    # here instead would put a second mode check in the
-                    # codebase; get_runner() is deliberately the only one.
-                    mode=getattr(runner, "mode", "fixture"),
-                )
-        except Exception as exc:  # noqa: BLE001 - the run itself succeeded
-            self._last_persist_error = str(exc)
+            raise ValueError("Pipeline returned no valid final output.")
+        data = output.model_dump()
+        if runner.mode == "live" and not req.photo_paths:
+            data["inspection_result"] = None
+        output = PipelineOutput.model_validate(data)
+        with SessionLocal() as db:
+            store_revision(db, req.loan_id, output, source_filename=req.filename,
+                           mode=runner.mode, request=req)
 
 
 registry = JobRegistry()

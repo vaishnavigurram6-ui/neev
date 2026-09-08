@@ -9,7 +9,9 @@ what they saw is what goes into the loan file, and a decision row holding only
 from datetime import datetime, timezone
 from typing import Literal
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Header, HTTPException
+from sqlalchemy import select
+from uuid import uuid4
 from pydantic import BaseModel, Field
 
 from app.api.deps import AuthorizedLoan, BankOfficer, BankReader, CurrentTranche, DbSession
@@ -53,17 +55,32 @@ def decide(
     tranche: CurrentTranche,
     db: DbSession,
     officer: BankOfficer,
+    idempotency_key: str | None = Header(default=None, max_length=100),
 ) -> DecisionResponse:
-    """Idempotent per tranche: a second POST updates the one row.
+    """Append an audit event and update the latest-state projection atomically.
 
-    A double-clicked "Hold" must leave one entry in the loan file, and an
-    officer who changes their mind must leave one entry too — the latest one,
-    with a fresh evidence snapshot, not an append-only argument with itself.
+    Clients can deduplicate retries using Idempotency-Key. Reusing a key with a
+    different payload is a conflict; an unkeyed submission is a new decision.
     """
+    key = f"{loan.id}:{tranche.number}:{idempotency_key or uuid4().hex}"
+    prior = db.scalar(select(models.DecisionEvent).where(models.DecisionEvent.idempotency_key == key))
+    if prior:
+        if (prior.action, prior.note, prior.decided_by) != (body.action, body.note, officer.name):
+            raise HTTPException(409, "Idempotency key was already used for a different decision.")
+        return DecisionResponse(loan_id=loan.id, tranche=tranche.number,
+                                action=prior.action, decided_at=prior.decided_at)
     decided_at = datetime.now(timezone.utc).replace(tzinfo=None)
     snapshot = to_tranche_decision(loan, tranche).model_dump_json()
 
     decision = tranche.decision
+    # Preserve the pre-migration decision before replacing its projection.
+    if decision and not db.scalar(select(models.DecisionEvent.id).where(
+        models.DecisionEvent.tranche_id == tranche.id
+    ).limit(1)):
+        db.add(models.DecisionEvent(tranche_id=tranche.id,
+            idempotency_key=f"legacy:{tranche.id}", action=decision.action,
+            note=decision.note, decided_by=decision.decided_by,
+            decided_at=decision.decided_at, evidence_snapshot=decision.evidence_snapshot or "{}"))
     if decision is None:
         decision = models.Decision(tranche_id=tranche.id)
         db.add(decision)
@@ -76,6 +93,9 @@ def decide(
     # trail auditable later: the figures are frozen at decision time, so a
     # re-run of the pipeline cannot retroactively change what was decided on.
     decision.evidence_snapshot = snapshot
+    db.add(models.DecisionEvent(tranche_id=tranche.id, idempotency_key=key,
+        action=body.action, note=body.note, decided_by=officer.name,
+        decided_at=decided_at, evidence_snapshot=snapshot))
 
     # Deliberately does NOT move `tranche.status`. Deciding to release is not
     # the same event as disbursing: flipping the status to "paid" while

@@ -8,28 +8,23 @@
 //   * `POST /api/auth/session` (spec §5.2 — "role + phone, sets cookie") is the
 //     real contract, called through lib/api.ts like every other endpoint. The
 //     backend's own Set-Cookie header cannot reach the browser from a
-//     server-to-server fetch, so this action writes `neev_session` itself in the
-//     format lib/session.ts parses: "role:loanId:name".
-//   * When the endpoint is not there — nothing listening (ApiError status 0), or
-//     a backend without the auth route yet (404) — the action falls back to a
-//     local session so the screens stay reachable. A backend that answers and
-//     *refuses*, or does not answer in time, is a different thing entirely and
-//     surfaces as an inline error: that is a real rejection, not an absence.
+//     server-to-server fetch, so apiLogin copies its signed cookie unchanged.
+//   * An unreachable, slow or rejecting backend is a failed login. There is no
+//     locally fabricated session fallback.
 //
 // There is no "send the OTP" endpoint and no OTP to send — real SMS is explicitly
 // out of scope (spec §9) — so step one only validates the number. Any six digits
-// are accepted in step two; nothing here is a secret, and nothing pretends to be.
+// are accepted in step two. This is an explicitly enabled synthetic-data sandbox,
+// not identity verification; the issued session cookie must still stay private.
 
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { ApiError, apiPost } from '@/lib/api';
-import { SESSION_COOKIE, type Role } from '@/lib/session';
+import { ApiError, apiLogin } from '@/lib/api';
+import { type Role } from '@/lib/session';
 import type { LoginState } from './state';
 
 /** The golden demo case, and the only owner loan the fixtures know. Used when the
  *  backend does not name one. */
 const GOLDEN_LOAN_ID = '1001';
-const SESSION_MAX_AGE_SECONDS = 60 * 60 * 8;
 
 /** Indian mobile numbers are ten digits and start 6-9. */
 const MOBILE = /^[6-9]\d{9}$/;
@@ -174,13 +169,7 @@ export async function loginAction(previous: LoginState, formData: FormData): Pro
   }
 
   let loanId = GOLDEN_LOAN_ID;
-  // Empty is deliberate: lib/session.ts fills in the role's display name, so an
-  // offline login invents no borrower.
-  let name = '';
-  // The role the *backend* grants, once it is able to. The submitted role is only
-  // a request: a phone number belongs to one side of the table, and the service
-  // that knows which is the one that should say. Until it does, the toggle wins,
-  // which is the mocked half of "mocked session, real boundary" (spec §2).
+  // Identity comes from the backend response, never from a locally signed cookie.
   let granted = role;
 
   const failed: LoginState = {
@@ -195,40 +184,18 @@ export async function loginAction(previous: LoginState, formData: FormData): Pro
 
   try {
     const body = await withTimeout(
-      apiPost<AuthSessionResponse | undefined>('/api/auth/session', { role, phone })
+      apiLogin<AuthSessionResponse | undefined>({ role, phone })
     );
-    // No answer inside the window is not permission to sign someone in: a slow
-    // backend may be a healthy backend about to refuse this number. Only a
-    // request that never left the process (status 0, below) is treated as absent.
+    // No answer inside the window is not permission to sign someone in.
     if (body === TIMED_OUT) return failed;
     if (typeof body?.loan_id === 'string' && body.loan_id) loanId = body.loan_id;
-    if (typeof body?.name === 'string') name = body.name;
     if (body?.role === 'owner' || body?.role === 'bank') granted = body.role;
   } catch (cause) {
     if (!(cause instanceof ApiError)) throw cause;
 
-    // status 0 — nothing is listening, so there is nothing to disagree with.
-    // 404 — something is listening but the auth route does not exist yet: it
-    // lands in plan Task 12, which is being built in parallel with this screen.
-    // Both fall through to a local session so the screens stay reachable; both
-    // are development states, and neither can happen once Task 12 has merged.
-    const endpointAbsent = cause.status === 0 || cause.status === 404;
-    if (!endpointAbsent) return failed;
-    console.warn(
-      `[login] POST /api/auth/session unavailable (status ${cause.status}) — issuing a local ${role} session. Once the backend's auth route exists this branch should never run.`
-    );
+    // Network failures and rejected credentials both fail closed.
+    return failed;
   }
-
-  const store = await cookies();
-  // The name is percent-encoded because the cookie is colon-separated and
-  // lib/session.ts decodes it; a name containing ":" must not shift the fields.
-  store.set(SESSION_COOKIE, `${granted}:${loanId}:${encodeURIComponent(name)}`, {
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: SESSION_MAX_AGE_SECONDS,
-    secure: process.env.NODE_ENV === 'production',
-  });
 
   // Throws NEXT_REDIRECT; it must stay outside the try above.
   redirect(destinationFor(granted, loanId, next));

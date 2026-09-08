@@ -36,6 +36,9 @@ _to_delete/
 # Editor swap files.
 *.sw[a-p]
 
+# Private uploads (local only; never commit borrower documents).
+artifacts/
+
 # Synthetic BoQ PDFs ARE committed (owner's call, 2026-09-07), so Cloud Shell
 # and a judge get the documents without installing reportlab. Safe to track
 # because scripts/synthetic_boqs.py sets rl_config.invariant, which fixes the

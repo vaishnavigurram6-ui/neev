@@ -12,7 +12,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from app.api.deps import OptionalUser
+from app.api.deps import CurrentUser, SessionUser
 from app.schemas.events import DoneEvent
 from app.services.jobs import registry
 
@@ -35,20 +35,24 @@ class JobStatusResponse(BaseModel):
 
 
 @router.get("/{job_id}", response_model=JobStatusResponse)
-def job_status(job_id: str) -> JobStatusResponse:
+def job_status(job_id: str, user: CurrentUser) -> JobStatusResponse:
     """Why a run failed, for a client that missed the stream's error event."""
     job = registry.get(job_id)
     if job is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"No job {job_id}."
         )
+    _authorize(job.loan_id, user)
     return JobStatusResponse(
         job_id=job.id, loan_id=job.loan_id, status=job.status, error=job.error
     )
 
 
 @router.get("/{job_id}/events")
-async def job_events(job_id: str, user: OptionalUser = None) -> StreamingResponse:
+async def job_events(job_id: str, user: CurrentUser) -> StreamingResponse:
+    job = registry.get(job_id)
+    if job is not None:
+        _authorize(job.loan_id, user)
     # Where an unknown job sends the reader. Role-aware, so a lender whose tab
     # reloads after a restart is not dropped into the borrower onboarding flow.
     fallback_redirect = "/bank/portfolio" if user and user.role == "bank" else "/owner/onboarding"
@@ -63,3 +67,8 @@ async def job_events(job_id: str, user: OptionalUser = None) -> StreamingRespons
             yield f"data: {fallback.model_dump_json()}\n\n"
 
     return StreamingResponse(generate(), media_type="text/event-stream", headers=SSE_HEADERS)
+
+
+def _authorize(loan_id: str, user: SessionUser) -> None:
+    if user.role == "owner" and user.loan_id != loan_id:
+        raise HTTPException(403, "This job belongs to another loan.")

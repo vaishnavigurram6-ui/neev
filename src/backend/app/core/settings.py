@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     neev_mode: Mode = "fixture"
     neev_allow_billed_calls: bool = False
     database_url: str = "sqlite:///./neev.db"
+    artifact_dir: str = "./artifacts"
+    # Explicit sandbox opt-in. No identity provider is implemented yet.
+    neev_demo_auth: bool = False
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
     @field_validator("neev_mode", mode="before")

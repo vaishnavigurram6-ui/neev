@@ -5,6 +5,7 @@
 # model memory — only from a tool result or the document itself.
 
 from google.cloud import bigquery
+from .units import rate_in_unit
 
 from ..config import (
     MISSING_SCOPE_AREA_FACTORS,
@@ -25,7 +26,7 @@ def _client():
 
 
 _UNBENCHMARKED = "No benchmark found — do not flag rate; note as UNBENCHMARKED."
-_SOURCE = "CPWD DSR 2023 x Hyderabad factor (rate_benchmarks table)"
+_SOURCE = "Provisional Hyderabad benchmark table; CPWD DSR verification pending"
 
 
 def lookup_benchmark_rates(item_descriptions: list[str]) -> dict:
@@ -141,9 +142,13 @@ def check_rate_deviations(quotes: list[dict]) -> dict:
         if not benchmark:
             results[item] = {"flag": False, "note": _UNBENCHMARKED}
             continue
-        results[item] = check_rate_deviation(
-            float(quote["boq_rate"]), float(benchmark)
-        )
+        try:
+            rate = rate_in_unit(float(benchmark), quote.get("benchmark_unit"), quote.get("unit"))
+        except ValueError as exc:
+            results[item] = {"flag": False, "assessable": False, "note": str(exc)}
+            continue
+        results[item] = {**check_rate_deviation(float(quote["boq_rate"]), rate),
+                         "assessable": True, "benchmark_rate": rate, "unit": quote["unit"]}
     return results
 
 
@@ -242,12 +247,20 @@ def _price(
 ) -> dict:
     """The arithmetic, with the benchmark lookups already done. Pure."""
     fair = 0.0
+    unpriced = []
     for item in line_items:
-        rate = (benchmarks.get(str(item.get("desc", ""))) or {}).get("benchmark_rate")
+        entry = benchmarks.get(str(item.get("desc", ""))) or {}
+        rate = entry.get("benchmark_rate")
+        if rate:
+            try:
+                rate = rate_in_unit(float(rate), entry.get("unit"), item.get("unit"))
+            except ValueError:
+                rate = None
         qty = float(item.get("qty") or 0)
         if rate and qty:
             fair += qty * float(rate)
         else:
+            unpriced.append(str(item.get("id", item.get("desc", ""))))
             # No benchmark: the quoted amount is the only figure there is.
             fair += float(item.get("amount") or 0)
 
@@ -273,9 +286,15 @@ def _price(
                            "note": "No benchmark rate for this scope; quantity only."})
             continue
 
+        try:
+            rate = rate_in_unit(float(rate), entry.get("unit"), "sqm")
+        except ValueError:
+            priced.append({"scope": scope, "qty": qty, "unit": "sqm", "rate": None,
+                           "amount": None, "note": "Benchmark unit is incompatible with area."})
+            continue
         amount = round(qty * float(rate))
         total += amount
-        priced.append({"scope": scope, "qty": qty, "unit": entry.get("unit", "sqm"),
+        priced.append({"scope": scope, "qty": qty, "unit": "sqm",
                        "rate": float(rate), "amount": amount,
                        "note": f"{factor:g} x built-up area at the benchmark rate."})
 
@@ -283,4 +302,6 @@ def _price(
         "fair_price_for_quoted_scope": round(fair, 2),
         "missing_scope": priced,
         "missing_scope_value": round(total, 2),
+        "unpriced_items": unpriced,
+        "missing_scope_complete": all(p["amount"] is not None for p in priced),
     }

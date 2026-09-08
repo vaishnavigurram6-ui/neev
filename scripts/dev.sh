@@ -73,13 +73,13 @@ ENV_LOCAL="src/frontend/.env.local"
 echo "Wrote $ENV_LOCAL -> http://127.0.0.1:$BE_PORT"
 
 echo "Seeding the database..."
-(cd src/backend && .venv/bin/python -m app.db.seed --reset)
+(cd src/backend && .venv/bin/python -m app.db.seed)
 
 cleanup() { echo; echo "Stopping..."; kill 0 2>/dev/null || true; }
 trap cleanup EXIT INT TERM
 
 echo "Starting backend on :$BE_PORT (NEEV_MODE=fixture)..."
-(cd "$ROOT/src/backend" && NEEV_MODE=fixture .venv/bin/python -m uvicorn app.main:app --port "$BE_PORT" --reload) &
+(cd "$ROOT/src/backend" && NEEV_MODE=fixture NEEV_DEMO_AUTH=true .venv/bin/python -m uvicorn app.main:app --port "$BE_PORT" --reload) &
 
 echo "Starting frontend on :$FE_PORT..."
 (cd "$ROOT/src/frontend" && NEEV_API_BASE="http://127.0.0.1:$BE_PORT" npm run dev -- --port "$FE_PORT") &

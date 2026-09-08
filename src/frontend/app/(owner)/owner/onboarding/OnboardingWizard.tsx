@@ -34,15 +34,15 @@ const COPY = {
 
   // Step 1 — verbatim from the prototype.
   dropLabel: 'Drop your Bill of Quantities here',
-  dropHint: 'PDF, Excel — or just photos of the pages. We read all of them.',
+  dropHint: 'PDF, JPEG, PNG or WebP — up to 10 MB. Demo mode replays a sample, not your upload.',
   volumeNote: 'Typically 80–150 line items · read in about a minute',
   sampleLead: 'no BoQ yet? ',
   sampleLink: 'see a sample report',
   held: 'Using ',
   heldTail: ' — choose another file to replace it.',
-  noFile: 'Choose your Bill of Quantities first — a PDF, an Excel file, or photos of the pages.',
+  noFile: 'Choose a PDF or a JPEG, PNG or WebP image of your BoQ.',
   tooBig: 'That file is larger than we can read in one go. Split it, or send the pages as photos.',
-  wrongKind: 'We read PDFs, Excel files and photos. That file looks like something else.',
+  wrongKind: 'Upload a PDF, JPEG, PNG or WebP. Export spreadsheets to PDF first.',
 
   // Step 2.
   plotTitle: 'Your plot & area',
@@ -82,26 +82,18 @@ const COPY = {
  *  `href="#"`; spec §7.4 says point it at the real thing. */
 export const GOLDEN_CASE_LOAN_ID = '1001';
 
-const ACCEPT = 'application/pdf,.xlsx,image/*';
+import { ACCEPT, MAX_UPLOAD_BYTES, looksReadable } from '@/components/owner/upload-validation';
 const FILE_FIELD = 'file';
 
 /** Well past any real BoQ, and matched to the upload relay's 180s timeout: 20 MB
  *  inside that window is about 0.9 Mbps sustained, which a domestic Indian uplink
  *  can hold. A cap the timeout cannot honour would reject slow uploads with an
  *  outage message and invite an identical retry. */
-const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 /** A built-up area outside this range is a typo, not a house. */
 const MIN_SQFT = 100;
 const MAX_SQFT = 100_000;
 
-function looksReadable(file: File): boolean {
-  if (file.type === 'application/pdf' || file.type.startsWith('image/')) return true;
-  if (file.type.includes('spreadsheet') || file.type.includes('excel')) return true;
-  // A drop bypasses the picker's `accept` filter, and some systems hand over an
-  // empty MIME type, so the extension is the fallback rather than the rule.
-  return /\.(pdf|xlsx|xls|csv)$/i.test(file.name);
-}
 
 type Step = 0 | 1 | 2;
 

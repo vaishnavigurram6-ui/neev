@@ -31,7 +31,9 @@ boq_analyst_agent = Agent(
         "2. Call lookup_benchmark_rates ONCE, passing every priced item's "
         "description in a single list. Do NOT call it per item. Then call "
         "check_rate_deviations ONCE with one entry per item that came back with a "
-        "benchmark_rate, as [{item, boq_rate, benchmark_rate}]. "
+        "benchmark_rate, as [{item, boq_rate, benchmark_rate, unit, benchmark_unit}]. "
+        "unit comes from the document and benchmark_unit from the lookup. If "
+        "assessable=false, report UNBENCHMARKED; never compare incompatible units. "
         "Flag type RATE_OUTLIER only when its result has flag=true; "
         "quote its deviation number verbatim. An item whose entry has "
         "matched_item=null is UNBENCHMARKED — never estimate a benchmark yourself.\n"
@@ -57,7 +59,7 @@ boq_analyst_agent = Agent(
         "state or imply the contractor is cheating.\n"
         "ON A RATE_OUTLIER FLAG ALSO SET, as numbers, not text: deviation_pct (the "
         "figure check_rate_deviations returned for that item) and benchmark_rate "
-        "(the figure lookup_benchmark_rates returned). Without deviation_pct the "
+        "(the unit-converted figure check_rate_deviations returned). Without deviation_pct the "
         "flag cannot say how far off the rate is, so it is not an acceptable flag.\n"
         "'item' MUST identify the thing flagged the way the DOCUMENT does:\n"
         "  - a flag about a priced line: that line's own number, e.g. \"3.1\"\n"
@@ -103,7 +105,7 @@ cost_estimation_agent = Agent(
         "round them, and omit either one only if it is absent upstream.\n"
         "Then account for WHERE the gap comes from, as `sections`: one entry per "
         "work section that differs, {name, quoted, market, delta}, delta = "
-        "quoted - market. A negative delta means the BoQ is under-provisioned "
+        "market - quoted. A positive delta means the BoQ is under-provisioned "
         "for that section. Cover only sections you can source from "
         "{boq_findings} or the tool — omit the array rather than estimate one, "
         "and never let the entries contradict expected_total_cost.\n"
@@ -124,7 +126,9 @@ visual_inspector_agent = Agent(
         "checklist-based, banded-confidence output as-is — do not invent a more "
         "precise percentage than the tool returns, and never override a "
         "needs_human_review flag.\n"
-        "Output JSON: {stage, confidence, matches_claim, evidence_notes}."
+        "Output JSON: {stage, confidence, matches_claim, evidence_notes, needs_human_review}. "
+        "Copy needs_human_review exactly. Never substitute the claimed stage for "
+        "an absent observation. No photos means not_assessed and human review."
     ),
     tools=[verify_construction_stage],
     output_key="inspection_result",
@@ -142,6 +146,8 @@ disbursal_risk_agent = Agent(
         "and observed_stage as the stage that was SEEN, not the stage claimed. "
         "If the evidence did not back the claim, the tool needs to know: money "
         "must not be released on evidence that disagrees with itself.\n"
+        "Pass needs_human_review from the inspection (true if absent), and "
+        "requested_amount from the loan context (zero only for a retrospective review).\n"
         "Output JSON: the assess_tranche result verbatim."
     ),
     tools=[assess_tranche],

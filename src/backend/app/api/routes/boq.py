@@ -26,6 +26,8 @@ from app.mappers.sanction import to_sanction_check
 from app.schemas.views import BoqReviewView, SanctionCheckView
 from app.services.jobs import registry
 from app.services.runner import BoqAnalysisRequest
+from app.services.artifacts import read_upload, store_artifact
+from app.api.routes.loans import _current_tranche
 
 router = APIRouter(prefix="/api/loans", tags=["boq"])
 
@@ -39,21 +41,28 @@ class UploadAccepted(BaseModel):
 async def upload_boq(
     loan: AuthorizedLoan,
     file: UploadFile = File(...),
-    built_up_sqft: int | None = Form(default=None),
+    built_up_sqft: int | None = Form(default=None, gt=0),
 ) -> UploadAccepted:
     # Starlette fills `size` from the multipart part, so the bytes never need to
     # be pulled into memory here. They are not carried into the request object
     # either: fixture mode ignores them, and the live runner reads them back
     # from the stored artefact (see BoqAnalysisRequest).
-    size = file.size if file.size is not None else len(await file.read())
+    data, mime = await read_upload(file)
+    tranche = _current_tranche(loan) if loan.tranches else None
     request = BoqAnalysisRequest(
         loan_id=loan.id,
         filename=file.filename or "boq.pdf",
-        content_type=file.content_type or "application/octet-stream",
-        size_bytes=size,
+        content_type=mime,
+        size_bytes=len(data),
+        artifact_path=store_artifact(data),
         locality=loan.locality,
         built_up_sqft=built_up_sqft or loan.built_up_sqft,
         sanctioned=loan.sanctioned,
+        disbursed=loan.disbursed,
+        tranche_number=tranche.number if tranche else None,
+        claimed_stage=(tranche.claimed_stage or tranche.milestone) if tranche else "not_assessed",
+        requested_amount=max(0, tranche.disbursed_cum - loan.disbursed) if tranche else 0,
+        photo_paths=[p.stored_path for p in tranche.photos if p.stored_path] if tranche else [],
     )
     job = registry.create(request)
     return UploadAccepted(job_id=job.id, loan_id=loan.id)
@@ -72,11 +81,17 @@ def boq_revision(loan: AuthorizedLoan, rev: int) -> BoqReviewView:
 @router.get("/{loan_id}/sanction-check", response_model=SanctionCheckView)
 def sanction_check(loan: AuthorizedLoan) -> SanctionCheckView:
     revision = latest_revision(loan)
-    return to_sanction_check(loan, revision, analysis_for(revision).cost_estimate)
+    output = analysis_for(revision)
+    view = to_sanction_check(loan, revision, output.cost_estimate)
+    view.provenance = output.provenance
+    return view
 
 
 def _review(loan: models.Loan, revision: models.BoqRevision) -> BoqReviewView:
     """The route sources the mapper's inputs, because the route is where the
     revision's provenance is already resolved (see app/api/analysis.py)."""
     output = analysis_for(revision)
-    return to_boq_review(loan, revision, output.cost_estimate, output.payment_schedule)
+    view = to_boq_review(loan, revision, output.cost_estimate, output.payment_schedule)
+    view.analysis_mode = revision.pipeline_mode
+    view.provenance = output.provenance
+    return view
