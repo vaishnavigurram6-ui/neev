@@ -219,9 +219,9 @@ credentials are documentation, so they live here.
 
 | Username | Password | Signs in as |
 |---|---|---|
-| `ravi` | `neev-demo` | Ravi Kumar — the flagged contract, loan 1001 |
-| `prasad` | `neev-demo` | D. Prasad — the clean contract, loan 1002 |
-| `officer` | `neev-demo` | Credit officer — the whole book |
+| `ravi` | `password` | Ravi Kumar — the flagged contract, loan 1001 |
+| `prasad` | `password` | D. Prasad — the clean contract, loan 1002 |
+| `officer` | `password` | Credit officer — the whole book |
 
 One shared password, set by `NEEV_DEMO_PASSWORD`. Override it on a deployment if
 you would rather it were not the one printed in this repo:

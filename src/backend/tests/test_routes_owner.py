@@ -132,7 +132,7 @@ def test_the_wrong_password_is_rejected(client):
         "/api/auth/session", json={"username": "ravi", "password": "wrong"}
     )
     no_such_user = client.post(
-        "/api/auth/session", json={"username": "nobody", "password": "neev-demo"}
+        "/api/auth/session", json={"username": "nobody", "password": "password"}
     )
     assert wrong_password.status_code == no_such_user.status_code == 401
     assert wrong_password.json()["detail"] == no_such_user.json()["detail"]

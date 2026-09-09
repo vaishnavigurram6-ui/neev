@@ -218,7 +218,7 @@ BACKEND_ENV="$BACKEND_ENV,NEEV_MAX_ANALYSES_PER_DAY=${NEEV_MAX_ANALYSES_PER_DAY:
 # The runbook tells the operator they can override the demo password here, and
 # for a while that was a lie: this variable was never sent, so the deployment
 # used the default whatever they exported.
-BACKEND_ENV="$BACKEND_ENV,NEEV_DEMO_PASSWORD=${NEEV_DEMO_PASSWORD:-neev-demo}"
+BACKEND_ENV="$BACKEND_ENV,NEEV_DEMO_PASSWORD=${NEEV_DEMO_PASSWORD:-password}"
 # Pin the model the pipeline was actually proven end to end on, rather than
 # inheriting a default that can move under it.
 BACKEND_ENV="$BACKEND_ENV,NEEV_GEMINI_MODEL=${NEEV_GEMINI_MODEL:-gemini-3.7-flash}"
@@ -285,5 +285,5 @@ echo "pipeline against Gemini -- about Rs 3.81 and 107 seconds per analysis,"
 echo "capped at ${NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY:-12} per loan and ${NEEV_MAX_ANALYSES_PER_DAY:-60} per day across the service."
 echo
 echo "Sign in as ravi (loan 1001), prasad (loan 1002) or officer (the whole"
-echo "book). Password: ${NEEV_DEMO_PASSWORD:-neev-demo}. These are named demo"
+echo "book). Password: ${NEEV_DEMO_PASSWORD:-password}. These are named demo"
 echo "accounts, not identity -- see src/backend/app/api/accounts.py."

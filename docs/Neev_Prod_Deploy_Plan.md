@@ -73,7 +73,7 @@ present, so this is moot today. It is a gap in the preflight, not in the project
 | 12 | Both containers actually build and serve. **Neither Dockerfile has ever been built in CI.** This is the stage that protects the two deploys, and it is free and unlimited. | `docker build -t neev-api .` · `docker build -t neev-web src/frontend` · `docker run -d --name api -p 8080:8080 neev-api` · `curl -fsS http://localhost:8080/api/health` → `{"status":"ok","mode":"fixture"}` · `docker run -d --name web -p 3000:8080 -e NEEV_API_BASE=http://host.docker.internal:8080 neev-web` · `curl -fsS -o /dev/null -w '%{http_code}\n' http://localhost:3000/` → 200 |
 | 13 | Confirm what will be uploaded to Cloud Build. There is **no `.gcloudignore`** in the repo; gcloud generates one from `.gitignore` at deploy time. Verified today: 343 files for the backend context, 133 for the frontend, **zero** `node_modules` / `.venv` / `.next` entries. | `gcloud meta list-files-for-upload . \| wc -l` → 343 · `gcloud meta list-files-for-upload . \| grep -cE 'node_modules\|\.venv'` → 0 · `gcloud meta list-files-for-upload src/frontend \| wc -l` → 133. This command does **not** write `.gcloudignore`; `gcloud run deploy` **will**, in the repo root and in `src/frontend`. Expect two new untracked files afterwards. |
 | 14 | Pick and record `NEEV_SESSION_SECRET` **yourself**. If you let the script generate it, you cannot reproduce it, and any later `--set-env-vars` that omits it signs every visitor out. | `openssl rand -hex 32` → paste into a note, then `export NEEV_SESSION_SECRET=<that value>` |
-| 15 | Decide the demo password. **The runbook's documented override does not work** — see §7.1. The deployed password will be `neev-demo` unless you add `NEEV_DEMO_PASSWORD` to the gcloud command by hand. | Either accept `neev-demo` (it is already printed in `docs/Neev_Demo_Runbook.md`, which is the intent) or use the hand-written invocation in §2.3 |
+| 15 | Decide the demo password. **The runbook's documented override does not work** — see §7.1. The deployed password will be `password` unless you add `NEEV_DEMO_PASSWORD` to the gcloud command by hand. | Either accept `password` (it is already printed in `docs/Neev_Demo_Runbook.md`, which is the intent) or use the hand-written invocation in §2.3 |
 | 16 | Decide the model. `NEEV_GEMINI_MODEL` is **not** passed by the deploy script, so the image runs `neev_pipeline/config.py`'s default `gemini-3.7-flash`. If that model id is not served on Vertex in the `global` location, every live analysis fails and you cannot change it without touching the service. | If you want an escape hatch, add `NEEV_GEMINI_MODEL=gemini-3.7-flash` to the env explicitly (§2.3) so a later `--update-env-vars` is an edit rather than an addition |
 | 17 | Warm-up plan agreed: someone hits both URLs a minute before presenting | see §3 step 0 |
 
@@ -132,7 +132,7 @@ Read from `scripts/deploy_cloudrun.sh` as it stands. Nothing below is inferred.
   enough that a judge working the flow never meets them.
 
 Not set, and therefore taking their defaults from `app/core/settings.py`:
-`NEEV_DEMO_PASSWORD` = `neev-demo`; `DATABASE_URL` = `sqlite:///./neev.db`;
+`NEEV_DEMO_PASSWORD` = `password`; `DATABASE_URL` = `sqlite:///./neev.db`;
 `ARTIFACT_DIR` = `./artifacts`; `CORS_ORIGINS` = localhost (irrelevant — every
 call is a server-to-server hop inside Cloud Run, see §2.4).
 
@@ -286,7 +286,7 @@ curl -fsS "$API_URL/api/auth/accounts"
 
 curl -fsS -c /tmp/neev.jar -X POST "$API_URL/api/auth/session" \
   -H 'content-type: application/json' \
-  -d '{"username":"ravi","password":"neev-demo"}'
+  -d '{"username":"ravi","password":"password"}'
 # expect {"role":"owner","loan_id":"1001","name":"Ravi Kumar"}
 ```
 
@@ -299,7 +299,7 @@ curl -fsS -b /tmp/neev.jar "$API_URL/api/loans/1001/boq/latest"   | head -c 400
 curl -fsS -b /tmp/neev.jar "$API_URL/api/loans/1001/sanction-check" | head -c 300
 ```
 
-Then in a browser, signed in as `ravi` / `neev-demo`, and as `officer`:
+Then in a browser, signed in as `ravi` / `password`, and as `officer`:
 
 - `$WEB_URL/owner/loans/1001/boq` — 40 items, ₹28,47,930 quoted vs ₹26,77,618 benchmark
 - `$WEB_URL/owner/loans/1001/sanction` — ₹4,35,794 shortfall
@@ -511,7 +511,7 @@ demo on a laptop beats a broken URL.
 
 ## 6 · What a judge will see
 
-Sign-in is at `$WEB_URL/login`. Three accounts, one shared password `neev-demo`
+Sign-in is at `$WEB_URL/login`. Three accounts, one shared password `password`
 (§1 step 15 if you changed it). The login screen lists the usernames itself, so
 you do not have to read them out.
 
@@ -597,7 +597,7 @@ one that will bite you.* `docs/Neev_Demo_Runbook.md:229` documents:
 `scripts/deploy_cloudrun.sh` never reads that variable — grep finds it in the
 two docs and nowhere in the script or the Dockerfile. `BACKEND_ENV` (lines
 211–221) does not include it. The deployed password will be the
-`app/core/settings.py:43` default, **`neev-demo`**, whatever you export. To
+`app/core/settings.py:43` default, **`password`**, whatever you export. To
 actually change it, add `NEEV_DEMO_PASSWORD=...` to the `--set-env-vars` string
 by hand (§2.3) or fix it afterwards with `--update-env-vars` (§5.3).
 

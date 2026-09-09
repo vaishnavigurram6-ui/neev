@@ -30,7 +30,7 @@ exist to set those up and to prove they are real.
 | Browser: 1440px wide, no bookmarks bar, no extensions, one tab | The runbook verifies 1280/1440/1920. 1440 fills a 1080p frame with readable type. |
 | Pick one theme and stay in it | The toggle is a nice detail and a terrible mid-video surprise. |
 | Two windows, signed in separately: `ravi` and `officer` | Switching accounts on camera costs 15 seconds and shows a login form twice. Cut between windows instead. |
-| Password for both: `neev-demo` | See the runbook. |
+| Password for both: `password` | See the runbook. |
 
 **Cost of a take:** about ₹3.81 for the BoQ analysis plus ₹1.50 for the
 milestone inspection. Five takes is under ₹30. Do not rehearse in live mode —

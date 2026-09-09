@@ -46,9 +46,9 @@ def _force_fixture_mode(monkeypatch):
 
 # The demo accounts, as tests use them. Imported rather than retyped so a
 # change to the account list is one edit, not forty.
-OWNER_LOGIN = {"username": "ravi", "password": "neev-demo"}
-OWNER_1002_LOGIN = {"username": "prasad", "password": "neev-demo"}
-BANK_LOGIN = {"username": "officer", "password": "neev-demo"}
+OWNER_LOGIN = {"username": "ravi", "password": "password"}
+OWNER_1002_LOGIN = {"username": "prasad", "password": "password"}
+BANK_LOGIN = {"username": "officer", "password": "password"}
 
 
 @pytest.fixture(autouse=True)

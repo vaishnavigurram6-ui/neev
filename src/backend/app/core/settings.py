@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     # deployed URL is public and sign-in used to accept any ten-digit number,
     # which meant anyone who found the link could start analyses that cost
     # money. Override it on a deployment to keep it out of a public repo.
-    neev_demo_password: str = "neev-demo"
+    neev_demo_password: str = "password"
     # How many analyses one loan may start in a rolling 24 hours, and how many
     # the whole service may. A live analysis costs real money — about Rs 3.81 —
     # and the deployed demo is a public URL whose sign-in accepts any ten-digit
