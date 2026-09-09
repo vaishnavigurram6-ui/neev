@@ -1,0 +1,25 @@
+# What `gcloud run deploy --source src/frontend` uploads for the WEB image.
+#
+# Explicit for the same reason as the root copy: deterministic, and gcloud does
+# not then write its own.
+#
+# .env.local matters most here. scripts/dev.sh regenerates it on every local run
+# with NEEV_API_BASE=http://127.0.0.1:8000, and Next reads .env.local at build
+# and at runtime -- so shipping it would point every deployed page at a backend
+# that does not exist inside the container. The deployed value arrives through
+# --set-env-vars instead.
+
+.git
+.gitignore
+.gcloudignore
+
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+node_modules/
+.next/
+out/
+*.log
+.DS_Store

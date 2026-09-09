@@ -1,0 +1,43 @@
+# What `gcloud run deploy --source .` uploads for the BACKEND image.
+#
+# Explicit, because gcloud reads only the ROOT .gitignore when it generates one
+# of these itself -- so src/backend/.gitignore is skipped and a 10MB pytest
+# cache and the local SQLite file were both being uploaded. It also stops gcloud
+# writing its own copy of this file into the repo mid-deploy.
+#
+# Keep in step with the root Dockerfile: it needs src/backend/, src/agents/ and
+# fixtures/, and nothing else in this repository.
+
+.git
+.gitignore
+.gcloudignore
+
+# Secrets. Already covered by .gitignore, restated because this is the file that
+# decides what leaves the machine.
+.env
+.env.*
+!.env.example
+
+# Local state and caches. The nested .gitignore files gcloud does not read.
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/*.db
+**/*.db-journal
+**/.DS_Store
+src/backend/artifacts/
+.claude/
+_to_delete/
+
+# The frontend is a separate image with its own context (--source src/frontend),
+# so none of it belongs in the backend upload.
+src/frontend/
+**/node_modules/
+
+# Not read by the seed, the app, or either image.
+docs/
+design_handoff_neev/
+figures/
+demo_assets/
+.golden_runs/
