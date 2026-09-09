@@ -41,7 +41,7 @@ const COPY = {
   onFile: 'On file —',
   reportedLead: 'Your photos are with your bank.',
   reportedBody:
-    'They are filed against this milestone and the draw is queued for verification. Your officer sees the same frames you sent — no need to send them again.',
+    'They are filed against this milestone and the disbursement is queued for verification. Your officer sees the same frames you sent — no need to send them again.',
   photosTitle: "This month's site photos",
   photosCta: 'Report a milestone →',
   photosNote:
@@ -91,7 +91,7 @@ const TRANCHE_COLUMNS: Column<PreviewTranche>[] = [
   },
   {
     key: 'drawn',
-    header: 'Drawn to date',
+    header: 'Disbursed to date',
     align: 'right',
     width: '140px',
     render: (row) => <Figure value={formatINR(row.drawnToDate)} size="sm" />,
@@ -154,7 +154,7 @@ export default async function BuildProgressPage({
       title={COPY.title}
       sub={
         loan
-          ? `${formatINR(loan.disbursed)} of ${formatINR(loan.sanctioned)} drawn${
+          ? `${formatINR(loan.disbursed)} of ${formatINR(loan.sanctioned)} disbursed${
               loan.currentMilestone ? ` · ${loan.currentMilestone.label.toLowerCase()} cast` : ''
             } · last verified ${formatDay(loan.lastVerifiedOn)}`
           : undefined
@@ -205,7 +205,7 @@ export default async function BuildProgressPage({
             <CardTable
               columns={TRANCHE_COLUMNS}
               rows={loan.tranches}
-              caption="Every tranche on this loan: the milestone it pays for, the amount, the cumulative total drawn after it, and whether it has been released."
+              caption="Every tranche on this loan: the milestone it pays for, the amount, the cumulative total disbursed after it, and whether it has been released."
               emptyMessage="No tranches have been scheduled on this loan yet."
             />
           </div>

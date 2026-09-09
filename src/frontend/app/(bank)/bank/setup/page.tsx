@@ -23,11 +23,11 @@ const COPY = {
   title: 'Bring your construction book onto Neev',
   sub: 'Three steps: add your loans, invite your borrowers, set your risk thresholds. Most books are live the same day.',
 
-  uploadTitle: 'Upload your draw schedule',
+  uploadTitle: 'Upload your disbursement schedule',
   uploadBody:
     'One CSV or Excel — loan IDs, sanctions, tranches, milestones. We map the columns automatically.',
   uploadLabel: 'Upload CSV / XLSX',
-  uploadHint: 'Drop the draw schedule here, or choose a file.',
+  uploadHint: 'Drop the disbursement schedule here, or choose a file.',
   uploadedTail: ' loans on the book · columns mapped on upload',
 
   losTitle: 'Connect your LOS / core banking',

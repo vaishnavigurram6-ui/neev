@@ -64,7 +64,7 @@ const COPY = {
     'Bills are held here for now — verification reads the photos, so bills are not part of what is sent yet.',
   submitLead: 'What your bank receives.',
   submitBody:
-    'Your photos and note go straight into the loan file against this milestone, and the draw is marked for verification. Your officer sees the same frames you sent.',
+    'Your photos and note go straight into the loan file against this milestone, and the disbursement is marked for verification. Your officer sees the same frames you sent.',
   onSubmitTitle: 'What happens on submit',
   onSubmitOne:
     'Photos are read against your BoQ — footings, PCC and starter bars checked as line items, not a vague "15%".',

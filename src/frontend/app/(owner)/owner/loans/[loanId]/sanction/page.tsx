@@ -53,7 +53,7 @@ const COPY = {
   shortfallLead: 'Shortfall of',
   // The full stop is added: the mockup draws the lead and the body as two
   // separate lines, and `CalloutBanner` joins them into one paragraph.
-  shortfallTail: '— flagged before drawdown.',
+  shortfallTail: '— flagged before the first disbursement.',
   shortfallBody:
     'At current rates, funds run out around brickwork. Re-scope now, while the plan can still change.',
   shortfallMeans: "The sanction won't reach a habitable structure as scoped.",

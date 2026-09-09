@@ -29,11 +29,13 @@ const OWNER_PANEL = {
 };
 
 const LENDER_PANEL = {
-  // "Draw" is what construction lending calls it, and what the rest of the
-  // product says -- but it is jargon on the first screen a lender ever sees.
-  // "Disbursement" is the word the data model already uses (`disbursed`,
-  // `disbursed_cum`), and unlike "payment" it cannot be misread as the
-  // borrower's repayment, which is money moving the other way.
+  // "Draw" is what construction lending calls it, but it is jargon on the
+  // first screen a lender ever sees. "Disbursement" is the word the data model
+  // already uses (`disbursed`, `disbursed_cum`), and unlike "payment" it cannot
+  // be misread as the borrower's repayment, which is money moving the other
+  // way. The rest of the product's copy was swept to match; `draw_schedule`
+  // survives as a form field name and a fixture filename, neither of which a
+  // visitor reads.
   headlineTop: 'Every disbursement, against',
   headlineBottom: 'what is actually built.',
   standfirst: 'The whole book ranked by exposure, and the evidence behind every release, on one screen.',
@@ -138,14 +140,14 @@ export default async function LoginPage({
 
           <LoginForm next={next} />
 
-          {/* This said "just enter your number above — there is nothing to sign
-              up for", which was true of the OTP form and is now false twice
-              over: there is no number, and an unknown username is refused.
-              Signup is designed but not built (CLAUDE.md), so the honest line
-              is where accounts come from, and it links nowhere rather than to a
-              page that does not exist. */}
           <p className="mt-[18px] text-center text-[13px] leading-[1.6] text-sub">
-            Accounts are issued by your lender. Neev has no self-service sign-up yet.
+            New here?{' '}
+            <Link
+              href="/signup"
+              className="font-semibold text-action underline decoration-1 underline-offset-2"
+            >
+              Create an account
+            </Link>
           </p>
 
         </div>

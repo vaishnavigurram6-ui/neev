@@ -40,7 +40,7 @@ const COPY = {
   beforeTwo:
     'The new payment schedule (25% before slab) is what your bank will release against.',
   beforeThreeLead: 'Next: ',
-  beforeThreeTail: ' before drawdown.',
+  beforeThreeTail: ' before the first disbursement.',
   download: 'Download sign-ready BoQ',
   downloadWhy: 'Generating a sign-ready document is out of scope for this build (spec §10).',
   noDiffTitle: 'This is the contract you started with',

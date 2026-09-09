@@ -19,7 +19,7 @@ export const ONBOARDING_STAGES: JourneyStage[] = [
   {
     n: '1',
     name: 'At sanction',
-    desc: 'Will the approved amount actually finish the house at local rates? Know before drawdown.',
+    desc: 'Will the approved amount actually finish the house at local rates? Know before the first disbursement.',
   },
   {
     n: '2',

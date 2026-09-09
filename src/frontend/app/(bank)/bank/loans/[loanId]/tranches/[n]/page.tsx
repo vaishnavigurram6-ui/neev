@@ -39,14 +39,14 @@ const COPY = {
   portfolio: 'Portfolio',
   requestLead: 'Release request —',
   drawnLead: 'Disbursed —',
-  upcomingLead: 'Next draw —',
+  upcomingLead: 'Next disbursement —',
   requestAt: 'at',
   sub: 'site photos read against BoQ line items',
   settledTitle: 'No decision to take',
   paidBody:
     'This tranche has already been disbursed. The evidence and the exposure math above are the record of it.',
   upcomingBody:
-    'This draw has not been requested yet. The decision card opens when the borrower submits it with the site photos for the stage.',
+    'This disbursement has not been requested yet. The decision card opens when the borrower submits it with the site photos for the stage.',
   recommend: 'Recommend',
   exposureLead: 'exposure',
   exposureUndefined: 'exposure undefined — no verified value in place',

@@ -29,15 +29,15 @@ import type { BoqReviewView, BuildProgressView, LoanSummaryView, ProgressTranche
 const COPY = {
   eyebrow: 'Loan file',
   back: '← Back to the book',
-  ladderTitle: 'Draw schedule',
+  ladderTitle: 'Disbursement schedule',
   ladderCaption:
-    'Every draw on this loan: the milestone it is tied to, what it releases, and where it stands.',
+    'Every disbursement on this loan: the milestone it is tied to, what it releases, and where it stands.',
   decide: 'Open decision',
   contractTitle: 'What the contract check found',
   contractSub: 'From the borrower s latest BoQ revision.',
   noContract: 'No BoQ has been analysed for this loan yet.',
   noContractBody:
-    'The borrower has not uploaded a bill of quantities, so there is no line-by-line check to read. The draw schedule below is still authoritative.',
+    'The borrower has not uploaded a bill of quantities, so there is no line-by-line check to read. The disbursement schedule below is still authoritative.',
   notFound: 'No such loan on the book',
   notFoundBody: 'Check the loan number, or go back to the portfolio and pick it from there.',
   evidenceNote:
@@ -57,7 +57,7 @@ function ladderColumns(): Column<ProgressTrancheView>[] {
   return [
     {
       key: 'number',
-      header: 'Draw',
+      header: 'Tranche',
       width: '70px',
       render: (row) => <Figure value={`T${row.number}`} size="sm" skin="bank" />,
     },
@@ -75,7 +75,7 @@ function ladderColumns(): Column<ProgressTrancheView>[] {
             {row.name}
           </span>
           <p className="mt-[2px] text-[11.5px] text-faint">{row.sub}</p>
-          <span className="sr-only">{` — open draw ${row.number}`}</span>
+          <span className="sr-only">{` — open disbursement ${row.number}`}</span>
         </div>
       ),
     },
@@ -186,13 +186,13 @@ export default async function LenderLoanFilePage({
           skin="bank"
           label="SANCTIONED"
           value={formatINR(loan.sanctioned)}
-          sub={`${loan.tranche_count} draws · ${loan.built_up_sqft ?? '—'} sqft`}
+          sub={`${loan.tranche_count} disbursements · ${loan.built_up_sqft ?? '—'} sqft`}
         />
         <StatCard
           skin="bank"
           label="DISBURSED"
           value={formatINR(loan.disbursed)}
-          sub={`${formatINR(undrawn)} still undrawn`}
+          sub={`${formatINR(undrawn)} still undisbursed`}
           tone={loan.disbursed > 0 ? 'neutral' : 'success'}
         />
         <StatCard

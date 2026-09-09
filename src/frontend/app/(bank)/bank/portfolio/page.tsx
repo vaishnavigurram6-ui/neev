@@ -38,8 +38,8 @@ const COPY = {
   caption:
     'Every loan on the book, ranked worst-first by disbursement exposure, with what has been paid, what has been seen on site, and the action each loan needs.',
   definitions:
-    'Exposure = cumulative disbursed ÷ verified value in place · CTC gap = undrawn balance − cost to complete at current rates',
-  provenance: 'illustrative draw schedule',
+    'Exposure = cumulative disbursed ÷ verified value in place · CTC gap = undisbursed balance − cost to complete at current rates',
+  provenance: 'illustrative disbursement schedule',
   behind: 'Behind schedule.',
   emptyTitle: 'No loans match this filter',
   emptyBody:

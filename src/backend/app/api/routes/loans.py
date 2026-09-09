@@ -261,7 +261,7 @@ def _current_tranche(loan: models.Loan) -> models.Tranche:
     if not loan.tranches:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Loan {loan.id} has no draw schedule yet.",
+            detail=f"Loan {loan.id} has no disbursement schedule yet.",
         )
     held = [t for t in loan.tranches if t.status == "on_hold"]
     if held:

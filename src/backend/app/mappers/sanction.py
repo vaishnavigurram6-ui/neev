@@ -75,7 +75,7 @@ def _ways_forward(
 
     options.append(
         SanctionOptionView(
-            title="Top-up before drawdown",
+            title="Top-up before the first disbursement",
             saves_label="closes the rest",
             desc=(
                 "Arranging the balance now costs far less than a build that stalls "

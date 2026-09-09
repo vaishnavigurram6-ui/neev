@@ -22,7 +22,7 @@ const COPY = {
   verified: 'Value in place',
   exposure: 'Exposure then',
   released: 'Released',
-  drawn: 'Drawn to date',
+  drawn: 'Disbursed to date',
   awaiting: 'Awaiting a decision',
   unverified: 'not verified',
 };
