@@ -15,6 +15,24 @@ import AccessibilityCluster from '@/components/ui/AccessibilityCluster';
 import Logo from '@/components/ui/Logo';
 import LoginForm from './LoginForm';
 
+/** Which side of the table this page is talking to. Copy only: the credential
+ *  decides what the visitor can actually see. */
+const OWNER_PANEL = {
+  headlineTop: 'The home builder’s side',
+  headlineBottom: 'of the table.',
+  standfirst:
+    'Your contract read line by line. Your money released against real progress. Your changes priced against what you signed.',
+  stagesLabel: 'What Neev checks, stage by stage',
+};
+
+const LENDER_PANEL = {
+  headlineTop: 'Every draw, against',
+  headlineBottom: 'what is actually built.',
+  standfirst:
+    'The book ranked by exposure. Each release checked against site photographs and the contract the borrower signed. The evidence, and the decision, on one screen.',
+  stagesLabel: 'What Neev checks, stage by stage',
+};
+
 export const metadata: Metadata = {
   title: 'Log in',
   description: 'Log in to Neev with your mobile number. No passwords.',
@@ -34,10 +52,22 @@ export default async function LoginPage({
 }) {
   const params = await searchParams;
   const next = first(params.next);
-  // `?role=` used to preselect a side of the table, and no longer needs to: the
-  // account decides the role, and the server answers with it. `next` still
-  // matters — it is where the visitor was heading before the middleware turned
-  // them away — and `actions.ts` refuses one outside the signed-in role's tree.
+  // `?role=` no longer preselects anything, because there is nothing to
+  // preselect: the account decides the role and the server answers with it.
+  // The old toggle let the CALLER declare its own role — any ten digits plus
+  // role=bank opened the whole book — which is an authorization hole wearing a
+  // label, not a control.
+  //
+  // It still decides which side of the table this PAGE talks to, and that
+  // distinction is the point: wayfinding is not authorization. A lender who
+  // follows "For lenders" from the marketing header should not arrive at a
+  // headline reading "The home builder's side of the table" and wonder whether
+  // they are in the wrong place. Nothing here affects what the credential can
+  // do — `actions.ts` still refuses a `next` outside the role the server
+  // actually granted.
+  const asked = first(params.role);
+  const forLender = asked === 'bank' || (asked !== 'owner' && next.startsWith('/bank'));
+  const panel = forLender ? LENDER_PANEL : OWNER_PANEL;
 
   return (
     <main className="grid min-h-screen grid-cols-[1fr_1.1fr]">
@@ -48,17 +78,16 @@ export default async function LoginPage({
 
         <div className="my-auto py-10">
           <h1 className="text-[30px] font-bold leading-[1.3] tracking-[-0.02em] text-ink">
-            The home builder’s side
+            {panel.headlineTop}
             <br />
-            of the table.
+            {panel.headlineBottom}
           </h1>
           <p className="mt-[14px] max-w-[400px] text-[14px] leading-[1.7] text-faint">
-            Your contract read line by line. Your money released against real progress. Your changes
-            priced against what you signed.
+            {panel.standfirst}
           </p>
           <JourneyStages
             layout="rows"
-            label="What Neev checks, stage by stage"
+            label={panel.stagesLabel}
             className="mt-8 max-w-[400px]"
           />
         </div>
