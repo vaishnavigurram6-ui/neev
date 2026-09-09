@@ -105,17 +105,39 @@ measured is worse than one that says nothing.
 carry three sections beyond the title: **1. Project description · 2. Project use
 case · 3. Architecture diagram**.*
 
-> **ACTION NEEDED — the largest remaining task.** You have a doc already:
-> https://docs.google.com/document/d/1JYcsxk8gSDNYBVRSKt3crod9Y1vm0gMUkrvz9cVM1YE/edit
+**Written 2026-09-10. Paste this:**
+
+```
+https://docs.google.com/document/d/1aHwUxgrJ8P93r4CP5gofRSI2a5gHdYmEN6pMyNTXDjI/edit
+```
+
+It carries all three mandated sections, in this order and named exactly as the
+form asks: **1. Project description · 2. Project use case · 3. Architecture
+diagram** — plus a stack table and a section stating what is honestly not built,
+which a reviewer would otherwise have to find for themselves.
+
+> **TWO THINGS TO DO IN THE DOC BEFORE YOU SUBMIT.**
 >
-> Before pasting it, check it has all three required sections and that sharing is
-> "anyone with the link → Viewer". Source material is in this repo:
-> - **Project description** — `docs/Neev_Idea_Submission.md` §1-2
-> - **Project use case** — §1.1-1.4 (self-construction borrower, the BoQ, the
->   downstream consequence for both sides)
-> - **Architecture diagram** — `figures/fig3_pipeline.png` (the five-agent
->   pipeline) and `figures/fig1_lifecycle.png`. Paste the images in; a link to a
->   GitHub file is not a diagram in the doc.
+> **1. Set sharing to "anyone with the link → Viewer".** I could not do this: the
+> Drive tool available to me shares only with a named person, not by link. The
+> form says a doc the panel cannot open makes the submission unvalidatable.
+>
+> **2. Insert the five figures.** The doc has five placeholder lines reading
+> `[FIGURE n — insert image by URL: …]`, each carrying the exact URL. Google's
+> HTML importer does not fetch remote images, so they arrived as text. For each:
+> *Insert → Image → By URL*, paste the URL from the placeholder, then delete the
+> placeholder line. Figure 5 in §3 is the architecture diagram the form
+> specifically requires, so that one is not optional.
+>
+> The URLs work because the repo is public:
+> - `figures/fig0_problem.png` — the asymmetry (§2.1)
+> - `figures/fig1_lifecycle.png` — the four checkpoints (§2.5)
+> - `figures/fig2_boq_hub.png` — one document, two readers (§2.6)
+> - `figures/fig4_bank.png` — what the lender sees (§2.7)
+> - `figures/fig3_pipeline.png` — **the architecture diagram** (§3)
+>
+> All five are at
+> `https://raw.githubusercontent.com/vaishnavigurram6-ui/neev/main/figures/<name>`
 
 ---
 
@@ -413,10 +435,10 @@ want to have accomplished?** · multiple choice · required
 | # | Item | State |
 |---|---|---|
 | 1 | Q2 is the **Patchamomma registration email** | **only you can confirm** |
-| 2 | Q7 Google Doc has all three required sections, shared "anyone with link" | **to do** |
+| 2 | Q7 doc: insert the 5 figures, then share "anyone with link → Viewer" | **to do — I cannot share by link** |
 | 3 | Q13 live URL, opened in a private window | after the deploy |
 | 4 | Q14 demo video uploaded, under 3 min, opened in a private window | **to do** |
-| 5 | Q15 GitHub repo is public | check |
+| 5 | Q15 GitHub repo is public | **done 2026-09-10** |
 | 6 | Q12's password matches what was actually deployed (`NEEV_DEMO_PASSWORD`) | check at deploy |
 | 7 | Both Cloud Run services answer, signed out, from another network | after the deploy |
 
