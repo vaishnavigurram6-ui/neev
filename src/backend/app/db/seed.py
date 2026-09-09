@@ -168,8 +168,11 @@ def seed(reset: bool = False) -> dict[str, int]:
                 )
         db.commit()
 
+        # One store for the whole book, so a frame is copied once however many
+        # loans reference it. See _SitePhotos.
+        frames = _SitePhotos()
         for loan_id in available_loan_ids():
-            _seed_pipeline_output(db, loan_id)
+            _seed_pipeline_output(db, loan_id, frames)
         db.commit()
 
         _seed_derived_risk(db, rows)
@@ -212,7 +215,7 @@ def _read_draw_schedule() -> dict[str, list[dict]]:
 from app.services.persistence import FLAG_GROUPS_BY_TYPE, UNGROUPED
 
 
-def _seed_pipeline_output(db, loan_id: str) -> None:
+def _seed_pipeline_output(db, loan_id: str, frames: "_SitePhotos") -> None:
     output = load_pipeline_output(loan_id)
     findings = output.boq_findings
 
@@ -292,7 +295,14 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
             if inspection is not None:
                 current.confidence = inspection.confidence
                 current.needs_human_review = inspection.needs_human_review
-                frames = _site_photos()
+                # Bytes only where the inspector actually saw the site.
+                # `apply_inspection` has just cleared observed_stage for a run
+                # that assessed nothing, and loan 1005's note says so in words:
+                # "No site photos supplied with tranche request; construction
+                # stage cannot be assessed visually." A photograph beside that
+                # caption contradicts it. A note-only row renders as the caption
+                # alone -- see `mappers/tranche.photo_src`.
+                observed = current.observed_stage is not None
                 for index, note in enumerate(inspection.evidence_notes[:3]):
                     db.add(
                         models.Photo(
@@ -303,7 +313,7 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
                             # the evidence grid on the officer's decision card
                             # had a caption and nothing to look at, which is
                             # not evidence -- it is a claim about evidence.
-                            stored_path=frames[index] if index < len(frames) else None,
+                            stored_path=frames.reference(index) if observed else None,
                             geotag_match=inspection.geotag_match,
                             timestamp_ok=inspection.timestamp_ok,
                             same_angle=inspection.same_angle,
@@ -365,8 +375,8 @@ def _seed_derived_risk(db, rows: list[dict]) -> None:
             target.cost_to_complete = int(round((loan.sanctioned - disbursed) - gap))
 
 
-def _site_photos() -> list[str]:
-    """Artifact references for the seeded evidence frames, in reading order.
+class _SitePhotos:
+    """Artifact references for the seeded evidence frames, stored on demand.
 
     Copied into ARTIFACT_DIR rather than referenced where they lie: every other
     photograph in the system is an artifact reference, and `read_artifact`
@@ -374,18 +384,38 @@ def _site_photos() -> list[str]:
     crafted `stored_path` from reading anything else on the disk. A seed that
     wrote paths the reader must reject would be seeding rows that 404.
 
-    Missing files are not an error. `demo_assets/` is git-ignored and a checkout
-    without the photographs must still seed: the rows are then note-only, which
-    is what they were before the photographs existed.
+    Lazy, and shared across the whole seed, because the number of frames and the
+    number of evidence notes are independent: there are four photographs and
+    each captured run wrote one note. Copying eagerly, per loan, wrote 21 files
+    for a ten-loan book and left 14 referenced by nothing -- and the count grew
+    with every loan added. Storing a frame only when a row is about to point at
+    it makes "every artifact the seed writes is referenced" true by
+    construction, which `test_seed_writes_one_copy_of_each_frame_and_no_orphans`
+    then holds it to.
+
+    A missing file is not an error: the frames are tracked under
+    `fixtures/site_photos/` and the backend image copies `fixtures/` wholesale,
+    but a checkout that pruned them must still seed. Those rows come out
+    note-only, which is what they were before the photographs existed, and
+    `mappers/tranche.photo_src` renders them as a caption alone.
     """
-    references: list[str] = []
-    for name in SITE_PHOTO_ORDER:
-        source = SITE_PHOTOS / name
+
+    def __init__(self) -> None:
+        self._stored: dict[int, str | None] = {}
+
+    def reference(self, index: int) -> str | None:
+        if index not in self._stored:
+            self._stored[index] = self._store(index)
+        return self._stored[index]
+
+    @staticmethod
+    def _store(index: int) -> str | None:
+        if index >= len(SITE_PHOTO_ORDER):
+            return None
         try:
-            references.append(store_artifact(source.read_bytes()))
+            return store_artifact((SITE_PHOTOS / SITE_PHOTO_ORDER[index]).read_bytes())
         except OSError:
-            continue
-    return references
+            return None
 
 
 def _seed_change_orders(db) -> None:

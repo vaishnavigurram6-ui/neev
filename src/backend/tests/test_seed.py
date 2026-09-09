@@ -85,3 +85,54 @@ def test_closed_loans_have_a_null_gap_rather_than_zero():
         loan = db.scalar(select(models.Loan).where(models.Loan.id == "1007"))
         assert loan is not None
         assert loan.cost_to_complete_gap is None
+
+
+def test_seed_writes_one_copy_of_each_frame_and_no_orphans(tmp_path, monkeypatch):
+    """Every artifact the seed writes is referenced by a row.
+
+    `_site_photos` was called once per loan, so seeding the book stored all
+    three frames ten times over and referenced one of each -- 21 files, 14 of
+    them dead, growing with every loan. The bytes are the cheap part; a store
+    whose contents nothing points at cannot be reasoned about.
+    """
+    monkeypatch.setenv("ARTIFACT_DIR", str(tmp_path / "artifacts"))
+    from app.core.settings import get_settings
+
+    get_settings.cache_clear()
+
+    seed(reset=True)
+
+    with SessionLocal() as db:
+        referenced = {
+            p.stored_path
+            for p in db.scalars(select(models.Photo)).all()
+            if p.stored_path
+        }
+
+    on_disk = {str(p.resolve()) for p in (tmp_path / "artifacts").iterdir()}
+    assert on_disk == referenced
+
+
+def test_an_inspection_that_saw_nothing_gets_no_photograph(tmp_path, monkeypatch):
+    """Loan 1005's evidence note is "No site photos supplied with tranche
+    request; construction stage cannot be assessed visually." The seed attached
+    a roof-slab photograph to it anyway, so the officer's decision card showed a
+    frame beside a caption denying one existed."""
+    monkeypatch.setenv("ARTIFACT_DIR", str(tmp_path / "artifacts"))
+    from app.core.settings import get_settings
+
+    get_settings.cache_clear()
+
+    seed(reset=True)
+
+    with SessionLocal() as db:
+        for photo in db.scalars(select(models.Photo)).all():
+            tranche = db.get(models.Tranche, photo.tranche_id)
+            assert tranche is not None
+            if tranche.observed_stage is None:
+                assert photo.stored_path is None, (
+                    f"loan {tranche.loan_id} tranche {tranche.number} assessed no "
+                    "stage but carries a photograph"
+                )
+            else:
+                assert photo.stored_path is not None
