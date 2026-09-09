@@ -50,9 +50,27 @@ cd "$ROOT"
 # process, and at --min-instances 0 Cloud Run recycles the instance after about
 # fifteen idle minutes: a visitor who reads a page, steps away and comes back
 # would be bounced to /login by a cookie signed with a key that no longer
-# exists. Pass your own to keep sessions across a redeploy; generated here so
-# forgetting cannot leave it empty.
-SESSION_SECRET="${NEEV_SESSION_SECRET:-$(openssl rand -hex 32)}"
+# exists.
+#
+# Three sources, in order: the environment, then .env, then a fresh one. .env is
+# in the list because the previous version read only the environment, so
+# "generate one and record it" -- which is what keeps sessions alive across a
+# redeploy -- worked only if you also remembered to export it. Forgetting was
+# silent: the deploy succeeded, and every session from the last one died. Same
+# file and same pattern as GOOGLE_API_KEY below.
+SESSION_SECRET="${NEEV_SESSION_SECRET:-}"
+if [ -z "$SESSION_SECRET" ] && [ -f "$ROOT/.env" ]; then
+  SESSION_SECRET="$(sed -n 's/^NEEV_SESSION_SECRET=//p' "$ROOT/.env" | head -1)"
+fi
+if [ -z "$SESSION_SECRET" ]; then
+  SESSION_SECRET="$(openssl rand -hex 32)"
+  echo "==> No NEEV_SESSION_SECRET in the environment or $ROOT/.env."
+  echo "    Generated a fresh one. Sessions from an earlier deploy will be"
+  echo "    signed out. To keep them, record one in .env before redeploying:"
+  echo "      echo \"NEEV_SESSION_SECRET=\$(openssl rand -hex 32)\" >> .env"
+else
+  echo "==> Session secret: reusing the recorded one (sessions survive this deploy)."
+fi
 
 MODE="${NEEV_MODE:-live}"
 GENAI_BACKEND="${NEEV_GENAI_BACKEND:-vertex}"
