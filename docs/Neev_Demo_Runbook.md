@@ -162,13 +162,22 @@ parse errors, in 107 seconds.
 
 Two things to know before demoing it:
 
-*The quota is the constraint, not the code.* The Gemini API free tier allows
-**20 `generateContent` requests per day per model**
-(`GenerateRequestsPerDayPerProjectPerModel-FreeTier`). One analysis is five
-agents plus tool round-trips, so the free tier is worth roughly **two analyses a
-day, per model** — and the limit is per model, so switching
-`NEEV_GEMINI_MODEL` buys another twenty. That is not a demo strategy. Enable
-billing for the Gemini API before demoing live, or demo in fixture mode.
+*Go through Vertex AI, not the Gemini API key.* The Gemini API's free tier
+allows **20 `generateContent` requests per day per model**
+(`GenerateRequestsPerDayPerProjectPerModel-FreeTier`) — one analysis is five
+agents plus tool round-trips, so that is about **two analyses a day**, and
+lifting it means putting a card on an AI Studio account. Vertex AI runs the same
+models with no such cap, authenticates as the Cloud Run service account, and
+bills the project's Cloud Billing account, which is where hackathon credits sit.
+`scripts/deploy_cloudrun.sh` uses Vertex by default; locally, set
+`GOOGLE_GENAI_USE_VERTEXAI=true GOOGLE_CLOUD_PROJECT=buildguard-ai-2026
+GOOGLE_CLOUD_LOCATION=global`. Proven end to end on 2026-09-09: 40 line items,
+30 flags, no parse errors, 161 seconds.
+
+*It is capped on purpose.* Twelve analyses per loan per day, sixty across the
+service (`NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY`, `NEEV_MAX_ANALYSES_PER_DAY`). The
+demo URL is public and its sign-in takes any ten-digit number, so without a cap
+anyone who finds it can spend credits at about ₹3.81 a click.
 
 *It takes 107 seconds.* The last three agents all fire after the final tool
 call, so the Analyzing screen sits on "Reviewing the payment schedule" for the

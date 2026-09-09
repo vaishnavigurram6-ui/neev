@@ -32,20 +32,30 @@ What that changes, and what it does not:
    and runs with no credentials. A test that bills is a test that bills on every
    CI run, forever. The socket-blocking fixture in
    `src/backend/tests/conftest.py` is autouse for the same reason.
-3. **The API key never enters git.** It lives in `.env` (git-ignored) locally
-   and in Secret Manager for a deployment — never in `--set-env-vars`, where it
-   would sit in the service's config and in `gcloud` output.
-4. **Live mode is exercised now, not shipped unexercised.** The path in
+3. **A deployment uses Vertex AI, not the Gemini API key**, and that is a cost
+   decision. The Gemini API's free tier allows 20 `generateContent` requests per
+   day per model — about two analyses — and lifting it means putting a card on
+   an AI Studio account. Vertex runs the same models, authenticates as the Cloud
+   Run service account, and bills the project's Cloud Billing account, which is
+   where the hackathon credits are. Three env vars and no code change:
+   `GOOGLE_GENAI_USE_VERTEXAI=true`, `GOOGLE_CLOUD_PROJECT`,
+   `GOOGLE_CLOUD_LOCATION`. Proven on 2026-09-09: 40 line items, 30 flags, no
+   parse errors, 161s.
+4. **The API key never enters git.** It lives in `.env` (git-ignored) for local
+   work, and in Secret Manager if anyone deploys with
+   `NEEV_GENAI_BACKEND=apikey` — never in `--set-env-vars`, where it would sit
+   in the service's config and in `gcloud` output.
+5. **Live mode is exercised now, not shipped unexercised.** The path in
    `app/services/live_runner.py` was written and type-checked but never run
    under the dry run; it has been run since this section was lifted. If you
    change it, run it.
-5. **A deployed live service is capped**, and the cap is not optional.
+6. **A deployed live service is capped**, and the cap is not optional.
    `NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY` (12) and `NEEV_MAX_ANALYSES_PER_DAY`
    (60) exist because the demo is `--allow-unauthenticated` and its sign-in
    accepts any ten-digit number, so on the paid tier nothing else stands
    between a crawler and the billing account. Raise them deliberately, never
    to zero.
-6. The backend venv and image now carry `google-adk`, `google-genai` and
+7. The backend venv and image now carry `google-adk`, `google-genai` and
    `neev-pipeline`, because the live runner imports them at call time. Fixture
    mode still touches none of them: the imports are inside the method body, and
    `test_no_google_import_at_module_scope` keeps them there.

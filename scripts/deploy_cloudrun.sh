@@ -10,6 +10,16 @@
 # NEEV_MODE=fixture in the environment to deploy the recorded-run replay
 # instead, which bills nothing.
 #
+# Live mode goes through VERTEX AI, not the Gemini API, and that is a cost
+# decision rather than a technical one. The Gemini API's free tier allows 20
+# generateContent requests per day per model -- about two analyses -- and
+# raising it means putting a card on an AI Studio account. Vertex AI runs the
+# same models, authenticates as the Cloud Run service account (so there is no
+# key to leak or rotate), and bills against the project's Cloud Billing
+# account, which is where hackathon credits live. Set
+# NEEV_GENAI_BACKEND=apikey to use a Gemini API key from Secret Manager
+# instead.
+#
 # Everything that can be checked is checked BEFORE the first deploy call, since
 # a deploy that succeeds and serves a broken app has still spent one.
 #
@@ -45,6 +55,8 @@ cd "$ROOT"
 SESSION_SECRET="${NEEV_SESSION_SECRET:-$(openssl rand -hex 32)}"
 
 MODE="${NEEV_MODE:-live}"
+GENAI_BACKEND="${NEEV_GENAI_BACKEND:-vertex}"
+VERTEX_LOCATION="${NEEV_VERTEX_LOCATION:-global}"
 SECRET_NAME="${NEEV_SECRET_NAME:-neev-gemini-api-key}"
 RUNTIME_SA="$(gcloud projects describe "$PROJECT" --format='value(projectNumber)')-compute@developer.gserviceaccount.com"
 
@@ -84,16 +96,40 @@ if ! printf '%s' "$BUILD_ROLES" | grep -qE 'cloudbuild.builds.builder|roles/edit
 fi
 echo "  ok  : $RUNTIME_SA can build and push"
 
-if [ "$MODE" = "live" ]; then
-  # 1. The key. Read from .env rather than the environment so the operator does
-  #    not have to export a credential into their shell history.
+if [ "$MODE" = "live" ] && [ "$GENAI_BACKEND" = "vertex" ]; then
+  # 1. Vertex AI, and the one role it needs. No key at all: the service account
+  #    is the credential.
+  if ! gcloud services list --enabled --project "$PROJECT" 2>/dev/null | grep -q '^aiplatform'; then
+    echo "  FAIL: aiplatform.googleapis.com is not enabled. Enable it, then re-run:"
+    echo "          gcloud services enable aiplatform.googleapis.com --project $PROJECT"
+    exit 1
+  fi
+  VERTEX_ROLES="$(gcloud projects get-iam-policy "$PROJECT" \
+    --flatten='bindings[].members' \
+    --filter="bindings.members:$RUNTIME_SA" \
+    --format='value(bindings.role)' 2>/dev/null || true)"
+  if ! printf '%s' "$VERTEX_ROLES" | grep -qE 'aiplatform.user|roles/editor|roles/owner'; then
+    echo "  FAIL: $RUNTIME_SA cannot call Vertex AI. Grant it, then re-run:"
+    echo
+    echo "          gcloud projects add-iam-policy-binding $PROJECT \\"
+    echo "            --member=serviceAccount:$RUNTIME_SA \\"
+    echo "            --role=roles/aiplatform.user"
+    exit 1
+  fi
+  echo "  ok  : Vertex AI reachable as $RUNTIME_SA (no API key needed)"
+
+elif [ "$MODE" = "live" ]; then
+  # 1b. The Gemini API key path, kept for anyone who wants it. Read from .env so
+  #     the operator does not have to export a credential into their shell.
   KEY="${GOOGLE_API_KEY:-$(sed -n 's/^GOOGLE_API_KEY=//p' "$ROOT/.env" | head -1)}"
   if [ -z "$KEY" ]; then
     echo "  FAIL: no GOOGLE_API_KEY in the environment or $ROOT/.env."
-    echo "        Live mode cannot call Gemini without it."
+    echo "        Live mode cannot call the Gemini API without it."
     exit 1
   fi
   echo "  ok  : GOOGLE_API_KEY found (${#KEY} chars)"
+  echo "  NOTE: the Gemini API free tier allows 20 requests per day per model,"
+  echo "        which is about two analyses. Vertex AI has no such cap."
 
   # 2. The runtime service account's BigQuery access. The agents' benchmark
   #    lookups query buildguard_data, and on this project the default compute
@@ -120,6 +156,7 @@ if [ "$MODE" = "live" ]; then
 
   # 3. The key in Secret Manager, never in --set-env-vars: an env var sits in
   #    the service's config and in the output of `gcloud run services describe`.
+  #    Only reached on the api-key path; Vertex needs no secret.
   if ! gcloud secrets describe "$SECRET_NAME" --project "$PROJECT" >/dev/null 2>&1; then
     echo "  ..  : creating secret $SECRET_NAME"
     gcloud secrets create "$SECRET_NAME" --project "$PROJECT" --replication-policy=automatic
@@ -174,7 +211,14 @@ echo "==> Building and deploying $BACKEND"
 BACKEND_ENV="NEEV_MODE=$MODE,NEEV_DEMO_AUTH=true,NEEV_SESSION_SECRET=$SESSION_SECRET,GOOGLE_CLOUD_PROJECT=$PROJECT"
 BACKEND_ENV="$BACKEND_ENV,NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY=${NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY:-12}"
 BACKEND_ENV="$BACKEND_ENV,NEEV_MAX_ANALYSES_PER_DAY=${NEEV_MAX_ANALYSES_PER_DAY:-60}"
-[ "$MODE" = "live" ] && BACKEND_ENV="$BACKEND_ENV,NEEV_ALLOW_BILLED_CALLS=1"
+if [ "$MODE" = "live" ]; then
+  BACKEND_ENV="$BACKEND_ENV,NEEV_ALLOW_BILLED_CALLS=1"
+  if [ "$GENAI_BACKEND" = "vertex" ]; then
+    # google-genai reads these three; ADK inherits the client it builds, so the
+    # whole pipeline moves to Vertex with no code change.
+    BACKEND_ENV="$BACKEND_ENV,GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_LOCATION=$VERTEX_LOCATION"
+  fi
+fi
 
 gcloud run deploy "$BACKEND" \
   --project "$PROJECT" \
@@ -187,7 +231,7 @@ gcloud run deploy "$BACKEND" \
   --cpu 1 \
   --timeout 600 \
   --set-env-vars "$BACKEND_ENV" \
-  $([ "$MODE" = "live" ] && echo "--set-secrets GOOGLE_API_KEY=$SECRET_NAME:latest")
+  $([ "$MODE" = "live" ] && [ "$GENAI_BACKEND" = "apikey" ] && echo "--set-secrets GOOGLE_API_KEY=$SECRET_NAME:latest")
 
 API_URL="$(gcloud run services describe "$BACKEND" \
   --project "$PROJECT" --region "$REGION" --format='value(status.url)')"
@@ -225,7 +269,7 @@ echo "  Neev is live:  $WEB_URL"
 echo "  API:           $API_URL"
 echo "──────────────────────────────────────────────────────────────"
 echo
-echo "Mode: $MODE. In live mode every 'Start the check' runs the five-agent"
+echo "Mode: $MODE via $GENAI_BACKEND. In live mode every 'Start the check' runs the five-agent"
 echo "pipeline against Gemini -- about Rs 3.81 and 107 seconds per analysis,"
 echo "capped at ${NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY:-12} per loan and ${NEEV_MAX_ANALYSES_PER_DAY:-60} per day across the service."
 echo
