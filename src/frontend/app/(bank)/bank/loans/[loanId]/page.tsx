@@ -33,7 +33,6 @@ const COPY = {
   ladderCaption:
     'Every draw on this loan: the milestone it is tied to, what it releases, and where it stands.',
   decide: 'Open decision',
-  view: 'View',
   contractTitle: 'What the contract check found',
   contractSub: 'From the borrower s latest BoQ revision.',
   noContract: 'No BoQ has been analysed for this loan yet.',
@@ -54,7 +53,7 @@ function awaitingDecision(tranche: ProgressTrancheView): boolean {
   return tranche.state === 'current';
 }
 
-function ladderColumns(loanId: string): Column<ProgressTrancheView>[] {
+function ladderColumns(): Column<ProgressTrancheView>[] {
   return [
     {
       key: 'number',
@@ -65,10 +64,18 @@ function ladderColumns(loanId: string): Column<ProgressTrancheView>[] {
     {
       key: 'milestone',
       header: 'Milestone',
+      // The row's drill-in. A button in every row read as five calls to action
+      // where there is only ever one — and "Open decision" did not fit the
+      // column it was in. The draw an officer actually has to answer is the
+      // primary button in the page header; from here the milestone opens any
+      // draw, decided or not.
       render: (row) => (
         <div>
-          <span className="text-[13px] font-semibold text-ink">{row.name}</span>
+          <span className="text-[13px] font-semibold text-action underline decoration-1 underline-offset-2">
+            {row.name}
+          </span>
           <p className="mt-[2px] text-[11.5px] text-faint">{row.sub}</p>
+          <span className="sr-only">{` — open draw ${row.number}`}</span>
         </div>
       ),
     },
@@ -86,21 +93,6 @@ function ladderColumns(loanId: string): Column<ProgressTrancheView>[] {
       width: '120px',
       render: (row) => (
         <StatusPill skin="bank" tone={row.tone} label={row.status_label} size="sm" />
-      ),
-    },
-    {
-      key: 'open',
-      header: '',
-      align: 'right',
-      width: '132px',
-      render: (row) => (
-        <Button
-          skin="bank"
-          variant={awaitingDecision(row) ? 'primary' : 'ghost'}
-          href={`/bank/loans/${loanId}/tranches/${row.number}`}
-        >
-          {row.state === 'done' ? COPY.view : COPY.decide}
-        </Button>
       ),
     },
   ];
@@ -260,8 +252,10 @@ export default async function LenderLoanFilePage({
           <div className="mt-3">
             <CardTable
               skin="bank"
-              columns={ladderColumns(loanId)}
+              columns={ladderColumns()}
               rows={progress.tranches}
+              rowHref={(row) => `/bank/loans/${loanId}/tranches/${row.number}`}
+              rowHrefColumn="milestone"
               caption={COPY.ladderCaption}
             />
           </div>
