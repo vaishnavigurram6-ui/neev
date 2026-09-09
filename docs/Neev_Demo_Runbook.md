@@ -209,6 +209,48 @@ narration.
 WhatsApp sending. Each renders as a disabled control that says why, rather than
 a dead button that lies.
 
+## Who a judge is, when they sign in
+
+Nobody. Sign-in takes any ten-digit number starting 6-9 and any six digits as
+the code, and there is no identity behind it — `NEEV_DEMO_AUTH` gates the whole
+endpoint and `deps.py` says in its own docstring that this is not identity
+verification. Two consequences worth knowing before a judged session:
+
+**Every "home owner" is Ravi, on loan 1001.** `create_session` maps an owner to
+`DEMO_OWNER_LOAN_ID` regardless of the number typed. That is deliberate — only
+1001 and 1002 have a recorded pipeline output, so handing a judge loan 1007
+would land them on a BoQ screen with nothing to show.
+
+**So two judges signed in at once share one loan and one database.** Cloud Run
+runs at `--max-instances 1` because SQLite lives on the instance's disk, so if
+two people report a milestone on 1001 within a minute of each other, the second
+overwrites the first and both see the same figures. For a walkthrough, let one
+person drive. For a booth, expect it and reset between visitors:
+
+    pkill -f "uvicorn app.main:app"
+    cd src/backend && rm -rf artifacts && .venv/bin/python -m app.db.seed --reset
+
+Real identity is a phone column on `Loan` plus an OTP provider, and neither
+exists. The seam is honest about it rather than hidden: every screen reads its
+identity from `GET /api/me`, so an identity provider drops in without touching
+a screen.
+
+## A judge with no Bill of Quantities
+
+Most of them, and it used to be a dead end: "no BoQ yet? see a sample report"
+jumps to loan 1001's stored analysis, so the visitor watches nothing run and the
+agents never fire for them.
+
+There is now a **Use our sample BoQ** button beside the file chooser on
+`/owner/onboarding`. It fetches `public/sample/sample-boq.pdf` — the same
+40-line quote the recorded runs were captured against — and hands it to the
+wizard as though the visitor had chosen it, so the upload, the analysis and the
+Analyzing screen are all genuinely theirs. In live mode that is a real run: five
+agents, about two minutes, about ₹3.81.
+
+The sample is also just a URL, so a judge can download it and upload it by hand
+if they would rather see the file first.
+
 ## The measurement worth quoting
 
 Judges ask how you know it works. There is an answer, and it costs nothing to

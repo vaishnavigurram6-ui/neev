@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 # Start both halves of the Neev app for local development or a demo.
 #
-# Runs entirely in fixture mode: no Gemini, no BigQuery, no billed Google call of
-# any kind. The backend venv contains no google-* package, so there is nothing
-# there that could bill even if it were asked to.
+# Fixture mode by default: no Gemini, no BigQuery, no billed call of any kind.
 #
-#   bash scripts/dev.sh            # backend 8000, frontend 3000
+#   bash scripts/dev.sh                    # backend 8000, frontend 3000
 #   BE_PORT=8010 FE_PORT=3010 bash scripts/dev.sh
+#
+# NEEV_MODE=live runs the real five-agent ADK pipeline through Vertex AI, which
+# BILLS. It goes through Vertex rather than a Gemini API key because the key's
+# free tier allows 20 requests a day per model -- about two analyses -- while
+# Vertex bills the project's Cloud Billing account, where the credits are:
+#
+#   NEEV_MODE=live bash scripts/dev.sh     # ~Rs 3.81 per BoQ check, ~Rs 1.50 per milestone
 #
 # Ctrl-C stops both.
 
@@ -78,8 +83,33 @@ echo "Seeding the database..."
 cleanup() { echo; echo "Stopping..."; kill 0 2>/dev/null || true; }
 trap cleanup EXIT INT TERM
 
-echo "Starting backend on :$BE_PORT (NEEV_MODE=fixture)..."
-(cd "$ROOT/src/backend" && NEEV_MODE=fixture NEEV_DEMO_AUTH=true .venv/bin/python -m uvicorn app.main:app --port "$BE_PORT" --reload) &
+MODE="${NEEV_MODE:-fixture}"
+BACKEND_ENV=(NEEV_MODE="$MODE" NEEV_DEMO_AUTH=true)
+
+if [ "$MODE" = "live" ]; then
+  # Vertex AI, authenticated by whatever `gcloud auth application-default login`
+  # left behind. No API key: see the header.
+  PROJECT="${GOOGLE_CLOUD_PROJECT:-buildguard-ai-2026}"
+  if [ ! -f "$HOME/.config/gcloud/application_default_credentials.json" ]; then
+    echo "Live mode needs application-default credentials for Vertex AI:"
+    echo "  gcloud auth application-default login"
+    exit 1
+  fi
+  BACKEND_ENV+=(
+    NEEV_ALLOW_BILLED_CALLS=1
+    GOOGLE_GENAI_USE_VERTEXAI=true
+    GOOGLE_CLOUD_PROJECT="$PROJECT"
+    GOOGLE_CLOUD_LOCATION="${GOOGLE_CLOUD_LOCATION:-global}"
+  )
+  echo
+  echo "  ⚠  LIVE MODE. Every 'Start the check' runs five agents against Gemini"
+  echo "     (about Rs 3.81, ~2 minutes); every milestone report runs two"
+  echo "     (about Rs 1.50, ~35 seconds). Billed to $PROJECT."
+  echo
+fi
+
+echo "Starting backend on :$BE_PORT (NEEV_MODE=$MODE)..."
+(cd "$ROOT/src/backend" && env "${BACKEND_ENV[@]}" .venv/bin/python -m uvicorn app.main:app --port "$BE_PORT" --reload) &
 
 echo "Starting frontend on :$FE_PORT..."
 (cd "$ROOT/src/frontend" && NEEV_API_BASE="http://127.0.0.1:$BE_PORT" npm run dev -- --port "$FE_PORT") &

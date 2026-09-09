@@ -38,6 +38,11 @@ const COPY = {
   volumeNote: 'Typically 80–150 line items · read in about a minute',
   sampleLead: 'no BoQ yet? ',
   sampleLink: 'see a sample report',
+  useSample: 'Use our sample BoQ',
+  useSampleBusy: 'Fetching the sample…',
+  useSampleFailed: 'The sample would not load. Choose a file instead.',
+  usingSample: 'Sample BoQ ready — a real 40-line builder’s quote.',
+  useSampleWhy: 'A real builder’s quote, 40 lines, if you have not got one to hand.',
   held: 'Using ',
   heldTail: ' — choose another file to replace it.',
   noFile: 'Choose a PDF or a JPEG, PNG or WebP image of your BoQ.',
@@ -112,6 +117,10 @@ export default function OnboardingWizard({ loan }: { loan: LoanFacts }) {
 
   const [step, setStep] = useState<Step>(0);
   const [file, setFile] = useState<File | null>(null);
+  // Set while the sample is being fetched, so the button can say so and cannot
+  // be pressed twice.
+  const [fetchingSample, setFetchingSample] = useState(false);
+  const [usingSample, setUsingSample] = useState(false);
   const [sqft, setSqft] = useState(loan.built_up_sqft === null ? '' : String(loan.built_up_sqft));
   const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState<FieldError | null>(null);
@@ -155,6 +164,35 @@ export default function OnboardingWizard({ loan }: { loan: LoanFacts }) {
 
     setFile(chosen);
     goto(1);
+  };
+
+  /** Take our own sample BoQ as the upload.
+   *
+   *  A visitor arriving with no builder's quote — which is most of them, and
+   *  every judge — could previously only follow "see a sample report", which
+   *  jumps to a stored analysis and never runs the pipeline. This gives them a
+   *  real 40-line quote to actually check, so what they watch is their own run.
+   *
+   *  Fetched rather than bundled: it is a 7.8 KB static file, and turning it
+   *  into a `File` here means the rest of this wizard — validation, the upload
+   *  relay, the Analyzing screen — cannot tell it from a file they chose.
+   */
+  const useSample = async () => {
+    if (fetchingSample) return;
+    setFetchingSample(true);
+    setError(null);
+    try {
+      const response = await fetch('/sample/sample-boq.pdf', { cache: 'force-cache' });
+      if (!response.ok) throw new Error(String(response.status));
+      const blob = await response.blob();
+      setFile(new File([blob], 'sample-boq.pdf', { type: 'application/pdf' }));
+      setUsingSample(true);
+      goto(1);
+    } catch {
+      setError({ scope: 'file', message: COPY.useSampleFailed });
+    } finally {
+      setFetchingSample(false);
+    }
   };
 
   const onPlot = (event: React.FormEvent<HTMLFormElement>) => {
@@ -304,6 +342,23 @@ export default function OnboardingWizard({ loan }: { loan: LoanFacts }) {
             >
               {messageFor('file')}
             </p>
+            {/* The one control a visitor with no BoQ actually needs. Beside the
+                chooser rather than inside the Dropzone: the Dropzone is the
+                kit's file input and adding a second action to it would make
+                every other screen that uses it carry the same button. */}
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => void useSample()}
+                disabled={fetchingSample}
+              >
+                {fetchingSample ? COPY.useSampleBusy : COPY.useSample}
+              </Button>
+              <span className="text-[12px] leading-[1.5] text-faint">
+                {usingSample ? COPY.usingSample : COPY.useSampleWhy}
+              </span>
+            </div>
             <div className="mt-4 flex items-center justify-between gap-4 text-[12.5px] text-faint">
               <span>{COPY.volumeNote}</span>
               {/* The prototype's dead `href="#"`, given the real destination —
