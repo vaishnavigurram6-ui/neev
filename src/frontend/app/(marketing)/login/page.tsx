@@ -11,6 +11,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JourneyStages from '@/components/marketing/JourneyStages';
+import { JOURNEY_STAGES, LENDER_STAGES } from '@/components/marketing/journey';
+import SegmentedToggle from '@/components/ui/SegmentedToggle';
 import AccessibilityCluster from '@/components/ui/AccessibilityCluster';
 import Logo from '@/components/ui/Logo';
 import LoginForm from './LoginForm';
@@ -23,19 +25,25 @@ const OWNER_PANEL = {
   standfirst:
     'Your contract read line by line. Your money released against real progress. Your changes priced against what you signed.',
   stagesLabel: 'What Neev checks, stage by stage',
+  stages: JOURNEY_STAGES,
 };
 
 const LENDER_PANEL = {
-  headlineTop: 'Every draw, against',
+  // "Draw" is what construction lending calls it, and what the rest of the
+  // product says -- but it is jargon on the first screen a lender ever sees.
+  // "Disbursement" is the word the data model already uses (`disbursed`,
+  // `disbursed_cum`), and unlike "payment" it cannot be misread as the
+  // borrower's repayment, which is money moving the other way.
+  headlineTop: 'Every disbursement, against',
   headlineBottom: 'what is actually built.',
-  standfirst:
-    'The book ranked by exposure. Each release checked against site photographs and the contract the borrower signed. The evidence, and the decision, on one screen.',
-  stagesLabel: 'What Neev checks, stage by stage',
+  standfirst: 'The whole book ranked by exposure, and the evidence behind every release, on one screen.',
+  stagesLabel: 'What a credit officer works through in Neev',
+  stages: LENDER_STAGES,
 };
 
 export const metadata: Metadata = {
   title: 'Log in',
-  description: 'Log in to Neev with your mobile number. No passwords.',
+  description: 'Log in to Neev with your username and password.',
   // Landing is the only indexable route in the product.
   robots: { index: false, follow: true },
 };
@@ -88,6 +96,7 @@ export default async function LoginPage({
           <JourneyStages
             layout="rows"
             label={panel.stagesLabel}
+            stages={panel.stages}
             className="mt-8 max-w-[400px]"
           />
         </div>
@@ -103,17 +112,40 @@ export default async function LoginPage({
         </div>
 
         <div className="m-auto w-[400px] max-w-full">
+          {/* Wayfinding, not authorization. This only decides which side of the
+              table the page talks to -- the copy on the left, and the wording
+              here -- and `?role=` is the same thing a "For lenders" link in the
+              marketing header already carries. What the visitor can actually
+              see is decided by the credential: the backend answers with the
+              role the account holds and `actions.ts` refuses a `next` outside
+              it. The old control was a different thing wearing the same shape,
+              a form field the SERVER believed, so any ten digits plus
+              `role=bank` opened the whole book. Reading it from the URL is what
+              keeps it a label. */}
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-[23px] font-bold tracking-[-0.02em] text-ink">Welcome back</h2>
+            <SegmentedToggle
+              options={[
+                { value: 'owner', label: 'Home builder' },
+                { value: 'bank', label: 'Lender' },
+              ]}
+              value={forLender ? 'bank' : 'owner'}
+              paramName="role"
+              skin={forLender ? 'bank' : 'owner'}
+              label="Which side of the table you are on"
+            />
+          </div>
+
           <LoginForm next={next} />
 
-          {/* The prototype sends this to Owner Onboarding, which is gated, so an
-              unauthenticated click bounces off the middleware straight back here.
-              It used to link to /login itself with onboarding as the destination —
-              which navigates to the page you are already on, looks completely
-              dead, and discards the number you had just typed. Logging in IS
-              signing up here: no passwords, no separate registration. So this
-              says that rather than linking anywhere. */}
+          {/* This said "just enter your number above — there is nothing to sign
+              up for", which was true of the OTP form and is now false twice
+              over: there is no number, and an unknown username is refused.
+              Signup is designed but not built (CLAUDE.md), so the honest line
+              is where accounts come from, and it links nowhere rather than to a
+              page that does not exist. */}
           <p className="mt-[18px] text-center text-[13px] leading-[1.6] text-sub">
-            New here? Just enter your number above — there is nothing to sign up for.
+            Accounts are issued by your lender. Neev has no self-service sign-up yet.
           </p>
 
         </div>

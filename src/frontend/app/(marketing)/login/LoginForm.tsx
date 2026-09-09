@@ -2,6 +2,9 @@
 
 // The login card. One step: a username and a password.
 //
+// The "Welcome back" heading lives in page.tsx, not here, so the role toggle can
+// sit on the same line as it. Both are static; only the fields need a client.
+//
 // It lists no accounts. It used to, as a hint for judges, and that is
 // documentation rather than interface: a product does not tell a visitor whose
 // account to borrow. The demo credentials live in docs/Neev_Demo_Runbook.md.
@@ -44,8 +47,6 @@ export default function LoginForm({ next }: { next: string }) {
   return (
     <form action={formAction} noValidate className="w-full">
       <input type="hidden" name="next" value={next} />
-
-      <h2 className="text-[23px] font-bold tracking-[-0.02em] text-ink">Welcome back</h2>
 
       <label htmlFor={usernameId} className="mt-6 block text-[12.5px] font-semibold text-sub">
         Username
