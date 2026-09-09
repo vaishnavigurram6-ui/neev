@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 from app.core.settings import Settings, assert_billed_calls_permitted, get_settings
 from app.schemas.events import PipelineEvent
-from app.schemas.pipeline import PipelineOutput
+from app.schemas.pipeline import InspectionResult, PipelineOutput, RiskAssessment
 
 
 class BoqAnalysisRequest(BaseModel):
@@ -37,6 +37,46 @@ class BoqAnalysisRequest(BaseModel):
     photo_paths: list[str] = Field(default_factory=list)
 
 
+class InspectionOutcome(BaseModel):
+    """What reading a reported milestone produces: a stage and what it implies.
+
+    Deliberately not a `PipelineOutput`. That type is the whole five-agent run,
+    and `parse_state` treats three of its keys as required — an inspection has
+    none of them and never will, so returning one would mean either lying about
+    what ran or teaching the parser that a BoQ analysis is optional.
+    """
+
+    inspection_result: InspectionResult | None = None
+    risk_assessment: RiskAssessment | None = None
+
+
+class MilestoneInspectionRequest(BaseModel):
+    """Everything the inspector and risk agents need for one reported milestone.
+
+    Reporting progress is the product's second promise — "photos verify each
+    payment" — and until now the photo path never asked the model anything: it
+    stored the frames and hardcoded ESCALATE. This is what makes that promise
+    true.
+
+    It carries the two figures the risk tool cannot derive from photographs,
+    `expected_total_cost` and `completed_value_estimate`. In a full pipeline run
+    those come from `cost_estimation_agent` through session state; here they are
+    read from the loan's stored analysis, because re-reading a BoQ nobody
+    changed would cost three more agents and produce the same numbers.
+    """
+
+    loan_id: str
+    tranche_number: int
+    claimed_stage: str
+    photo_paths: list[str] = Field(default_factory=list)
+    locality: str = "Kompally, Hyderabad"
+    sanctioned: int = 0
+    disbursed: int = 0
+    requested_amount: int = 0
+    expected_total_cost: float = 0.0
+    completed_value_estimate: float = 0.0
+
+
 @runtime_checkable
 class PipelineRunner(Protocol):
     # How a run this runner produced should be filed. Lets the driver record
@@ -53,6 +93,15 @@ class PipelineRunner(Protocol):
 
     def final_output(self, req: BoqAnalysisRequest) -> PipelineOutput | None:
         """A validated result, or None when the run cannot be persisted."""
+        ...
+
+    # The milestone path. Also declared `def`, for the same reason as `run`.
+    def inspect(self, req: MilestoneInspectionRequest) -> AsyncIterator[PipelineEvent]:
+        """Yield progress as the photos are read, ending with DoneEvent."""
+        ...
+
+    def inspection_output(self, req: MilestoneInspectionRequest) -> InspectionOutcome | None:
+        """The inspection and the risk assessment it produced, or None."""
         ...
 
 

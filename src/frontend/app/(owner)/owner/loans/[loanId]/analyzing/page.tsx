@@ -32,14 +32,18 @@ export default async function AnalyzingPage({
   searchParams,
 }: {
   params: Promise<{ loanId: string }>;
-  searchParams: Promise<{ job?: string | string[] }>;
+  searchParams: Promise<{ job?: string | string[]; kind?: string | string[] }>;
 }) {
   const { loanId } = await params;
   // The route segment is client input, and `proxy.ts` only checks it against the
   // (forgeable) session cookie — so validate it before it reaches a backend URL.
   if (!isLoanId(loanId)) notFound();
-  const { job } = await searchParams;
+  const { job, kind } = await searchParams;
   const jobId = typeof job === 'string' && job.length > 0 ? job : null;
+  // Anything but the one known alternative is a BoQ check, which is what the
+  // screen has always been. A stale or hand-edited `kind` changes the wording,
+  // never the stream.
+  const checkKind = kind === 'milestone' ? 'milestone' : 'boq';
 
   let loan: LoanFacts | null = null;
   try {
@@ -78,5 +82,5 @@ export default async function AnalyzingPage({
     );
   }
 
-  return <AnalyzingLive jobId={jobId} loanId={loanId} loan={loan} />;
+  return <AnalyzingLive jobId={jobId} loanId={loanId} loan={loan} kind={checkKind} />;
 }

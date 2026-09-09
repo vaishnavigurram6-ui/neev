@@ -13,10 +13,13 @@ from pydantic import BaseModel
 
 from app.api.deps import AuthorizedLoan, DbSession
 from app.db import models
+from app.api.analysis import analysis_for
 from app.mappers.boq import visible_questions
 from app.mappers.loan import to_build_progress, to_loan_summary
 from app.schemas.views import BuildProgressView, LoanSummaryView
 from app.services.artifacts import read_artifact, read_upload, store_artifact
+from app.services.jobs import registry
+from app.services.runner import MilestoneInspectionRequest
 from typing import Literal
 
 router = APIRouter(prefix="/api/loans", tags=["loans"])
@@ -44,6 +47,10 @@ class QuestionsSentResponse(BaseModel):
 class MilestoneResponse(BaseModel):
     tranche: int
     photos: int
+    # The inspection reading the photographs. None when there was no stored
+    # analysis to price the draw against, in which case the tranche is marked
+    # for human review and says so rather than guessing.
+    job_id: str | None = None
 
 
 @router.get("/{loan_id}", response_model=LoanSummaryView)
@@ -184,11 +191,61 @@ async def report_milestone(
         )
     if stage:
         tranche.claimed_stage = stage
+    # Marked for review immediately, and left that way until the inspection
+    # comes back. The borrower has asked for money against these photographs;
+    # the honest interim state is "a human should look", not a recommendation
+    # nobody has made yet.
     tranche.needs_human_review = True
     tranche.recommendation = "ESCALATE"
     loan.recommendation = "ESCALATE"
     db.commit()
-    return MilestoneResponse(tranche=tranche.number, photos=len(uploaded))
+
+    job = _inspect_the_photos(loan, tranche, db)
+    return MilestoneResponse(
+        tranche=tranche.number, photos=len(uploaded), job_id=job.id if job else None
+    )
+
+
+def _inspect_the_photos(
+    loan: models.Loan, tranche: models.Tranche, db: DbSession
+):
+    """Hand the reported milestone to the inspector and the risk agent.
+
+    This is the product's second promise — "photos verify each payment" — and
+    for a while the photo path kept none of it: it stored the frames, set
+    ESCALATE by hand, and never asked the model anything. The same two agents a
+    full BoQ analysis uses read them now.
+
+    Two figures the photographs cannot supply come from the loan's stored
+    analysis: the expected total cost and the completed value estimate. Without
+    a stored analysis there is nothing to price the draw against, so the
+    inspection is skipped and the tranche stays marked for human review — which
+    is what it already says.
+    """
+    revision = max(loan.revisions, key=lambda r: r.rev, default=None)
+    if revision is None:
+        return None
+    try:
+        estimate = analysis_for(revision).cost_estimate
+    except HTTPException:
+        return None
+    if estimate is None:
+        return None
+
+    return registry.create_inspection(
+        MilestoneInspectionRequest(
+            loan_id=loan.id,
+            tranche_number=tranche.number,
+            claimed_stage=tranche.claimed_stage or tranche.milestone,
+            photo_paths=[p.stored_path for p in tranche.photos if p.stored_path],
+            locality=loan.locality,
+            sanctioned=loan.sanctioned,
+            disbursed=loan.disbursed,
+            requested_amount=max(0, tranche.disbursed_cum - loan.disbursed),
+            expected_total_cost=estimate.expected_total_cost,
+            completed_value_estimate=estimate.completed_value_estimate,
+        )
+    )
 
 
 def _current_tranche(loan: models.Loan) -> models.Tranche:

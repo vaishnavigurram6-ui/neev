@@ -17,7 +17,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.db import models
-from app.schemas.pipeline import PipelineOutput
+from app.schemas.pipeline import InspectionResult, PipelineOutput, RiskAssessment
 from app.services.runner import BoqAnalysisRequest
 
 # Which BoQ Review group each flag belongs under.
@@ -49,6 +49,44 @@ FLAG_GROUPS_BY_TYPE = {
     "UNBENCHMARKED": "NO BENCHMARK TO COMPARE AGAINST",
 }
 UNGROUPED = "OTHER"
+
+
+def apply_inspection(
+    loan: models.Loan,
+    tranche: models.Tranche,
+    inspection: InspectionResult | None,
+    risk: RiskAssessment | None,
+) -> None:
+    """Write what the photographs showed, and what it means for this draw.
+
+    Shared by a full BoQ analysis and a reported milestone, which is the point:
+    both paths run the same two agents over the same photographs, so a milestone
+    must not be able to disagree with a full run about the observed stage or the
+    exposure it implies.
+
+    A missing inspection or risk assessment is not treated as a pass. No
+    observation means human review and ESCALATE — the same conclusion a reader
+    would reach from an empty evidence grid, and the opposite of what defaulting
+    to RELEASE would say.
+    """
+    tranche.needs_human_review = inspection.needs_human_review if inspection else True
+    tranche.confidence = inspection.confidence if inspection else None
+    tranche.observed_stage = inspection.stage if inspection else None
+    tranche.recommendation = risk.recommendation if risk else "ESCALATE"
+    tranche.verified_value = int(risk.verified_value) if risk else None
+    tranche.exposure_ratio = risk.exposure_ratio if risk else None
+    tranche.exposure_undefined = risk.exposure_undefined if risk else True
+    tranche.cost_to_complete = (
+        int(risk.cost_to_complete) if risk and risk.cost_to_complete is not None else None
+    )
+    tranche.cost_to_complete_gap = int(risk.cost_to_complete_gap) if risk else None
+
+    loan.exposure_ratio = tranche.exposure_ratio
+    loan.exposure_undefined = tranche.exposure_undefined
+    loan.cost_to_complete_gap = tranche.cost_to_complete_gap
+    loan.recommendation = tranche.recommendation
+    loan.seen_on_site = tranche.observed_stage
+    loan.behind_schedule = not inspection.matches_claim if inspection else True
 
 
 def store_revision(
@@ -136,26 +174,11 @@ def store_revision(
     # draw was assessed from an unrelated latest revision or the highest number.
     tranche = next((t for t in loan.tranches
                     if request and t.number == request.tranche_number), None)
-    risk, inspection = output.risk_assessment, output.inspection_result
     if tranche is not None:
         tranche.assessment_revision_id = revision.id
         tranche.owner_view = output.explanation.owner_view
         tranche.officer_view = output.explanation.officer_view
-        tranche.needs_human_review = inspection.needs_human_review if inspection else True
-        tranche.confidence = inspection.confidence if inspection else None
-        tranche.observed_stage = inspection.stage if inspection else None
-        tranche.recommendation = risk.recommendation if risk else "ESCALATE"
-        tranche.verified_value = int(risk.verified_value) if risk else None
-        tranche.exposure_ratio = risk.exposure_ratio if risk else None
-        tranche.exposure_undefined = risk.exposure_undefined if risk else True
-        tranche.cost_to_complete = int(risk.cost_to_complete) if risk and risk.cost_to_complete is not None else None
-        tranche.cost_to_complete_gap = int(risk.cost_to_complete_gap) if risk else None
-        loan.exposure_ratio = tranche.exposure_ratio
-        loan.exposure_undefined = tranche.exposure_undefined
-        loan.cost_to_complete_gap = tranche.cost_to_complete_gap
-        loan.recommendation = tranche.recommendation
-        loan.seen_on_site = tranche.observed_stage
-        loan.behind_schedule = not inspection.matches_claim if inspection else True
+        apply_inspection(loan, tranche, output.inspection_result, output.risk_assessment)
 
     db.commit()
     db.refresh(revision)

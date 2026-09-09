@@ -13,7 +13,12 @@ from dataclasses import dataclass, field
 from typing import AsyncIterator, Literal
 
 from app.schemas.events import DoneEvent, ErrorEvent, PipelineEvent
-from app.services.runner import BoqAnalysisRequest, PipelineRunner, get_runner
+from app.services.runner import (
+    BoqAnalysisRequest,
+    MilestoneInspectionRequest,
+    PipelineRunner,
+    get_runner,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -116,6 +121,73 @@ class JobRegistry:
         self._tasks[job.id] = asyncio.create_task(self._drive(job, req))
         self._evict()
         return job
+
+    def create_inspection(self, req: MilestoneInspectionRequest) -> Job:
+        """Start reading a reported milestone's photographs.
+
+        A job like any other, so the Analyzing screen's stream, the heartbeat,
+        the failure copy and the daily cap all apply unchanged — the only
+        difference is which agents run and what gets written at the end.
+        """
+        job = Job(id=uuid.uuid4().hex[:12], loan_id=req.loan_id)
+        self._jobs[job.id] = job
+        self._tasks[job.id] = asyncio.create_task(self._drive_inspection(job, req))
+        self._evict()
+        return job
+
+    async def _drive_inspection(self, job: Job, req: MilestoneInspectionRequest) -> None:
+        try:
+            runner = get_runner()
+            async for event in runner.inspect(req):
+                if isinstance(event, ErrorEvent):
+                    raise RuntimeError("Inspection reported a failure.")
+                if not isinstance(event, DoneEvent):
+                    job.publish(event)
+            self._persist_inspection(runner, req)
+            job.publish(DoneEvent(redirect=f"/owner/loans/{job.loan_id}/progress"))
+            job.status = "done"
+        except Exception as exc:  # noqa: BLE001 - recorded on the job, never raised
+            job.error = _reader_facing(exc)
+            logger.error(
+                "inspection job %s failed for loan %s: %s",
+                job.id,
+                job.loan_id,
+                type(exc).__name__,
+                exc_info=exc,
+            )
+            job.publish(
+                ErrorEvent(message=job.error, redirect=f"/owner/loans/{job.loan_id}/progress")
+            )
+            job.status = "error"
+
+    def _persist_inspection(
+        self, runner: PipelineRunner, req: MilestoneInspectionRequest
+    ) -> None:
+        """Write the reading to the tranche the photographs were evidence for.
+
+        Nothing is written when the parse failed. A tranche left as it was is
+        recoverable — the borrower reports again; a tranche carrying half an
+        assessment is what an officer would then decide money on.
+        """
+        from app.db.session import SessionLocal
+        from app.db import models
+        from app.services.persistence import apply_inspection
+
+        output = runner.inspection_output(req)
+        if output is None:
+            raise RuntimeError("Inspection produced nothing that could be stored.")
+
+        with SessionLocal() as db:
+            loan = db.get(models.Loan, req.loan_id)
+            if loan is None:
+                raise RuntimeError(f"Loan {req.loan_id} is gone.")
+            tranche = next(
+                (t for t in loan.tranches if t.number == req.tranche_number), None
+            )
+            if tranche is None:
+                raise RuntimeError(f"Loan {req.loan_id} has no tranche {req.tranche_number}.")
+            apply_inspection(loan, tranche, output.inspection_result, output.risk_assessment)
+            db.commit()
 
     def _evict(self) -> None:
         """Drop the oldest finished jobs once the registry exceeds its cap.

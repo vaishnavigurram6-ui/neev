@@ -40,6 +40,21 @@ import Card from '@/components/ui/Card';
 import ErrorState from '@/components/ui/ErrorState';
 import StatusPill from '@/components/ui/StatusPill';
 
+/** What is being checked. A milestone report streams the same phase events
+ *  through the same screen, but "Reading your contract" is the wrong sentence
+ *  for somebody who just photographed a slab. */
+export type CheckKind = 'boq' | 'milestone';
+
+const MILESTONE_COPY = {
+  title: 'Reading your site photos…',
+  leadPrefix: 'Checking what they show against the work priced in your ',
+  leadSuffix: ' contract — this takes a minute or two.',
+  docPrefix: 'Milestone — ',
+  docFallback: 'This month’s photos',
+  waiting: 'Your build progress opens when the check finishes',
+  skipLink: 'see your build progress',
+};
+
 const COPY = {
   title: 'Reading your contract…',
   /** The mockup reads "40 line items found. Checking each against real Kompally
@@ -108,9 +123,13 @@ export default function AnalyzingLive({
   jobId,
   loanId,
   loan,
+  kind = 'boq',
 }: {
   jobId: string;
   loanId: string;
+  /** Which check is running. Both stream the same phase events through this
+   *  screen; only the words differ. */
+  kind?: CheckKind;
   /** null when the loan record could not be read. The stream is the point of
    *  this screen, so it runs anyway and the header simply says less. */
   loan: LoanFacts | null;
@@ -199,7 +218,11 @@ export default function AnalyzingLive({
     setAttempt((previous) => previous + 1);
   };
 
-  const documentLabel = loan?.contractor ? COPY.docPrefix + loan.contractor : COPY.docFallback;
+  // One copy object, resolved once. The milestone variant overrides only the
+  // sentences that would be wrong; everything else — the reconnect notice, the
+  // failure states, the findings heading — reads the same either way.
+  const copy = kind === 'milestone' ? { ...COPY, ...MILESTONE_COPY } : COPY;
+  const documentLabel = loan?.contractor ? copy.docPrefix + loan.contractor : copy.docFallback;
   const progress = state.progress;
   const etaSeconds = progress?.eta_s;
   const hasReport = loan !== null && loan.latest_rev !== null;
@@ -214,13 +237,13 @@ export default function AnalyzingLive({
           <span className="tnum text-[12.5px] text-sub">{documentLabel}</span>
         </p>
         <h1 className="mt-5 font-display text-[26px] font-bold tracking-[-0.02em] text-ink">
-          {COPY.title}
+          {copy.title}
         </h1>
         {loan && (
           <p className="mt-2 text-[14px] text-sub">
-            {COPY.leadPrefix}
+            {copy.leadPrefix}
             {loan.locality}
-            {COPY.leadSuffix}
+            {copy.leadSuffix}
           </p>
         )}
       </div>
@@ -267,7 +290,7 @@ export default function AnalyzingLive({
         <div className="py-[14px]">
           <div
             role="progressbar"
-            aria-label={COPY.title}
+            aria-label={copy.title}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={progress?.pct}
@@ -350,16 +373,20 @@ export default function AnalyzingLive({
                 role="status"
                 className="inline-block rounded-[10px] bg-chip px-7 py-3 text-[14px] font-semibold text-sub"
               >
-                {state.finished ? COPY.opening : COPY.waiting}
+                {state.finished ? copy.opening : copy.waiting}
               </p>
               {hasReport && !state.finished && (
                 <p className="mt-[10px] text-[12px] text-faint">
                   {COPY.skipLead}
                   <Link
-                    href={`/owner/loans/${loanId}/boq`}
+                    href={
+                      kind === 'milestone'
+                        ? `/owner/loans/${loanId}/progress`
+                        : `/owner/loans/${loanId}/boq`
+                    }
                     className="font-semibold text-action hover:underline"
                   >
-                    {COPY.skipLink}
+                    {copy.skipLink}
                   </Link>
                 </p>
               )}

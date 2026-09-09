@@ -20,8 +20,12 @@ from typing import AsyncIterator
 from app.core.settings import assert_billed_calls_permitted
 from app.schemas.events import DoneEvent, PhaseEvent, PipelineEvent
 from app.schemas.pipeline import PipelineOutput
-from app.services.pipeline_parse import parse_state
-from app.services.runner import BoqAnalysisRequest
+from app.services.pipeline_parse import parse_output_key, parse_state
+from app.services.runner import (
+    BoqAnalysisRequest,
+    InspectionOutcome,
+    MilestoneInspectionRequest,
+)
 
 # Which display phase each ADK tool call advances (spec §5.2).
 TOOL_TO_PHASE: dict[str, int] = {
@@ -33,6 +37,13 @@ TOOL_TO_PHASE: dict[str, int] = {
     "check_steel_rcc_ratio": 3,
     "check_payment_schedule": 4,
 }
+
+# The milestone path's two phases. Named for what a borrower waiting on a
+# payment cares about, not for the agents doing it.
+INSPECTION_PHASE_NAMES: list[str] = [
+    "Reading your site photos",
+    "Re-checking this payment against the work in place",
+]
 
 PHASE_NAMES: list[str] = [
     "Reading the document",
@@ -140,6 +151,157 @@ class AdkPipelineRunner:
                 yield PhaseEvent(index=index, status="done", name=PHASE_NAMES[index])
 
         yield DoneEvent(redirect=f"/owner/loans/{req.loan_id}/boq")
+
+    async def inspect(self, req: MilestoneInspectionRequest) -> AsyncIterator[PipelineEvent]:
+        """Drive the inspector and the risk agent over one reported milestone.
+
+        Two agents, not five. The BoQ has not changed since it was analysed, so
+        re-reading it would spend three more agents to reproduce numbers already
+        stored — `expected_total_cost` and `completed_value_estimate` come in on
+        the request instead.
+
+        A fresh SequentialAgent over the two existing agent objects rather than
+        new ones: the instructions, the tools and the output_keys are the same
+        ones the full pipeline uses, so a milestone and a full run cannot drift
+        apart in what they mean by "observed stage".
+        """
+        assert_billed_calls_permitted()
+        from app.services.artifacts import read_artifact
+
+        from google.adk.agents import SequentialAgent  # noqa: PLC0415
+        from google.adk.runners import InMemoryRunner  # noqa: PLC0415
+        from google.genai import types  # noqa: PLC0415
+        from neev_pipeline.agent import (  # noqa: PLC0415
+            disbursal_risk_agent,
+            visual_inspector_agent,
+        )
+
+        # `.clone()`, not the agent objects themselves: ADK gives an agent one
+        # parent, and both of these already belong to the five-agent
+        # `neev_pipeline` built at module import. Passing them here raises
+        # "already has a parent agent". A clone carries the same instruction,
+        # tools and output_key, so this still cannot drift from what a full run
+        # means by "observed stage" — which redefining them here would.
+        pipeline = SequentialAgent(
+            name="neev_milestone_inspection",
+            sub_agents=[visual_inspector_agent.clone(), disbursal_risk_agent.clone()],
+        )
+        runner = InMemoryRunner(agent=pipeline, app_name="neev")
+        # `disbursal_risk_agent`'s instruction interpolates {cost_estimate},
+        # which in a full run is whatever `cost_estimation_agent` left in
+        # session state. Standalone there is no such key and ADK raises
+        # "Context variable not found" before the model is ever called — so the
+        # two figures the request carries are seeded in the same shape and the
+        # same place a full run would leave them. Written as JSON text because
+        # that is what an output_key holds: raw model output, not a dict.
+        session = await runner.session_service.create_session(
+            app_name="neev",
+            user_id=f"loan-{req.loan_id}",
+            state={
+                "cost_estimate": json.dumps(
+                    {
+                        "expected_total_cost": req.expected_total_cost,
+                        "completed_value_estimate": req.completed_value_estimate,
+                    }
+                )
+            },
+        )
+
+        parts = [
+            types.Part(
+                text=(
+                    f"The borrower on loan {req.loan_id} has reported milestone "
+                    f"'{req.claimed_stage}' and submitted the attached site photos. "
+                    f"Location: {req.locality}. "
+                    f"Site photo paths for verify_construction_stage: "
+                    f"{json.dumps(req.photo_paths)}. "
+                    f"Sanctioned amount: {req.sanctioned}. "
+                    f"Disbursed cumulative: {req.disbursed}. "
+                    f"Requested amount: {req.requested_amount}. "
+                    f"Expected total cost: {req.expected_total_cost}. "
+                    f"Completed value estimate: {req.completed_value_estimate}. "
+                    "No site photos means inspection is not_assessed and human "
+                    "review is required."
+                )
+            )
+        ]
+        # Server-generated references, never a caller's path.
+        from io import BytesIO
+        from PIL import Image
+        for reference in req.photo_paths:
+            data = read_artifact(reference)
+            with Image.open(BytesIO(data)) as image:
+                mime = Image.MIME[image.format]
+            parts.append(types.Part.from_bytes(data=data, mime_type=mime))
+
+        yield PhaseEvent(index=0, status="running", name=INSPECTION_PHASE_NAMES[0])
+        finished: set[int] = set()
+        reached_risk = False
+        async for event in runner.run_async(
+            user_id=session.user_id,
+            session_id=session.id,
+            new_message=types.Content(role="user", parts=parts),
+        ):
+            # `assess_tranche` firing is the boundary between the two phases:
+            # the photographs have been read by the time the risk tool is
+            # called with what they showed.
+            if not reached_risk and "assess_tranche" in _tool_calls(event):
+                reached_risk = True
+                finished.add(0)
+                yield PhaseEvent(index=0, status="done", name=INSPECTION_PHASE_NAMES[0])
+                yield PhaseEvent(index=1, status="running", name=INSPECTION_PHASE_NAMES[1])
+
+        self._last_state = (
+            await runner.session_service.get_session(
+                app_name="neev", user_id=session.user_id, session_id=session.id
+            )
+        ).state
+
+        # Settle whatever is still open, once. Yielding a phase done twice made
+        # the screen tick a step it had already ticked.
+        for index in range(len(INSPECTION_PHASE_NAMES)):
+            if index not in finished:
+                finished.add(index)
+                yield PhaseEvent(index=index, status="done", name=INSPECTION_PHASE_NAMES[index])
+        yield DoneEvent(redirect=f"/owner/loans/{req.loan_id}/progress")
+
+    def inspection_output(self, req: MilestoneInspectionRequest) -> InspectionOutcome | None:
+        """The two output_keys this run produced, through the same validators.
+
+        `parse_output_key` rather than `parse_state`: the latter requires
+        `boq_findings`, `cost_estimate` and `explanation`, which an inspection
+        does not produce and should not have to fake. Same per-key normalizer
+        and same model either way, so a stage read here validates exactly as it
+        would in a full run.
+
+        Nothing is returned unless the inspection itself parsed. A risk
+        assessment without the observation behind it is a recommendation with no
+        evidence, which is the one thing this screen must not store.
+        """
+        state = self._last_state
+        if state is None:
+            self.last_parse_errors = {"session": "no inspection has completed"}
+            return None
+
+        errors: dict[str, str] = {}
+        parsed: dict[str, object] = {}
+        for key in ("inspection_result", "risk_assessment"):
+            raw = state.get(key)
+            if raw is None:
+                errors[key] = "absent from session state"
+                continue
+            try:
+                parsed[key] = parse_output_key(key, raw)
+            except Exception as exc:  # noqa: BLE001 - reported, never raised
+                errors[key] = str(exc)
+
+        self.last_parse_errors = errors
+        if "inspection_result" not in parsed:
+            return None
+        return InspectionOutcome(
+            inspection_result=parsed["inspection_result"],  # type: ignore[arg-type]
+            risk_assessment=parsed.get("risk_assessment"),  # type: ignore[arg-type]
+        )
 
     def final_output(self, req: BoqAnalysisRequest) -> PipelineOutput | None:
         """The run's five output_key values, parsed into a PipelineOutput.

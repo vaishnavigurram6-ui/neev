@@ -14,6 +14,13 @@ from app.services.jobs import JobRegistry
 from app.services.runner import BoqAnalysisRequest
 
 
+PNG = (
+    b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06"
+    b"\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00"
+    b"\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82"
+)
+
+
 def image_bytes():
     out = BytesIO()
     Image.new("RGB", (2, 2)).save(out, "PNG")
@@ -148,3 +155,85 @@ def test_the_cap_is_per_loan_not_global(signed_client, monkeypatch):
         assert signed_client.post("/api/loans/1002/boq", files=pdf).status_code == 200
     finally:
         get_settings.cache_clear()
+
+
+async def test_reporting_photos_runs_the_inspector_and_the_risk_agent(client, instant_pipeline):
+    """The product's second promise: "photos verify each payment".
+
+    For a while the photo path kept none of it — it stored the frames, set
+    ESCALATE by hand, and never asked the model anything. Reporting a milestone
+    now runs the same two agents a full BoQ analysis uses, and what they read is
+    written to the tranche the photographs were evidence for.
+    """
+    from app.db import models
+    from app.db.session import SessionLocal
+    from app.services.jobs import registry
+
+    client.post("/api/auth/session", json={"role": "owner", "phone": "9849012345"})
+    with SessionLocal() as db:
+        before = next(t for t in db.get(models.Loan, "1001").tranches if t.number == 4)
+        # Wipe the seeded reading so a stale value cannot make this pass.
+        before.observed_stage = None
+        before.confidence = None
+        before.exposure_ratio = None
+        db.commit()
+
+    response = client.post(
+        "/api/loans/1001/milestones",
+        data={"stage": "brickwork_roof"},
+        files=[("photos", ("slab.png", PNG, "image/png"))],
+    )
+    assert response.status_code == 200, response.text
+    job_id = response.json()["job_id"]
+    assert job_id, "reporting a milestone must start an inspection"
+
+    # Drain the stream, which is what waits for the inspection to finish.
+    client.get(f"/api/jobs/{job_id}/events")
+    assert registry.get(job_id).status == "done", registry.get(job_id).error
+
+    with SessionLocal() as db:
+        after = next(t for t in db.get(models.Loan, "1001").tranches if t.number == 4)
+        # The agents' reading, not the hardcoded escalation.
+        assert after.observed_stage == "slab"
+        assert after.confidence is not None
+        assert after.exposure_ratio is not None
+        assert after.recommendation in ("RELEASE", "HOLD", "ESCALATE", "INSPECT")
+        # Derived from the inspection rather than left stale. Not asserted
+        # against the stage this test claimed: fixture mode replays a recording
+        # made against the claim of the day, so only a live run can judge a
+        # claim it has not seen before.
+        from app.fixtures.loader import load_pipeline_output
+
+        recorded = load_pipeline_output("1001").inspection_result
+        assert db.get(models.Loan, "1001").behind_schedule is (not recorded.matches_claim)
+
+
+async def test_a_milestone_with_no_stored_analysis_stays_under_review(client):
+    """There is nothing to price a draw against until a BoQ has been analysed,
+    so the inspection is skipped rather than run on invented figures — and the
+    tranche keeps the one honest answer, which is that a human should look."""
+    from app.db import models
+    from app.db.session import SessionLocal
+
+    client.post(
+        "/api/auth/session",
+        json={"role": "owner", "phone": "9849012345", "loan_id": "1002"},
+    )
+    with SessionLocal() as db:
+        loan = db.get(models.Loan, "1002")
+        for revision in list(loan.revisions):
+            db.delete(revision)
+        db.commit()
+
+    response = client.post(
+        "/api/loans/1002/milestones",
+        files=[("photos", ("slab.png", PNG, "image/png"))],
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["job_id"] is None
+
+    with SessionLocal() as db:
+        tranche = next(
+            t for t in db.get(models.Loan, "1002").tranches if t.needs_human_review
+        )
+        assert tranche.recommendation == "ESCALATE"

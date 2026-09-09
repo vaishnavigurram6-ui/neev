@@ -11,7 +11,11 @@ from typing import AsyncIterator
 from app.fixtures.loader import load_analyzing_script, load_pipeline_output
 from app.schemas.events import DoneEvent, FindingEvent, PhaseEvent, PipelineEvent, ProgressEvent
 from app.schemas.pipeline import PipelineOutput
-from app.services.runner import BoqAnalysisRequest
+from app.services.runner import (
+    BoqAnalysisRequest,
+    InspectionOutcome,
+    MilestoneInspectionRequest,
+)
 
 
 class FixtureRunner:
@@ -45,6 +49,45 @@ class FixtureRunner:
                     await self._pause()
 
         yield DoneEvent(redirect=f"/owner/loans/{req.loan_id}/boq")
+
+    async def inspect(self, req: MilestoneInspectionRequest) -> AsyncIterator[PipelineEvent]:
+        """Replay the recorded inspection for this loan, on the same two phases.
+
+        Fixture mode has to answer the milestone path too, or reporting progress
+        would work only with credits — and the offline demo is the one that has
+        to work in a room with bad wifi. The events match what
+        AdkPipelineRunner.inspect emits, so the screens cannot tell them apart.
+        """
+        from app.services.live_runner import INSPECTION_PHASE_NAMES
+
+        for index, name in enumerate(INSPECTION_PHASE_NAMES):
+            yield PhaseEvent(index=index, status="running", name=name)
+            await self._pause()
+            yield PhaseEvent(index=index, status="done", name=name)
+
+        yield DoneEvent(redirect=f"/owner/loans/{req.loan_id}/progress")
+
+    def inspection_output(self, req: MilestoneInspectionRequest) -> InspectionOutcome | None:
+        """The recorded inspection and risk assessment, or None.
+
+        The same authored output a full run replays, which is the point: a
+        milestone reported in fixture mode lands the borrower on the figures the
+        rest of the demo already shows.
+        """
+        recorded = self.final_output(
+            BoqAnalysisRequest(
+                loan_id=req.loan_id,
+                filename="recorded",
+                content_type="application/pdf",
+                size_bytes=0,
+            )
+        )
+        if recorded is None or recorded.inspection_result is None:
+            return None
+        return InspectionOutcome(
+            inspection_result=recorded.inspection_result,
+            risk_assessment=recorded.risk_assessment,
+        )
 
     async def _pause(self) -> None:
         if self.step_delay_s:

@@ -154,6 +154,20 @@ results are the fixtures the app serves. Also real: the five-agent ADK pipeline,
 the risk arithmetic and its thresholds, the whole web application, role
 enforcement, and the audit trail a decision writes.
 
+**Two live paths, not one.** Uploading a BoQ runs all five agents. Reporting a
+milestone runs the two that judge photographs — `visual_inspector_agent` then
+`disbursal_risk_agent` — because the BoQ has not changed and re-reading it would
+spend three more agents to reproduce stored numbers. That path used to store the
+frames and hardcode ESCALATE without asking the model anything, which made the
+landing page's "photos verify each payment" the one promise the product did not
+keep.
+
+Worth demoing, because the model reaches the demo's own conclusion unaided. On
+2026-09-09, Ravi's real slab photographs against a claimed `brickwork_roof`:
+stage `slab`, confidence `high`, **`matches_claim` false**, ESCALATE, exposure
+1.11 — in 33 seconds. The borrower asked for the brickwork draw and the
+photographs show a slab, and nothing seeded that.
+
 **Live, if the key allows it.** `NEEV_MODE=live` drives the real five-agent ADK
 pipeline on whatever is uploaded. It is built and it has been run: on
 2026-09-09, `fixtures/sample_boq.pdf` through the live runner produced 40 line

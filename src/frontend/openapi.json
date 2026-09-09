@@ -1157,6 +1157,17 @@
       },
       "MilestoneResponse": {
         "properties": {
+          "job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id"
+          },
           "photos": {
             "title": "Photos",
             "type": "integer"

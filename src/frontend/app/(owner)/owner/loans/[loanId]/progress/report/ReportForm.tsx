@@ -114,9 +114,23 @@ export default function ReportForm({
         body,
       });
       if (response.ok) {
-        // The evidence is filed against a tranche now under review, and the
-        // build-progress screen is where that shows. Push, not replace: Back
-        // should return here rather than skipping the whole report.
+        // Reporting a milestone starts an inspection: the same two agents a BoQ
+        // analysis uses read the photographs and re-price the draw. When one
+        // starts, follow it on the Analyzing screen — a borrower who has asked
+        // for a payment should watch the check that decides it, not land on an
+        // unchanged page. `job_id` is null when there is no stored analysis to
+        // price against, and then Build Progress is the honest destination.
+        const payload: unknown = await response.json().catch(() => null);
+        const job =
+          typeof payload === 'object' && payload !== null && 'job_id' in payload
+            ? (payload as { job_id: unknown }).job_id
+            : null;
+        if (typeof job === 'string' && job) {
+          router.push(
+            `/owner/loans/${loanId}/analyzing?job=${encodeURIComponent(job)}&kind=milestone`
+          );
+          return;
+        }
         router.push(`/owner/loans/${loanId}/progress?reported=1`);
         // `pending` stays set deliberately — the navigation is the completion,
         // and re-enabling the button under a leaving page invites a resend.
