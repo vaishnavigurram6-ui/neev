@@ -28,6 +28,13 @@ class Settings(BaseSettings):
     artifact_dir: str = "./artifacts"
     # Explicit sandbox opt-in. No identity provider is implemented yet.
     neev_demo_auth: bool = False
+    # Signs the sandbox session cookie. Empty means "a fresh random key per
+    # process", which is the safe default for local work but signs everyone out
+    # on restart — and on Cloud Run at --min-instances 0 the instance is
+    # recycled after about fifteen idle minutes, so a visitor who reads a page,
+    # steps away and comes back is bounced to /login through no fault of their
+    # own. Set it on a deployment and sessions survive a cold start.
+    neev_session_secret: str = ""
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
     @field_validator("neev_mode", mode="before")

@@ -499,3 +499,50 @@ def test_build_progress_carries_the_phase_history(client):
     # milestone lands (slab carries 0.25 of the build against plinth's 0.10), so
     # cover can improve. What matters is that the last drawn phase is today's.
     assert phases[2]["exposure"] == risk.exposure_ratio
+
+
+def test_a_pinned_session_secret_survives_a_restart(monkeypatch):
+    """Without this, a Cloud Run cold start signs every visitor out.
+
+    `--min-instances 0` recycles the instance after roughly fifteen idle
+    minutes, so a reader who steps away and comes back returns with a cookie
+    signed by a key that no longer exists. Pinning the secret makes the cookie
+    outlive the process; leaving it unset keeps the local default, where a fresh
+    key per process is the safer thing.
+    """
+    import importlib
+
+    from app.core.settings import get_settings
+
+    def reload_with(secret: str | None):
+        if secret is None:
+            monkeypatch.delenv("NEEV_SESSION_SECRET", raising=False)
+        else:
+            monkeypatch.setenv("NEEV_SESSION_SECRET", secret)
+        get_settings.cache_clear()
+        import app.api.deps as deps
+
+        return importlib.reload(deps)
+
+    try:
+        pinned = reload_with("a-deployment-secret")
+        cookie = pinned.encode_cookie("owner", "1001", "Ravi Kumar")
+        # A "restart": the module is rebuilt, and the old cookie still verifies.
+        restarted = reload_with("a-deployment-secret")
+        assert restarted._parse_cookie(cookie) is not None
+
+        # A different secret does not, which is the point of signing it.
+        rotated = reload_with("a-different-secret")
+        assert rotated._parse_cookie(cookie) is None
+
+        # And with nothing set, each process gets its own key.
+        first = reload_with(None)
+        issued = first.encode_cookie("owner", "1001", "Ravi Kumar")
+        second = reload_with(None)
+        assert second._parse_cookie(issued) is None
+    finally:
+        # Leave the module as the rest of the suite expects to find it.
+        get_settings.cache_clear()
+        import app.api.deps as deps
+
+        importlib.reload(deps)

@@ -30,6 +30,14 @@ FRONTEND="${FRONTEND_SERVICE:-neev-web}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+# Signs the demo session cookie. Without it the backend picks a random key per
+# process, and at --min-instances 0 Cloud Run recycles the instance after about
+# fifteen idle minutes: a visitor who reads a page, steps away and comes back
+# would be bounced to /login by a cookie signed with a key that no longer
+# exists. Pass your own to keep sessions across a redeploy; generated here so
+# forgetting cannot leave it empty.
+SESSION_SECRET="${NEEV_SESSION_SECRET:-$(openssl rand -hex 32)}"
+
 echo "Project : $PROJECT"
 echo "Region  : $REGION"
 echo
@@ -61,7 +69,7 @@ gcloud run deploy "$BACKEND" \
   --max-instances 1 \
   --memory 1Gi \
   --timeout 300 \
-  --set-env-vars NEEV_MODE=fixture,NEEV_DEMO_AUTH=true
+  --set-env-vars "NEEV_MODE=fixture,NEEV_DEMO_AUTH=true,NEEV_SESSION_SECRET=$SESSION_SECRET"
 
 API_URL="$(gcloud run services describe "$BACKEND" \
   --project "$PROJECT" --region "$REGION" --format='value(status.url)')"

@@ -20,11 +20,31 @@ from fastapi import Depends, HTTPException, Path, Request, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.core.settings import get_settings
 from app.db import models
 from app.db.session import get_session
 
 SESSION_COOKIE = "neev_session"
-_SESSION_KEY = secrets.token_bytes(32)  # single-process sandbox; restart signs everyone out
+
+
+def _session_key() -> bytes:
+    """The key the sandbox session cookie is signed with.
+
+    From NEEV_SESSION_SECRET when a deployment sets one, so a session survives
+    the instance being recycled — Cloud Run at `--min-instances 0` drops it
+    after about fifteen idle minutes, and without this every cold start
+    invalidates every cookie in the wild.
+
+    Otherwise a fresh random key per process, which is the right default for
+    local work: nothing persists, and a forgotten secret cannot become a shared
+    one. Read once at import, so the whole process agrees on it whatever
+    happens to the environment afterwards.
+    """
+    secret = get_settings().neev_session_secret.strip()
+    return secret.encode() if secret else secrets.token_bytes(32)
+
+
+_SESSION_KEY = _session_key()
 
 Role = Literal["owner", "bank"]
 
