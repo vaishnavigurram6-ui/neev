@@ -76,8 +76,14 @@ def test_store_revision_appends_the_next_rev_with_its_raw_output():
 
 
 def test_a_loan_the_fixture_does_not_cover_stores_nothing():
-    # Better an empty state than loan 1001's figures under another borrower's name.
-    assert FixtureRunner(step_delay_s=0).final_output(_req("1003")) is None
+    """Better an empty state than loan 1001's figures under another borrower's
+    name.
+
+    All ten seeded loans now have a recorded run, so the uncovered case needs a
+    loan id that is not one of them — which is also the realistic shape of the
+    bug this guards against: a request arriving for a loan nobody analysed.
+    """
+    assert FixtureRunner(step_delay_s=0).final_output(_req("9999")) is None
 
 
 async def test_driving_a_job_to_completion_persists_a_revision():

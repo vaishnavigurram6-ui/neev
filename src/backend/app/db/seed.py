@@ -22,6 +22,7 @@ from app.db import models
 from app.db.session import SessionLocal, init_db
 from app.fixtures.loader import available_loan_ids, load_pipeline_output
 from app.services.artifacts import store_artifact
+from app.services.persistence import apply_inspection
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 DRAW_SCHEDULE = REPO_ROOT / "fixtures" / "draw_schedule.csv"
@@ -274,28 +275,18 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
             )
         )
         if current is not None:
-            current.verified_value = int(risk.verified_value)
-            current.exposure_ratio = risk.exposure_ratio
-            current.exposure_undefined = risk.exposure_undefined
-            # `is not None`, not truthiness: a genuine 0 is a real figure.
-            current.cost_to_complete = (
-                int(risk.cost_to_complete) if risk.cost_to_complete is not None else None
-            )
-            current.cost_to_complete_gap = int(risk.cost_to_complete_gap)
-            current.recommendation = risk.recommendation
-
-            # The Portfolio Hotlist row reads off the LOAN, the Tranche Decision
-            # screen off the tranche. Both must be the same number or a row
-            # links to a screen that contradicts it. The loan used to keep
-            # portfolio_rows.json's authored exposure while the tranche took the
-            # pipeline's -- 1.29 on the row against 1.11 on the screen once
-            # captured runs replaced the authored fixture.
+            # One rule, one place. This block used to reimplement what
+            # `apply_inspection` does at runtime, and the two drifted the moment
+            # the rule changed: a fix that made cost-to-complete conditional on
+            # an inspection landed in persistence and left the seed writing a
+            # Rs 35,95,327 shortfall onto a fully drawn loan, because the seed
+            # had its own copy. The mirroring onto the loan is part of it -- the
+            # Portfolio Hotlist row reads the LOAN and the Tranche Decision
+            # screen reads the TRANCHE, so a row would otherwise link to a
+            # screen that contradicts it.
             parent = db.get(models.Loan, loan_id)
             if parent is not None:
-                parent.exposure_ratio = risk.exposure_ratio
-                parent.exposure_undefined = risk.exposure_undefined
-                parent.cost_to_complete_gap = int(risk.cost_to_complete_gap)
-                parent.recommendation = risk.recommendation
+                apply_inspection(parent, current, inspection, risk)
             current.owner_view = output.explanation.owner_view
             current.officer_view = output.explanation.officer_view
             if inspection is not None:

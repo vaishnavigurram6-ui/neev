@@ -238,6 +238,23 @@ def normalize(key: str, obj: dict) -> dict:
                 f"inspection_result reports confidence "
                 f"{obj.get('confidence')!r}; no stage judgement was made"
             )
+        # The same answer said a different way. Given no photographs, a run may
+        # report a legal confidence and leave matches_claim null -- there was
+        # nothing to compare the claim against, so there is no answer, and
+        # saying so is right. `matches_claim` is a bool because every reader
+        # treats it as one (the evidence gate in PipelineOutput reads it
+        # directly), so a null belongs on the Unassessable path with the rest
+        # of "could not judge" rather than widening the field and leaving every
+        # reader to handle a third state.
+        #
+        # Found by a real capture: loan 1007's run answered confidence "low"
+        # with matches_claim null, slipped past the check above, and lost an
+        # otherwise complete five-agent analysis at validation.
+        if obj.get("matches_claim") is None:
+            raise Unassessable(
+                "inspection_result reports matches_claim null; no photographs "
+                "were assessed, so the claim was never compared"
+            )
         # Models write a sentence where the schema wants list[str].
         notes = obj.get("evidence_notes")
         if isinstance(notes, str):

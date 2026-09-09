@@ -1,0 +1,352 @@
+{
+  "boq_findings": {
+    "line_items": [
+      {
+        "id": "1",
+        "desc": "Earthwork excavation in ordinary soil, foundation",
+        "qty": 111.5,
+        "unit": "cum",
+        "rate": 234.0,
+        "amount": 26091.0,
+        "section": "1. EARTHWORK"
+      },
+      {
+        "id": "2",
+        "desc": "Refilling excavated soil around foundation",
+        "qty": 69.5,
+        "unit": "cum",
+        "rate": 134.0,
+        "amount": 9313.0,
+        "section": "1. EARTHWORK"
+      },
+      {
+        "id": "3",
+        "desc": "Sand bed under floor slab",
+        "qty": 21.2,
+        "unit": "cum",
+        "rate": 1768.0,
+        "amount": 37482.0,
+        "section": "1. EARTHWORK"
+      },
+      {
+        "id": "4",
+        "desc": "Plain cement concrete 1:4:8 under footings",
+        "qty": 18.8,
+        "unit": "cum",
+        "rate": 5325.0,
+        "amount": 100110.0,
+        "section": "2. FOUNDATION & PLINTH"
+      },
+      {
+        "id": "5",
+        "desc": "Stone masonry foundation CM 1:6",
+        "qty": 46.8,
+        "unit": "cum",
+        "rate": 4265.0,
+        "amount": 199602.0,
+        "section": "2. FOUNDATION & PLINTH"
+      },
+      {
+        "id": "6",
+        "desc": "RCC M20 for plinth beam incl. shuttering",
+        "qty": 10.4,
+        "unit": "cum",
+        "rate": 8380.0,
+        "amount": 87152.0,
+        "section": "2. FOUNDATION & PLINTH"
+      },
+      {
+        "id": "7",
+        "desc": "DPC 50mm thick CC 1:2:4 over plinth",
+        "qty": 27.8,
+        "unit": "sqm",
+        "rate": 311.0,
+        "amount": 8646.0,
+        "section": "2. FOUNDATION & PLINTH"
+      },
+      {
+        "id": "8",
+        "desc": "RCC M25 for columns, beams and roof slab",
+        "qty": 57.8,
+        "unit": "cum",
+        "rate": 7508.0,
+        "amount": 433962.0,
+        "section": "3. RCC SUPERSTRUCTURE"
+      },
+      {
+        "id": "9",
+        "desc": "RCC M25 for staircase and landing",
+        "qty": 6.4,
+        "unit": "cum",
+        "rate": 7933.0,
+        "amount": 50771.0,
+        "section": "3. RCC SUPERSTRUCTURE"
+      },
+      {
+        "id": "10",
+        "desc": "Steel reinforcement TMT Fe 500 incl. binding",
+        "qty": 5699.1,
+        "unit": "kg",
+        "rate": 75.0,
+        "amount": 427432.0,
+        "section": "4. REINFORCEMENT"
+      },
+      {
+        "id": "11",
+        "desc": "External brick wall 9 inch, cement mortar 1:6",
+        "qty": 55.2,
+        "unit": "cum",
+        "rate": 5745.0,
+        "amount": 317124.0,
+        "section": "5. MASONRY"
+      },
+      {
+        "id": "12",
+        "desc": "Half brick partition wall 115 mm CM 1:4",
+        "qty": 94.0,
+        "unit": "sqm",
+        "rate": 679.0,
+        "amount": 63826.0,
+        "section": "5. MASONRY"
+      },
+      {
+        "id": "13",
+        "desc": "12 mm thick internal plastering CM 1:4",
+        "qty": 382.2,
+        "unit": "sqm",
+        "rate": 189.0,
+        "amount": 72236.0,
+        "section": "6. PLASTERING"
+      },
+      {
+        "id": "14",
+        "desc": "Outside wall plaster 18mm two coats",
+        "qty": 203.7,
+        "unit": "sqm",
+        "rate": 247.0,
+        "amount": 50314.0,
+        "section": "6. PLASTERING"
+      },
+      {
+        "id": "15",
+        "desc": "Vitrified tiles 2x2 ft laid on cement bed",
+        "qty": 184.3,
+        "unit": "sqm",
+        "rate": 1030.0,
+        "amount": 189829.0,
+        "section": "7. FLOORING"
+      },
+      {
+        "id": "16",
+        "desc": "Ceramic tile dado in toilets up to 7ft",
+        "qty": 46.2,
+        "unit": "sqm",
+        "rate": 783.0,
+        "amount": 36175.0,
+        "section": "7. FLOORING"
+      },
+      {
+        "id": "17",
+        "desc": "Terrace and sunk waterproofing treatment",
+        "qty": 128.3,
+        "unit": "sqm",
+        "rate": 661.0,
+        "amount": 84806.0,
+        "section": "8. WATERPROOFING"
+      },
+      {
+        "id": "18",
+        "desc": "Internal concealed wiring, copper, per point",
+        "qty": 92.4,
+        "unit": "pt",
+        "rate": 648.0,
+        "amount": 59875.0,
+        "section": "9. ELECTRICAL"
+      },
+      {
+        "id": "19",
+        "desc": "CPVC water supply lines concealed incl. fittings",
+        "qty": 9.1,
+        "unit": "set",
+        "rate": 10793.0,
+        "amount": 98216.0,
+        "section": "10. PLUMBING"
+      },
+      {
+        "id": "20",
+        "desc": "Anti-termite treatment to foundation and plinth",
+        "qty": 119.7,
+        "unit": "sqm",
+        "rate": 1492.0,
+        "amount": 178592.0,
+        "section": "11. ANTI-TERMITE"
+      },
+      {
+        "id": "21",
+        "desc": "Interior painting, emulsion, over putty",
+        "qty": 366.1,
+        "unit": "sqm",
+        "rate": 128.0,
+        "amount": 46861.0,
+        "section": "12. PAINTING"
+      },
+      {
+        "id": "22",
+        "desc": "Outside weatherproof painting",
+        "qty": 218.3,
+        "unit": "sqm",
+        "rate": 156.0,
+        "amount": 34055.0,
+        "section": "12. PAINTING"
+      }
+    ],
+    "flags": [
+      {
+        "item": "3",
+        "type": "RATE_OUTLIER",
+        "evidence": "Quoted rate of Rs 1,768/cum is 31% above the benchmark rate of Rs 1,350/cum (threshold: 15%).",
+        "question": "Could you please clarify the basis for the quoted rate of Rs 1,768/cum for sand bed filling against the prevailing benchmark of Rs 1,350/cum?",
+        "tone": "danger",
+        "label": "Rate +31%",
+        "benchmark_rate": 1350.0,
+        "deviation_pct": 31.0
+      },
+      {
+        "item": "18",
+        "type": "UNBENCHMARKED",
+        "evidence": "Missing or incompatible benchmark units; manual comparison required.",
+        "question": "Could you provide a detailed breakdown of the components and labor included under the per-point electrical wiring rate?",
+        "tone": "neutral",
+        "label": "No benchmark"
+      },
+      {
+        "item": "19",
+        "type": "UNBENCHMARKED",
+        "evidence": "Missing or incompatible benchmark units; manual comparison required.",
+        "question": "Could you share the detailed itemized scope and material specifications covered per plumbing set?",
+        "tone": "neutral",
+        "label": "No benchmark"
+      },
+      {
+        "item": "20",
+        "type": "UNBENCHMARKED",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you clarify the chemical specifications and application methodology for the anti-termite treatment?",
+        "tone": "neutral",
+        "label": "No benchmark"
+      },
+      {
+        "item": "10",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Line item specifies Fe 500 grade but omits brand/make (e.g., Tata Tiscon, JSW, SAIL) and IS standard compliance.",
+        "question": "Could you confirm the approved brand/manufacturer and IS standard of TMT steel reinforcement that will be supplied?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "15",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Line item mentions vitrified tiles 2x2 ft without specifying brand, make, or quality series.",
+        "question": "Could you confirm the intended brand, model, and thickness for the 2x2 ft vitrified flooring tiles?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "18",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Line item omits brand/make of copper wiring, conduit pipes, and modular switches.",
+        "question": "Could you specify the approved brands for the copper wires, conduits, and electrical accessories?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "19",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Line item omits brand and pressure rating/class for CPVC pipes and fittings.",
+        "question": "Could you clarify the make and schedule/class of the CPVC pipes and fittings to be installed?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "20",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Line item does not specify the chemical formulation, brand, or standard (e.g., IS 6313).",
+        "question": "Could you specify the chemical compound, brand, and warranty duration for the anti-termite treatment?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "21",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Line item omits paint brand, product tier, and number of coats.",
+        "question": "Could you confirm the paint brand, product line, and number of coats proposed for the interior emulsion?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "22",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Line item omits paint brand and product tier for exterior weatherproof painting.",
+        "question": "Could you confirm the exterior paint brand and specific product specification to be used?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "steel ratio",
+        "type": "STEEL_RATIO",
+        "evidence": "Reinforcement to concrete ratio is 76.4 kg/cum (5,699.1 kg across 74.6 cum RCC), which falls below the expected range of 80 to 120 kg/cum.",
+        "question": "Could you share the structural drawings and bar bending schedule to confirm whether 76.4 kg/cum meets the structural design requirements?",
+        "tone": "warn",
+        "label": "Steel ratio"
+      },
+      {
+        "item": "payment schedule",
+        "type": "FRONT_LOADED",
+        "evidence": "50% of the total contract value is due prior to casting the roof slab, exceeding the benchmark threshold of 30%.",
+        "question": "Could the payment schedule milestones be revised to align disbursements more closely with physical construction progress?",
+        "tone": "danger",
+        "label": "Front-loaded"
+      },
+      {
+        "item": "gst",
+        "type": "GST_SILENT",
+        "evidence": "The quotation terms do not state whether quoted rates and the contract total include or exclude GST.",
+        "question": "Could you please confirm whether the quoted rates and total contract amount are inclusive or exclusive of applicable GST?",
+        "tone": "warn",
+        "label": "GST unclear"
+      }
+    ],
+    "boq_total": 2612470.0,
+    "payment_pct_before_slab": 0.5
+  },
+  "cost_estimate": {
+    "expected_total_cost": 3954859.35,
+    "completed_value_estimate": 11006922.59,
+    "sanction_gap": -1454859.35,
+    "fair_price_for_quoted_scope": 2574733.3,
+    "missing_scope_value": 0.0
+  },
+  "risk_assessment": {
+    "exposure_undefined": true,
+    "recommendation": "INSPECT",
+    "pct_complete": 0.0,
+    "verified_value": 0.0,
+    "cost_to_complete": 3954859.0,
+    "cost_to_complete_gap": -3954859.0,
+    "live_ltv_pct": 22.7,
+    "ltv_default_prior": 0.139,
+    "reasons": [
+      "Construction stage could not be verified from the evidence supplied (reported as 'not_assessed'). Exposure is undefined without a confirmed stage, so no release decision can be made -- route to physical inspection."
+    ]
+  },
+  "explanation": {
+    "owner_view": "We have completed a review of your contractor's quotation and project financials for your residential construction in Jeedimetla, Hyderabad. \n\nKey Financial Summary:\n- Contractor Quoted BOQ Total: Rs 26,12,470\n- Fair Price Estimate for Quoted Scope: Rs 25,74,733.30\n- Estimated Total Construction Cost: Rs 39,54,859.35\n- Completed Property Value Estimate: Rs 1,10,06,922.59\n- Sanction Gap (Sanction of Rs 25,00,000 vs Total Cost): -Rs 14,54,859.35\n- Cost-to-Complete Gap: -Rs 39,54,859.00\n\nBecause no site photographs were supplied for this review, the physical stage of construction could not be assessed visually, resulting in a verified progress value of Rs 0 and a recommendation for an on-site physical inspection before any further loan adjustments.\n\nTo protect your financial interests and ensure structural quality, we recommend discussing the following specific points and negotiation questions with your contractor:\n1. Sand Filling Rate: Could you please clarify the basis for the quoted rate of Rs 1,768/cum for sand bed filling against the prevailing benchmark of Rs 1,350/cum?\n2. Payment Schedule Milestones: 50% of the contract value is requested before casting the roof slab (benchmark is 30%). Could the payment schedule milestones be revised to align disbursements more closely with physical construction progress?\n3. Steel Reinforcement Density: The quoted steel-to-concrete ratio is 76.4 kg/cum (5,699.1 kg steel for 74.6 cum RCC), which is below the typical standard range of 80 to 120 kg/cum. Could you share the structural drawings and bar bending schedule to confirm whether 76.4 kg/cum meets the structural design requirements?\n4. Material Brand Specifications: Line items omit specific makes, grades, and standards. Could you confirm:\n   - The approved brand/manufacturer and IS standard for TMT Fe 500 steel reinforcement?\n   - The intended brand, model, and thickness for the 2x2 ft vitrified tiles?\n   - Approved brands for copper wires, conduits, modular switches, and a breakdown of the per-point rate?\n   - Brand, schedule/class, and detailed itemized scope per plumbing set for CPVC lines?\n   - Chemical compound, formulation, IS standard compliance, and warranty for the anti-termite treatment?\n   - Brand, product tier, and number of coats for interior emulsion and exterior weatherproof painting?\n5. GST Clarity: Could you please confirm whether the quoted rates and total contract amount are inclusive or exclusive of applicable GST?\n\nNext Steps: Please arrange for an on-site physical inspection or upload clear, geo-tagged site photographs covering the foundation, plinth, and superstructure to verify on-ground progress.",
+    "officer_view": "TRANCHE ASSESSMENT & BOQ AUDIT REPORT\n\n1. Project & Loan Metadata:\n- Loan ID: 1008\n- Location: Jeedimetla, Hyderabad (Built-up Area: 2,200 sqft)\n- Sanctioned Loan Amount: INR 25,00,000.00\n- Cumulative Disbursed: INR 25,00,000.00\n- Live LTV: 22.7%\n- LTV Default Prior: 0.139\n\n2. Stage Verification & Cost Analytics:\n- Observed Construction Stage: not_assessed (Confidence: 0.0)\n- Verified Value: INR 0.00\n- Percentage Complete: 0.0%\n- Estimated Completed Value: INR 1,10,06,922.59 (Basis: Hyderabad city median across 2,518 listings)\n- Expected Total Cost: INR 3,954,859.35\n- Sanction Gap: -INR 1,454,859.35\n- Cost to Complete: INR 3,954,859.00\n- Cost-to-Complete Gap: -INR 3,954,859.00\n- Exposure Ratio: null (exposure_undefined: true; cannot be computed without confirmed physical progress)\n- Projected Exposure Ratio: null\n\n3. BOQ Review & Benchmark Variance:\n- Total Quoted BOQ Amount: INR 26,12,470.00\n- Fair Price for Quoted Scope: INR 25,74,733.30\n- Missing Scope Value: INR 0.00\n- Benchmark Data Source: Provisional Hyderabad benchmark table (CPWD DSR verification pending)\n- Rate Outliers: Item 3 (Sand bed under floor slab) quoted at Rs 1,768/cum vs benchmark Rs 1,350/cum (+31.0% deviation, exceeds 15% threshold).\n- Unbenchmarked Items: Item 18 (Internal concealed wiring, pt unit), Item 19 (CPVC supply lines, set unit), Item 20 (Anti-termite treatment).\n- Structural Ratio Flag: RCC steel ratio is 76.4 kg/cum (5,699.1 kg steel / 74.6 cum RCC), below the benchmark range of 80–120 kg/cum.\n- Commercial Terms: Payment schedule is front-loaded at 50% prior to roof slab casting (threshold: 30%). BOQ is silent on GST applicability.\n- Specification Deficiencies: Line items 10, 15, 18, 19, 20, 21, and 22 lack manufacturer, brand, class, and IS standard details.\n\n4. Evidence List:\n- BOQ Document: Navya Infra (Client: Mr. S. Reddy, 22 line items across 12 sections, 2-page document with payment terms).\n- Site Evidence: None provided (visual inspection stage 'not_assessed', needs_human_review: true).\n\n5. Final Recommendation:\n- Recommendation: INSPECT\n- Rationale: Construction stage could not be verified from the evidence supplied. Exposure is undefined without a confirmed stage; no further tranche release or adjustment can be authorized without routing to physical site inspection."
+  },
+  "provenance": {
+    "boq_findings": "captured",
+    "cost_estimate": "captured",
+    "risk_assessment": "captured",
+    "explanation": "captured"
+  }
+}

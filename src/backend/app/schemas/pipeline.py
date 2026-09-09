@@ -108,6 +108,14 @@ class CostSection(BaseModel):
         return self
 
 
+# The five milestones a photograph can show. Anything else -- "not_assessed"
+# above all -- means nothing was observed, and every figure the risk tool
+# derives from a stage is then an assumption rather than a measurement.
+OBSERVABLE_STAGES = frozenset(
+    {"foundation", "plinth", "slab", "brickwork_roof", "finishing"}
+)
+
+
 class InspectionResult(BaseModel):
     stage: str
     confidence: Literal["high", "medium", "low"]
@@ -161,7 +169,7 @@ class PipelineOutput(BaseModel):
         if risk and risk.recommendation == "RELEASE" and (
             not inspection or inspection.needs_human_review
             or not inspection.matches_claim or inspection.confidence == "low"
-            or inspection.stage not in {"foundation", "plinth", "slab", "brickwork_roof", "finishing"}
+            or inspection.stage not in OBSERVABLE_STAGES
         ):
             risk.recommendation = "ESCALATE"
             risk.reasons.append("Release blocked: inspection evidence requires human review.")

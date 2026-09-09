@@ -149,11 +149,20 @@ def test_questions_rank_by_what_they_cost_and_never_empty_a_hand_written_list():
     assert ranked[0].text == "m11"
 
 
-def test_portfolio_preserves_the_designs_exposure_descending_order():
+def test_portfolio_orders_by_the_exposure_it_shows():
+    """The mapper sorts, rather than trusting the order it is handed.
+
+    It used to preserve `Loan.hotlist_rank` — the design's authored sequence —
+    which stopped matching the column when recorded runs replaced the authored
+    exposures. Handed the loans in the wrong order on purpose here, so the
+    sorting is the thing under test.
+    """
     with SessionLocal() as db:
-        loans = db.scalars(select(models.Loan).order_by(models.Loan.hotlist_rank)).all()
+        loans = db.scalars(select(models.Loan).order_by(models.Loan.id.desc())).all()
         view = to_portfolio(list(loans))
-    assert [row.loan_id for row in view.rows][:4] == ["1003", "1004", "1001", "1009"]
+    exposures = [row.exposure for row in view.rows if row.exposure is not None]
+    assert exposures == sorted(exposures, reverse=True)
+    assert [row.loan_id for row in view.rows][:3] == ["1004", "1009", "1001"]
 
 
 def test_every_portfolio_row_has_its_own_drill_in_href():

@@ -234,8 +234,22 @@ def test_boq_latest_for_an_unknown_loan_is_404(client):
 
 
 def test_boq_latest_for_a_loan_with_no_analysis_is_404(client):
-    # Loan 1003 is in the book but has no BoQ revision yet. An empty object
-    # would render a blank screen; a 404 renders the real not-found page.
+    """An empty object would render a blank screen; a 404 renders the real
+    not-found page.
+
+    Every seeded loan now carries a recorded run, so this builds the uncovered
+    case rather than borrowing one: a loan with its revisions removed is what a
+    borrower looks like before they have uploaded anything.
+    """
+    from app.db import models
+    from app.db.session import SessionLocal
+
+    with SessionLocal() as db:
+        loan = db.get(models.Loan, "1003")
+        for revision in list(loan.revisions):
+            db.delete(revision)
+        db.commit()
+
     assert client.get("/api/loans/1003/boq/latest").status_code == 404
 
 

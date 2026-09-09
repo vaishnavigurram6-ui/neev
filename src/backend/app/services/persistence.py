@@ -17,7 +17,12 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.db import models
-from app.schemas.pipeline import InspectionResult, PipelineOutput, RiskAssessment
+from app.schemas.pipeline import (
+    OBSERVABLE_STAGES,
+    InspectionResult,
+    PipelineOutput,
+    RiskAssessment,
+)
 from app.services.runner import BoqAnalysisRequest
 
 # Which BoQ Review group each flag belongs under.
@@ -69,22 +74,47 @@ def apply_inspection(
     would reach from an empty evidence grid, and the opposite of what defaulting
     to RELEASE would say.
     """
+    # "An inspection exists" is not the same as "a stage was seen". Loan 1005's
+    # run returned an inspection whose stage was `not_assessed`, which parsed
+    # cleanly and still measured nothing, so the gap came back as the price of
+    # the whole house again.
+    observed = inspection is not None and inspection.stage in OBSERVABLE_STAGES
+    measured = risk is not None and observed
+
     tranche.needs_human_review = inspection.needs_human_review if inspection else True
     tranche.confidence = inspection.confidence if inspection else None
-    tranche.observed_stage = inspection.stage if inspection else None
+    tranche.observed_stage = inspection.stage if observed else None
     tranche.recommendation = risk.recommendation if risk else "ESCALATE"
     tranche.verified_value = int(risk.verified_value) if risk else None
     tranche.exposure_ratio = risk.exposure_ratio if risk else None
     tranche.exposure_undefined = risk.exposure_undefined if risk else True
+    # Cost to complete is only a measurement when something was measured. The
+    # risk tool derives it from the observed stage, so with no inspection it
+    # assumes nothing is built and returns the price of the whole house: loan
+    # 1007, fully drawn at Rs 25,00,000, came back needing Rs 35,95,327 more
+    # than it had left. That is an artefact of the missing photographs, not a
+    # shortfall, and a lender reading it as one would be reading a number
+    # nobody measured. `enforce_evidence_gate` already distrusts a
+    # recommendation made without an inspection; these two figures earn the
+    # same treatment.
     tranche.cost_to_complete = (
-        int(risk.cost_to_complete) if risk and risk.cost_to_complete is not None else None
+        int(risk.cost_to_complete)
+        if measured and risk.cost_to_complete is not None
+        else None
     )
-    tranche.cost_to_complete_gap = int(risk.cost_to_complete_gap) if risk else None
+    tranche.cost_to_complete_gap = (
+        int(risk.cost_to_complete_gap)
+        if measured and risk.cost_to_complete_gap is not None
+        else None
+    )
 
     loan.exposure_ratio = tranche.exposure_ratio
     loan.exposure_undefined = tranche.exposure_undefined
     loan.cost_to_complete_gap = tranche.cost_to_complete_gap
     loan.recommendation = tranche.recommendation
+    # None rather than the literal "not_assessed": this is display text on the
+    # hotlist, and a lender reading "not_assessed" in a column headed "seen on
+    # site" learns less than they do from an empty cell.
     loan.seen_on_site = tranche.observed_stage
     loan.behind_schedule = not inspection.matches_claim if inspection else True
 

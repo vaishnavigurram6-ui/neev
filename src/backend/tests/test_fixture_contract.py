@@ -34,8 +34,20 @@ def test_every_fixture_validates_against_the_pipeline_schema(loan_id):
     assert isinstance(output, PipelineOutput)
 
 
-def test_both_golden_loans_are_present():
-    assert available_loan_ids() == ["1001", "1002"]
+def test_every_loan_on_the_book_has_a_recorded_run():
+    """Ten loans, ten captures.
+
+    It used to be two: 1001 and 1002 were the authored golden cases and the
+    other eight carried derived figures, so eight of ten loan files told a
+    lender "no BoQ has been analysed for this loan yet". The eight were
+    recorded on 2026-09-10 from the synthetic bills of quantities in
+    fixtures/synthetic/, each matched to its loan so the contract total sits
+    within 0.95-1.35x of the sanction. Same pipeline that reads a real upload.
+    """
+    assert available_loan_ids() == [
+        "1001", "1002", "1003", "1004", "1005",
+        "1006", "1007", "1008", "1009", "1010",
+    ]
 
 
 @pytest.mark.parametrize(

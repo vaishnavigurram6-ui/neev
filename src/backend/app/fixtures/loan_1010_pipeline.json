@@ -1,0 +1,334 @@
+{
+  "boq_findings": {
+    "line_items": [
+      {
+        "id": "1",
+        "desc": "Earthwork excavation in ordinary soil, foundation",
+        "qty": 77.1,
+        "unit": "cum",
+        "rate": 264.0,
+        "amount": 20354.0,
+        "section": "1. EARTHWORK"
+      },
+      {
+        "id": "2",
+        "desc": "Refilling excavated soil around foundation",
+        "qty": 46.3,
+        "unit": "cum",
+        "rate": 152.0,
+        "amount": 7038.0,
+        "section": "1. EARTHWORK"
+      },
+      {
+        "id": "3",
+        "desc": "Sand bed under floor slab",
+        "qty": 14.6,
+        "unit": "cum",
+        "rate": 1421.0,
+        "amount": 20747.0,
+        "section": "1. EARTHWORK"
+      },
+      {
+        "id": "4",
+        "desc": "PCC 1:4:8 with 40mm aggregate below footings",
+        "qty": 10.7,
+        "unit": "cum",
+        "rate": 5287.0,
+        "amount": 56571.0,
+        "section": "2. FOUNDATION & PLINTH"
+      },
+      {
+        "id": "5",
+        "desc": "Size stone masonry in CM 1:6 for foundation",
+        "qty": 28.0,
+        "unit": "cum",
+        "rate": 3770.0,
+        "amount": 105560.0,
+        "section": "2. FOUNDATION & PLINTH"
+      },
+      {
+        "id": "6",
+        "desc": "Reinforced cement concrete M20 plinth beam",
+        "qty": 6.6,
+        "unit": "cum",
+        "rate": 8433.0,
+        "amount": 55658.0,
+        "section": "2. FOUNDATION & PLINTH"
+      },
+      {
+        "id": "7",
+        "desc": "DPC layer above plinth level",
+        "qty": 16.4,
+        "unit": "sqm",
+        "rate": 298.0,
+        "amount": 4887.0,
+        "section": "2. FOUNDATION & PLINTH"
+      },
+      {
+        "id": "8",
+        "desc": "RCC M25 for columns, beams and roof slab",
+        "qty": 40.0,
+        "unit": "cum",
+        "rate": 7928.0,
+        "amount": 317120.0,
+        "section": "3. RCC SUPERSTRUCTURE"
+      },
+      {
+        "id": "9",
+        "desc": "Stair case RCC M25 incl. steps",
+        "qty": 4.0,
+        "unit": "cum",
+        "rate": 8465.0,
+        "amount": 33860.0,
+        "section": "3. RCC SUPERSTRUCTURE"
+      },
+      {
+        "id": "10",
+        "desc": "Steel reinforcement TMT Fe 500 incl. binding",
+        "qty": 3951.6,
+        "unit": "kg",
+        "rate": 68.0,
+        "amount": 268709.0,
+        "section": "4. REINFORCEMENT"
+      },
+      {
+        "id": "11",
+        "desc": "Brickwork in CM 1:6 for external walls, 230mm",
+        "qty": 35.1,
+        "unit": "cum",
+        "rate": 5314.0,
+        "amount": 186521.0,
+        "section": "5. MASONRY"
+      },
+      {
+        "id": "12",
+        "desc": "Half brick partition wall 115 mm CM 1:4",
+        "qty": 54.2,
+        "unit": "sqm",
+        "rate": 694.0,
+        "amount": 37615.0,
+        "section": "5. MASONRY"
+      },
+      {
+        "id": "13",
+        "desc": "12 mm thick internal plastering CM 1:4",
+        "qty": 265.0,
+        "unit": "sqm",
+        "rate": 177.0,
+        "amount": 46905.0,
+        "section": "6. PLASTERING"
+      },
+      {
+        "id": "14",
+        "desc": "18 mm external plastering, sponge finish",
+        "qty": 140.8,
+        "unit": "sqm",
+        "rate": 235.0,
+        "amount": 33088.0,
+        "section": "6. PLASTERING"
+      },
+      {
+        "id": "15",
+        "desc": "Floor tiling with vitrified tiles incl. skirting",
+        "qty": 131.4,
+        "unit": "sqm",
+        "rate": 998.0,
+        "amount": 131137.0,
+        "section": "7. FLOORING"
+      },
+      {
+        "id": "16",
+        "desc": "Toilet dado ceramic tiling",
+        "qty": 30.0,
+        "unit": "sqm",
+        "rate": 880.0,
+        "amount": 26400.0,
+        "section": "7. FLOORING"
+      },
+      {
+        "id": "17",
+        "desc": "Terrace and sunk waterproofing treatment",
+        "qty": 84.1,
+        "unit": "sqm",
+        "rate": 583.0,
+        "amount": 49030.0,
+        "section": "8. WATERPROOFING"
+      },
+      {
+        "id": "18",
+        "desc": "Concealed electrical wiring with copper conductor per point",
+        "qty": 65.5,
+        "unit": "pt",
+        "rate": 659.0,
+        "amount": 43164.0,
+        "section": "9. ELECTRICAL"
+      },
+      {
+        "id": "19",
+        "desc": "Concealed CPVC plumbing lines with fittings",
+        "qty": 5.3,
+        "unit": "set",
+        "rate": 10981.0,
+        "amount": 58199.0,
+        "section": "10. PLUMBING"
+      },
+      {
+        "id": "20",
+        "desc": "Pre-construction anti termite treatment",
+        "qty": 73.4,
+        "unit": "sqm",
+        "rate": 4820.0,
+        "amount": 353788.0,
+        "section": "11. ANTI-TERMITE"
+      },
+      {
+        "id": "21",
+        "desc": "Two coats acrylic emulsion on inside walls",
+        "qty": 240.1,
+        "unit": "sqm",
+        "rate": 134.0,
+        "amount": 32173.0,
+        "section": "12. PAINTING"
+      },
+      {
+        "id": "22",
+        "desc": "Outside weatherproof painting",
+        "qty": 129.3,
+        "unit": "sqm",
+        "rate": 147.0,
+        "amount": 19007.0,
+        "section": "12. PAINTING"
+      }
+    ],
+    "flags": [
+      {
+        "item": "10",
+        "type": "STEEL_RATIO",
+        "evidence": "Total steel of 3951.6 kg across 50.6 cum of RCC yields a ratio of 78.1 kg/cum, which is below the expected range of 80 to 120 kg/cum.",
+        "question": "Could you provide the structural drawings and bar bending schedule to confirm whether 78.1 kg/cum of reinforcement is sufficient for the structural members?",
+        "tone": "warn",
+        "label": "Steel ratio"
+      },
+      {
+        "item": "10",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Steel reinforcement description does not specify an approved manufacturer/brand (e.g., Tata Tiscon, JSW, SAIL).",
+        "question": "Could you please confirm the approved brand and make of TMT Fe 500 steel to be supplied for the project?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "15",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Vitrified flooring specification does not state the tile brand, series, or dimensions.",
+        "question": "Could you please specify the brand, size, and price range of the vitrified tiles included in the quote?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "16",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Ceramic dado tiling description lacks brand, dimensions, and specifications.",
+        "question": "Could you please clarify the brand, dimensions, and height of the ceramic dado tiling for the toilets?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "18",
+        "type": "UNBENCHMARKED",
+        "evidence": "Missing or incompatible benchmark units; manual comparison required.",
+        "question": "Could you provide a detailed point schedule and brand specifications for the concealed electrical point wiring?",
+        "tone": "neutral",
+        "label": "No benchmark"
+      },
+      {
+        "item": "18",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Electrical point wiring does not specify the wire brand, conduit type, or switch make.",
+        "question": "Could you please confirm the approved brands for the copper wires, conduits, and modular switches?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "19",
+        "type": "UNBENCHMARKED",
+        "evidence": "Missing or incompatible benchmark units; manual comparison required.",
+        "question": "Could you share the brand, pipe schedule, and specific fittings included under each plumbing set?",
+        "tone": "neutral",
+        "label": "No benchmark"
+      },
+      {
+        "item": "19",
+        "type": "UNDERSPECIFIED",
+        "evidence": "CPVC plumbing line description does not specify the pipe brand or pressure rating.",
+        "question": "Could you please specify the brand and class/pressure rating of the CPVC pipes and fittings?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "20",
+        "type": "UNBENCHMARKED",
+        "evidence": "No benchmark found — do not flag rate; note as UNBENCHMARKED.",
+        "question": "Could you clarify the scope, chemical details, and warranty provided for the anti-termite treatment quoted at Rs 4,820 per sqm?",
+        "tone": "neutral",
+        "label": "No benchmark"
+      },
+      {
+        "item": "20",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Anti-termite treatment does not specify the chemical formulation or compliance standard (e.g., IS 6313).",
+        "question": "Could you please confirm the chemical name, dilution ratio, and application standard to be used for the anti-termite treatment?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "21",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Interior painting item does not specify the paint manufacturer or product tier.",
+        "question": "Could you please confirm the brand and product line of acrylic emulsion paint to be applied on internal walls?",
+        "tone": "warn",
+        "label": "Vague spec"
+      },
+      {
+        "item": "22",
+        "type": "UNDERSPECIFIED",
+        "evidence": "Exterior painting item does not specify the brand or product specification.",
+        "question": "Could you please specify the brand and product tier for the exterior weatherproof paint?",
+        "tone": "warn",
+        "label": "Vague spec"
+      }
+    ],
+    "boq_total": 1907531.0,
+    "payment_pct_before_slab": 0.28
+  },
+  "cost_estimate": {
+    "expected_total_cost": 2516728.68,
+    "completed_value_estimate": 5600000.0,
+    "sanction_gap": -516728.68,
+    "fair_price_for_quoted_scope": 1934724.9,
+    "missing_scope_value": 0.0
+  },
+  "risk_assessment": {
+    "exposure_undefined": true,
+    "recommendation": "INSPECT",
+    "pct_complete": 0.0,
+    "verified_value": 0.0,
+    "cost_to_complete": 2516729.0,
+    "cost_to_complete_gap": -2124764.0,
+    "live_ltv_pct": 28.7,
+    "ltv_default_prior": 0.139,
+    "reasons": [
+      "Construction stage could not be verified from the evidence supplied (reported as 'not_assessed'). Exposure is undefined without a confirmed stage, so no release decision can be made -- route to physical inspection."
+    ]
+  },
+  "explanation": {
+    "owner_view": "We are currently reviewing your loan account (Loan 1010). Because no site photos were submitted with this request, we could not verify the current stage of construction remotely, and the release recommendation has been marked for an on-site physical inspection (INSPECT).\n\nFinancial Summary & Cost Gaps:\n- Sanctioned Loan Amount: ₹20,00,000\n- Disbursed to Date: ₹16,08,035 (Remaining Sanction: ₹3,91,965)\n- Contractor's Quoted BOQ Total: ₹1,907,531 (Fair price for quoted scope: ₹19,34,724.90)\n- Expected Total Construction Cost: ₹25,16,728.68\n- Sanction Gap: -₹5,16,728.68 (the total expected cost exceeds the sanctioned loan amount)\n- Cost-to-Complete: ₹25,16,729\n- Cost-to-Complete Gap: -₹2,124,764 (the difference between remaining sanction funds and estimated completion cost prior to stage verification)\n\nWhat You Can Do Next:\n1. Facilitate the upcoming site inspection or provide clear site progress photographs so our technical team can verify the completed work and determine the verified value.\n2. Review your personal contribution / bridge financing to cover the estimated ₹5,16,728.68 total funding gap.\n3. Take the following clarification and negotiation questions to your contractor regarding the BOQ:\n   - Reinforcement Quantity: 'Could you provide the structural drawings and bar bending schedule to confirm whether 78.1 kg/cum of reinforcement is sufficient for the structural members?'\n   - Steel Make: 'Could you please confirm the approved brand and make of TMT Fe 500 steel to be supplied for the project?'\n   - Flooring: 'Could you please specify the brand, size, and price range of the vitrified tiles included in the quote?'\n   - Wall Dado: 'Could you please clarify the brand, dimensions, and height of the ceramic dado tiling for the toilets?'\n   - Electrical: 'Could you provide a detailed point schedule and brand specifications for the concealed electrical point wiring?' and 'Could you please confirm the approved brands for the copper wires, conduits, and modular switches?'\n   - Plumbing: 'Could you share the brand, pipe schedule, and specific fittings included under each plumbing set?' and 'Could you please specify the brand and class/pressure rating of the CPVC pipes and fittings?'\n   - Anti-Termite Treatment: 'Could you clarify the scope, chemical details, and warranty provided for the anti-termite treatment quoted at Rs 4,820 per sqm?' and 'Could you please confirm the chemical name, dilution ratio, and application standard to be used for the anti-termite treatment?'\n   - Painting: 'Could you please confirm the brand and product line of acrylic emulsion paint to be applied on internal walls?' and 'Could you please specify the brand and product tier for the exterior weatherproof paint?'",
+    "officer_view": "TRANCHE ASSESSMENT AUDIT REPORT — LOAN ID: 1010\nLocation: Alwal, Hyderabad | Built-Up Area: 1,400 sqft\n\n1. EXECUTIVE DECISION & RECOMMENDATION\n- Recommendation: INSPECT\n- Justification: Construction stage could not be verified due to absence of site photos (stage reported as 'not_assessed', confidence: 0.0, needs_human_review: true). Exposure is undefined without a confirmed milestone; zero release authorized prior to physical verification.\n\n2. EXPOSURE & VALUATION METRICS\n- Verified Value: INR 0 (0.0% completion assessed)\n- Exposure Ratio: Undefined (null)\n- Projected Exposure Ratio: Undefined (null)\n- Cumulative Disbursed: INR 1,608,035\n- Sanctioned Limit: INR 2,000,000\n- Completed Value Estimate: INR 5,600,000 (Basis: Alwal median across 21 listings)\n- Live LTV: 28.7% (LTV default prior: 0.139)\n- Cost to Complete: INR 2,516,729\n- Cost-to-Complete Gap: INR -2,124,764\n- Expected Total Cost: INR 2,516,728.68 (Sanction Gap: INR -516,728.68)\n\n3. BOQ & BENCHMARK ANALYSIS\n- Contractor BOQ Total: INR 1,907,531 across 22 line items\n- Fair Price for Quoted Scope: INR 1,934,724.90\n- Missing Scope Value: INR 0\n- Upfront Payment Structure: 28.0% prior to slab (compliant with <= 30.0% benchmark threshold)\n- Benchmark Reference Source: Provisional Hyderabad benchmark table (CPWD DSR verification pending)\n- Rate Deviations: Items 1 to 17, 21, and 22 are within the +/-15.0% tolerance band. Items 18 (Electrical), 19 (Plumbing), and 20 (Anti-termite) are UNBENCHMARKED / non-assessable due to incompatible units or absent benchmark rates.\n- Structural Flag: Steel ratio is 78.1 kg/cum (3,951.6 kg steel / 50.6 cum RCC), below the standard benchmark range of 80.0 to 120.0 kg/cum."
+  },
+  "provenance": {
+    "boq_findings": "captured",
+    "cost_estimate": "captured",
+    "risk_assessment": "captured",
+    "explanation": "captured"
+  }
+}

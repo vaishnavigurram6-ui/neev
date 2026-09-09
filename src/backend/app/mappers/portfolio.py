@@ -1,8 +1,21 @@
 """Portfolio Hotlist.
 
-Row order is the design's exposure-descending order, preserved via
-Loan.hotlist_rank rather than recomputed — the SQL orders by gap ascending and
-would produce a different table (spec 4.5).
+Row order is exposure-descending, computed from the exposure each row shows.
+
+It used to be preserved from `Loan.hotlist_rank`, which the seed assigns from
+the order of portfolio_rows.json — the design's own order, authored against the
+authored exposures. That held until the loans were re-analysed: recorded runs
+replaced those exposures and left 1003 at the top of a table headed "ranked by
+disbursement exposure" with 0.87 and ON TRACK, above 1004 at 1.71 and ESCALATE.
+A ranking that contradicts its own column is worse than a ranking nobody chose.
+
+Computing it also keeps it true after a live run. A borrower who reports a
+milestone in production changes their own exposure, and the book should reorder;
+a seed-time rank could not.
+
+A loan with no exposure sorts last rather than first. `None` is not a bad
+ratio — it means no photograph was assessed, so nothing was measured — and
+`hotlist_rank` breaks ties so the order stays stable between requests.
 
 Every row gets its own drill-in href. The prototype gives only loan 1001 a real
 link and points the other nine at "#" (spec 7.4).
@@ -29,7 +42,14 @@ ACTION_TONE = {
 
 
 def to_portfolio(loans: list[models.Loan]) -> PortfolioView:
-    ordered = sorted(loans, key=lambda loan: loan.hotlist_rank)
+    ordered = sorted(
+        loans,
+        key=lambda loan: (
+            loan.exposure_ratio is None,
+            -(loan.exposure_ratio or 0.0),
+            loan.hotlist_rank,
+        ),
+    )
 
     hold = [loan for loan in ordered if loan.recommendation in {"HOLD", "ESCALATE", "INSPECT"}]
     capital_at_risk = -sum(
@@ -93,7 +113,7 @@ def to_portfolio(loans: list[models.Loan]) -> PortfolioView:
             # decision they are being asked for is about all of that. The
             # pending draw is one click on from there.
             href=f"/bank/loans/{loan.id}",
-            tranche=_latest_tranche(loan),
+            tranche=_assessed_tranche(loan),
         )
         for loan in ordered
     ]
@@ -110,9 +130,22 @@ def _action_tone(recommendation: str | None) -> str:
     return ACTION_TONE.get(recommendation or "RELEASE", "warn")
 
 
-def _latest_tranche(loan: models.Loan) -> int:
-    paid_or_held = [t for t in loan.tranches if t.status in ("paid", "on_hold")]
-    return max((t.number for t in paid_or_held), default=1)
+def _assessed_tranche(loan: models.Loan) -> int:
+    """The draw whose assessment this row is quoting.
+
+    The row's exposure, gap and action all come from one tranche, and it has to
+    be the one the row points at or a lender opens a screen that contradicts the
+    line they clicked. That was live for loan 1004: the recorded run wrote
+    ESCALATE onto T3 while this returned T4 — drawn, unassessed, and so
+    reporting INSPECT to somebody who had just read ESCALATE.
+
+    So: the furthest drawn tranche that actually carries a recommendation, and
+    the furthest drawn one otherwise. A loan with nothing drawn has nothing
+    assessed and answers T1, which is where its story starts.
+    """
+    drawn = [t for t in loan.tranches if t.status in ("paid", "on_hold")]
+    assessed = [t for t in drawn if t.recommendation]
+    return max((t.number for t in (assessed or drawn)), default=1)
 
 
 def _compact(rupees: int) -> str:

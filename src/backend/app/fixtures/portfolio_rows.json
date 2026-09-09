@@ -9,7 +9,8 @@
     "disbursed": 1921557,
     "exposure": 1.42,
     "gap": -690000,
-    "action": "HOLD"
+    "action": "HOLD",
+    "built_up_sqft": 2450
   },
   {
     "loan_id": "1004",
@@ -21,14 +22,15 @@
     "disbursed": 3757129,
     "exposure": 1.35,
     "gap": -820000,
-    "action": "HOLD"
+    "action": "HOLD",
+    "built_up_sqft": 2450
   },
   {
     "loan_id": "1001",
     "borrower": "Ravi Kumar",
     "locality": "Kompally",
     "paid_up_to": "Slab (T3)",
-    "seen_on_site": "Slab ✓",
+    "seen_on_site": "Slab \u2713",
     "behind": false,
     "disbursed": 1800000,
     "exposure": 1.29,
@@ -41,43 +43,46 @@
     "borrower": "M. Farhan",
     "locality": "Bachupally",
     "paid_up_to": "Roof (T4)",
-    "seen_on_site": "Roof ✓",
+    "seen_on_site": "Roof \u2713",
     "behind": false,
     "disbursed": 2487861,
     "exposure": 1.04,
     "gap": -110000,
-    "action": "INSPECT"
+    "action": "INSPECT",
+    "built_up_sqft": 2450
   },
   {
     "loan_id": "1006",
     "borrower": "T. Lakshmi",
     "locality": "Kompally",
     "paid_up_to": "Slab (T3)",
-    "seen_on_site": "Slab ✓",
+    "seen_on_site": "Slab \u2713",
     "behind": false,
     "disbursed": 1296892,
     "exposure": 0.98,
     "gap": 40000,
-    "action": "INSPECT"
+    "action": "INSPECT",
+    "built_up_sqft": 2000
   },
   {
     "loan_id": "1010",
     "borrower": "S. Reddy",
     "locality": "Alwal",
     "paid_up_to": "Roof (T4)",
-    "seen_on_site": "Roof ✓",
+    "seen_on_site": "Roof \u2713",
     "behind": false,
     "disbursed": 1608035,
     "exposure": 0.96,
     "gap": 75000,
-    "action": "ON TRACK"
+    "action": "ON TRACK",
+    "built_up_sqft": 1400
   },
   {
     "loan_id": "1002",
     "borrower": "D. Prasad",
     "locality": "Kukatpally",
     "paid_up_to": "Slab (T3)",
-    "seen_on_site": "Slab ✓",
+    "seen_on_site": "Slab \u2713",
     "behind": false,
     "disbursed": 1214337,
     "exposure": 0.97,
@@ -90,35 +95,38 @@
     "borrower": "V. Naidu",
     "locality": "Suraram",
     "paid_up_to": "Done (T5)",
-    "seen_on_site": "Finishing ✓",
+    "seen_on_site": "Finishing \u2713",
     "behind": false,
     "disbursed": 2500000,
     "exposure": 0.94,
     "gap": null,
-    "action": "ON TRACK"
+    "action": "ON TRACK",
+    "built_up_sqft": 2000
   },
   {
     "loan_id": "1008",
     "borrower": "G. Swathi",
     "locality": "Jeedimetla",
     "paid_up_to": "Done (T5)",
-    "seen_on_site": "Finishing ✓",
+    "seen_on_site": "Finishing \u2713",
     "behind": false,
     "disbursed": 2500000,
     "exposure": 0.93,
     "gap": null,
-    "action": "ON TRACK"
+    "action": "ON TRACK",
+    "built_up_sqft": 2200
   },
   {
     "loan_id": "1005",
     "borrower": "B. Yadav",
     "locality": "Quthbullapur",
     "paid_up_to": "Done (T5)",
-    "seen_on_site": "Finishing ✓",
+    "seen_on_site": "Finishing \u2713",
     "behind": false,
     "disbursed": 1500000,
     "exposure": 0.91,
     "gap": null,
-    "action": "ON TRACK"
+    "action": "ON TRACK",
+    "built_up_sqft": 1250
   }
 ]

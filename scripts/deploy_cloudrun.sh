@@ -131,15 +131,31 @@ elif [ "$MODE" = "live" ]; then
   echo "  NOTE: the Gemini API free tier allows 20 requests per day per model,"
   echo "        which is about two analyses. Vertex AI has no such cap."
 
-  # 2. The runtime service account's BigQuery access. The agents' benchmark
-  #    lookups query buildguard_data, and on this project the default compute
-  #    service account carries NO role binding at all — so without this the app
-  #    deploys clean and then fails on the first analysis, having spent a deploy.
-  ROLES="$(gcloud projects get-iam-policy "$PROJECT" \
+  # 3. The key in Secret Manager, never in --set-env-vars: an env var sits in
+  #    the service's config and in the output of `gcloud run services describe`.
+  #    Only reached on the api-key path; Vertex needs no secret.
+  if ! gcloud secrets describe "$SECRET_NAME" --project "$PROJECT" >/dev/null 2>&1; then
+    echo "  ..  : creating secret $SECRET_NAME"
+    gcloud secrets create "$SECRET_NAME" --project "$PROJECT" --replication-policy=automatic
+  fi
+  printf '%s' "$KEY" | gcloud secrets versions add "$SECRET_NAME" --project "$PROJECT" --data-file=- >/dev/null
+  gcloud secrets add-iam-policy-binding "$SECRET_NAME" --project "$PROJECT" \
+    --member="serviceAccount:$RUNTIME_SA" --role=roles/secretmanager.secretAccessor >/dev/null
+  echo "  ok  : $SECRET_NAME holds the key, readable by the runtime account"
+fi
+
+# The runtime account's BigQuery access, whichever credential route live mode
+# takes. It sat inside the api-key branch, so a Vertex deploy -- the default --
+# skipped the check entirely: the app would have deployed clean and then failed
+# on the first analysis, having spent a deploy. The agents' benchmark lookups
+# query buildguard_data, and on this project the default compute service account
+# started with no role binding at all.
+if [ "$MODE" = "live" ]; then
+  BQ_ROLES="$(gcloud projects get-iam-policy "$PROJECT" \
     --flatten='bindings[].members' \
     --filter="bindings.members:$RUNTIME_SA" \
     --format='value(bindings.role)' 2>/dev/null || true)"
-  if ! printf '%s' "$ROLES" | grep -qE 'bigquery|roles/editor|roles/owner'; then
+  if ! printf '%s' "$BQ_ROLES" | grep -qE 'bigquery|roles/editor|roles/owner'; then
     echo "  FAIL: $RUNTIME_SA cannot read BigQuery."
     echo "        The pipeline's rate lookups would fail on every analysis."
     echo "        Grant it, then re-run this script:"
@@ -153,18 +169,6 @@ elif [ "$MODE" = "live" ]; then
     exit 1
   fi
   echo "  ok  : $RUNTIME_SA can read BigQuery"
-
-  # 3. The key in Secret Manager, never in --set-env-vars: an env var sits in
-  #    the service's config and in the output of `gcloud run services describe`.
-  #    Only reached on the api-key path; Vertex needs no secret.
-  if ! gcloud secrets describe "$SECRET_NAME" --project "$PROJECT" >/dev/null 2>&1; then
-    echo "  ..  : creating secret $SECRET_NAME"
-    gcloud secrets create "$SECRET_NAME" --project "$PROJECT" --replication-policy=automatic
-  fi
-  printf '%s' "$KEY" | gcloud secrets versions add "$SECRET_NAME" --project "$PROJECT" --data-file=- >/dev/null
-  gcloud secrets add-iam-policy-binding "$SECRET_NAME" --project "$PROJECT" \
-    --member="serviceAccount:$RUNTIME_SA" --role=roles/secretmanager.secretAccessor >/dev/null
-  echo "  ok  : $SECRET_NAME holds the key, readable by the runtime account"
 fi
 echo
 
@@ -211,6 +215,13 @@ echo "==> Building and deploying $BACKEND"
 BACKEND_ENV="NEEV_MODE=$MODE,NEEV_DEMO_AUTH=true,NEEV_SESSION_SECRET=$SESSION_SECRET,GOOGLE_CLOUD_PROJECT=$PROJECT"
 BACKEND_ENV="$BACKEND_ENV,NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY=${NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY:-12}"
 BACKEND_ENV="$BACKEND_ENV,NEEV_MAX_ANALYSES_PER_DAY=${NEEV_MAX_ANALYSES_PER_DAY:-60}"
+# The runbook tells the operator they can override the demo password here, and
+# for a while that was a lie: this variable was never sent, so the deployment
+# used the default whatever they exported.
+BACKEND_ENV="$BACKEND_ENV,NEEV_DEMO_PASSWORD=${NEEV_DEMO_PASSWORD:-neev-demo}"
+# Pin the model the pipeline was actually proven end to end on, rather than
+# inheriting a default that can move under it.
+BACKEND_ENV="$BACKEND_ENV,NEEV_GEMINI_MODEL=${NEEV_GEMINI_MODEL:-gemini-3.7-flash}"
 if [ "$MODE" = "live" ]; then
   BACKEND_ENV="$BACKEND_ENV,NEEV_ALLOW_BILLED_CALLS=1"
   if [ "$GENAI_BACKEND" = "vertex" ]; then
@@ -273,6 +284,6 @@ echo "Mode: $MODE via $GENAI_BACKEND. In live mode every 'Start the check' runs 
 echo "pipeline against Gemini -- about Rs 3.81 and 107 seconds per analysis,"
 echo "capped at ${NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY:-12} per loan and ${NEEV_MAX_ANALYSES_PER_DAY:-60} per day across the service."
 echo
-echo "Sign in with any 10-digit number. 'Home owner' lands on loan 1001;"
-echo "'Bank officer' opens the portfolio. Auth is a demo session, not a"
-echo "credential -- see src/backend/app/api/deps.py."
+echo "Sign in as ravi (loan 1001), prasad (loan 1002) or officer (the whole"
+echo "book). Password: ${NEEV_DEMO_PASSWORD:-neev-demo}. These are named demo"
+echo "accounts, not identity -- see src/backend/app/api/accounts.py."

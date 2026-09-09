@@ -22,15 +22,20 @@ def _as_officer(client):
     assert client.post("/api/auth/session", json=BANK_LOGIN).status_code == 200
 
 
-DESIGN_ORDER = ["1003", "1004", "1001", "1009", "1006", "1010", "1002", "1007", "1008", "1005"]
+WORST_FIRST = ["1004", "1009", "1001"]  # the three over-exposed loans, in order
 
 
 # ---------------------------------------------------------------- portfolio
 
 
-def test_portfolio_returns_the_whole_book_in_the_designs_order(client):
+def test_portfolio_returns_the_whole_book_worst_first(client):
+    """Was the design's authored order, which recorded runs made untrue. The
+    top of the book is what a lender opens on, so that much is pinned; the rest
+    is covered by test_the_book_is_ranked_worst_first as a property."""
     body = client.get("/api/portfolio").json()
-    assert [row["loan_id"] for row in body["rows"]] == DESIGN_ORDER
+    ids = [row["loan_id"] for row in body["rows"]]
+    assert len(ids) == 10
+    assert ids[:3] == WORST_FIRST
     assert body["cards"][0]["value"] == 10
 
 
@@ -43,18 +48,48 @@ def test_every_row_links_to_its_own_loan(client):
         assert row["href"] != "#"
 
 
-def test_needs_action_selects_hold_and_inspect(client):
+def test_needs_action_selects_everything_that_is_not_on_track(client):
     body = client.get("/api/portfolio", params={"filter": "needs_action"}).json()
-    assert [row["loan_id"] for row in body["rows"]] == ["1003", "1004", "1001", "1009", "1006"]
-    assert {row["action_label"] for row in body["rows"]} == {"HOLD", "INSPECT"}
+    labels = {row["action_label"] for row in body["rows"]}
+    assert labels == {"ESCALATE", "HOLD", "INSPECT"}
+    assert "ON TRACK" not in labels
     # The cards describe the whole book, so filtering rows must not move them.
     assert body["cards"][0]["value"] == 10
+    # Asserted as a property rather than a list of ids: every loan carries a
+    # recorded run now, so the labels follow what the agents concluded and a
+    # re-record would rewrite a hardcoded list without changing the rule.
+    everything = client.get("/api/portfolio").json()["rows"]
+    assert len(body["rows"]) == sum(
+        1 for row in everything if row["action_label"] != "ON TRACK"
+    )
+
+
+def test_the_book_is_ranked_worst_first(client):
+    """The table is headed "ranked by disbursement exposure", so it has to be.
+
+    The order used to be preserved from the design's own authored sequence,
+    which stopped agreeing with the column the moment recorded runs replaced
+    the authored exposures: 1003 sat at the top with 0.87 and ON TRACK, above
+    1004 at 1.71 and ESCALATE.
+    """
+    rows = client.get("/api/portfolio").json()["rows"]
+    measured = [row["exposure"] for row in rows if row["exposure"] is not None]
+    assert measured == sorted(measured, reverse=True)
+    # A loan with no exposure measured nothing, which is not the same as being
+    # the safest — it sorts last, not first.
+    unmeasured_from = next(
+        i for i, row in enumerate(rows) if row["exposure"] is None
+    )
+    assert all(row["exposure"] is None for row in rows[unmeasured_from:])
 
 
 def test_on_track_is_the_complement(client):
     rows = client.get("/api/portfolio", params={"filter": "on_track"}).json()["rows"]
-    assert len(rows) == 5
+    assert rows, "the book cannot be entirely in trouble"
     assert {row["action_label"] for row in rows} == {"ON TRACK"}
+    needs = client.get("/api/portfolio", params={"filter": "needs_action"}).json()["rows"]
+    everything = client.get("/api/portfolio").json()["rows"]
+    assert len(rows) + len(needs) == len(everything)
 
 
 def test_an_unknown_filter_is_rejected(client):
@@ -267,10 +302,28 @@ def test_the_slab_tranche_is_paid_and_carries_no_pending_decision(client):
 
 def test_every_portfolio_row_agrees_with_the_screen_it_links_to(client):
     """A row reading "HOLD, 1.42" must not drill into "INSPECT, exposure
-    undefined" with an em dash in every math line. Only 1001 and 1002 have
-    authored pipeline output; the rest derive theirs from the same figures the
-    row shows, so the two can never disagree."""
-    expected = {"HOLD": "HOLD", "INSPECT": "INSPECT", "ON TRACK": "RELEASE"}
+    undefined" with an em dash in every math line.
+
+    All ten loans carry a recorded run now, and the row quotes the tranche the
+    assessment was written to — which is what `_assessed_tranche` exists to
+    get right. It was wrong for 1004: the run wrote ESCALATE onto T3 while the
+    row pointed at T4, drawn and unassessed, so the screen answered INSPECT to
+    somebody who had just read ESCALATE.
+
+    Agreement includes agreeing that a figure is not there. Four loans have no
+    exposure because no photograph was assessed, and the row and the screen
+    both have to say so."""
+    # Every label the portfolio can show, mapped to the recommendation the
+    # screen behind it must carry. ESCALATE arrived when the eight derived
+    # loans were re-analysed — two of them had photographs that disagreed with
+    # the claimed stage — and a label with no entry here fails as a KeyError,
+    # which is the right way for this test to notice a new one.
+    expected = {
+        "HOLD": "HOLD",
+        "INSPECT": "INSPECT",
+        "ESCALATE": "ESCALATE",
+        "ON TRACK": "RELEASE",
+    }
 
     for row in client.get("/api/portfolio").json()["rows"]:
         # The row links to the borrower's file; the draw its figures describe is
@@ -281,17 +334,26 @@ def test_every_portfolio_row_agrees_with_the_screen_it_links_to(client):
         ).json()
         assert screen["recommendation"] == expected[row["action_label"]], row["loan_id"]
         assert screen["exposure"] == row["exposure"], row["loan_id"]
-        assert screen["exposure_undefined"] is False, row["loan_id"]
+        assert screen["exposure_undefined"] is (row["exposure"] is None), row["loan_id"]
 
 
-def test_derived_loans_get_no_invented_rationale(client):
-    """No narrative was ever written for the eight non-golden loans, so the
-    rationale panel must show an empty state rather than prose invented for
-    them."""
-    body = client.get("/api/loans/1003/tranches/3").json()
-    assert body["exposure"] is not None
-    assert body["officer_view"] is None
-    assert body["owner_view"] is None
+def test_every_loan_now_carries_its_own_rationale(client):
+    """It used to be that only 1001 and 1002 had a narrative, and the other
+    eight showed an honest empty state rather than prose invented for them.
+
+    All ten were recorded on 2026-09-10, so the explainer wrote for each of
+    them — and the point that survives is the one that mattered then: the
+    rationale a screen shows is one an agent actually produced for that loan,
+    never text borrowed from another.
+    """
+    seen: set[str] = set()
+    for loan_id, tranche in (("1001", 4), ("1003", 3), ("1009", 3)):
+        body = client.get(f"/api/loans/{loan_id}/tranches/{tranche}").json()
+        assert body["officer_view"], loan_id
+        assert body["owner_view"], loan_id
+        # Not another loan's prose.
+        assert body["officer_view"] not in seen, f"{loan_id} reuses a rationale"
+        seen.add(body["officer_view"])
 
 
 def test_the_tranche_decision_carries_the_whole_record(client):

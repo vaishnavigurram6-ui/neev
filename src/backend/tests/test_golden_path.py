@@ -174,7 +174,8 @@ def test_the_golden_path(client, beat):
 
     portfolio = client.get("/api/portfolio").json()
     assert len(portfolio["rows"]) == 10
-    assert [r["loan_id"] for r in portfolio["rows"]][:3] == ["1003", "1004", "1001"]
+    # Worst first, by the exposure each row shows.
+    assert [r["loan_id"] for r in portfolio["rows"]][:3] == ["1004", "1009", "1001"]
     # Every row drills in somewhere real, and to its own loan.
     assert len({r["href"] for r in portfolio["rows"]}) == 10
     assert all(r["loan_id"] in r["href"] for r in portfolio["rows"])
