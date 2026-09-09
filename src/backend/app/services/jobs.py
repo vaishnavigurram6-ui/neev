@@ -8,6 +8,7 @@ replays what it missed instead of showing an empty screen.
 import asyncio
 import logging
 import uuid
+from datetime import datetime, timedelta, timezone
 from dataclasses import dataclass, field
 from typing import AsyncIterator, Literal
 
@@ -36,6 +37,11 @@ class Job:
     # per-subscriber queues to keep in step, and nothing can be published into
     # the gap between a subscriber replaying history and starting to follow.
     _updated: asyncio.Event = field(default_factory=asyncio.Event, repr=False)
+    # When the analysis was STARTED, which is what spends money — a run that
+    # 503s halfway has already paid for the agents that answered. The daily cap
+    # counts these rather than stored revisions, since a revision only exists
+    # if the run succeeded.
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
     def publish(self, event: PipelineEvent) -> None:
         self.events.append(event)
@@ -172,6 +178,21 @@ class JobRegistry:
             # DoneEvent and leave the Analyzing screen spinning.
             job.publish(DoneEvent(redirect=redirect))
             job.status = "error"
+
+    def started_since(self, cutoff: datetime, loan_id: str | None = None) -> int:
+        """How many analyses were started after `cutoff`, optionally for one loan.
+
+        In memory, so a restart forgets. That is the right trade for a demo
+        guard rather than a billing control: the deployment this protects runs
+        at --min-instances 1 and --max-instances 1, so one warm process holds
+        the count for as long as the demo lasts, and a cold start resetting it
+        is not the failure mode worth engineering against.
+        """
+        return sum(
+            1
+            for job in self._jobs.values()
+            if job.created_at >= cutoff and (loan_id is None or job.loan_id == loan_id)
+        )
 
     async def stream(
         self, job_id: str, heartbeat_s: float | None = None

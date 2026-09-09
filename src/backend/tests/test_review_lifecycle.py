@@ -98,3 +98,53 @@ def test_decision_events_are_append_only_and_retries_are_deduplicated(signed_cli
     assert signed_client.post(url, json={"action": "ESCALATE"}, headers={"Idempotency-Key": "b"}).status_code == 200
     with SessionLocal() as db:
         assert [e.action for e in db.scalars(select(models.DecisionEvent).order_by(models.DecisionEvent.id))] == ["HOLD", "ESCALATE"]
+
+def test_the_daily_cap_stops_a_public_url_spending_without_limit(signed_client, monkeypatch):
+    """A live analysis costs real money and the deployed demo is a public URL
+    whose sign-in accepts any ten-digit number. On the Gemini free tier Google's
+    own 20-a-day cap is the backstop; on the paid tier there is none.
+
+    The cap counts analyses STARTED, because a run that fails halfway has
+    already paid for the agents that answered.
+    """
+    from app.core.settings import get_settings
+
+    monkeypatch.setenv("NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY", "2")
+    get_settings.cache_clear()
+    try:
+        pdf = {"file": ("boq.pdf", b"%PDF-1.4 test\n%%EOF", "application/pdf")}
+        assert signed_client.post("/api/loans/1001/boq", files=pdf).status_code == 200
+        assert signed_client.post("/api/loans/1001/boq", files=pdf).status_code == 200
+
+        refused = signed_client.post("/api/loans/1001/boq", files=pdf)
+        assert refused.status_code == 429
+        # Copy a borrower can act on, and no mention of quotas or credits.
+        detail = refused.json()["detail"]
+        assert "try again tomorrow" in detail.lower()
+        for leak in ("quota", "credit", "Gemini", "429"):
+            assert leak.lower() not in detail.lower()
+    finally:
+        get_settings.cache_clear()
+
+
+def test_the_cap_is_per_loan_not_global(signed_client, monkeypatch):
+    """One borrower exhausting their own allowance must not lock out the book."""
+    from app.core.settings import get_settings
+
+    monkeypatch.setenv("NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY", "1")
+    monkeypatch.setenv("NEEV_MAX_ANALYSES_PER_DAY", "50")
+    get_settings.cache_clear()
+    try:
+        pdf = {"file": ("boq.pdf", b"%PDF-1.4 test\n%%EOF", "application/pdf")}
+        assert signed_client.post("/api/loans/1001/boq", files=pdf).status_code == 200
+        assert signed_client.post("/api/loans/1001/boq", files=pdf).status_code == 429
+
+        # A lender's session reads the whole book, so switch to 1002's owner.
+        signed_client.cookies.clear()
+        signed_client.post(
+            "/api/auth/session",
+            json={"role": "owner", "phone": "9849012345", "loan_id": "1002"},
+        )
+        assert signed_client.post("/api/loans/1002/boq", files=pdf).status_code == 200
+    finally:
+        get_settings.cache_clear()

@@ -39,7 +39,13 @@ What that changes, and what it does not:
    `app/services/live_runner.py` was written and type-checked but never run
    under the dry run; it has been run since this section was lifted. If you
    change it, run it.
-5. The backend venv and image now carry `google-adk`, `google-genai` and
+5. **A deployed live service is capped**, and the cap is not optional.
+   `NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY` (12) and `NEEV_MAX_ANALYSES_PER_DAY`
+   (60) exist because the demo is `--allow-unauthenticated` and its sign-in
+   accepts any ten-digit number, so on the paid tier nothing else stands
+   between a crawler and the billing account. Raise them deliberately, never
+   to zero.
+6. The backend venv and image now carry `google-adk`, `google-genai` and
    `neev-pipeline`, because the live runner imports them at call time. Fixture
    mode still touches none of them: the imports are inside the method body, and
    `test_no_google_import_at_module_scope` keeps them there.

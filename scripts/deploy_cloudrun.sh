@@ -53,6 +53,37 @@ RUNTIME_SA="$(gcloud projects describe "$PROJECT" --format='value(projectNumber)
 # calls that cannot be taken back.
 echo "==> Preflight for NEEV_MODE=$MODE"
 
+# 0. The APIs and the roles `gcloud run deploy --source` itself needs. Learned
+#    the hard way on 2026-09-09: cloudbuild.googleapis.com was not enabled, and
+#    the default compute service account -- which is also Cloud Build's build
+#    account -- carried NO role binding at all, so the build could not read its
+#    own uploaded source tarball. `--source` would have failed before it ever
+#    reached a revision.
+for API in cloudbuild.googleapis.com run.googleapis.com artifactregistry.googleapis.com; do
+  if ! gcloud services list --enabled --project "$PROJECT" 2>/dev/null | grep -q "^$API"; then
+    echo "  FAIL: $API is not enabled. Enable it, then re-run:"
+    echo "          gcloud services enable $API --project $PROJECT"
+    exit 1
+  fi
+done
+echo "  ok  : cloudbuild, run and artifactregistry are enabled"
+
+BUILD_ROLES="$(gcloud projects get-iam-policy "$PROJECT" \
+  --flatten='bindings[].members' \
+  --filter="bindings.members:$RUNTIME_SA" \
+  --format='value(bindings.role)' 2>/dev/null || true)"
+if ! printf '%s' "$BUILD_ROLES" | grep -qE 'cloudbuild.builds.builder|roles/editor|roles/owner'; then
+  echo "  FAIL: $RUNTIME_SA cannot build."
+  echo "        Cloud Build runs as this account and cannot read the source it"
+  echo "        just uploaded. Grant it, then re-run this script:"
+  echo
+  echo "          gcloud projects add-iam-policy-binding $PROJECT \\"
+  echo "            --member=serviceAccount:$RUNTIME_SA \\"
+  echo "            --role=roles/cloudbuild.builds.builder"
+  exit 1
+fi
+echo "  ok  : $RUNTIME_SA can build and push"
+
 if [ "$MODE" = "live" ]; then
   # 1. The key. Read from .env rather than the environment so the operator does
   #    not have to export a credential into their shell history.
@@ -137,7 +168,12 @@ echo "==> Building and deploying $BACKEND"
 #
 # timeout 600: a measured live run is 107 seconds, and the SSE stream is held
 # open for the whole of it.
+# The daily analysis cap travels with the deployment, because the thing it
+# guards against is the deployment: a public URL whose sign-in accepts any
+# ten-digit number, in a mode where every upload spends about Rs 3.81.
 BACKEND_ENV="NEEV_MODE=$MODE,NEEV_DEMO_AUTH=true,NEEV_SESSION_SECRET=$SESSION_SECRET,GOOGLE_CLOUD_PROJECT=$PROJECT"
+BACKEND_ENV="$BACKEND_ENV,NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY=${NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY:-12}"
+BACKEND_ENV="$BACKEND_ENV,NEEV_MAX_ANALYSES_PER_DAY=${NEEV_MAX_ANALYSES_PER_DAY:-60}"
 [ "$MODE" = "live" ] && BACKEND_ENV="$BACKEND_ENV,NEEV_ALLOW_BILLED_CALLS=1"
 
 gcloud run deploy "$BACKEND" \
@@ -190,7 +226,8 @@ echo "  API:           $API_URL"
 echo "──────────────────────────────────────────────────────────────"
 echo
 echo "Mode: $MODE. In live mode every 'Start the check' runs the five-agent"
-echo "pipeline against Gemini -- about Rs 3.81 and 107 seconds per analysis."
+echo "pipeline against Gemini -- about Rs 3.81 and 107 seconds per analysis,"
+echo "capped at ${NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY:-12} per loan and ${NEEV_MAX_ANALYSES_PER_DAY:-60} per day across the service."
 echo
 echo "Sign in with any 10-digit number. 'Home owner' lands on loan 1001;"
 echo "'Bank officer' opens the portfolio. Auth is a demo session, not a"

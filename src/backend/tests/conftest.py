@@ -44,6 +44,20 @@ def _force_fixture_mode(monkeypatch):
     get_settings.cache_clear()
 
 
+@pytest.fixture(autouse=True)
+def _empty_job_registry():
+    """The job registry is a module-level singleton, so jobs outlive the test
+    that made them. That was harmless until the daily analysis cap started
+    counting them: a test that uploads twice would then make the next test's
+    first upload the third of the day, and the pair would pass or fail on
+    alphabetical order."""
+    from app.services.jobs import registry
+
+    registry._jobs.clear()
+    yield
+    registry._jobs.clear()
+
+
 @pytest.fixture
 def seeded_db(tmp_path, monkeypatch):
     """Point the engine at a throwaway file and seed the whole book into it."""

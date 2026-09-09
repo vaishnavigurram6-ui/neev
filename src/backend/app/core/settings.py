@@ -35,6 +35,14 @@ class Settings(BaseSettings):
     # steps away and comes back is bounced to /login through no fault of their
     # own. Set it on a deployment and sessions survive a cold start.
     neev_session_secret: str = ""
+    # How many analyses one loan may start in a rolling 24 hours, and how many
+    # the whole service may. A live analysis costs real money — about Rs 3.81 —
+    # and the deployed demo is a public URL whose sign-in accepts any ten-digit
+    # number. On the Gemini free tier Google's own 20-requests-a-day cap is the
+    # backstop; on the paid tier there is none, so this is it. Generous enough
+    # that a judge working through the flow never meets it.
+    neev_max_analyses_per_loan_per_day: int = 12
+    neev_max_analyses_per_day: int = 60
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
     @field_validator("neev_mode", mode="before")

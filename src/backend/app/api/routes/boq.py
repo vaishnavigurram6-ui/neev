@@ -15,11 +15,14 @@ change here. This route still reads no mode, which is the property that made the
 fix possible in the first place.
 """
 
-from fastapi import APIRouter, File, Form, UploadFile
+from datetime import datetime, timedelta, timezone
+
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel
 
 from app.api.analysis import analysis_for, latest_revision, revision_number
 from app.api.deps import AuthorizedLoan
+from app.core.settings import get_settings
 from app.db import models
 from app.mappers.boq import to_boq_review
 from app.mappers.sanction import to_sanction_check
@@ -47,6 +50,7 @@ async def upload_boq(
     # be pulled into memory here. They are not carried into the request object
     # either: fixture mode ignores them, and the live runner reads them back
     # from the stored artefact (see BoqAnalysisRequest).
+    _refuse_if_over_the_daily_cap(loan)
     data, mime = await read_upload(file)
     tranche = _current_tranche(loan) if loan.tranches else None
     request = BoqAnalysisRequest(
@@ -66,6 +70,41 @@ async def upload_boq(
     )
     job = registry.create(request)
     return UploadAccepted(job_id=job.id, loan_id=loan.id)
+
+
+def _refuse_if_over_the_daily_cap(loan: models.Loan) -> None:
+    """Stop a public URL from spending credit without limit.
+
+    A live analysis drives five agents against Gemini and costs real money. The
+    deployed demo is `--allow-unauthenticated` and its sign-in accepts any
+    ten-digit number, so without this the only thing between the billing
+    account and a crawler is Google's own free-tier cap of twenty requests a
+    day — which disappears the moment the key moves to the paid tier.
+
+    Counts analyses STARTED, not revisions stored: a run that fails halfway has
+    already paid for the agents that answered, and a revision only exists if the
+    run succeeded. Two limits, because one loan hammering its own upload and a
+    hundred loans doing it once each cost the same.
+    """
+    settings = get_settings()
+    cutoff = datetime.now(timezone.utc) - timedelta(days=1)
+
+    per_loan = settings.neev_max_analyses_per_loan_per_day
+    if per_loan > 0 and registry.started_since(cutoff, loan.id) >= per_loan:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=(
+                "This contract has been checked as many times as we allow in a day. "
+                "Open the check you have already run, or try again tomorrow."
+            ),
+        )
+
+    overall = settings.neev_max_analyses_per_day
+    if overall > 0 and registry.started_since(cutoff) >= overall:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="We are checking as many contracts as we can today. Try again tomorrow.",
+        )
 
 
 @router.get("/{loan_id}/boq/latest", response_model=BoqReviewView)
