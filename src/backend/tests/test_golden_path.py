@@ -84,8 +84,13 @@ def test_the_golden_path(client, beat):
     boq = client.get("/api/loans/1001/boq/latest").json()
     out = captured()
     assert boq["boq_total"] == out.boq_findings.boq_total
-    # Every flag the run produced reaches a group; none is dropped en route.
-    assert sum(len(g["items"]) for g in boq["groups"]) == len(out.boq_findings.flags)
+    # Every flag is accounted for: a finding lands in a group, and an
+    # UNBENCHMARKED gap in our own benchmark table is counted instead of listed.
+    # Nothing is dropped on the way to a screen.
+    assert (
+        sum(len(g["items"]) for g in boq["groups"]) + boq["unbenchmarked_count"]
+        == len(out.boq_findings.flags)
+    )
     assert boq["groups"], "a flagged BoQ must render at least one group"
     assert boq["pct_before_slab"] == out.boq_findings.payment_pct_before_slab
     # The run that just finished was stored, so the redirect above resolves.

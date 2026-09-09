@@ -13,6 +13,7 @@ from pydantic import BaseModel
 
 from app.api.deps import AuthorizedLoan, DbSession
 from app.db import models
+from app.mappers.boq import visible_questions
 from app.mappers.loan import to_build_progress, to_loan_summary
 from app.schemas.views import BuildProgressView, LoanSummaryView
 from app.services.artifacts import read_upload, store_artifact
@@ -46,10 +47,16 @@ def send_questions(loan: AuthorizedLoan, db: DbSession) -> QuestionsSentResponse
     Idempotent: a second click does not re-stamp `sent_at` on a question already
     sent, and the count returned is how many questions are now with the
     contractor — the number the screen says it sent, both times.
+
+    Only the questions the screen actually showed are stamped. The BoQ Review
+    panel ranks and caps the list (see `mappers.boq.visible_questions`), and the
+    WhatsApp message the owner sends carries exactly those — so stamping the
+    whole stored list would record eighteen questions as "sent" that nobody
+    ever sent.
     """
     now = datetime.now(timezone.utc).replace(tzinfo=None)
     revision = max(loan.revisions, key=lambda r: r.rev, default=None)
-    questions = revision.questions if revision else []
+    questions = visible_questions(revision) if revision else []
     for question in questions:
         if question.status == "draft":
             question.status = "sent"

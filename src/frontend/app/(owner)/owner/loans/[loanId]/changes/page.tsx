@@ -1,18 +1,14 @@
 // Change Orders — Neev 6 Change Orders.dc.html.
 //
-// Scaffolded preview (plan Task 19) with real data behind it: both change orders
-// are the ones the seed stores for the golden case, including their "Neev's read"
-// text and their tone. The mockup's own three orders are a different set — the
-// seed's are the ones the rest of the app can act on, so they win.
+// Live against `GET /api/loans/{id}/change-orders`, and the writing side works:
+// accept, decline and counter all POST to the reply endpoint, and an owner can
+// log a change their contractor asked for verbally. The running total in the
+// rail comes from the mapper rather than being re-added here, so the rows and
+// the figure the owner decides against can never disagree.
 //
-// What stays a preview is the writing side: replying, accepting and declining
-// need a change-order endpoint, which no task in this phase builds, so those
-// buttons are disabled and say why.
+// Was a scaffolded preview (plan Task 19) reading a transcription of the seed.
 import CalloutBanner from '@/components/owner/CalloutBanner';
 import Panel from '@/components/owner/Panel';
-import PreviewEmpty from '@/components/owner/PreviewEmpty';
-import { previewLoan } from '@/components/owner/preview';
-import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import CardTable, { type Column } from '@/components/ui/CardTable';
 import EmptyState from '@/components/ui/EmptyState';
@@ -21,21 +17,29 @@ import KeyValueCard from '@/components/ui/KeyValueCard';
 import PageHeader from '@/components/ui/PageHeader';
 import StatusPill from '@/components/ui/StatusPill';
 import StickyRail from '@/components/ui/StickyRail';
+import { ApiError, apiGet } from '@/lib/api';
 import { formatDelta, formatINR } from '@/lib/format';
 import type { Tone } from '@/lib/tone';
+import type { ChangeOrdersView } from '@/lib/types';
+import LogChange from './LogChange';
+import ReplyCard from './ReplyCard';
 
 const COPY = {
   eyebrow: 'ON EVERY VARIATION',
   title: 'Changes to your contract',
   sub: 'Every change your contractor proposes, priced against the BoQ you signed — visible on paper, not argued from memory.',
   log: '＋ Log a change',
-  logWhy: 'Logging a change yourself needs the change-order endpoint, which this preview screen does not have yet.',
+  logTitle: 'Log a change your contractor asked for',
+  logLead:
+    'Asked for verbally, or on the phone? Write it down here and it is on the record — priced against the line you signed, like every other change.',
   readLead: "Neev's read:",
-  counter: 'Reply with counter-rate',
+  counter: 'Send counter',
+  counterLabel: 'Counter at (₹)',
   accept: 'Accept',
   decline: 'Decline',
-  actionWhy:
-    'Replying to a change order needs the change-order endpoint, which this preview screen does not have yet.',
+  unreachableTitle: 'We could not load your changes',
+  unreachable:
+    'The service that holds your change orders did not answer. Reload the page in a moment — nothing has been lost.',
   totalTitle: 'Running total',
   signedLabel: 'Contract you signed',
   acceptedLabel: 'Changes accepted',
@@ -54,6 +58,19 @@ const COPY = {
   noneBody:
     'When your contractor proposes a variation, it lands here priced against the BoQ you signed — so you can see what it costs before you agree to it.',
   emptyWhat: 'This is where every change your contractor proposes would be priced and listed.',
+};
+
+/** The stored status, in the owner's words. One vocabulary, resolved once. */
+const STATUS_LABEL: Record<string, string> = {
+  pending: 'Awaiting your reply',
+  countered: 'You countered',
+  accepted: 'Accepted',
+  declined: 'Declined',
+};
+
+const SETTLED_LINE: Record<string, string> = {
+  accepted: 'You accepted this change, so it is part of your contract total.',
+  declined: 'You declined this change. The line you signed stands.',
 };
 
 interface ComparisonRow {
@@ -94,43 +111,48 @@ export default async function ChangeOrdersPage({
   params: Promise<{ loanId: string }>;
 }) {
   const { loanId } = await params;
-  const loan = previewLoan(loanId);
+
+  let view: ChangeOrdersView | null = null;
+  let unreachable = false;
+  try {
+    view = await apiGet<ChangeOrdersView>(`/api/loans/${loanId}/change-orders`);
+  } catch (cause) {
+    // A loan with no BoQ yet has no signed total to price changes against, and
+    // that is a "nothing here yet", not a failure. Anything else is.
+    if (!(cause instanceof ApiError)) throw cause;
+    if (cause.status !== 404) unreachable = true;
+  }
 
   const header = (
     <PageHeader
-      status={<StatusPill tone="neutral" label="Preview" />}
       eyebrow={COPY.eyebrow}
       title={COPY.title}
       sub={COPY.sub}
-      actions={
-        <>
-          <Button disabled reason={COPY.logWhy} aria-describedby="log-change-why">
-            {COPY.log}
-          </Button>
-        </>
-      }
+      actions={<LogChange loanId={loanId} copy={{ cta: COPY.log, title: COPY.logTitle, lead: COPY.logLead }} />}
     />
   );
 
-  if (!loan) {
+  if (view === null) {
     return (
       <div className="flex flex-col gap-5">
         {header}
-        <PreviewEmpty loanId={loanId} what={COPY.emptyWhat} />
+        <EmptyState
+          title={unreachable ? COPY.unreachableTitle : COPY.noneTitle}
+          body={unreachable ? COPY.unreachable : COPY.emptyWhat}
+        />
       </div>
     );
   }
 
-  // Three states, not two. A declined change is settled but adds nothing to the
-  // contract, so it must not be counted with the accepted ones.
-  const pending = loan.changeOrders.filter((order) => order.state === 'pending');
-  const accepted = loan.changeOrders.filter((order) => order.state === 'accepted');
-  const sum = (orders: typeof loan.changeOrders) =>
-    orders.reduce((total, order) => total + order.delta, 0);
-  const pendingTotal = sum(pending);
-  const acceptedTotal = sum(accepted);
-  const ifAccepted = loan.boqTotal + acceptedTotal + pendingTotal;
-  const overSanction = ifAccepted - loan.sanctioned;
+  // Every figure below comes from the mapper. Re-adding them here is how a
+  // screen ends up disagreeing with its own rows: three states, not two, and a
+  // countered order is priced at the counter rather than at the proposal.
+  const orders = view.orders;
+  const pending = orders.filter((order) => order.open);
+  const accepted = orders.filter((order) => order.status === 'accepted');
+  const { accepted_total: acceptedTotal, pending_total: pendingTotal } = view;
+  const ifAccepted = view.if_accepted_total;
+  const overSanction = view.over_sanction;
   const overTone = overSanction > 0 ? 'danger' : 'success';
   const overTail =
     overSanction <= 0
@@ -147,17 +169,15 @@ export default async function ChangeOrdersPage({
 
       <div className="flex items-start gap-5">
         <div className="flex min-w-0 flex-1 flex-col gap-[14px]">
-          {loan.changeOrders.length === 0 && (
-            <EmptyState title={COPY.noneTitle} body={COPY.noneBody} />
-          )}
+          {orders.length === 0 && <EmptyState title={COPY.noneTitle} body={COPY.noneBody} />}
 
-          {loan.changeOrders.map((order) => (
+          {orders.map((order) => (
             <Card key={order.id} className="p-[22px]">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <div className="flex items-center gap-[10px]">
-                    <span className="tnum text-[11.5px] text-faint">{order.id}</span>
-                    <StatusPill tone={order.tone} label={order.statusLabel} />
+                    <span className="tnum text-[11.5px] text-faint">CO-{order.id}</span>
+                    <StatusPill tone={order.tone} label={STATUS_LABEL[order.status] ?? order.status} />
                   </div>
                   <h2 className="mt-2 text-[15px] font-bold text-ink">{order.title}</h2>
                 </div>
@@ -170,14 +190,14 @@ export default async function ChangeOrdersPage({
                   rows={[
                     {
                       version: 'In your signed BoQ',
-                      desc: order.signedDesc,
-                      amount: order.signedAmount,
+                      desc: order.signed_desc,
+                      amount: order.signed_amount,
                       tone: 'neutral',
                     },
                     {
                       version: 'Now proposed',
-                      desc: order.proposedDesc,
-                      amount: order.proposedAmount,
+                      desc: order.proposed_desc,
+                      amount: order.proposed_amount,
                       tone: order.tone,
                     },
                   ]}
@@ -186,31 +206,27 @@ export default async function ChangeOrdersPage({
               </div>
 
               <div className="mt-[12px]">
-                <CalloutBanner tone={order.tone} lead={COPY.readLead} body={order.neevsRead} />
+                <CalloutBanner tone={order.tone} lead={COPY.readLead} body={order.neevs_read} />
               </div>
 
-              {order.state === 'pending' && (
-                <div className="mt-[14px]">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="primary"
-                      disabled
-                      reason={COPY.actionWhy}
-                      aria-describedby={`${order.id}-why`}
-                    >
-                      {COPY.counter}
-                    </Button>
-                    <Button disabled reason={COPY.actionWhy} aria-describedby={`${order.id}-why`}>
-                      {COPY.accept}
-                    </Button>
-                    <Button disabled reason={COPY.actionWhy} aria-describedby={`${order.id}-why`}>
-                      {COPY.decline}
-                    </Button>
-                  </div>
-                  <p id={`${order.id}-why`} className="mt-[8px] text-[11.5px] text-faint">
-                    {COPY.actionWhy}
-                  </p>
-                </div>
+              {order.open ? (
+                <ReplyCard
+                  loanId={loanId}
+                  changeOrderId={order.id}
+                  proposedAmount={order.counter_amount ?? order.proposed_amount}
+                  signedAmount={order.signed_amount}
+                  labels={{
+                    counter: COPY.counter,
+                    counterLabel: COPY.counterLabel,
+                    accept: COPY.accept,
+                    decline: COPY.decline,
+                  }}
+                />
+              ) : (
+                <p className="mt-[12px] text-[12px] text-faint">
+                  {SETTLED_LINE[order.status] ?? ''}
+                  {order.owner_note ? ` “${order.owner_note}”` : ''}
+                </p>
               )}
             </Card>
           ))}
@@ -222,7 +238,7 @@ export default async function ChangeOrdersPage({
             rows={[
               {
                 label: COPY.signedLabel,
-                value: <Figure value={formatINR(loan.boqTotal)} />,
+                value: <Figure value={formatINR(view.signed_total)} />,
               },
               {
                 label: `${COPY.acceptedLabel} (${accepted.length})`,

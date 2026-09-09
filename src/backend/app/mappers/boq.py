@@ -30,8 +30,37 @@ GROUP_ORDER = [
     "SPECIFICATIONS TOO VAGUE TO PRICE",
     "EXPECTED BUT ABSENT",
     "PAYMENT TERMS",
-    "NO BENCHMARK TO COMPARE AGAINST",
 ]
+
+# An UNBENCHMARKED flag is not a finding against the contractor — it says our
+# benchmark table had nothing to compare that line against. A captured run
+# raises one per unpriceable line, so on loan 1001 twelve of twenty-six "flags"
+# were gaps in our own data, listed in the same table as three real rate
+# outliers and counted in the same FLAGS RAISED figure. That reads as an alarm
+# nobody can act on, so the rows are withheld and the count says how many.
+#
+# Withheld, not deleted: `unbenchmarked_count` is on the view model and the
+# screen states it in one line. A report that quietly narrowed its own coverage
+# would be claiming more than it checked.
+WITHHELD_FLAG_TYPES = frozenset({"UNBENCHMARKED"})
+
+# Which questions earn a place in "Send before you sign", most material first.
+# A captured run writes one question per flag, and a list of twenty-six is a
+# list nobody sends: the WhatsApp message is the deliverable, and it has to be
+# short enough to be read on a phone by a contractor who did not ask for it.
+QUESTION_PRIORITY = {
+    "RATE_OUTLIER": 0,       # money already on the table
+    "MISSING_SCOPE": 1,      # money not yet on the table
+    "FRONT_LOADED": 2,       # when the money leaves
+    "GST_SILENT": 2,
+    "STEEL_RATIO": 3,
+    "UNDERSPECIFIED": 4,     # what you get for the money
+}
+QUESTIONS_SHOWN = 8
+
+
+def _visible(flags: list[models.Flag]) -> list[models.Flag]:
+    return [f for f in flags if f.type not in WITHHELD_FLAG_TYPES]
 
 
 def to_boq_review(
@@ -48,9 +77,11 @@ def to_boq_review(
     the pipeline actually produced. Sourcing `estimate` and `payment_schedule`
     is the caller's job, because the caller is where mode is already resolved.
     """
-    rate_outliers = sum(1 for f in revision.flags if f.type == "RATE_OUTLIER")
-    missing = sum(1 for f in revision.flags if f.type == "MISSING_SCOPE")
-    vague = sum(1 for f in revision.flags if f.type == "UNDERSPECIFIED")
+    findings = _visible(revision.flags)
+    unbenchmarked = len(revision.flags) - len(findings)
+    rate_outliers = sum(1 for f in findings if f.type == "RATE_OUTLIER")
+    missing = sum(1 for f in findings if f.type == "MISSING_SCOPE")
+    vague = sum(1 for f in findings if f.type == "UNDERSPECIFIED")
     amount_before_slab = revision.boq_total * revision.payment_pct_before_slab
 
     cards = [
@@ -66,10 +97,12 @@ def to_boq_review(
         ),
         StatCardView(
             label="FLAGS RAISED",
-            value=len(revision.flags),
+            # Findings only. The card and the table below it count the same
+            # rows, which is the property `_group` already exists to protect.
+            value=len(findings),
             value_kind="count",
             sub=f"{rate_outliers} rate outliers · {missing} missing scope · {vague} vague specs",
-            tone="danger" if revision.flags else "success",
+            tone="danger" if findings else "success",
         ),
         StatCardView(
             label="MISSING SCOPE",
@@ -87,7 +120,8 @@ def to_boq_review(
         ),
     ]
 
-    flagged = _group(revision.flags)
+    flagged = _group(findings)
+    questions, withheld = _questions(revision, findings)
     return BoqReviewView(
         loan_id=loan.id,
         borrower=loan.borrower_name,
@@ -98,10 +132,9 @@ def to_boq_review(
         cards=cards,
         groups=flagged,
         all_groups=_all_items(revision),
-        questions=[
-            QuestionView(number=q.number, text=q.text, status=q.status)
-            for q in sorted(revision.questions, key=lambda q: q.number)
-        ],
+        questions=questions,
+        questions_withheld=withheld,
+        unbenchmarked_count=unbenchmarked,
         boq_total=float(revision.boq_total),
         payment_schedule=[
             PaymentStageView(label=s.label, pct=s.pct, before_slab=s.before_slab)
@@ -111,6 +144,64 @@ def to_boq_review(
         amount_before_slab=amount_before_slab,
         gst_stated=_gst_stated(estimate),
     )
+
+
+def visible_questions(revision: models.BoqRevision) -> list[models.Question]:
+    """The stored question rows the BoQ Review panel shows, in its order.
+
+    Exported for `POST /questions/send`, which must stamp exactly the questions
+    the owner was looking at — the same ranking and the same cap.
+    """
+    return _rank(revision, _visible(revision.flags))[0]
+
+
+def _questions(
+    revision: models.BoqRevision, findings: list[models.Flag]
+) -> tuple[list[QuestionView], int]:
+    """The panel's questions, renumbered 1..n, and how many were held back."""
+    shown, withheld = _rank(revision, findings)
+    return (
+        [QuestionView(number=n, text=q.text, status=q.status) for n, q in enumerate(shown, 1)],
+        withheld,
+    )
+
+
+def _rank(
+    revision: models.BoqRevision, findings: list[models.Flag]
+) -> tuple[list[models.Question], int]:
+    """The questions worth sending, most material first, capped.
+
+    Questions are stored as their own rows (they are editable and sendable), and
+    a stored question carries no flag type — so the flag it came from is found
+    by its text, which `persistence.py` copies verbatim from `Flag.question`.
+    Matching that way means a question keeps its place in the order even after a
+    re-run renumbers everything.
+
+    A question whose only flag was withheld goes with it: asking the contractor
+    to specify a line we could not price is a fair question, but it is not one
+    of the eight that change the price.
+    """
+    priority_by_text: dict[str, int] = {}
+    for flag in findings:
+        text = (flag.question or "").strip()
+        if not text:
+            continue
+        rank = QUESTION_PRIORITY.get(flag.type, len(QUESTION_PRIORITY))
+        priority_by_text[text] = min(priority_by_text.get(text, rank), rank)
+
+    stored = sorted(revision.questions, key=lambda q: q.number)
+    # A revision with flags but no matching question text (a hand-authored seed,
+    # or a re-worded question) keeps its list rather than showing an empty
+    # panel: no match at all means there is nothing to rank by.
+    keep = [q for q in stored if q.text.strip() in priority_by_text]
+    if not keep:
+        keep = stored
+
+    ordered = sorted(
+        keep,
+        key=lambda q: (priority_by_text.get(q.text.strip(), len(QUESTION_PRIORITY)), q.number),
+    )
+    return ordered[:QUESTIONS_SHOWN], len(ordered) - QUESTIONS_SHOWN if len(ordered) > QUESTIONS_SHOWN else 0
 
 
 def _gst_stated(estimate) -> bool:
@@ -128,17 +219,29 @@ def _gst_stated(estimate) -> bool:
 
 
 def _all_items(revision: models.BoqRevision) -> list[FlagGroupView]:
-    """One row per actual document item. Absence of a flag is not a match."""
+    """One row per actual document item, with only the red flags marked.
+
+    This is the whole document, read the way an owner reads their own contract:
+    forty lines, and the ones that are actually wrong standing out. Only a
+    `danger` flag earns a label here — a rate above benchmark, scope that is
+    absent. A "Vague spec", a "No benchmark" and the old "Not assessed"
+    fallback all put a pill on nearly every row, which left nothing standing
+    out and read as if the whole contract were suspect.
+
+    The quieter findings are not lost: they are in the flagged table, which is
+    the view that exists to list them.
+    """
     buckets: dict[str, list[FlagRowView]] = {}
     for item in revision.line_items:
-        flags = [f for f in revision.flags if f.item == item.item_id]
-        label = " · ".join(dict.fromkeys(f.label for f in flags)) or "Not assessed"
-        tone = next((t for t in ("danger", "warn", "neutral", "success")
-                     if any(f.tone == t for f in flags)), "neutral")
+        red = [f for f in revision.flags if f.item == item.item_id and f.tone == "danger"]
         buckets.setdefault(item.section or "DOCUMENT ITEMS", []).append(FlagRowView(
             item=item.item_id, desc=item.desc, qty=item.qty, unit=item.unit,
-            rate=item.rate, amount=item.amount, label=label, tone=tone,
-            note="\n".join(f.evidence for f in flags) or "No item-level assessment recorded; not a verified benchmark match.",
+            rate=item.rate, amount=item.amount,
+            label=" · ".join(dict.fromkeys(f.label for f in red)),
+            tone="danger" if red else "neutral",
+            # No claim either way on a quiet row: this view is the document, not
+            # a verification report.
+            note="\n".join(f.evidence for f in red),
         ))
     return [FlagGroupView(name=name, items=items) for name, items in buckets.items()]
 

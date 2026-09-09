@@ -161,6 +161,11 @@
             "title": "Questions",
             "type": "array"
           },
+          "questions_withheld": {
+            "default": 0,
+            "title": "Questions Withheld",
+            "type": "integer"
+          },
           "received_on": {
             "anyOf": [
               {
@@ -175,6 +180,11 @@
           },
           "rev": {
             "title": "Rev",
+            "type": "integer"
+          },
+          "unbenchmarked_count": {
+            "default": 0,
+            "title": "Unbenchmarked Count",
             "type": "integer"
           }
         },
@@ -191,6 +201,8 @@
           "groups",
           "all_groups",
           "questions",
+          "questions_withheld",
+          "unbenchmarked_count",
           "payment_schedule",
           "boq_total",
           "pct_before_slab",
@@ -317,6 +329,166 @@
           "phases"
         ],
         "title": "BuildProgressView",
+        "type": "object"
+      },
+      "ChangeOrderView": {
+        "description": "One variation the contractor has proposed, priced against the signed BoQ.",
+        "properties": {
+          "counter_amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Counter Amount"
+          },
+          "delta": {
+            "title": "Delta",
+            "type": "number"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "neevs_read": {
+            "title": "Neevs Read",
+            "type": "string"
+          },
+          "open": {
+            "default": true,
+            "title": "Open",
+            "type": "boolean"
+          },
+          "owner_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Note"
+          },
+          "proposed_amount": {
+            "title": "Proposed Amount",
+            "type": "number"
+          },
+          "proposed_desc": {
+            "title": "Proposed Desc",
+            "type": "string"
+          },
+          "replied_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replied At"
+          },
+          "signed_amount": {
+            "title": "Signed Amount",
+            "type": "number"
+          },
+          "signed_desc": {
+            "title": "Signed Desc",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "tone": {
+            "default": "warn",
+            "enum": [
+              "danger",
+              "warn",
+              "success",
+              "neutral"
+            ],
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "signed_desc",
+          "signed_amount",
+          "proposed_desc",
+          "proposed_amount",
+          "delta",
+          "neevs_read",
+          "status",
+          "tone",
+          "counter_amount",
+          "owner_note",
+          "replied_at",
+          "open"
+        ],
+        "title": "ChangeOrderView",
+        "type": "object"
+      },
+      "ChangeOrdersView": {
+        "properties": {
+          "accepted_total": {
+            "title": "Accepted Total",
+            "type": "number"
+          },
+          "if_accepted_total": {
+            "title": "If Accepted Total",
+            "type": "number"
+          },
+          "loan_id": {
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "orders": {
+            "items": {
+              "$ref": "#/components/schemas/ChangeOrderView"
+            },
+            "title": "Orders",
+            "type": "array"
+          },
+          "over_sanction": {
+            "title": "Over Sanction",
+            "type": "number"
+          },
+          "pending_total": {
+            "title": "Pending Total",
+            "type": "number"
+          },
+          "sanctioned": {
+            "title": "Sanctioned",
+            "type": "number"
+          },
+          "signed_total": {
+            "title": "Signed Total",
+            "type": "number"
+          }
+        },
+        "required": [
+          "loan_id",
+          "signed_total",
+          "orders",
+          "accepted_total",
+          "pending_total",
+          "if_accepted_total",
+          "sanctioned",
+          "over_sanction"
+        ],
+        "title": "ChangeOrdersView",
         "type": "object"
       },
       "ContractorRowView": {
@@ -1001,6 +1173,46 @@
         "title": "MilestoneResponse",
         "type": "object"
       },
+      "NewChangeOrder": {
+        "description": "What the owner types when they log a change their contractor has asked for\nverbally. `neevs_read` is deliberately absent: the read is Neev's, and a\ncaller that could write it could put words in the product's mouth.",
+        "properties": {
+          "proposed_amount": {
+            "minimum": 0.0,
+            "title": "Proposed Amount",
+            "type": "integer"
+          },
+          "proposed_desc": {
+            "minLength": 1,
+            "title": "Proposed Desc",
+            "type": "string"
+          },
+          "signed_amount": {
+            "minimum": 0.0,
+            "title": "Signed Amount",
+            "type": "integer"
+          },
+          "signed_desc": {
+            "minLength": 1,
+            "title": "Signed Desc",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "signed_desc",
+          "signed_amount",
+          "proposed_desc",
+          "proposed_amount"
+        ],
+        "title": "NewChangeOrder",
+        "type": "object"
+      },
       "PaymentStageView": {
         "properties": {
           "before_slab": {
@@ -1505,6 +1717,48 @@
           "sent"
         ],
         "title": "QuestionsSentResponse",
+        "type": "object"
+      },
+      "ReplyRequest": {
+        "properties": {
+          "action": {
+            "enum": [
+              "accept",
+              "decline",
+              "counter"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "counter_amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Counter Amount"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "ReplyRequest",
         "type": "object"
       },
       "SanctionBarView": {
@@ -2413,6 +2667,169 @@
         ]
       }
     },
+    "/api/loans/{loan_id}/change-orders": {
+      "get": {
+        "description": "Every variation on this loan, with the running total underneath.",
+        "operationId": "change_orders_api_loans__loan_id__change_orders_get",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeOrdersView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change Orders",
+        "tags": [
+          "change orders"
+        ]
+      },
+      "post": {
+        "description": "Log a change the contractor asked for off the record.\n\nTone is `neutral` and the read says plainly that the owner logged it: a\nfigure Neev never checked must not arrive wearing the same warn/danger\ncolours as one it did.",
+        "operationId": "log_change_order_api_loans__loan_id__change_orders_post",
+        "parameters": [
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewChangeOrder"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeOrderView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Log Change Order",
+        "tags": [
+          "change orders"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/change-orders/{change_order_id}/reply": {
+      "post": {
+        "description": "Accept, decline or counter one change order.\n\nA lender may read this loan's variations but never answer them: the reply is\nthe borrower's decision about their own contract.",
+        "operationId": "reply_api_loans__loan_id__change_orders__change_order_id__reply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "change_order_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "Change Order Id",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeOrderView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reply",
+        "tags": [
+          "change orders"
+        ]
+      }
+    },
     "/api/loans/{loan_id}/milestones": {
       "post": {
         "description": "A borrower reporting progress: a stage, some photos, an optional note.\n\nThe photos attach to the tranche currently under review, which is the one\nwhose release they are evidence for.\n\nEvery field this endpoint cannot actually establish is left null: the\ngeotag, timestamp and same-angle flags, which the visual inspector fills in\nlive mode, and `taken_at` \u2014 upload time is not capture time, and writing it\ninto an evidence trail as though it were would be the one lie a verification\nrecord cannot afford.",
@@ -2514,7 +2931,7 @@
     },
     "/api/loans/{loan_id}/questions/send": {
       "post": {
-        "description": "Marks the drafted questions sent.\n\nIdempotent: a second click does not re-stamp `sent_at` on a question already\nsent, and the count returned is how many questions are now with the\ncontractor \u2014 the number the screen says it sent, both times.",
+        "description": "Marks the drafted questions sent.\n\nIdempotent: a second click does not re-stamp `sent_at` on a question already\nsent, and the count returned is how many questions are now with the\ncontractor \u2014 the number the screen says it sent, both times.\n\nOnly the questions the screen actually showed are stamped. The BoQ Review\npanel ranks and caps the list (see `mappers.boq.visible_questions`), and the\nWhatsApp message the owner sends carries exactly those \u2014 so stamping the\nwhole stored list would record eighteen questions as \"sent\" that nobody\never sent.",
         "operationId": "send_questions_api_loans__loan_id__questions_send_post",
         "parameters": [
           {

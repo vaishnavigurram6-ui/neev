@@ -8,7 +8,16 @@ inside the runner factory and never executed while the dry run is active.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import auth, boq, contractors, jobs, loans, portfolio, tranches
+from app.api.routes import (
+    auth,
+    boq,
+    change_orders,
+    contractors,
+    jobs,
+    loans,
+    portfolio,
+    tranches,
+)
 from app.core.settings import get_settings
 
 # Three routers share the /api/loans prefix. That is safe because none of their
@@ -20,6 +29,7 @@ ROUTERS = [
     auth.router,
     loans.router,
     boq.router,
+    change_orders.router,
     jobs.router,
     portfolio.router,
     tranches.router,

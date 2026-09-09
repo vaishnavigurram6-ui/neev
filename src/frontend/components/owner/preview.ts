@@ -61,6 +61,11 @@ export interface PreviewPhotoSlot {
   slotKey: string;
   label: string;
   guidance: string;
+  /** The photograph already on file for this slot, when there is one. Loan
+   *  1001's are the real site photographs of Plot 47 (see
+   *  `public/site/README.md`), taken at the slab pour the third tranche was
+   *  released against. */
+  recorded?: { src: string; taken: string; alt: string };
 }
 
 export interface PreviewQuestion {
@@ -417,6 +422,29 @@ const REV2: PreviewRevision = {
 /** The three shots a milestone needs, keyed the way the seed keys its photo
  *  rows: `{loanId}-{milestone}-{slot}`. Both progress screens read this, so the
  *  "wide shot from the gate" is one slot and not two. */
+/** The photographs on file for the golden case. Real photographs of Plot 47 at
+ *  the slab stage — the evidence the third tranche was released against — so
+ *  the screen opens on a site rather than on three grey boxes. Other loans
+ *  have no photographs in this build and open empty, which is the honest
+ *  state for them. */
+const RECORDED_1001: Record<string, { src: string; taken: string; alt: string }> = {
+  wide: {
+    src: '/site/1001-slab-wide.jpg',
+    taken: 'On file — 10 Aug 2026',
+    alt: 'Plot 47 from the road: the first-floor slab shuttered and propped, columns standing.',
+  },
+  work: {
+    src: '/site/1001-slab-work.jpg',
+    taken: 'On file — 10 Aug 2026',
+    alt: 'The slab from the front, ring beam reinforcement tied and ready for the pour.',
+  },
+  angle: {
+    src: '/site/1001-slab-angle.jpg',
+    taken: 'On file — 10 Aug 2026',
+    alt: 'The same frame as the month before, with curing water going onto the slab.',
+  },
+};
+
 function photoSlots(loanId: string, milestoneKey: string): PreviewPhotoSlot[] {
   return [
     { slot: 'wide', label: 'Wide shot from the gate' },
@@ -426,6 +454,7 @@ function photoSlots(loanId: string, milestoneKey: string): PreviewPhotoSlot[] {
     slotKey: `${loanId}-${milestoneKey}-${entry.slot}`,
     label: entry.label,
     guidance: 'Same spot every time — it is what makes the check instant.',
+    recorded: loanId === '1001' ? RECORDED_1001[entry.slot] : undefined,
   }));
 }
 

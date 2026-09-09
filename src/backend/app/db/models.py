@@ -216,6 +216,13 @@ class ChangeOrder(Base):
     neevs_read: Mapped[str] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(16), default="pending")
     tone: Mapped[str] = mapped_column(String(16), default="warn")
+    # Set when the owner counters rather than accepting: the rupee figure they
+    # are willing to agree to. Kept alongside `proposed_amount` rather than
+    # replacing it, so the running total can show what was asked *and* what was
+    # offered back, and a dispute later has both numbers.
+    counter_amount: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    owner_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    replied_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     loan: Mapped[Loan] = relationship(back_populates="change_orders")
 

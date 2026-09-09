@@ -30,6 +30,10 @@ ENV NODE_ENV=production \
 # it and have to be copied alongside.
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+# The comment above says public/ is not in the standalone output, and it was not
+# being copied either: the site photographs on Build Progress 404'd in the
+# container while working in `next dev`.
+COPY --from=builder /app/public ./public
 
 # Non-root, which Cloud Run does not require but costs nothing to do.
 RUN addgroup -S neev && adduser -S neev -G neev && chown -R neev:neev /app

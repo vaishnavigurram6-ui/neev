@@ -5,7 +5,7 @@ formatter to apply, which is what keeps formatINR() the single formatter and
 stops pre-formatted money entering the API (spec 5.1a).
 """
 
-from datetime import date
+from datetime import date, datetime
 from typing import Literal
 
 from pydantic import BaseModel as PydanticBaseModel, ConfigDict, Field
@@ -73,6 +73,13 @@ class BoqReviewView(BaseModel):
     groups: list[FlagGroupView]
     all_groups: list[FlagGroupView]
     questions: list[QuestionView]
+    # How many more questions the analysis wrote than the screen shows. Stated
+    # rather than dropped silently: every withheld question's flag is still in
+    # the table above it.
+    questions_withheld: int = 0
+    # Lines the benchmark table had nothing to compare against. Not findings —
+    # gaps in our own data — so they are counted here and not listed as flags.
+    unbenchmarked_count: int = 0
     payment_schedule: list[PaymentStageView]
     # The quoted contract total. Present so the rail does not have to invert it
     # out of amount_before_slab / pct_before_slab, which is what the screen was
@@ -323,3 +330,40 @@ class ContractorScorecardView(BaseModel):
 
 PhaseHistoryView.model_rebuild()
 TrancheDecisionView.model_rebuild()
+
+
+class ChangeOrderView(BaseModel):
+    """One variation the contractor has proposed, priced against the signed BoQ."""
+
+    id: int
+    title: str
+    signed_desc: str
+    signed_amount: float
+    proposed_desc: str
+    proposed_amount: float
+    delta: float
+    neevs_read: str
+    status: str
+    tone: Tone = "warn"
+    counter_amount: float | None = None
+    owner_note: str | None = None
+    replied_at: datetime | None = None
+    # Whether this order still awaits the owner. The screen needs the question
+    # "can I act on this?" answered once, here, rather than re-derived from a
+    # status string on every row.
+    open: bool = True
+
+
+class ChangeOrdersView(BaseModel):
+    loan_id: str
+    signed_total: float
+    orders: list[ChangeOrderView]
+    accepted_total: float
+    pending_total: float
+    # Signed + accepted + everything still pending, as proposed. The figure the
+    # owner is deciding against, and the one that can breach the sanction.
+    if_accepted_total: float
+    sanctioned: float
+    # Positive means over sanction. Signed so the screen never has to guess
+    # which side of the line it is on.
+    over_sanction: float

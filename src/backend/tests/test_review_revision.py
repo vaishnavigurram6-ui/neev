@@ -28,11 +28,25 @@ def test_new_revision_questions_and_risk_replace_only_the_target_snapshot(signed
 
 
 def test_all_rows_are_the_actual_document_items(signed_client):
+    """The All view is the document, with only the red flags marked.
+
+    A label on every row -- "Vague spec", "No benchmark", and the old "Not
+    assessed" fallback -- left nothing standing out and read as though the whole
+    contract were suspect. Only a `danger` flag marks a row here; the quieter
+    findings are in the flagged table, which exists to list them.
+    """
     view = signed_client.get("/api/loans/1001/boq/latest").json()
     rows = [item for group in view["all_groups"] for item in group["items"]]
     assert len(rows) == view["item_count"] == 40
     assert len({row["item"] for row in rows}) == 40
-    assert any(row["label"] == "Not assessed" for row in rows)
+
+    marked = [row for row in rows if row["label"]]
+    assert marked, "a contract with rate outliers must mark them here too"
+    assert all(row["tone"] == "danger" for row in marked)
+    assert all(row["note"] for row in marked), "a marked row says what is wrong"
+    # And a quiet row claims nothing in either direction.
+    quiet = [row for row in rows if not row["label"]]
+    assert quiet and all(row["tone"] == "neutral" and row["note"] == "" for row in quiet)
 
 
 @pytest.mark.parametrize("area,data,status", [(-1, b"%PDF-1.4\n%%EOF", 422),

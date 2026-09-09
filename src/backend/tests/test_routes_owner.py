@@ -178,7 +178,12 @@ def test_boq_latest_carries_the_captured_figures(client):
     assert body["item_count"] == 40
     out = captured()
     assert body["cards"][0]["value"] == out.boq_findings.boq_total
-    assert body["cards"][1]["value"] == len(out.boq_findings.flags)
+    # Findings only. Twelve of the captured run's twenty-six flags are
+    # UNBENCHMARKED -- gaps in our benchmark table, not findings against the
+    # contractor -- so the card counts what the table below it lists.
+    findings = [f for f in out.boq_findings.flags if f.type != "UNBENCHMARKED"]
+    assert body["cards"][1]["value"] == len(findings)
+    assert body["unbenchmarked_count"] == len(out.boq_findings.flags) - len(findings)
     assert body["pct_before_slab"] == out.boq_findings.payment_pct_before_slab
     # Derived, not stored: the rail needs the rupee figure and the fraction.
     out = captured()
@@ -186,10 +191,12 @@ def test_boq_latest_carries_the_captured_figures(client):
         out.boq_findings.boq_total * out.boq_findings.payment_pct_before_slab
     )
     assert len(body["questions"]) == 4
-    # Every flag must reach a group; none may be dropped on the way to a screen.
-    assert sum(len(group["items"]) for group in body["groups"]) == len(
-        captured().boq_findings.flags
-    )
+    # Every flag is accounted for: a finding lands in a group, and an
+    # UNBENCHMARKED gap in our own benchmark table is counted instead of listed.
+    # Nothing is dropped on the way to a screen.
+    assert sum(len(group["items"]) for group in body["groups"]) + body[
+        "unbenchmarked_count"
+    ] == len(captured().boq_findings.flags)
 
 
 def test_no_money_crosses_the_api_as_a_formatted_string(client):

@@ -19,16 +19,22 @@ export default function PhotoSlot({
   guidance,
   chips = [],
   onFile,
+  recorded,
 }: {
   slotKey: string;
   label: string;
   guidance?: string;
   chips?: { label: string; tone: Tone }[];
   onFile?: (file: File) => void;
+  /** A photo already on file for this slot. Shown until the owner picks a
+   *  replacement, so the screen opens on what the site actually looked like
+   *  last month rather than on an empty grey box. `taken` is the caption the
+   *  status line reads — a date, not a filename. */
+  recorded?: { src: string; taken: string; alt?: string };
 }) {
   const inputId = useId();
   const [preview, setPreview] = useState<string | null>(null);
-  const [status, setStatus] = useState('No photo yet');
+  const [status, setStatus] = useState(recorded ? recorded.taken : 'No photo yet');
   // Object URLs are revoked when replaced and on unmount; otherwise every
   // re-pick leaks the previous blob for the life of the document.
   const previewRef = useRef<string | null>(null);
@@ -84,6 +90,14 @@ export default function PhotoSlot({
             height={(MAX_EDGE * 3) / 4}
             className="h-full w-full object-cover"
             unoptimized
+          />
+        ) : recorded ? (
+          <Image
+            src={recorded.src}
+            alt={recorded.alt ?? `${label} — the photo on file`}
+            width={MAX_EDGE}
+            height={(MAX_EDGE * 3) / 4}
+            className="h-full w-full object-cover"
           />
         ) : (
           <span className="text-[11.5px] text-faint">Same spot, every month</span>

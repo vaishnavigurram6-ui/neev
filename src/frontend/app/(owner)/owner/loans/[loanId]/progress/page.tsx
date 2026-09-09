@@ -200,6 +200,7 @@ export default async function BuildProgressPage({
                   slotKey={slot.slotKey}
                   label={slot.label}
                   guidance={slot.guidance}
+                  recorded={slot.recorded}
                 />
               ))}
             </div>

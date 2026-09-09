@@ -2,6 +2,8 @@
 properties that keep them from leaking: no formatted money, and grouping/order
 taken from the mockups rather than recomputed."""
 
+from types import SimpleNamespace
+
 import pytest
 from sqlalchemy import select
 
@@ -21,7 +23,7 @@ from app.db import models
 from app.db.seed import seed
 from app.db.session import SessionLocal, init_db
 from app.fixtures.loader import load_pipeline_output
-from app.mappers.boq import to_boq_review
+from app.mappers.boq import QUESTIONS_SHOWN, _questions, to_boq_review
 from app.mappers.portfolio import to_portfolio
 from app.mappers.tranche import to_tranche_decision
 
@@ -61,13 +63,15 @@ def test_boq_review_carries_numbers_not_formatted_strings():
         assert not isinstance(card.value, str) or card.value_kind == "text"
 
 
-def test_flag_groups_lead_with_findings_and_end_with_what_we_could_not_check():
+def test_flag_groups_lead_with_findings_and_withhold_what_we_could_not_check():
     """Order is editorial, and the editorial point is what a reader sees first.
 
-    Was the mockup's work-section order. A captured run spreads 31 flags across
-    item ids no hand-written section map covers, so grouping is by finding type
-    now -- and the twelve "no benchmark" rows go last so they never crowd the
-    three real outliers.
+    Was the mockup's work-section order, then finding-type groups with "no
+    benchmark" last. A captured run raises one UNBENCHMARKED flag per line it
+    could not price -- twelve on loan 1001, against three real rate outliers --
+    so they are counted rather than listed: they are gaps in our benchmark
+    table, not findings against the contractor, and a table that mixes the two
+    reads as an alarm nobody can act on.
     """
     with SessionLocal() as db:
         loan = db.get(models.Loan, "1001")
@@ -75,8 +79,74 @@ def test_flag_groups_lead_with_findings_and_end_with_what_we_could_not_check():
 
     names = [g.name for g in view.groups]
     assert names[0] == "RATES ABOVE BENCHMARK"
-    assert names[-1] == "NO BENCHMARK TO COMPARE AGAINST"
+    assert "NO BENCHMARK TO COMPARE AGAINST" not in names
     assert "OTHER" not in names, "every flag type must have a home"
+
+    # Withheld, not lost: the count is on the view and the card agrees with the
+    # rows, which is the property the group order exists to protect.
+    assert view.unbenchmarked_count > 0
+    flags_card = next(c for c in view.cards if c.label == "FLAGS RAISED")
+    assert flags_card.value == sum(len(g.items) for g in view.groups)
+
+
+def test_the_questions_panel_is_capped_and_renumbered():
+    """Twenty-six questions is a list nobody sends.
+
+    A captured run writes one question per flag. The panel's deliverable is a
+    WhatsApp message, so it carries at most eight and says how many it held
+    back. Numbers are the panel's own 1..n, not the stored row numbers, so a
+    capped list never shows "1, 2, 5".
+    """
+    with SessionLocal() as db:
+        loan = db.get(models.Loan, "1001")
+        view = _review(loan)
+
+    assert 0 < len(view.questions) <= QUESTIONS_SHOWN
+    assert [q.number for q in view.questions] == list(range(1, len(view.questions) + 1))
+    assert view.questions_withheld == 0 or len(view.questions) == QUESTIONS_SHOWN
+
+
+def test_questions_rank_by_what_they_cost_and_never_empty_a_hand_written_list():
+    """Rate outliers first, vague specs last, and the cap applied after ranking.
+
+    Unit-level because the seeded revision's four questions are hand-authored
+    (they match no flag text), which is the other case this pins: a list that
+    cannot be ranked is kept whole rather than silently emptied.
+    """
+    def question(number, text):
+        return SimpleNamespace(number=number, text=text, status="draft")
+
+    def flag(type_, text):
+        return SimpleNamespace(type=type_, question=text)
+
+    # Deliberately stored worst-first-last: ranking must beat row order.
+    stored = [question(n, f"q{n}") for n in range(1, 4)]
+    findings = [
+        flag("UNDERSPECIFIED", "q1"),
+        flag("MISSING_SCOPE", "q2"),
+        flag("RATE_OUTLIER", "q3"),
+    ]
+    ranked, withheld = _questions(SimpleNamespace(questions=stored), findings)
+    assert [q.text for q in ranked] == ["q3", "q2", "q1"]
+    assert withheld == 0
+
+    # A question whose only flag was withheld goes with it.
+    ranked, _ = _questions(SimpleNamespace(questions=stored), findings[1:])
+    assert [q.text for q in ranked] == ["q3", "q2"]
+
+    # And nothing matching at all keeps the authored list, in its own order.
+    ranked, withheld = _questions(SimpleNamespace(questions=stored), [])
+    assert [q.text for q in ranked] == ["q1", "q2", "q3"]
+    assert withheld == 0
+
+    # The cap bites after ranking, not before.
+    many = [question(n, f"m{n}") for n in range(1, 12)]
+    ranked, withheld = _questions(
+        SimpleNamespace(questions=many),
+        [flag("UNDERSPECIFIED", f"m{n}") for n in range(1, 11)] + [flag("RATE_OUTLIER", "m11")],
+    )
+    assert len(ranked) == QUESTIONS_SHOWN and withheld == 3
+    assert ranked[0].text == "m11"
 
 
 def test_portfolio_preserves_the_designs_exposure_descending_order():

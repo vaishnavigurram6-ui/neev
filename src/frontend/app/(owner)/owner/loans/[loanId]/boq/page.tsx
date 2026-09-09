@@ -103,11 +103,16 @@ const COPY = {
   tableCaption:
     'Every BoQ line that needs your attention, grouped by section: the line’s own figures, what the local benchmark says, and the flag raised against it.',
   emptyTable: 'Nothing on this contract needs your attention.',
-  matched: '{n} document items have no recorded finding; this does not verify their rates',
+  matched: '{n} of {total} lines carry a red flag',
   showAll: 'Show all',
   showFlagged: 'Show flagged only',
   allNote:
-    'Some document items are missing from the stored analysis. Do not treat them as benchmark matches.',
+    'The stored analysis covers fewer lines than the document has. The rest are shown unmarked because they were not assessed, not because they were cleared.',
+  unbenchmarked:
+    '{n} lines had no local benchmark to compare against, so their rates are neither confirmed nor questioned.',
+  questionsMore:
+    '{n} further questions came out of the check. They are in the flagged list above, line by line.',
+  replay: 'Demo replay — this report replays a recorded analysis of this contract.',
 
   payTitle: 'Payment schedule',
   frontLoaded: 'Front-loaded',
@@ -160,7 +165,11 @@ const COLUMNS: Column<FlaggedRow>[] = [
             <span className="text-[13.5px] font-semibold text-ink">{row.desc}</span>
             {figures && <Figure value={figures} size="sm" />}
           </div>
-          <p className="mt-[4px] max-w-[560px] text-[12.5px] leading-[1.55] text-sub">{row.note}</p>
+          {row.note && (
+            <p className="mt-[4px] max-w-[560px] text-[12.5px] leading-[1.55] text-sub">
+              {row.note}
+            </p>
+          )}
         </div>
       );
     },
@@ -170,7 +179,10 @@ const COLUMNS: Column<FlaggedRow>[] = [
     header: COPY.colFlag,
     align: 'right',
     width: '130px',
-    render: (row) => <StatusPill tone={row.tone} label={row.label} />,
+    // A row with nothing against it gets no pill. In the All view that is most
+    // of the contract, and an empty pill on every line is what made a clean
+    // document look uniformly suspect.
+    render: (row) => (row.label ? <StatusPill tone={row.tone} label={row.label} /> : null),
   },
 ];
 
@@ -253,8 +265,10 @@ export default async function BoqReviewPage({
   // every flag — but that is the mapper silently losing a row, and papering over
   // it here would hide it. Reported to the mapper's owner.
   const flaggedCount = countRows(boq.groups);
-  const flaggedItems = new Set(boq.groups.flatMap((group) => group.items.map((item) => item.item)));
-  const matchedCount = boq.all_groups.flatMap((group) => group.items).filter((item) => !flaggedItems.has(item.item)).length;
+  const allRows = boq.all_groups.flatMap((group) => group.items);
+  // The All view marks only red flags, so this is what the reader can actually
+  // count on that screen.
+  const redCount = allRows.filter((item) => item.label).length;
   const otherView = view === 'all' ? 'flagged' : 'all';
 
   // The schedule is judged once — by the API, whose own DUE BEFORE SLAB card is
@@ -267,10 +281,11 @@ export default async function BoqReviewPage({
 
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-sm text-sub">
-        {boq.analysis_mode === 'fixture' ? 'Demo replay — this report does not analyze the uploaded document. ' : 'Stored analysis. '}
-        Benchmarks are provisional; CPWD verification is pending. Unflagged does not mean verified.
-      </p>
+      {/* Only when the report really is a replay. In live mode the pipeline has
+          read this document, and a caveat saying otherwise would be false. */}
+      {boq.analysis_mode === 'fixture' && (
+        <p className="text-sm text-sub">{COPY.replay}</p>
+      )}
       <PageHeader
         eyebrow={COPY.eyebrow}
         title={COPY.title}
@@ -353,7 +368,12 @@ export default async function BoqReviewPage({
           />
 
           <div className="flex items-baseline justify-between gap-4 text-[12.5px] text-faint">
-            <span>{fill(COPY.matched, { n: String(matchedCount) })}</span>
+            <span>
+              {fill(COPY.matched, { n: String(redCount), total: String(allRows.length) })}
+              {boq.unbenchmarked_count > 0
+                ? ` · ${fill(COPY.unbenchmarked, { n: String(boq.unbenchmarked_count) })}`
+                : ''}
+            </span>
             <Link
               href={`/owner/loans/${loanId}/boq?view=${otherView}`}
               scroll={false}
@@ -367,13 +387,7 @@ export default async function BoqReviewPage({
               stored (see `mappers/boq.py`). Saying so beats a tab labelled
               "All 40" that quietly shows nine rows. */}
           {view === 'all' && rows.length < boq.item_count && (
-            <p className="text-[12px] leading-[1.55] text-faint">
-              {fill(COPY.allNote, {
-                flagged: String(flaggedCount),
-                matched: String(matchedCount),
-                locality: loan.locality,
-              })}
-            </p>
+            <p className="text-[12px] leading-[1.55] text-faint">{COPY.allNote}</p>
           )}
         </div>
 
@@ -437,6 +451,14 @@ export default async function BoqReviewPage({
                   items={boq.questions.map((question) => question.text)}
                 />
               </div>
+              {/* The panel carries the questions that change the price. Saying
+                  how many it held back keeps the list short without pretending
+                  it is the whole of what the check found. */}
+              {boq.questions_withheld > 0 && (
+                <p className="mt-[8px] text-[11.5px] leading-[1.5] text-faint">
+                  {fill(COPY.questionsMore, { n: String(boq.questions_withheld) })}
+                </p>
+              )}
               <CopyQuestionsButton
                 message={shareMessage({
                   questions: boq.questions,
