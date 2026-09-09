@@ -106,6 +106,20 @@ export function apiLogin<T>(body: unknown): Promise<T> {
   });
 }
 
+/** Sign-up, which also issues a session -- so it copies the cookie exactly the
+ *  way apiLogin does. Same reason: the backend's Set-Cookie cannot reach the
+ *  browser from a server-to-server fetch, so the server action re-issues it. */
+export function apiSignup<T>(body: unknown): Promise<T> {
+  return request<T>('/api/auth/signup', { method: 'POST', body: JSON.stringify(body) }, async (response) => {
+    const value = response.headers.get('set-cookie')?.match(/(?:^|,\s*)neev_session=([^;]+)/)?.[1];
+    if (!value) throw new ApiError('Backend did not issue a session', 502);
+    (await cookies()).set('neev_session', value, {
+      httpOnly: true, sameSite: 'lax', path: '/', maxAge: 43200,
+      secure: process.env.NODE_ENV === 'production',
+    });
+  });
+}
+
 /** All reads and writes forward the caller's session; headers may carry idempotency keys. */
 export function apiPost<T>(
   path: string,

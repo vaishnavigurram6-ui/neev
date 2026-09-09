@@ -1036,7 +1036,7 @@
         "type": "object"
       },
       "LoginRequest": {
-        "description": "A named demo account and the shared demo password.\n\nWas a phone number and a six-digit code that accepted any six digits \u2014 a\nflow nobody could narrate honestly, and one that mapped every owner onto\nloan 1001 however they signed in. See `app.api.accounts`.",
+        "description": "A username and a password, resolved against either mechanism.\n\nEither one of the three provisioned accounts plus the shared demo password,\nor an account somebody created through sign-up plus their own. The caller\ndoes not say which, and cannot: the answer decides the role.",
         "properties": {
           "password": {
             "maxLength": 200,
@@ -1984,6 +1984,63 @@
         "title": "SanctionSectionView",
         "type": "object"
       },
+      "SignupRequest": {
+        "description": "Everything needed to open an account and the loan behind it.\n\nThe loan fields are here rather than on a later screen because a borrower\nwith no loan has nothing to be shown: every owner screen reads\n`/api/loans/{id}`. A brand-new loan answers 200 with no tranches and no\nrevisions, and the screens render that as \"nothing checked yet\".",
+        "properties": {
+          "built_up_sqft": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 100000.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Built Up Sqft"
+          },
+          "locality": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Locality",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 200,
+            "minLength": 8,
+            "title": "Password",
+            "type": "string"
+          },
+          "sanctioned": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 100000000.0,
+            "title": "Sanctioned",
+            "type": "integer"
+          },
+          "username": {
+            "maxLength": 40,
+            "minLength": 3,
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "username",
+          "password",
+          "locality",
+          "sanctioned"
+        ],
+        "title": "SignupRequest",
+        "type": "object"
+      },
       "StageView": {
         "properties": {
           "name": {
@@ -2408,6 +2465,47 @@
           }
         },
         "summary": "Create Session",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/signup": {
+      "post": {
+        "operationId": "create_account_api_auth_signup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Account",
         "tags": [
           "auth"
         ]

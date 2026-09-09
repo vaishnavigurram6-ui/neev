@@ -10,7 +10,17 @@ Money is stored as integer rupees. No column ever holds a formatted string.
 
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -70,6 +80,39 @@ class Loan(Base):
     change_orders: Mapped[list["ChangeOrder"]] = relationship(
         back_populates="loan", cascade="all, delete-orphan"
     )
+
+
+class User(Base):
+    """An account somebody created through sign-up.
+
+    Additive, and deliberately not the home of the three provisioned accounts in
+    `app/api/accounts.py`. Those share one password read from the environment,
+    so putting them here would mean either hashing that value at seed time --
+    after which changing `NEEV_DEMO_PASSWORD` on a deployment would silently do
+    nothing until the next reseed -- or keeping the special case anyway. Two
+    mechanisms, because they are two different things: provisioned identities
+    with a shared gate, and self-created ones with their own secret.
+
+    Unique on `(role, username)` rather than on `username`, because the roles
+    are two separate books: there is nothing wrong with a borrower and a credit
+    officer both called `ravi`, and the day officers can be created too, this
+    table already allows it. The role is a LOOKUP KEY here and never a claim of
+    privilege -- it comes from which form was submitted, not from the request
+    saying what it would like to be. Sign-up creates borrowers only; officers
+    stay provisioned.
+    """
+
+    __tablename__ = "users"
+    __table_args__ = (UniqueConstraint("role", "username", name="uq_users_role_username"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    username: Mapped[str] = mapped_column(String(40), index=True)
+    role: Mapped[str] = mapped_column(String(8))
+    # The loan this identity holds, as `Loan.id`. Sign-up creates one per
+    # borrower, so a new account never lands on somebody else's contract.
+    loan_id: Mapped[str] = mapped_column(ForeignKey("loans.id"))
+    password_hash: Mapped[str] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
 class BoqRevision(Base):

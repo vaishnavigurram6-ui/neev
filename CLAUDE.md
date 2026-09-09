@@ -94,39 +94,43 @@ Frontend uses `npm`.
 - `docs/Neev_Demo_Runbook.md` — how to run and narrate the demo; start here
 - `scripts/dev.sh` — starts both servers, seeded, in fixture mode
 
-## Decided but not built: two books, and signup
+## Two books, and signup — built 2026-09-10
 
-Deferred on 2026-09-10 until after the first deploy — auth is the riskiest thing
-to rewrite hours before a one-shot deploy, and the three named accounts carry
-the demo. Recorded here so it is not re-derived.
+Deferred earlier the same day, then asked for and built. What exists:
 
-The prompt was a fair one: **there could be an officer named ravi as well.**
-Usernames only collide once people can create them, so signup and the collision
-are one piece of work, not two.
+- **A `users` table**, unique on `(role, username)`, so borrower-`ravi` and
+  officer-`ravi` are separate accounts. The prompt was a fair one: *there could
+  be an officer named ravi as well*, and usernames only collide once people can
+  create them.
+- **The role is a lookup key, never a claim of privilege.** Sign-up writes
+  `owner` and only `owner`; there is no `role` field on the request. That
+  distinction is the whole lesson of the old login toggle, which let the request
+  assert `role: bank` and be believed. `/login?role=bank` still exists and still
+  only chooses the page's copy.
+- **Sign-up is borrower-only.** Staff access to the whole book is never
+  self-served; officers stay provisioned in `app/api/accounts.py`. That
+  asymmetry is what makes two books make sense rather than symmetry for its own
+  sake.
+- **A new borrower gets their own loan** — name, username, password, locality,
+  sanctioned amount, built-up area, all on one form, because a borrower with no
+  loan has nothing to be shown. Ids continue the seeded book, so the first
+  account created is loan 1011, ranked last on the officer's hotlist since
+  nothing has been checked.
+- **`hashlib.scrypt`** in `app/services/passwords.py`, parameters stored in the
+  hash so the cost can be raised without invalidating old rows. Note
+  `maxmem`: OpenSSL refuses more than 32 MiB by default and *raises* rather than
+  choosing safer parameters, which is why N=2^14 and the ceiling is derived from
+  the parameters in use.
 
-The shape, when it happens:
+**The provisioned accounts stay a tuple, not seeded rows.** They share one
+password read from the environment, so a row would mean either hashing that
+value at seed time — after which changing `NEEV_DEMO_PASSWORD` on a deployment
+would silently do nothing until the next reseed — or keeping the special case
+anyway. Two mechanisms because they are two different things: provisioned
+identities behind a shared gate, and self-created ones with their own secret.
 
-- **Role-scoped usernames.** Unique on `(role, username)`, so borrower-`ravi`
-  and officer-`ravi` are separate accounts. The role comes from where the
-  visitor is — `/login` against `/login?role=bank`, which already chooses the
-  page's copy — and is used as a **lookup key, never as a claim of privilege**.
-  That distinction is the whole lesson of the old toggle, which let the request
-  assert `role: bank` and be believed.
-- **Signup is borrower-only.** Staff access to the whole book is never
-  self-served; officers stay provisioned by the seed. That asymmetry is also
-  what makes two books make sense rather than being symmetry for its own sake.
-- **A new borrower gets their own loan**, described on the form: sanctioned
-  amount, locality, built-up area. Verified reachable on 2026-09-10 — a loan
-  with no tranches and no revisions returns 200 from `/api/loans/{id}` and
-  `/progress`, and 404 from `/boq/latest` and `/sanction-check`, which the
-  screens already render as "nothing checked yet". So the core loop works for a
-  brand-new account, and Build Progress stays honestly empty until a draw
-  exists.
-- **Real hashing** (`hashlib.scrypt`), and the demo accounts become seeded rows
-  rather than the tuple in `app/api/accounts.py`.
-
-Roughly three hours: table and migration, hashing, the signup endpoint and loan
-creation, the role-scoped lookup, the page, and tests.
+25 tests in `src/backend/tests/test_routes_signup.py`, including that a
+provisioned name cannot be minted and that no request can create a lender.
 
 ## State of the build (2026-08-28)
 

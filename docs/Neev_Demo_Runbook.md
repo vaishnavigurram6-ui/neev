@@ -223,8 +223,15 @@ credentials are documentation, so they live here.
 | `prasad` | `password` | D. Prasad — the clean contract, loan 1002 |
 | `officer` | `password` | Credit officer — the whole book |
 
-One shared password, set by `NEEV_DEMO_PASSWORD`. Override it on a deployment if
-you would rather it were not the one printed in this repo:
+These three are provisioned. A visitor can also create their own borrower
+account at `/signup` — name, username, password, and the loan they are building
+against — which lands them on their own contract screen, honestly empty until
+they upload a BoQ. Those passwords are hashed with `hashlib.scrypt`; only the
+three above share one. Sign-up creates borrowers only: a credit officer's access
+to the whole book is never self-served.
+
+One shared password for the three, set by `NEEV_DEMO_PASSWORD`. Override it on a
+deployment if you would rather it were not the one printed in this repo:
 
     NEEV_DEMO_PASSWORD='say-it-out-loud' NEEV_DEPLOY_SANDBOX=1 bash scripts/deploy_cloudrun.sh
 

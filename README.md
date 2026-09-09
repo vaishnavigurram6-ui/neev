@@ -34,8 +34,8 @@ src/agents    →  the ADK pipeline, driven by the backend or by `adk web`
 
 - **`src/agents/neev_pipeline/`** — the pipeline above. `adk web` from
   `src/agents/` discovers `neev_pipeline.agent.root_agent`.
-- **`src/backend/`** — FastAPI + SQLAlchemy + SQLite. 22 API paths, 239 tests.
-- **`src/frontend/`** — Next.js App Router + Tailwind v4. 16 routes, role
+- **`src/backend/`** — FastAPI + SQLAlchemy + SQLite. 23 API paths, 264 tests.
+- **`src/frontend/`** — Next.js App Router + Tailwind v4. 17 routes, role
   enforcement in `proxy.ts`.
 
 ### Run it
@@ -44,15 +44,34 @@ src/agents    →  the ADK pipeline, driven by the backend or by `adk web`
 bash scripts/dev.sh          # both servers, seeded, fixture mode
 ```
 
-Prints the demo URLs. Sign in with a username and password — the demo accounts
-are listed in **`docs/Neev_Demo_Runbook.md`**, which is also what to say at each
-screen.
+Prints the demo URLs. **`docs/Neev_Demo_Runbook.md`** lists the three
+provisioned accounts and what to say at each screen.
+
+### Accounts
+
+Two mechanisms, deliberately not one:
+
+- **Provisioned** — two borrowers and a credit officer, sharing one password
+  from `NEEV_DEMO_PASSWORD`. A gate on a public demo URL, printed in the
+  runbook, never a secret.
+- **Self-created** — `/signup` opens a borrower account with its own loan, and
+  the password is hashed with `hashlib.scrypt` (`app/services/passwords.py`).
+
+Sign-up creates **borrowers only**. A credit officer's access to the whole book
+is never self-served, and there is no `role` field in the request — which is
+what keeps the role in the `users` table a lookup key rather than a privilege a
+caller can ask for. Usernames are unique per role, so a borrower and an officer
+may both be called `ravi` the day officers can be created too.
+
+A brand-new loan has no tranches and no revisions. `/api/loans/{id}` answers 200
+for it and `/boq/latest` answers 404, which the screens render as "nothing
+checked yet" — so the core loop works from an empty account.
 
 ### Test it
 
 ```bash
 python3 -m tests.test_offline                             # 60, no venv, no network
-cd src/backend && .venv/bin/python -m pytest tests/ -q    # 239
+cd src/backend && .venv/bin/python -m pytest tests/ -q    # 264
 cd src/frontend && npm run verify                         # typecheck, lint, no-raw-hex, build, 13 tests
 ```
 
@@ -89,6 +108,12 @@ changes where the object comes from and nothing else.
 Loan 1001 is the golden HOLD case; 1002 is clean. The other eight came out of
 the same live pipeline over synthetic BoQs, and two of them reached ESCALATE on
 their own.
+
+### A note on vocabulary
+
+The screens say **disbursement**, not "draw". Draw is what construction lending
+calls it, and `fixtures/draw_schedule.csv` and the `draw_schedule` form field
+keep the name, but no visitor reads either.
 
 ## Layout
 

@@ -36,6 +36,7 @@ export type SanctionBarView = { "label": string; "value": number; "pct_of_max": 
 export type SanctionCheckView = { "loan_id": string; "provenance": { [key: string]: string; }; "bars": Array<SanctionBarView>; "shortfall": number; "sections": Array<SanctionSectionView>; "options": Array<SanctionOptionView>; };
 export type SanctionOptionView = { "title": string; "saves_label": string; "desc": string; };
 export type SanctionSectionView = { "name": string; "quoted": (number | null); "quoted_note": (string | null); "market": (number | null); "delta": number; "tone": "danger" | "warn" | "success" | "neutral"; };
+export type SignupRequest = { "name": string; "username": string; "password": string; "locality": string; "sanctioned": number; "built_up_sqft"?: (number | null); };
 export type StageView = { "name": string; "sub": string; "state": "done" | "current" | "todo"; };
 export type StandingRowView = { "label": string; "value": (number | string); "value_kind": "money" | "money_compact" | "count" | "pct" | "ratio" | "text"; "tone": "danger" | "warn" | "success" | "neutral"; };
 export type StatCardView = { "label": string; "value": (number | string); "value_kind": "money" | "money_compact" | "count" | "pct" | "ratio" | "text"; "sub": string; "tone": "danger" | "warn" | "success" | "neutral"; };
