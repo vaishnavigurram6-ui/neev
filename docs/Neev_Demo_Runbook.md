@@ -1,6 +1,7 @@
 # Neev — demo runbook
 
-*Written 2026-08-28. Everything here runs in fixture mode: no Gemini, no BigQuery,
+*Written 2026-08-28, updated 2026-09-09 when the dry run was lifted and live mode
+was first executed. The four beats below run in fixture mode: no Gemini, no BigQuery,
 no billed Google call. There is no `google` package in the backend venv at all,
 so nothing can bill even by accident.*
 
@@ -153,12 +154,33 @@ results are the fixtures the app serves. Also real: the five-agent ADK pipeline,
 the risk arithmetic and its thresholds, the whole web application, role
 enforcement, and the audit trail a decision writes.
 
-**Staged.** The pipeline is not driving the screens *live*. The app replays a
-recorded run rather than analysing on upload, so **whatever PDF you upload, you
-will see loan 1001's recorded analysis.** Say so rather than letting a judge
-discover it. Wiring live analysis to the upload path needs an artefact store and
-the ADK in the backend image; the seam is built and `get_runner()` is the only
-place that would change.
+**Live, if the key allows it.** `NEEV_MODE=live` drives the real five-agent ADK
+pipeline on whatever is uploaded. It is built and it has been run: on
+2026-09-09, `fixtures/sample_boq.pdf` through the live runner produced 40 line
+items, 27 flags, a ₹28,47,930 total and a ₹32,35,794 cost estimate with zero
+parse errors, in 107 seconds.
+
+Two things to know before demoing it:
+
+*The quota is the constraint, not the code.* The Gemini API free tier allows
+**20 `generateContent` requests per day per model**
+(`GenerateRequestsPerDayPerProjectPerModel-FreeTier`). One analysis is five
+agents plus tool round-trips, so the free tier is worth roughly **two analyses a
+day, per model** — and the limit is per model, so switching
+`NEEV_GEMINI_MODEL` buys another twenty. That is not a demo strategy. Enable
+billing for the Gemini API before demoing live, or demo in fixture mode.
+
+*It takes 107 seconds.* The last three agents all fire after the final tool
+call, so the Analyzing screen sits on "Reviewing the payment schedule" for the
+best part of ninety seconds. The stream writes a heartbeat every 15s to keep the
+connection open, but the progress bar genuinely does not move. Narrate it, or
+demo fixture mode, where the same five phases play in about eight seconds.
+
+**Fixture mode**, the default, replays a recorded run instead: **whatever PDF you
+upload, you see loan 1001's recorded analysis.** Say so rather than letting a
+judge discover it. It costs nothing, has no quota, and the BoQ screen labels
+itself "Demo replay" so the claim is on the page rather than only in your
+narration.
 
 **Not built.** Real OTP, translation, text-to-speech, marked-up PDF export,
 WhatsApp sending. Each renders as a disabled control that says why, rather than

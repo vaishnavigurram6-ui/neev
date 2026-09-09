@@ -107,3 +107,42 @@ def test_legacy_migration_is_repeatable_and_preserves_questions():
             "Keep original question", 1)
         assert connection.execute(text("SELECT COUNT(*) FROM boq_revisions")).scalar() == 2
     engine.dispose()
+
+async def test_a_quiet_stream_writes_a_heartbeat():
+    """A live run goes quiet for a long time, and a silent socket gets closed.
+
+    The last three agents all fire after the final tool call — 93 seconds of
+    silence on a measured run — so the stream writes an SSE comment rather than
+    nothing. Fixture mode never pauses this long, which is why nothing needed
+    it until the pipeline ran for real.
+    """
+    import asyncio
+
+    from app.schemas.events import DoneEvent, PhaseEvent
+    from app.services.jobs import Job, registry
+
+    job = Job(id="heartbeat-test", loan_id="1001", status="running")
+    registry._jobs[job.id] = job
+    try:
+        seen: list[object] = []
+        heartbeats = 0
+
+        async def read():
+            nonlocal heartbeats
+            async for event in registry.stream(job.id, heartbeat_s=0.02):
+                if event is None:
+                    heartbeats += 1
+                    # Enough to prove the socket is being written to.
+                    if heartbeats == 3:
+                        job.publish(DoneEvent(redirect="/owner/loans/1001/boq"))
+                    continue
+                seen.append(event)
+
+        job.publish(PhaseEvent(index=0, status="running", name="Reading the document"))
+        await asyncio.wait_for(read(), timeout=5)
+
+        assert heartbeats >= 3, "a quiet stream must keep writing"
+        # And the heartbeats never displace real events, terminal one included.
+        assert [type(e).__name__ for e in seen] == ["PhaseEvent", "DoneEvent"]
+    finally:
+        registry._jobs.pop(job.id, None)

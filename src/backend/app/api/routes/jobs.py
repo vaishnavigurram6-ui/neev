@@ -18,6 +18,13 @@ from app.services.jobs import registry
 
 router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 
+# How long the stream may stay silent before it writes a comment. A live run's
+# last three agents fire after the final tool call — 93 seconds of silence on a
+# measured run — and Cloud Run, browsers and any proxy in between are all
+# entitled to close an idle connection. Fixture mode never goes quiet this long,
+# which is why this was not needed until the pipeline ran for real.
+HEARTBEAT_S = 15.0
+
 SSE_HEADERS = {
     "Cache-Control": "no-cache",
     # Nginx buffers proxied responses by default, which would hold every event
@@ -59,7 +66,12 @@ async def job_events(job_id: str, user: CurrentUser) -> StreamingResponse:
 
     async def generate() -> AsyncIterator[str]:
         try:
-            async for event in registry.stream(job_id):
+            async for event in registry.stream(job_id, heartbeat_s=HEARTBEAT_S):
+                if event is None:
+                    # An SSE comment. EventSource ignores it, so no client
+                    # knows or cares — it exists to put a byte on the wire.
+                    yield ": keep-alive\n\n"
+                    continue
                 yield f"data: {event.model_dump_json()}\n\n"
         except KeyError:
             # Unknown job. Send the reader somewhere real and close.

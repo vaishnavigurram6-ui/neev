@@ -61,6 +61,7 @@ def assert_billed_calls_permitted(settings: Settings | None = None) -> None:
     settings = settings or get_settings()
     if not settings.neev_allow_billed_calls:
         raise BilledCallsNotPermitted(
-            "Live mode requires NEEV_ALLOW_BILLED_CALLS=1. It is deliberately "
-            "unset: this build must consume no Google credits. See CLAUDE.md."
+            "Live mode requires NEEV_ALLOW_BILLED_CALLS=1. Setting NEEV_MODE=live "
+            "alone is not enough, on purpose: it is what stops a stray mode in a "
+            "shell from spending credit. See CLAUDE.md."
         )

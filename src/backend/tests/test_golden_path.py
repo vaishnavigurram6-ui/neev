@@ -6,8 +6,12 @@ than trusting it -- there is no `google` namespace in this venv at all, so no
 billed call is reachable from here.
 """
 
-import importlib.util
+import ast
 import json
+import os
+import subprocess
+import sys
+from pathlib import Path
 
 def captured(loan_id: str = "1001"):
     """The captured run's own figures, read rather than transcribed.
@@ -28,19 +32,67 @@ from app.db import models
 from app.db.session import SessionLocal
 
 
-def test_the_backend_cannot_make_a_billed_call():
-    """The strongest available proof, and the reason it is first.
+# Modules whose mere import means a billed path is loaded.
+BILLED_ROOTS = ("google", "neev_pipeline")
 
-    The backend declares no Google dependency, so the libraries that would talk
-    to Gemini or BigQuery are not installed. This is not a policy check that
-    could be forgotten -- it is an absence.
+
+def test_no_google_import_at_module_scope():
+    """Fixture mode must not be able to reach a billed library, and this is now
+    the check that proves it.
+
+    It used to be an absence: the backend declared no Google dependency, so the
+    libraries were simply not installed. That stopped being true when the dry
+    run was lifted and the live runner needed `google-adk` in the same venv --
+    see CLAUDE.md. The property survives as structure instead: every ADK import
+    in `live_runner.py` sits inside the method body, so nothing loads until
+    somebody in live mode actually calls it.
+
+    An AST scan rather than a grep, because a `# noqa`-tagged import inside a
+    string or a comment is not an import and should not fail this.
     """
-    for module in ("google", "google.adk", "google.genai", "google.cloud.bigquery"):
-        try:
-            found = importlib.util.find_spec(module) is not None
-        except ModuleNotFoundError:
-            found = False
-        assert not found, f"{module} is importable in the backend venv"
+    app_root = Path(__file__).resolve().parents[1] / "app"
+    offenders: list[str] = []
+    for path in sorted(app_root.rglob("*.py")):
+        tree = ast.parse(path.read_text(), filename=str(path))
+        # Module scope only: `tree.body`, not `ast.walk`. An import nested in a
+        # function is exactly the pattern this test is protecting.
+        for node in tree.body:
+            names: list[str] = []
+            if isinstance(node, ast.Import):
+                names = [alias.name for alias in node.names]
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                names = [node.module]
+            for name in names:
+                if name.split(".")[0] in BILLED_ROOTS:
+                    offenders.append(f"{path.relative_to(app_root)}:{node.lineno} imports {name}")
+    assert not offenders, "module-scope billed imports:\n  " + "\n  ".join(offenders)
+
+
+def test_serving_the_whole_app_loads_no_billed_library():
+    """The runtime half of the check above, and the stronger of the two.
+
+    Importing every router, mapper and service the app serves from must not pull
+    ADK, the Gemini client or the BigQuery client into `sys.modules`. A
+    subprocess because this test suite's own conftest imports rather a lot, and
+    a library another test loaded first would make this pass for the wrong
+    reason.
+    """
+    probe = (
+        "import sys, app.main;"
+        "app.main.create_app();"
+        "loaded = sorted(m for m in sys.modules if m.split('.')[0] in "
+        f"{BILLED_ROOTS!r});"
+        "print('|'.join(loaded))"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", probe],
+        capture_output=True,
+        text=True,
+        cwd=Path(__file__).resolve().parents[1],
+        env={**os.environ, "NEEV_MODE": "fixture"},
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "", f"fixture mode loaded: {result.stdout.strip()}"
 
 
 def test_fixture_mode_is_what_you_get_without_asking():

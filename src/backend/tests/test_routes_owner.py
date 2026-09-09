@@ -399,11 +399,13 @@ def test_a_crashed_run_emits_an_error_event_before_done(client, monkeypatch):
 
     events = _sse_events(client, job_id)
     assert [event["type"] for event in events] == ["error", "done"]
-    assert "RuntimeError" in events[0]["message"]
+    # The stream carries copy for the reader, never the exception's own name.
+    assert "RuntimeError" not in events[0]["message"]
+    assert events[0]["message"].endswith("please try again.")
 
     status = client.get(f"/api/jobs/{job_id}").json()
     assert status["status"] == "error"
-    assert "RuntimeError" in status["error"]
+    assert "RuntimeError" not in status["error"]
 
 
 def test_job_status_for_an_unknown_job_is_404(client):

@@ -99,18 +99,38 @@ That change is already made — see *Code changes* below.
 **Credits are not your constraint.** The scarce resources are your two deploys
 and the demo's wall clock.
 
-### The one line that would have cost ₹2,530
+### The ₹2,530 line, corrected to ₹740 — and put back
 
-`deploy_cloudrun.sh` previously passed `--min-instances 1`, which bills roughly
-1.2M vCPU-seconds over a fortnight against a 180k free tier — about **₹2,530 to
-answer nobody at 3am**. Now `0`.
+**This section had the arithmetic wrong.** It priced a warm instance at Cloud
+Run's *active* CPU rate. Cloud Run bills an idle min-instance at a different
+SKU, and the Cloud Billing catalog for `asia-south1` (read 2026-09-09) gives:
 
-The trade: a 3–6 second cold start, because the entrypoint reseeds SQLite on
-boot. Hit the URL once before presenting and no viewer sees it. And a decision a
-judge records is lost when the instance recycles after 15 idle minutes — for a
-demo that is arguably correct, since every visitor gets clean state.
-`--max-instances 1` stays, because that one *is* a correctness requirement:
-SQLite on an instance's own disk cannot survive a second instance.
+| SKU | ₹ per unit |
+|---|---|
+| Services CPU (request-based, active) | 0.00229308 / vCPU-s |
+| **Services Min Instance CPU** | **0.000238862 / vCPU-s** |
+| **Services Min Instance Memory** | **0.000238862 / GiB-s** |
+
+Idle CPU is **9.6× cheaper** than active. Fourteen days of one warm instance is
+1,209,600 seconds, so with the 180k vCPU-s / 360k GiB-s monthly free tier
+applied:
+
+- 1 vCPU + 1 GiB → ₹246 + ₹203 = **₹449**
+- 1 vCPU + 2 GiB → ₹246 + ₹492 = **₹738**
+
+Not ₹2,530. `--min-instances 1` is back on the backend at 2 GiB, because the
+image now carries the ADK pipeline: a cold start pays that import plus a reseed,
+which is 15–30 seconds of blank screen rather than the old 3–6. ₹740 is a
+better trade than a judge watching a spinner.
+
+The frontend stays at `--min-instances 0`. A Next standalone server boots in a
+second or two, nobody notices, and warming it would double the bill for nothing.
+
+`--max-instances 1` stays on the backend, and that one *is* a correctness
+requirement rather than a cost one: SQLite lives on the instance's own disk, so
+two instances would serve two different databases. A decision or an upload is
+still lost when the instance recycles — for a demo that is arguably right, since
+every visitor gets clean state.
 
 ---
 

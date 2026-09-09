@@ -8,7 +8,64 @@ import os
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "buildguard-ai-2026")
 BQ_DATASET = "buildguard_data"
 LOCATION = "asia-south1"
-GEMINI_MODEL = "gemini-3.6-flash"
+# Overridable without a code change: a flash model can return 503 "experiencing
+# high demand" on a heavy request (a PDF plus five tool declarations) while
+# answering a trivial one fine, and a demo cannot wait for capacity to come
+# back. Set NEEV_GEMINI_MODEL to move the whole pipeline to another model.
+# Default is the model this pipeline has actually been run on end to end
+# (2026-09-09: 40 line items, 27 flags, no parse errors, 107s). gemini-3.6-flash
+# 503'd the BoQ request twice before retry existed and has not been proven on a
+# full run since.
+GEMINI_MODEL = os.environ.get("NEEV_GEMINI_MODEL", "gemini-3.7-flash")
+
+# How many times a single model call may be retried, and on what.
+#
+# This pipeline is five agents in sequence, so one run is five-plus model calls
+# and ANY of them returning 503 kills the whole analysis — the failure rate
+# compounds rather than averages. Measured on 2026-09-09: the same flash model
+# answered a one-word prompt in 4.9s while 503-ing the BoQ request twice in a
+# row, so this is capacity pressure on heavy requests, not an outage, and the
+# right answer is to wait and ask again.
+#
+# 503 and 429 are the retryable ones; 500 and 502 are worth one look too. A 4xx
+# that is not 429 is our own bad request and retrying it just spends money
+# twice.
+GEMINI_RETRY_ATTEMPTS = int(os.environ.get("NEEV_GEMINI_RETRY_ATTEMPTS", "6"))
+GEMINI_RETRY_STATUS_CODES = [429, 500, 502, 503, 504]
+
+
+def gemini_model():
+    """The model every agent in the pipeline runs on, with retry attached.
+
+    An ADK `Gemini` instance rather than a bare model-name string: the string
+    form gets ADK's defaults, which do not retry, and a 503 on any one of the
+    five agents then surfaces as a failed analysis to somebody who uploaded a
+    contract and is watching a progress bar.
+
+    Imported lazily by `agent.py` at module import, which is itself inside the
+    live runner's method body — nothing here loads in fixture mode.
+    """
+    from google.adk.models.google_llm import Gemini
+    from google.genai import types
+
+    return Gemini(
+        model=GEMINI_MODEL,
+        retry_options=types.HttpRetryOptions(
+            attempts=GEMINI_RETRY_ATTEMPTS,
+            # Exponential with jitter: a thundering retry into a busy model is
+            # how a 503 becomes a rate limit.
+            exp_base=2.0,
+            initial_delay=1.0,
+            # Long enough to ride out a 503 spike, deliberately not long enough
+            # to ride out a per-minute token limit: six attempts backing off to
+            # 45s could hold one agent for three minutes, and five agents of
+            # that is a screen nobody waits for. A rate limit is reported to the
+            # reader instead, with the one thing that fixes it — wait a minute.
+            max_delay=45.0,
+            jitter=1.0,
+            http_status_codes=GEMINI_RETRY_STATUS_CODES,
+        ),
+    )
 
 # BigQuery tables
 TBL_LOAN_HISTORY = f"{PROJECT_ID}.{BQ_DATASET}.loan_history"

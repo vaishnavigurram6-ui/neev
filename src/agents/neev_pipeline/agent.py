@@ -4,7 +4,7 @@
 
 from google.adk.agents import Agent, SequentialAgent
 
-from .config import GEMINI_MODEL
+from .config import gemini_model
 from .tools.boq_analyst_tool import (
     lookup_benchmark_rates,
     price_against_benchmarks,
@@ -17,9 +17,11 @@ from .tools.cost_estimation_tool import estimate_construction_cost
 from .tools.visual_inspector_tool import verify_construction_stage
 from .tools.disbursal_risk_tool import assess_tranche
 
+_MODEL = gemini_model()
+
 boq_analyst_agent = Agent(
     name="boq_analyst_agent",
-    model=GEMINI_MODEL,
+    model=_MODEL,
     instruction=(
         "You are a quantity surveyor working FOR the home owner. Read the attached "
         "Bill of Quantities (PDF/image/Excel) and:\n"
@@ -92,7 +94,7 @@ boq_analyst_agent = Agent(
 
 cost_estimation_agent = Agent(
     name="cost_estimation_agent",
-    model=GEMINI_MODEL,
+    model=_MODEL,
     instruction=(
         "Using {boq_findings} and the stated location and built-up area, call "
         "estimate_construction_cost to establish expected_total_cost and the "
@@ -119,7 +121,7 @@ cost_estimation_agent = Agent(
 
 visual_inspector_agent = Agent(
     name="visual_inspector_agent",
-    model=GEMINI_MODEL,
+    model=_MODEL,
     instruction=(
         "Verify the submitted site photos (2-3 angles) against the claimed "
         "construction stage using verify_construction_stage. Use the tool's "
@@ -136,7 +138,7 @@ visual_inspector_agent = Agent(
 
 disbursal_risk_agent = Agent(
     name="disbursal_risk_agent",
-    model=GEMINI_MODEL,
+    model=_MODEL,
     instruction=(
         "Call assess_tranche exactly once, passing FLAT SCALAR values read from "
         "{cost_estimate}, {inspection_result}, and the loan context (sanctioned "
@@ -156,7 +158,7 @@ disbursal_risk_agent = Agent(
 
 explainer_agent = Agent(
     name="explainer_agent",
-    model=GEMINI_MODEL,
+    model=_MODEL,
     instruction=(
         "Write two rationales from {boq_findings}, {cost_estimate}, "
         "{inspection_result}, {risk_assessment}:\n"

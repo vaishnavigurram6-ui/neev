@@ -1,55 +1,48 @@
 # Neev — working agreements
 
-## 🚫 DRY RUN: no billed Google API calls (PARTIALLY LIFTED)
+## ✅ DRY RUN: LIFTED
 
-**Status: PARTIALLY LIFTED 2026-09-07 by the repo owner.**
+**Status: LIFTED 2026-09-09 by the repo owner**, in their words: "we can spend
+the credits now, its fine, so remove the guardrails and prepare it to go to
+live and we have to use agents as well."
 
-The owner lifted this for *free* operations only, in their words: "run all the
-tests/commands that are free without my approval… deploy command needs my
-approval." Gemini was not mentioned, and Gemini is the part that costs money per
-call — so it stays gated. Read the table as the whole rule:
+Gemini completions and vision, the ADK pipeline, and `gcloud run deploy` are all
+permitted now. `GOOGLE_API_KEY` is restored in `.env` (the value came from
+`.env.disabled-backup`, which stays git-ignored).
+
+What that changes, and what it does not:
 
 | Operation | Status |
 |---|---|
-| BigQuery reads and `bq load` on this project's own tables | **Permitted, no approval.** They are kilobytes, inside the 1 TB/month free tier, and a load is free outright. |
-| `gcloud` metadata and read-only commands | **Permitted, no approval.** |
-| Scripts fenced against Gemini — `verify_against_bigquery.py`, `synthetic_boqs.py` | **Permitted, no approval.** Each replaces `google.genai.Client` so a model call raises rather than bills. |
-| **Gemini completions and vision** | **STILL GATED.** Every call spends credit. Needs the owner's explicit go-ahead for the specific task, and `NEEV_ALLOW_BILLED_CALLS=1`. |
-| `record_golden_run.py`, `golden_run.py`, `adk web` | **STILL GATED** — all three drive Gemini. |
-| **`gcloud run deploy`** | **GATED, always.** The owner approves each one. Only **two** free deploys exist for this hackathon; a third costs money. See `docs/Neev_Two_Week_Plan.md`. |
-
-The original prohibition, for reference: no Gemini completions, no Gemini vision
-calls, and no BigQuery queries — not in the app, not in tests, not in a "quick
-check", and not to record a fixture.
-
-`GOOGLE_API_KEY` in `.env` is deliberately commented out (`#[DRY-RUN DISABLED …]`).
-The original value is kept locally in `.env.disabled-backup`, which is git-ignored.
+| Gemini completions and vision, `adk web`, `scripts/golden_run.py`, `record_golden_run.py` | **Permitted.** Each full pipeline run costs about ₹3.81 — see `docs/Neev_Two_Week_Plan.md`. Say what a run will cost before making it, and do not run the pipeline in a loop without asking. |
+| **A pipeline run while the key is on the free tier** | **Budget it like a scarce resource, because it is.** The free tier allows 20 `generateContent` requests per day *per model*, and one analysis is five agents plus tool round-trips — roughly **two analyses a day**. Spending them on a debugging loop leaves none for a demo. Check `https://ai.dev/rate-limit` before running, and prefer `--from-raw` replay (free) for anything that is not specifically testing the live path. |
+| BigQuery reads and `bq load` on this project's own tables | **Permitted.** Kilobytes, inside the free tier. |
+| `gcloud` read-only and metadata commands | **Permitted.** |
+| **`gcloud run deploy`** | **STILL GATED. The owner approves every one.** Two free deploys existed for this hackathon and `scripts/deploy_cloudrun.sh` spends both in a single invocation (backend, then frontend). A third costs money. Never run it unasked. |
+| Anything that deletes or rewrites cloud state — `bq rm`, dropping a dataset, deleting a service | **GATED.** Ask first. Reversibility is the test, not cost. |
 
 ### Rules
 
-1. **Do not uncomment, restore, export, or otherwise reinstate `GOOGLE_API_KEY`.**
-   Not to debug, not to verify, not "just once". Only the owner re-enables it.
-   Still true: the key only buys Gemini, which is still gated.
-2. **Never run** `adk web` or `scripts/golden_run.py` without the owner saying so
-   for that specific task — both drive the full billed pipeline.
-   `scripts/load_bigquery.sh` and plain `bq` commands are now permitted: loads are
-   free and these tables are kilobytes. `gcloud run deploy` needs approval every
-   time.
-3. **The backend runs in `NEEV_MODE=fixture`** — the default. Live mode also
-   requires `NEEV_ALLOW_BILLED_CALLS=1`, which must never be set while this
-   section is ACTIVE.
-4. **Tests must not reach the network.** Follow the pattern in
-   `tests/test_offline.py`, which stubs the Google libraries in `sys.modules` and
-   runs with no credentials at all.
-5. Live-mode code may still be **written and type-checked** — it just is never
-   **executed**. It ships unexercised by design; the owner validates it in Cloud
-   Shell once credits are approved.
-
-### To lift the dry run (owner only)
-
-Uncomment the key in `.env` (or restore `.env.disabled-backup`), then change this
-section's status to LIFTED with the date. Until that edit exists in this file,
-assume it is ACTIVE.
+1. **`NEEV_MODE=live` needs `NEEV_ALLOW_BILLED_CALLS=1`** and a key in the
+   environment. That belt-and-braces check stays: it is what stops a stray
+   `NEEV_MODE=live` in a shell from billing, and `get_runner` is still the only
+   place that reads the mode.
+2. **Tests must never reach the network**, unchanged and non-negotiable. Follow
+   `tests/test_offline.py`, which stubs the Google libraries in `sys.modules`
+   and runs with no credentials. A test that bills is a test that bills on every
+   CI run, forever. The socket-blocking fixture in
+   `src/backend/tests/conftest.py` is autouse for the same reason.
+3. **The API key never enters git.** It lives in `.env` (git-ignored) locally
+   and in Secret Manager for a deployment — never in `--set-env-vars`, where it
+   would sit in the service's config and in `gcloud` output.
+4. **Live mode is exercised now, not shipped unexercised.** The path in
+   `app/services/live_runner.py` was written and type-checked but never run
+   under the dry run; it has been run since this section was lifted. If you
+   change it, run it.
+5. The backend venv and image now carry `google-adk`, `google-genai` and
+   `neev-pipeline`, because the live runner imports them at call time. Fixture
+   mode still touches none of them: the imports are inside the method body, and
+   `test_no_google_import_at_module_scope` keeps them there.
 
 ---
 

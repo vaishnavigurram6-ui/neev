@@ -87,6 +87,26 @@ def _install_stubs():
     adk_agents.Agent = _StubAgent
     adk_agents.SequentialAgent = _StubAgent
 
+    # The pipeline builds its model as an ADK `Gemini` instance rather than a
+    # bare model-name string, so every agent inherits one retry policy -- five
+    # agents in sequence means five chances for a 503 to end an analysis. That
+    # pulls two more names into the surface this stub has to cover.
+    adk_models = _module("google.adk.models")
+    adk_google_llm = _module("google.adk.models.google_llm")
+    adk.models = adk_models
+    adk_models.google_llm = adk_google_llm
+
+    class _StubGemini:
+        def __init__(self, **kwargs):
+            self.__dict__.update(kwargs)
+
+    class _StubRetryOptions:
+        def __init__(self, **kwargs):
+            self.__dict__.update(kwargs)
+
+    adk_google_llm.Gemini = _StubGemini
+    genai_types.HttpRetryOptions = _StubRetryOptions
+
 
 _install_stubs()
 

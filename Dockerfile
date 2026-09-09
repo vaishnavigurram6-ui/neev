@@ -28,13 +28,23 @@ RUN pip install --no-cache-dir \
       "pydantic-settings>=2.6" "sqlalchemy>=2.0" "python-multipart>=0.0.12" \
       "pillow>=11.0"
 
+# The agents. NEEV_MODE=live drives the five-agent ADK pipeline, and
+# app/services/live_runner.py imports `neev_pipeline`, `google.adk` and
+# `google.genai` inside its method body — so the image needs them even though
+# nothing loads them until a live run starts.
+#
+# Its own layer, and before app/: this is the heaviest install in the image and
+# it changes far less often than the backend's own code.
+COPY src/agents ./agents
+RUN pip install --no-cache-dir ./agents
+
 COPY src/backend/app ./app
 # The seed's other input, read via the repo-root path described above.
 COPY fixtures /app/fixtures
 
-# Fixture mode is the default, and NEEV_ALLOW_BILLED_CALLS is deliberately
-# absent: an image that reached live mode by accident would spend credits. Set
-# both explicitly at deploy time if and when live analysis is wanted.
+# Fixture mode is still the image's default, and NEEV_ALLOW_BILLED_CALLS is
+# still deliberately absent — an image that reached live mode by accident would
+# spend credits. `deploy_cloudrun.sh` sets both, plus the key, at deploy time.
 ENV NEEV_MODE=fixture \
     PORT=8080
 

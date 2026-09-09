@@ -139,7 +139,12 @@ async def test_a_failing_run_still_terminates_the_stream(monkeypatch):
     events = [event async for event in registry.stream(job.id)]
     assert isinstance(events[-1], DoneEvent)
     assert job.status == "error"
-    assert "RuntimeError" in (job.error or "")
+    # A reader-facing sentence, and deliberately NOT the exception class:
+    # "Analysis could not be saved (_ResourceExhaustedError)" told a borrower a
+    # save had failed when a rate limit had stopped the analysis. The class name
+    # goes to the log instead -- see _reader_facing.
+    assert job.error and "RuntimeError" not in job.error
+    assert job.error.endswith("please try again.")
 
 
 def test_each_runner_declares_the_provenance_its_runs_are_filed_under():
@@ -169,3 +174,28 @@ def test_no_service_but_the_runner_factory_reads_the_mode():
         if "neev_mode" in path.read_text(encoding="utf-8")
     )
     assert readers == ["runner.py"]
+
+
+def test_a_rate_limit_says_the_one_thing_that_fixes_it():
+    """The Gemini API's binding limit is input tokens per minute per model, so a
+    429 mid-analysis clears by itself. Telling a borrower to wait a minute is
+    both true and actionable; telling them a save failed is neither."""
+    from app.services.jobs import _GENERIC_FAILURE, _reader_facing
+
+    class _ResourceExhaustedError(Exception):
+        """Same name as ADK's, which is what _reader_facing matches on."""
+
+    class ServerError(Exception):
+        pass
+
+    class Subclass(_ResourceExhaustedError):
+        """A wrapper class still gets its parent's message, via the MRO."""
+
+    assert "Wait a minute" in _reader_facing(_ResourceExhaustedError())
+    assert "Wait a minute" in _reader_facing(Subclass())
+    assert "busy right now" in _reader_facing(ServerError())
+    assert _reader_facing(ValueError("some internal detail")) == _GENERIC_FAILURE
+    # And nothing internal leaks through any of them.
+    for exc in (_ResourceExhaustedError(), ServerError(), ValueError("secret")):
+        assert type(exc).__name__ not in _reader_facing(exc)
+        assert "secret" not in _reader_facing(exc)

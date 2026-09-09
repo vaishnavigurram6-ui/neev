@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "neev-backend"
 version = "0.1.0"
-description = "Neev application backend. Serves pipeline-shaped fixture data; deliberately carries no ADK dependency."
+description = "Neev application backend. Serves the ADK pipeline live, or replays a recorded run in fixture mode."
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115",
@@ -19,6 +19,11 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.3", "pytest-asyncio>=0.24", "httpx>=0.27"]
+# What NEEV_MODE=live needs. An extra rather than a hard dependency: fixture
+# mode imports none of it -- every ADK import in app/services/live_runner.py is
+# inside the method body -- so a deployment that only replays recorded runs can
+# still install the backend without pulling ADK and its transitive tree.
+live = ["neev-pipeline"]
 
 [tool.setuptools.packages.find]
 include = ["app*"]
