@@ -21,10 +21,21 @@ from sqlalchemy import delete, select
 from app.db import models
 from app.db.session import SessionLocal, init_db
 from app.fixtures.loader import available_loan_ids, load_pipeline_output
+from app.services.artifacts import store_artifact
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 DRAW_SCHEDULE = REPO_ROOT / "fixtures" / "draw_schedule.csv"
 PORTFOLIO_ROWS = Path(__file__).resolve().parents[1] / "fixtures" / "portfolio_rows.json"
+
+# The golden case's own site photographs, in the order the inspection notes
+# describe them: the wide shot from the road first, then the same frame with
+# curing water going on. See fixtures/site_photos/README.md.
+SITE_PHOTOS = REPO_ROOT / "fixtures" / "site_photos"
+SITE_PHOTO_ORDER = (
+    "roof_slab_shuttering_wide.jpg",
+    "roof_slab_curing.jpg",
+    "footings_and_ground_floor_slab.jpg",
+)
 
 CONTRACTORS = [
     # From Neev 5 Contractor Scorecard.dc.html. Loan 1001's contractor is named
@@ -290,12 +301,18 @@ def _seed_pipeline_output(db, loan_id: str) -> None:
             if inspection is not None:
                 current.confidence = inspection.confidence
                 current.needs_human_review = inspection.needs_human_review
+                frames = _site_photos()
                 for index, note in enumerate(inspection.evidence_notes[:3]):
                     db.add(
                         models.Photo(
                             tranche_id=current.id,
                             slot_key=f"{loan_id}-t{risk_tranche_no}-angle{index + 1}",
                             caption=note,
+                            # The frame the note was written about. Without it
+                            # the evidence grid on the officer's decision card
+                            # had a caption and nothing to look at, which is
+                            # not evidence -- it is a claim about evidence.
+                            stored_path=frames[index] if index < len(frames) else None,
                             geotag_match=inspection.geotag_match,
                             timestamp_ok=inspection.timestamp_ok,
                             same_angle=inspection.same_angle,
@@ -355,6 +372,29 @@ def _seed_derived_risk(db, rows: list[dict]) -> None:
         if gap is not None:
             target.cost_to_complete_gap = int(gap)
             target.cost_to_complete = int(round((loan.sanctioned - disbursed) - gap))
+
+
+def _site_photos() -> list[str]:
+    """Artifact references for the seeded evidence frames, in reading order.
+
+    Copied into ARTIFACT_DIR rather than referenced where they lie: every other
+    photograph in the system is an artifact reference, and `read_artifact`
+    refuses a path outside that directory -- correctly, since it is what stops a
+    crafted `stored_path` from reading anything else on the disk. A seed that
+    wrote paths the reader must reject would be seeding rows that 404.
+
+    Missing files are not an error. `demo_assets/` is git-ignored and a checkout
+    without the photographs must still seed: the rows are then note-only, which
+    is what they were before the photographs existed.
+    """
+    references: list[str] = []
+    for name in SITE_PHOTO_ORDER:
+        source = SITE_PHOTOS / name
+        try:
+            references.append(store_artifact(source.read_bytes()))
+        except OSError:
+            continue
+    return references
 
 
 def _seed_change_orders(db) -> None:

@@ -7,6 +7,7 @@ from PIL import Image
 from sqlalchemy import select
 
 from app.db import models
+from app.api.routes.loans import UPLOAD_SLOT_PREFIX
 from app.db.session import SessionLocal
 from app.schemas.events import DoneEvent, ErrorEvent
 from app.services.jobs import JobRegistry
@@ -47,7 +48,10 @@ def test_milestone_keeps_claim_separate_and_retains_bytes(signed_client):
         assert tranche.observed_stage == "slab"
         assert tranche.needs_human_review is True
         assert tranche.recommendation == "ESCALATE"
-        photo = next(p for p in tranche.photos if p.stored_path)
+        # The uploaded row, not the seeded one: the seed now gives its evidence
+        # rows real frames too, so "the first row with bytes" would pick the
+        # golden case's own photograph and pass without proving anything.
+        photo = next(p for p in tranche.photos if UPLOAD_SLOT_PREFIX in p.slot_key)
         assert Path(photo.stored_path).read_bytes() == image_bytes()
 
 

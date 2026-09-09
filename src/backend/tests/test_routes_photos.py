@@ -82,23 +82,34 @@ def test_anonymous_readers_get_nothing(client):
 
 
 def test_a_row_with_no_stored_bytes_is_a_404_not_a_broken_image(client):
-    """The seeded inspection notes are rows without files."""
+    """A row can record what the inspector read without holding the frame.
+
+    The seed gives the golden case's evidence rows real photographs, so this
+    builds the other kind: `stored_path` is nullable precisely because a
+    checkout without the demo photographs, or a live run that captured a
+    reading and not a file, still has to render.
+    """
     _as(client, OWNER_1001)
     with SessionLocal() as db:
-        photo = db.scalars(
-            select(models.Photo).where(models.Photo.stored_path.is_(None))
-        ).first()
-        assert photo is not None, "the seed should carry note-only photo rows"
-        note_only = photo.id
-    assert client.get(f"/api/loans/1001/photos/{note_only}").status_code == 404
+        tranche = next(t for t in db.get(models.Loan, "1001").tranches if t.number == 4)
+        note_only = models.Photo(
+            tranche_id=tranche.id,
+            slot_key="1001-t4-note",
+            caption="Read from the photograph, which was not retained.",
+        )
+        db.add(note_only)
+        db.commit()
+        photo_id = note_only.id
+
+    assert client.get(f"/api/loans/1001/photos/{photo_id}").status_code == 404
     # And the view says so rather than pointing a screen at a dead frame.
     photos = [
         p
         for phase in client.get("/api/loans/1001/progress").json()["phases"]
         for p in phase["photos"]
     ]
-    assert photos, "the golden case has photo rows"
-    assert any(p["src"] is None for p in photos)
+    assert any(p["src"] is None for p in photos), "a note-only row must carry no src"
+    assert any(p["src"] for p in photos), "and a seeded frame must carry one"
 
 
 def test_a_photo_whose_file_has_gone_is_a_404(client, tmp_path):

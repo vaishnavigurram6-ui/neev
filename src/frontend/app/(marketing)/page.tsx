@@ -15,7 +15,6 @@
 // load — so there are no loading / empty / error states to implement.
 import type { Metadata } from 'next';
 import HeroPhoto from '@/components/marketing/HeroPhoto';
-import JourneyStages from '@/components/marketing/JourneyStages';
 import MarketingHeader from '@/components/marketing/MarketingHeader';
 import Button from '@/components/ui/Button';
 
@@ -84,35 +83,42 @@ export default function LandingPage() {
               <span className="text-[13px] font-semibold text-faint">2 minutes · no sign-up</span>
             </div>
           </div>
-          <HeroPhoto placeholder="Family playing with their kid, new home behind" />
+          <HeroPhoto
+            placeholder="Family playing with their kid, new home behind"
+            src="/marketing/hero-family.jpg"
+            alt="A young family sitting on the floor of an empty room, the parents' hands meeting to make a roof over their daughter, under a house drawn on the wall behind them."
+          />
         </div>
 
+        {/* The page's one supporting statement, and the only thing under the
+            hero. It used to sit above a second numbered band — the four-stage
+            journey strip — which said the same thing from the product's side:
+            seven items, two sequences, one counting from 1 and the other from
+            0. The journey strip is on Login and Onboarding, so a visitor who
+            acts meets it on the very next screen; here it was the accessory to
+            take off. What stays answers the only question a visitor with a
+            contract in their hand is asking, which is what to do with it. */}
         <div className="border-t border-line">
           <ol
             aria-label="How Neev works, in three steps"
-            className="mx-auto grid max-w-[1060px] grid-cols-3 gap-8 px-10 py-7"
+            className="mx-auto grid max-w-[1060px] grid-cols-3 gap-10 px-10 py-11"
           >
             {STEPS.map((step) => (
-              <li key={step.n} className="flex items-baseline gap-3">
-                <span className="flex-none font-display text-[15px] font-bold text-action">
+              <li key={step.n} className="flex items-baseline gap-[14px]">
+                <span className="flex-none font-display text-[19px] font-bold text-action">
                   {step.n}
                 </span>
                 <div>
-                  <div className="text-[13.5px] font-bold text-ink">{step.title}</div>
-                  <div className="mt-[3px] text-[12.5px] leading-[1.55] text-sub">{step.desc}</div>
+                  <div className="text-[15px] font-bold leading-[1.35] text-ink">{step.title}</div>
+                  <div className="mt-[5px] max-w-[30ch] text-[13px] leading-[1.6] text-sub">
+                    {step.desc}
+                  </div>
                 </div>
               </li>
             ))}
           </ol>
         </div>
 
-        <div className="border-t border-line">
-          <JourneyStages
-            layout="grid"
-            label="What Neev checks, stage by stage"
-            className="mx-auto max-w-[1060px] px-10 py-7"
-          />
-        </div>
       </main>
 
       <footer className="px-10 pb-5 pt-4 text-center text-[11.5px] text-faint">

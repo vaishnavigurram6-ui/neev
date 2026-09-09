@@ -38,6 +38,7 @@ const COPY = {
     "More has been paid out than the structure is worth so far. Pausing now forces the re-scope while there's still money left to re-scope with.",
   pausedCta: 'See your options',
   paymentsTitle: 'Payments so far',
+  onFile: 'On file —',
   reportedLead: 'Your photos are with your bank.',
   reportedBody:
     'They are filed against this milestone and the draw is queued for verification. Your officer sees the same frames you sent — no need to send them again.',
@@ -124,11 +125,24 @@ export default async function BuildProgressPage({
   // the bank's audit trail cannot disagree. Fetched defensively -- a history
   // section is worth having, but not at the cost of the whole page.
   let phases: BuildProgressView['phases'] = [];
+  let lastVerified: string | null = null;
   try {
-    phases = (await apiGet<BuildProgressView>(`/api/loans/${loanId}/progress`)).phases;
+    const progress = await apiGet<BuildProgressView>(`/api/loans/${loanId}/progress`);
+    phases = progress.phases;
+    lastVerified = progress.last_verified_on;
   } catch (cause) {
     if (!(cause instanceof ApiError)) throw cause;
   }
+
+  // The frames already on file, newest phase first, for the slots below. They
+  // come from the API rather than from a path in the bundle: a site photograph
+  // is somebody's house being built, and `/api/loans/{id}/photos/{n}`
+  // authorizes per loan where a file under public/ would be readable by anyone
+  // who guessed its name.
+  const onFile = [...phases]
+    .reverse()
+    .flatMap((phase) => phase.photos)
+    .filter((photo) => photo.src);
 
   const reported = justReported ? (
     <CalloutBanner tone="success" lead={COPY.reportedLead} body={COPY.reportedBody} />
@@ -209,13 +223,23 @@ export default async function BuildProgressPage({
             footer={COPY.photosNote}
           >
             <div className="grid grid-cols-3 gap-[10px]">
-              {loan.photoSlots.map((slot) => (
+              {loan.photoSlots.map((slot, index) => (
                 <PhotoSlot
                   key={slot.slotKey}
                   slotKey={slot.slotKey}
                   label={slot.label}
                   guidance={slot.guidance}
-                  recorded={slot.recorded}
+                  recorded={
+                    onFile[index]?.src
+                      ? {
+                          src: onFile[index].src as string,
+                          taken: lastVerified
+                            ? `${COPY.onFile} ${formatDay(lastVerified)}`
+                            : COPY.onFile,
+                          alt: onFile[index].caption ?? slot.label,
+                        }
+                      : undefined
+                  }
                 />
               ))}
             </div>

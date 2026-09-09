@@ -97,6 +97,11 @@ export default function PhotoSlot({
             alt={recorded.alt ?? `${label} — the photo on file`}
             width={MAX_EDGE}
             height={(MAX_EDGE * 3) / 4}
+            // The frame comes from `/api/loans/{id}/photos/{n}`, which
+            // authorizes per session: an optimiser hop would need the same
+            // cookie, and a borrower's site photograph has no business in a
+            // shared image cache.
+            unoptimized
             className="h-full w-full object-cover"
           />
         ) : (
