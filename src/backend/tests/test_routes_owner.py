@@ -7,6 +7,7 @@ reached the network would fail these tests instead of costing money.
 """
 
 import json
+from urllib.parse import unquote
 
 import pytest
 
@@ -55,7 +56,37 @@ def test_posting_a_session_sets_the_cookie_the_frontend_parses(client):
     raw = client.cookies["neev_session"]
     role, loan_id, name = raw.split(":")[:3]
     assert (role, loan_id) == ("owner", "1001")
-    assert name == "Ravi%20Kumar"
+    assert name == "UmF2aSBLdW1hcg"  # base64url("Ravi Kumar"), see the test below
+
+
+def test_the_cookie_survives_a_percent_decode(client):
+    """No "%" anywhere in the value, because Next.js decodes it one time too many.
+
+    `apiLogin` copies this cookie into Next's own jar with `cookies().set()`.
+    Next percent-encodes on write and percent-decodes on read, so a browser
+    round trip is lossless — but the render Next performs *in the same request*
+    after a server action's `redirect()` reads the value back through the
+    decoding path with no matching encode. A name held as "Ravi%20Kumar" came
+    back as "Ravi Kumar": a space, which terminates a Cookie header value and
+    is not the string the signature covers. Every first login therefore 401'd
+    on /api/me and the owner layout bounced the visitor to /login.
+
+    A value with no "%" in it is unchanged by that extra decode, which is why
+    the name is base64url rather than percent-encoded.
+    """
+    _login(client)
+    raw = client.cookies["neev_session"]
+    assert "%" not in raw
+    assert unquote(raw) == raw
+
+    # And the name still arrives intact — spaces, and non-ASCII too.
+    from app.api.deps import _parse_cookie, encode_cookie
+
+    for name in ("Ravi Kumar", "Ananya Raghunathan", "ರವಿ ಕುಮಾರ್", "A:B"):
+        cookie = encode_cookie("owner", "1001", name)
+        assert "%" not in cookie
+        parsed = _parse_cookie(cookie)
+        assert parsed is not None and parsed.name == name
 
 
 def test_me_is_401_without_a_session(client):

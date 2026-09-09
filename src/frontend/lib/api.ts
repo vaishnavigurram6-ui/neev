@@ -28,12 +28,29 @@ export class ApiError extends Error {
 // which the screens already render as an error state with a retry.
 const REQUEST_TIMEOUT_MS = 8000;
 
+/** The `cookie` header that carries this visitor's session to the backend, or
+ *  undefined when there is no session.
+ *
+ *  ALWAYS read the session through `cookies()`, NEVER by forwarding the raw
+ *  `cookie` header off an incoming request. Next percent-encodes cookie values
+ *  when it writes them, so the header a browser sends holds
+ *  `neev_session=owner%3A1001%3AUmF2aSBLdW1hcg%3A...` while the backend signs
+ *  and parses `owner:1001:UmF2aSBLdW1hcg:...`. `cookies()` decodes on read; a
+ *  forwarded raw header does not, and `_parse_cookie` then finds no colons at
+ *  all and reads it as *no session* — which surfaced as the BoQ upload failing
+ *  with "No session. Sign in at POST /api/auth/session." for a signed-in owner.
+ *  Pinned by tests/session-forwarding.test.mjs. */
+export async function sessionCookieHeader(): Promise<string | undefined> {
+  const cookie = (await cookies()).get('neev_session');
+  return cookie ? `neev_session=${cookie.value}` : undefined;
+}
+
 async function request<T>(path: string, init?: RequestInit, onResponse?: (response: Response) => Promise<void>): Promise<T> {
   const method = init?.method ?? 'GET';
-  const cookie = (await cookies()).get('neev_session');
+  const cookie = await sessionCookieHeader();
   const headers = new Headers(init?.headers);
   headers.set('content-type', 'application/json');
-  if (cookie) headers.set('cookie', `neev_session=${cookie.value}`);
+  if (cookie) headers.set('cookie', cookie);
 
   let response: Response;
   try {

@@ -15,7 +15,7 @@
 // Both this relay and the backend enforce session and owner/loan authorization;
 // knowing a job id alone never grants access to another borrower's findings.
 import { isLoanId } from '@/components/owner/loan-facts';
-import { API_BASE, ApiError, apiGet } from '@/lib/api';
+import { API_BASE, ApiError, apiGet, sessionCookieHeader } from '@/lib/api';
 import { readSession } from '@/lib/session';
 
 // Never prerendered, never cached: the response is an open socket.
@@ -108,7 +108,10 @@ export async function GET(
 
   let upstream: Response;
   try {
-    const cookie = request.headers.get('cookie');
+    // Read through `cookies()`, not off this request's own header — see
+    // `sessionCookieHeader`. Forwarding the raw header sent the backend a
+    // percent-encoded value it read as no session at all.
+    const cookie = await sessionCookieHeader();
     upstream = await fetch(`${API_BASE}/api/jobs/${jobId}/events`, {
       headers: {
         accept: 'text/event-stream',

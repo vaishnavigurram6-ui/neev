@@ -217,9 +217,20 @@ export default function OnboardingWizard({ loan }: { loan: LoanFacts }) {
           router.push(`/owner/loans/${loan.loan_id}/analyzing?job=${encodeURIComponent(jobId)}`);
           return;
         }
+      } else if (response.status === 401) {
+        // The session died under the wizard — the backend restarting is enough
+        // to do it, since it signs cookies with a per-process key. Signing in
+        // is the only remedy, so offer it instead of an error the reader can
+        // do nothing with. `next` returns them here with the loan still open.
+        router.push(`/login?next=${encodeURIComponent('/owner/onboarding')}`);
+        return;
       } else if (response.status === 413) {
         failure = COPY.tooLarge;
-      } else {
+      } else if (response.status < 500) {
+        // A 4xx carries copy written for this reader ("Unsupported file type"),
+        // so it is worth showing. A 5xx carries whatever the service happened
+        // to say — an internal detail, sometimes an API instruction — and the
+        // generic message is more honest than quoting it.
         const detail = field('detail');
         if (typeof detail === 'string' && detail.length > 0) failure = COPY.refused + detail;
       }

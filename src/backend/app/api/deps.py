@@ -4,16 +4,17 @@ Sessions are signed, expiring sandbox sessions; login requires NEEV_DEMO_AUTH.
 Every private API read/write requires a session and resource authorization.
 This is NOT production identity verification: sandbox login still accepts a
 chosen role and loan. A real identity provider remains a deployment gate.
-Cookies contain role:loan:name:expiry:signature. Next.js obtains verified
-identity from /api/me; its edge cookie parsing is only a navigation hint.
+Cookies contain role:loan:name:expiry:signature, and carry no "%" — see
+`encode_cookie`. Next.js obtains verified identity from /api/me; its edge
+cookie parsing is only a navigation hint.
 """
 
 import hashlib
 import hmac
 import secrets
 import time
+from base64 import urlsafe_b64decode, urlsafe_b64encode
 from typing import Annotated, Iterator, Literal
-from urllib.parse import quote, unquote
 
 from fastapi import Depends, HTTPException, Path, Request, status
 from pydantic import BaseModel
@@ -54,13 +55,41 @@ def get_db() -> Iterator[Session]:
 DbSession = Annotated[Session, Depends(get_db)]
 
 
+def _encode_name(name: str) -> str:
+    """base64url, unpadded: the alphabet is `A-Za-z0-9-_`, so no "%" can appear."""
+    return urlsafe_b64encode(name.encode()).decode().rstrip("=")
+
+
+def _decode_name(encoded: str) -> str:
+    """Lenient by design: a mangled name degrades to "" and never to a 500.
+
+    The name is inside the signed payload, so anything that reaches here has
+    already matched the signature — this only has to survive our own history
+    of cookie formats without raising.
+    """
+    try:
+        return urlsafe_b64decode(encoded + "=" * (-len(encoded) % 4)).decode()
+    except (ValueError, UnicodeDecodeError):
+        return ""
+
+
 def encode_cookie(role: Role, loan_id: str, name: str) -> str:
-    """Signed `role:loan_id:name:expiry:signature`, with the name percent-encoded.
+    """Signed `role:loan_id:name:expiry:signature`, the name in base64url.
 
     The name is encoded because it is the only field that can contain a colon
     or a non-ASCII character, and the frontend splits on ":" before decoding.
+
+    It is base64url and *not* percent-encoded because the value must contain no
+    "%": the frontend copies this cookie into Next's own jar, and the render
+    Next performs in the same request after a server action's `redirect()`
+    reads it back percent-decoded with no matching encode. "Ravi%20Kumar" came
+    back as "Ravi Kumar" — a space, which both terminates a Cookie header value
+    and is not what the signature covers — so every first login 401'd here and
+    the owner layout bounced the visitor back to /login. A value with no "%" in
+    it is unchanged by that extra decode. Pinned by
+    `test_the_cookie_survives_a_percent_decode`.
     """
-    payload = f"{role}:{loan_id}:{quote(name, safe='')}:{int(time.time()) + 43200}"
+    payload = f"{role}:{loan_id}:{_encode_name(name)}:{int(time.time()) + 43200}"
     signature = hmac.new(_SESSION_KEY, payload.encode(), hashlib.sha256).hexdigest()
     return f"{payload}:{signature}"
 
@@ -69,9 +98,8 @@ def _parse_cookie(raw: str | None) -> SessionUser | None:
     """A malformed cookie is "no session", never an exception.
 
     Every field is untrusted client input: an unknown role or a missing loan id
-    means the caller is anonymous. `unquote` is lenient by design — it leaves a
-    stray "%" alone rather than raising — so a mangled name degrades to a
-    mangled name and never to a 500.
+    means the caller is anonymous. `_decode_name` is lenient by design, so a
+    mangled name degrades to the role's default and never to a 500.
     """
     if not raw:
         return None
@@ -91,7 +119,7 @@ def _parse_cookie(raw: str | None) -> SessionUser | None:
     loan_id, _, encoded_name = rest.partition(":")
     if not loan_id:
         return None
-    name = unquote(encoded_name)
+    name = _decode_name(encoded_name)
     if role == "bank":
         return SessionUser(role="bank", loan_id=loan_id, name=name or BANK_NAME)
     return SessionUser(role="owner", loan_id=loan_id, name=name or "Owner")

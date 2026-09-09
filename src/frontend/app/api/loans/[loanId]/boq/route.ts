@@ -20,7 +20,7 @@
 // middleware gates them — so the session check below is not belt-and-braces, it
 // is the only gate on the path.
 import { isLoanId } from '@/components/owner/loan-facts';
-import { API_BASE } from '@/lib/api';
+import { API_BASE, sessionCookieHeader } from '@/lib/api';
 import { readSession } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
@@ -59,7 +59,10 @@ export async function POST(
   }
 
   try {
-    const cookie = request.headers.get('cookie');
+    // Read through `cookies()`, not off this request's own header — see
+    // `sessionCookieHeader`. Forwarding the raw header sent the backend a
+    // percent-encoded value it read as no session at all.
+    const cookie = await sessionCookieHeader();
     const upstream = await fetch(`${API_BASE}/api/loans/${loanId}/boq`, {
       method: 'POST',
       // The multipart boundary lives in the incoming content-type header, so it
