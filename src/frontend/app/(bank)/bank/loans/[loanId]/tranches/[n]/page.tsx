@@ -22,6 +22,7 @@ import Panel from '@/components/owner/Panel';
 import Card from '@/components/ui/Card';
 import PageHeader from '@/components/ui/PageHeader';
 import SegmentedToggle, { type ToggleOption } from '@/components/ui/SegmentedToggle';
+import RationaleReading from './RationaleReading';
 import StageStrip from '@/components/ui/StageStrip';
 import StatusPill from '@/components/ui/StatusPill';
 import StickyRail from '@/components/ui/StickyRail';
@@ -56,13 +57,14 @@ const COPY = {
   mathTitle: 'The math, in one line each',
   mathCaption:
     'Each figure behind the recommendation: what it is, how it is worked out, and what it comes to.',
+  rationaleTitle: 'Why this recommendation',
   rationaleLabel: 'Whose explanation to show',
   noRationale: 'No written explanation was recorded for this tranche.',
 };
 
 const RATIONALES: ToggleOption[] = [
-  { value: 'owner', label: 'For the owner' },
-  { value: 'officer', label: 'For the credit officer' },
+  { value: 'officer', label: 'Credit note' },
+  { value: 'owner', label: 'As sent to the borrower' },
 ];
 
 // The milestone as the mockup's headline writes it, lower case and mid-sentence:
@@ -120,7 +122,9 @@ export default async function TrancheDecisionPage({
   if (!LOAN_ID.test(loanId)) notFound();
 
   const asked = first((await searchParams).rationale);
-  const rationale = RATIONALES.some((option) => option.value === asked) ? asked : 'owner';
+  // The officer's own reading is the default on the officer's own screen. The
+  // owner's version is one click away, for the conversation that follows.
+  const rationale = RATIONALES.some((option) => option.value === asked) ? asked : 'officer';
 
   let view: TrancheDecisionView;
   try {
@@ -238,6 +242,30 @@ export default async function TrancheDecisionPage({
             </div>
           </Panel>
 
+          {/* The reading, in the main column. It was in the 340px rail, where
+              1,600 characters of credit record could only ever be a wall of
+              text — and the rail is where the decision card belongs, because
+              that is the thing an officer needs within reach at all times. */}
+          <Panel
+            title={COPY.rationaleTitle}
+            skin="bank"
+            aside={
+              <SegmentedToggle
+                options={RATIONALES}
+                value={rationale}
+                paramName="rationale"
+                skin="bank"
+                label={COPY.rationaleLabel}
+              />
+            }
+          >
+            {rationaleText ? (
+              <RationaleReading text={rationaleText} />
+            ) : (
+              <p className="text-[13px] text-sub">{COPY.noRationale}</p>
+            )}
+          </Panel>
+
           <Panel title={COPY.mathTitle} skin="bank">
             <MathTable rows={view.math} caption={COPY.mathCaption} />
           </Panel>
@@ -246,22 +274,6 @@ export default async function TrancheDecisionPage({
         {/* The kit's 340px rail, not the prototype's 380px: the two-column
             shells are one width across the product (spec 6.1a). */}
         <StickyRail>
-          <Card skin="bank" className="p-[22px]">
-            {/* The tabs are the panel's heading — which narrative you are
-                reading is the tab that is selected, so a second heading
-                repeating it would only be read twice. */}
-            <SegmentedToggle
-              options={RATIONALES}
-              value={rationale}
-              paramName="rationale"
-              skin="bank"
-              label={COPY.rationaleLabel}
-            />
-            <p className="mt-[14px] text-[13px] leading-[1.7] text-sub">
-              {rationaleText ?? COPY.noRationale}
-            </p>
-          </Card>
-
           {pending ? (
             <DecisionCard
               loanId={view.loan_id}
