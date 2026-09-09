@@ -1495,12 +1495,24 @@
           "slot_key": {
             "title": "Slot Key",
             "type": "string"
+          },
+          "src": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Src"
           }
         },
         "required": [
           "slot_key",
           "caption",
-          "chips"
+          "chips",
+          "src"
         ],
         "title": "PhotoView",
         "type": "object"
@@ -1585,6 +1597,10 @@
             ],
             "title": "Tone",
             "type": "string"
+          },
+          "tranche": {
+            "title": "Tranche",
+            "type": "integer"
           }
         },
         "required": [
@@ -1600,7 +1616,8 @@
           "gap_note",
           "action_label",
           "tone",
-          "href"
+          "href",
+          "tranche"
         ],
         "title": "PortfolioRowView",
         "type": "object"
@@ -2880,6 +2897,60 @@
           }
         },
         "summary": "Report Milestone",
+        "tags": [
+          "loans"
+        ]
+      }
+    },
+    "/api/loans/{loan_id}/photos/{photo_id}": {
+      "get": {
+        "description": "One photograph from this loan's evidence.\n\nLoan-scoped on purpose: `AuthorizedLoan` lets a lender read any loan in the\nbook and an owner only their own, and the photo is looked up *within* the\nauthorized loan rather than by id alone \u2014 otherwise any signed-in borrower\ncould walk the id space and read another family's site photographs.\n\nPrivate and immutable: the bytes never change once written, but they are\nsomebody's home under construction, so this is `private` rather than\n`public` and never lands in a shared cache.",
+        "operationId": "loan_photo_api_loans__loan_id__photos__photo_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "The loan's id, e.g. 1001.",
+            "in": "path",
+            "name": "loan_id",
+            "required": true,
+            "schema": {
+              "description": "The loan's id, e.g. 1001.",
+              "title": "Loan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "image/jpeg": {}
+            },
+            "description": "The photograph."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Loan Photo",
         "tags": [
           "loans"
         ]

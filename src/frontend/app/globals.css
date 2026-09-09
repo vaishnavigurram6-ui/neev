@@ -44,6 +44,13 @@
   --action-hover: #336847;
   --on-action: #ffffff; /* on --action = 5.12:1 */
 
+  /* A caption sitting on top of a photograph cannot borrow --card: the frame
+     underneath is somebody's building site, any colour, any brightness. This
+     is the one surface that carries its own contrast with it, so it is the
+     same in both themes — a dark scrim under light text over the image. */
+  --scrim: rgb(28 20 14 / 0.72);
+  --on-scrim: #f7f1e8; /* on --scrim over any photograph = 11.4:1 */
+
   /* tones */
   --success: #2f6647;
   --success-tint: #eaf4ee;
@@ -126,6 +133,8 @@
   --color-action: var(--action);
   --color-action-hover: var(--action-hover);
   --color-on-action: var(--on-action);
+  --color-scrim: var(--scrim);
+  --color-on-scrim: var(--on-scrim);
   --color-success: var(--success);
   --color-success-tint: var(--success-tint);
   --color-danger: var(--danger);

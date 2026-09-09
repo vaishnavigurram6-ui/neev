@@ -127,7 +127,7 @@ def test_the_golden_path(client, beat):
     assert all(r["loan_id"] in r["href"] for r in portfolio["rows"])
 
     golden = next(r for r in portfolio["rows"] if r["loan_id"] == "1001")
-    tranche_no = int(golden["href"].rsplit("/", 1)[-1])
+    tranche_no = int(golden["tranche"])
     assert tranche_no == 4, "the decision is pending on T4, not the already-paid T3"
 
     decision_view = client.get(f"/api/loans/1001/tranches/{tranche_no}").json()

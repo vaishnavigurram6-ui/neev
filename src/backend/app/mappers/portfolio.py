@@ -87,7 +87,13 @@ def to_portfolio(loans: list[models.Loan]) -> PortfolioView:
             gap_note=None if loan.cost_to_complete_gap is not None else "closed",
             action_label=_action_label(loan.recommendation),
             tone=_action_tone(loan.recommendation),  # type: ignore[arg-type]
-            href=f"/bank/loans/{loan.id}/tranches/{_latest_tranche(loan)}",
+            # The borrower's file, not a bare decision card. An officer who
+            # lands straight on a tranche has no borrower, no contractor, no
+            # site photographs and no history in front of them -- and the
+            # decision they are being asked for is about all of that. The
+            # pending draw is one click on from there.
+            href=f"/bank/loans/{loan.id}",
+            tranche=_latest_tranche(loan),
         )
         for loan in ordered
     ]

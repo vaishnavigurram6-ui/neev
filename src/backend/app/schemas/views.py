@@ -136,6 +136,11 @@ class PortfolioRowView(BaseModel):
     action_label: str
     tone: Tone
     href: str
+    # The draw this row's action refers to. The row's own figures -- exposure,
+    # the gap, the action -- are that tranche's, so the number travels with
+    # them: the href used to carry it, and reading a tranche number out of a
+    # URL is not a contract.
+    tranche: int
 
 
 class PortfolioView(BaseModel):
@@ -166,6 +171,11 @@ class PhotoView(BaseModel):
     slot_key: str
     caption: str | None
     chips: list[EvidenceChipView] = Field(default_factory=list)
+    # Where the photograph itself can be fetched, or null when the row records
+    # that a photo arrived but no bytes were kept — the seeded inspection notes
+    # are rows of that kind. A screen showing a broken image would be worse
+    # than one showing a caption and saying the frame is not held.
+    src: str | None = None
 
 
 class TrancheDecisionView(BaseModel):

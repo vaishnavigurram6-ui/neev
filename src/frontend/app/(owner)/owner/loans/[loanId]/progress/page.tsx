@@ -38,6 +38,9 @@ const COPY = {
     "More has been paid out than the structure is worth so far. Pausing now forces the re-scope while there's still money left to re-scope with.",
   pausedCta: 'See your options',
   paymentsTitle: 'Payments so far',
+  reportedLead: 'Your photos are with your bank.',
+  reportedBody:
+    'They are filed against this milestone and the draw is queued for verification. Your officer sees the same frames you sent — no need to send them again.',
   photosTitle: "This month's site photos",
   photosCta: 'Report a milestone →',
   photosNote:
@@ -103,10 +106,16 @@ const TRANCHE_COLUMNS: Column<PreviewTranche>[] = [
 
 export default async function BuildProgressPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ loanId: string }>;
+  searchParams: Promise<{ reported?: string }>;
 }) {
   const { loanId } = await params;
+  // Set by Update Progress after a successful send. The owner has just handed
+  // over the evidence for a payment; landing on an unchanged screen with no
+  // acknowledgement is how someone ends up sending it twice.
+  const justReported = (await searchParams).reported === '1';
   const loan = previewLoan(loanId);
 
   // The rest of this screen still runs on preview data (it is a scaffolded
@@ -120,6 +129,10 @@ export default async function BuildProgressPage({
   } catch (cause) {
     if (!(cause instanceof ApiError)) throw cause;
   }
+
+  const reported = justReported ? (
+    <CalloutBanner tone="success" lead={COPY.reportedLead} body={COPY.reportedBody} />
+  ) : null;
 
   const header = (
     <PageHeader
@@ -140,6 +153,7 @@ export default async function BuildProgressPage({
     return (
       <div className="flex flex-col gap-5">
         {header}
+        {reported}
         <PreviewEmpty loanId={loanId} what={COPY.emptyWhat} />
       </div>
     );
@@ -155,6 +169,7 @@ export default async function BuildProgressPage({
   return (
     <div className="flex flex-col gap-5">
       {header}
+      {reported}
 
       {paused && (
         <CalloutBanner

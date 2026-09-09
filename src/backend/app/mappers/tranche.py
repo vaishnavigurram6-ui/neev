@@ -141,7 +141,12 @@ def to_tranche_decision(loan: models.Loan, tranche: models.Tranche) -> TrancheDe
     ]
 
     photos = [
-        PhotoView(slot_key=photo.slot_key, caption=photo.caption, chips=_chips(photo))
+        PhotoView(
+            slot_key=photo.slot_key,
+            caption=photo.caption,
+            chips=_chips(photo),
+            src=photo_src(loan.id, photo),
+        )
         for photo in tranche.photos
     ]
 
@@ -175,6 +180,18 @@ def _number_or_dash(value: float | int | None) -> float | str:
 
 def _kind(value: float | int | None, kind: str) -> str:
     return "text" if value is None else kind
+
+
+def photo_src(loan_id: str, photo: models.Photo) -> str | None:
+    """The API path the photograph itself is served from.
+
+    None when the row holds no bytes: the seeded inspection notes are rows of
+    that kind — they record what the visual inspector saw, not a file. The
+    screens render a caption for those rather than a broken frame.
+    """
+    if not photo.stored_path:
+        return None
+    return f"/api/loans/{loan_id}/photos/{photo.id}"
 
 
 def _chips(photo: models.Photo) -> list[EvidenceChipView]:

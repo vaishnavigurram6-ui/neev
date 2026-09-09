@@ -273,8 +273,12 @@ def test_every_portfolio_row_agrees_with_the_screen_it_links_to(client):
     expected = {"HOLD": "HOLD", "INSPECT": "INSPECT", "ON TRACK": "RELEASE"}
 
     for row in client.get("/api/portfolio").json()["rows"]:
-        number = row["href"].rsplit("/", 1)[-1]
-        screen = client.get(f"/api/loans/{row['loan_id']}/tranches/{number}").json()
+        # The row links to the borrower's file; the draw its figures describe is
+        # carried in `tranche` rather than parsed back out of the href.
+        assert row["href"] == f"/bank/loans/{row['loan_id']}"
+        screen = client.get(
+            f"/api/loans/{row['loan_id']}/tranches/{row['tranche']}"
+        ).json()
         assert screen["recommendation"] == expected[row["action_label"]], row["loan_id"]
         assert screen["exposure"] == row["exposure"], row["loan_id"]
         assert screen["exposure_undefined"] is False, row["loan_id"]

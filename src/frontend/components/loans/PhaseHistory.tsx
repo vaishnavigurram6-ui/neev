@@ -17,6 +17,7 @@ const COPY = {
     'What was claimed at each stage, what the photos showed, and what was released against it.',
   bankSub: 'The full verification and disbursement record for this loan, phase by phase.',
   noEvidence: 'No site photographs were collected for this phase.',
+  framesTitle: 'The frames on file',
   noEvidenceWhy: 'It was released before Neev was verifying this loan.',
   verified: 'Value in place',
   exposure: 'Exposure then',
@@ -97,6 +98,11 @@ export default function PhaseHistory({
 
                 {phase.observed_by_neev ? (
                   <div className="mt-[14px] border-t border-line pt-3">
+                    {/* The photographs themselves, when the frames are held.
+                        `src` is null for a phase whose row records only what
+                        the inspector read, and the chips and notes below carry
+                        that phase on their own. */}
+                    <Frames photos={phase.photos} tranche={phase.tranche_number} />
                     <div className="flex flex-wrap gap-[6px]">
                       {phase.photos.flatMap((photo) =>
                         photo.chips.map((chip) => (
@@ -165,5 +171,39 @@ function Cell({ label, children }: { label: string; children: React.ReactNode })
       </dt>
       <dd className="mt-[3px]">{children}</dd>
     </div>
+  );
+}
+
+/** A row of thumbnails, one per photograph actually on file.
+ *
+ *  Plain <img>: the bytes come from a session-gated relay, so Next's optimiser
+ *  would only add a hop needing the same cookie — and these are photographs of
+ *  somebody's half-built house, which should not sit in a shared image cache.
+ */
+function Frames({ photos, tranche }: { photos: PhaseHistoryView['photos']; tranche: number }) {
+  const held = photos.filter((photo) => photo.src);
+  if (held.length === 0) return null;
+
+  return (
+    <ul className="mb-3 flex flex-wrap gap-[8px]">
+      {held.map((photo) => (
+        <li key={photo.slot_key}>
+          <a
+            href={photo.src ?? '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block h-[86px] w-[116px] overflow-hidden rounded-[10px] border border-line focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photo.src ?? ''}
+              alt={photo.caption ?? `Site photograph for tranche ${tranche}`}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }

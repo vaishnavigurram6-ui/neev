@@ -8,7 +8,7 @@ Progress screen renders and the Update Progress screen reads for its stage list.
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from fastapi import APIRouter, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Form, HTTPException, Path, Response, UploadFile, status
 from pydantic import BaseModel
 
 from app.api.deps import AuthorizedLoan, DbSession
@@ -16,14 +16,25 @@ from app.db import models
 from app.mappers.boq import visible_questions
 from app.mappers.loan import to_build_progress, to_loan_summary
 from app.schemas.views import BuildProgressView, LoanSummaryView
-from app.services.artifacts import read_upload, store_artifact
+from app.services.artifacts import read_artifact, read_upload, store_artifact
 from typing import Literal
 
 router = APIRouter(prefix="/api/loans", tags=["loans"])
 
-# Photos a borrower uploads are stored by reference, not by blob: the demo keeps
-# the bytes out of SQLite, and a real deployment swaps this for object storage.
+# Photos a borrower uploads are stored by reference, not by blob: the row holds
+# a path into ARTIFACT_DIR rather than the image, and a real deployment swaps
+# that directory for object storage. `GET /{loan_id}/photos/{photo_id}` reads
+# them back, which is what lets a lender see the evidence a borrower sent.
 UPLOAD_SLOT_PREFIX = "upload"
+
+# The formats read_upload accepts, keyed by their magic bytes. The stored file
+# is the validated original, so its type is read from the bytes rather than
+# from a content-type header the uploader chose or a column that could drift
+# out of step with the file.
+_MAGIC = (
+    (b"\xff\xd8\xff", "image/jpeg"),
+    (b"\x89PNG\r\n\x1a\n", "image/png"),
+)
 
 
 class QuestionsSentResponse(BaseModel):
@@ -38,6 +49,61 @@ class MilestoneResponse(BaseModel):
 @router.get("/{loan_id}", response_model=LoanSummaryView)
 def loan_summary(loan: AuthorizedLoan) -> LoanSummaryView:
     return to_loan_summary(loan)
+
+
+def _sniff(data: bytes) -> str:
+    """WebP is RIFF....WEBP — a prefix check cannot see past the length field."""
+    for magic, mime in _MAGIC:
+        if data.startswith(magic):
+            return mime
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    # read_upload rejected everything else, so this is a file written by an
+    # older build. Served as a download rather than guessed at.
+    return "application/octet-stream"
+
+
+@router.get(
+    "/{loan_id}/photos/{photo_id}",
+    responses={200: {"content": {"image/jpeg": {}}, "description": "The photograph."}},
+)
+def loan_photo(
+    loan: AuthorizedLoan, db: DbSession, photo_id: int = Path(ge=1)
+) -> Response:
+    """One photograph from this loan's evidence.
+
+    Loan-scoped on purpose: `AuthorizedLoan` lets a lender read any loan in the
+    book and an owner only their own, and the photo is looked up *within* the
+    authorized loan rather than by id alone — otherwise any signed-in borrower
+    could walk the id space and read another family's site photographs.
+
+    Private and immutable: the bytes never change once written, but they are
+    somebody's home under construction, so this is `private` rather than
+    `public` and never lands in a shared cache.
+    """
+    photo = db.get(models.Photo, photo_id)
+    tranche_ids = {tranche.id for tranche in loan.tranches}
+    if photo is None or photo.tranche_id not in tranche_ids or not photo.stored_path:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Loan {loan.id} has no photograph {photo_id}.",
+        )
+    try:
+        data = read_artifact(photo.stored_path)
+    except (ValueError, OSError):
+        # A row whose file is gone: the instance recycled, or the reference is
+        # from another machine's ARTIFACT_DIR. Not a 500 — there is simply no
+        # photograph to serve.
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="That photograph is no longer stored.",
+        ) from None
+
+    return Response(
+        content=data,
+        media_type=_sniff(data),
+        headers={"Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff"},
+    )
 
 
 @router.post("/{loan_id}/questions/send", response_model=QuestionsSentResponse)

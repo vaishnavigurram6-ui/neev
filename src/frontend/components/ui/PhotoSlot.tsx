@@ -104,14 +104,26 @@ export default function PhotoSlot({
         )}
       </div>
 
+      {/* The native control renders as a browser-drawn "Choose File" button
+          that takes no styling and reads as a system widget dropped into the
+          page. It is kept — it is the accessible control, and it stays in the
+          tab order — but visually hidden behind the label, which is the button
+          the design asks for. `sr-only` and not `hidden`: a display:none input
+          is unfocusable, which would take the picker away from a keyboard. */}
       <input
         id={inputId}
         type="file"
         accept={ACCEPT}
         data-slot-key={slotKey}
         onChange={(event) => void handle(event.target.files?.[0])}
-        className="mt-[10px] block w-full text-[11.5px] text-sub"
+        className="peer sr-only"
       />
+      <label
+        htmlFor={inputId}
+        className="mt-[10px] inline-flex cursor-pointer items-center justify-center gap-2 rounded-pill border border-input-border bg-card px-4 py-[8px] text-[12.5px] font-semibold text-ink transition-colors hover:border-ink peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-action"
+      >
+        {preview || recorded ? 'Choose a different photo' : 'Choose a photo'}
+      </label>
       {/* Upload status is announced, not merely shown. */}
       <p aria-live="polite" className="mt-[6px] text-[11px] text-faint">
         {status}

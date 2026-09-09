@@ -18,7 +18,7 @@ Two things here are deliberate and easy to get wrong:
 
 from app.db import models
 from app.schemas.views import PhaseDecisionView, PhaseHistoryView, PhotoView
-from app.mappers.tranche import STAGE_LABEL, _chips
+from app.mappers.tranche import STAGE_LABEL, _chips, photo_src
 
 STATUS_LABEL = {"paid": "Released", "on_hold": "On hold", "upcoming": "Not requested"}
 STATUS_TONE = {"paid": "success", "on_hold": "danger", "upcoming": "neutral"}
@@ -50,7 +50,12 @@ def to_phase_history(loan: models.Loan) -> list[PhaseHistoryView]:
                 observed_by_neev=bool(tranche.confidence and tranche.observed_stage
                                       and tranche.observed_stage != "not_assessed"),
                 photos=[
-                    PhotoView(slot_key=p.slot_key, caption=p.caption, chips=_chips(p))
+                    PhotoView(
+                        slot_key=p.slot_key,
+                        caption=p.caption,
+                        chips=_chips(p),
+                        src=photo_src(loan.id, p),
+                    )
                     for p in tranche.photos
                 ],
                 evidence_notes=[p.caption for p in tranche.photos if p.caption],

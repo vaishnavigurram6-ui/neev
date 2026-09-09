@@ -158,7 +158,17 @@ export default async function TrancheDecisionPage({
             <Link href="/bank/portfolio" className="text-bank-accent hover:underline">
               {COPY.portfolio}
             </Link>
-            {` · Loan ${view.loan_id} — ${view.borrower} · Tranche ${view.tranche_number}`}
+            {' · '}
+            {/* The loan file, so an officer can get to the borrower's whole
+                record -- history, site photographs, the other draws -- from
+                the card they were sent to decide. */}
+            <Link
+              href={`/bank/loans/${view.loan_id}`}
+              className="text-bank-accent hover:underline"
+            >
+              {`Loan ${view.loan_id} — ${view.borrower}`}
+            </Link>
+            {` · Tranche ${view.tranche_number}`}
           </>
         }
         title={`${lead} ${formatINR(view.request_amount)} ${COPY.requestAt} ${

@@ -1,30 +1,31 @@
 // Update Progress — Neev 3b Update Progress.dc.html.
 //
-// Scaffolded preview (plan Task 19). The four steps are one real <form> with
-// real labelled controls: the mockup's milestone tiles are radio inputs, its
-// image slots are the kit's `PhotoSlot`, its bills strip is a multi-file
-// `Dropzone`, and its "anything to add" panel is a labelled <textarea>. Sending
-// needs `POST /api/loans/{id}/milestones` (Task 12), so the submit button is
-// disabled and says why rather than pretending to send.
+// The four steps are one real <form> with real labelled controls: the mockup's
+// milestone tiles are radio inputs, its image slots are the kit's `PhotoSlot`,
+// its bills strip is a multi-file `Dropzone`, and its "anything to add" panel
+// is a labelled <textarea>. It sends: `ReportForm` collects the downscaled
+// photographs and POSTs them to `/api/loans/{id}/milestones`, which files them
+// against the tranche they are evidence for and flips it to needs-review — so
+// the lender sees the frames on their own loan page and tranche card.
+//
+// The form itself is a client component because the photographs live in it;
+// the header, the rail and the loan's figures stay on the server.
 //
 // The mockup is written for the foundation milestone — "Footings done?", a
 // ₹2,80,000 release — which is not where this loan is: the seed has foundation
 // and plinth released and the slab tranche pending. So the milestone-specific
 // copy is templated from the loan's own current milestone and the release figure
 // comes from the draw schedule.
-import CalloutBanner from '@/components/owner/CalloutBanner';
 import GuidanceList from '@/components/owner/GuidanceList';
 import Panel from '@/components/owner/Panel';
 import PreviewEmpty from '@/components/owner/PreviewEmpty';
 import { previewLoan } from '@/components/owner/preview';
 import Button from '@/components/ui/Button';
-import Dropzone from '@/components/ui/Dropzone';
 import Figure from '@/components/ui/Figure';
 import PageHeader from '@/components/ui/PageHeader';
-import PhotoSlot from '@/components/ui/PhotoSlot';
-import StatusPill from '@/components/ui/StatusPill';
 import StickyRail from '@/components/ui/StickyRail';
-import { formatINR, formatQty } from '@/lib/format';
+import { formatINR } from '@/lib/format';
+import ReportForm from './ReportForm';
 
 const COPY = {
   eyebrow: 'BUILD PROGRESS · REPORT A MILESTONE',
@@ -52,11 +53,18 @@ const COPY = {
   notesLabel: 'Anything to add?',
   notesPlaceholder: 'e.g. "Anti-termite treatment done before PCC, bill attached"',
   submit: 'Send for verification',
-  submitWhy:
-    'Sending a milestone for verification needs the milestone endpoint, which is not wired up on this preview screen yet.',
-  submitLead: 'This screen is a preview.',
+  sending: 'Sending your photos…',
+  needPhoto: 'Add at least one photo — the photos are the evidence.',
+  failed: 'Your report was not sent. Try again in a moment.',
+  refused: 'This loan is not the one you are signed in for.',
+  signIn: 'Your session has expired. Sign in again and send it once more.',
+  unconfirmed:
+    'The upload did not complete, so nothing was recorded. Check your connection and send it again.',
+  billsNotSent:
+    'Bills are held here for now — verification reads the photos, so bills are not part of what is sent yet.',
+  submitLead: 'What your bank receives.',
   submitBody:
-    'The form is real and the figures are your own, but nothing is sent until the verification endpoint is connected.',
+    'Your photos and note go straight into the loan file against this milestone, and the draw is marked for verification. Your officer sees the same frames you sent.',
   onSubmitTitle: 'What happens on submit',
   onSubmitOne:
     'Photos are read against your BoQ — footings, PCC and starter bars checked as line items, not a vague "15%".',
@@ -82,7 +90,6 @@ export default async function UpdateProgressPage({
 
   const header = (
     <PageHeader
-      status={<StatusPill tone="neutral" label="Preview" />}
       eyebrow={COPY.eyebrow}
       title={milestone ? `${milestone.label}${COPY.titleTail}` : 'Report a milestone'}
       sub={
@@ -112,114 +119,14 @@ export default async function UpdateProgressPage({
       {header}
 
       <div className="flex items-start gap-5">
-        <form className="flex min-w-0 flex-1 flex-col gap-5">
-          <Panel title={COPY.stepOneTitle}>
-            <fieldset>
-              <legend className="sr-only">{COPY.stepOneLegend}</legend>
-              <div className="grid grid-cols-5 gap-2">
-                {loan.milestones.map((option) => (
-                  <label
-                    key={option.key}
-                    className={`flex items-start gap-2 rounded-card border px-3 py-[12px] ${
-                      option.state === 'current'
-                        ? 'border-action bg-success-tint'
-                        : 'border-line bg-card'
-                    } ${option.state === 'done' ? 'opacity-70' : 'cursor-pointer'}`}
-                  >
-                    <input
-                      type="radio"
-                      name="milestone"
-                      value={option.key}
-                      defaultChecked={option.state === 'current'}
-                      disabled={option.state === 'done'}
-                      className="mt-[3px] flex-none accent-action"
-                    />
-                    <span className="min-w-0">
-                      <span className="block text-[12px] font-semibold text-ink">
-                        {option.label}
-                      </span>
-                      <span className="mt-[2px] block text-[10.5px] leading-[1.4] text-faint">
-                        {option.sub}
-                      </span>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-          </Panel>
-
-          <Panel
-            title={COPY.stepTwoTitle}
-            aside={`${loan.photoSlots.length}${COPY.stepTwoAsideTail}`}
-          >
-            <div className="grid grid-cols-3 gap-[10px]">
-              {loan.photoSlots.map((slot) => (
-                <PhotoSlot
-                  key={slot.slotKey}
-                  slotKey={slot.slotKey}
-                  label={slot.label}
-                  guidance={slot.guidance}
-                />
-              ))}
-            </div>
-            <div className="mt-[14px] flex flex-wrap gap-[6px]">
-              <StatusPill tone="neutral" label={COPY.checkLocation} />
-              <StatusPill tone="neutral" label={COPY.checkTimestamp} />
-              <StatusPill tone="neutral" label={COPY.checkAngle} />
-            </div>
-          </Panel>
-
-          <Panel
-            title={`${COPY.stepThreeTitle} — ${COPY.stepThreeOptional}`}
-            aside={COPY.stepThreeAside}
-            footer={
-              <p>
-                {COPY.billsNoteLead}
-                <Figure value={`${formatQty(loan.steelQtyKg)} kg`} size="sm" />
-                {COPY.billsNoteTail}
-              </p>
-            }
-          >
-            <Dropzone
-              name="bills"
-              accept="application/pdf,image/*"
-              label={COPY.billsLabel}
-              hint={COPY.billsHint}
-              multiple
-            />
-          </Panel>
-
-          <Panel title={`${COPY.stepFourTitle} — ${COPY.stepFourOptional}`}>
-            <label htmlFor="milestone-notes" className="sr-only">
-              {COPY.notesLabel}
-            </label>
-            <textarea
-              id="milestone-notes"
-              name="notes"
-              rows={3}
-              placeholder={COPY.notesPlaceholder}
-              className="w-full rounded-[10px] border border-input-border bg-bg px-4 py-3 text-[13px] text-ink placeholder:text-faint"
-            />
-            <div className="mt-[16px] flex items-center justify-end gap-3">
-              {/* The reason a control is inert has to be readable without a
-                  mouse: a disabled button is out of the tab order and `title`
-                  alone reaches nobody using a keyboard or a screen reader. */}
-              <p id="submit-why" className="text-[11.5px] text-faint">
-                {COPY.submitWhy}
-              </p>
-              <Button
-                type="submit"
-                variant="primary"
-                disabled
-                reason={COPY.submitWhy}
-              >
-                {COPY.submit}
-              </Button>
-            </div>
-          </Panel>
-
-          <CalloutBanner tone="neutral" lead={COPY.submitLead} body={COPY.submitBody} />
-        </form>
+        <ReportForm
+          loanId={loanId}
+          milestones={loan.milestones}
+          slots={loan.photoSlots}
+          currentKey={milestone.key}
+          steelQtyKg={loan.steelQtyKg}
+          copy={COPY}
+        />
 
         <StickyRail>
           <Panel
