@@ -1,12 +1,16 @@
-# Neev
+# Neev (नींव)
 
-AI agent pipeline that protects self-construction home loans — for the owner
-(catches BoQ padding, missing scope, front-loaded payment schedules) and the
-lender (verifies build stage from site photos before releasing each tranche).
+AI agent pipeline that protects self-construction home loans — for the home
+builder (catches BoQ padding, missing scope, front-loaded payment schedules) and
+for the lender (verifies build stage from site photographs before releasing each
+disbursement).
 
 Built on Google ADK: a `SequentialAgent` of five specialists sharing state via
 `output_key`, with every number grounded in a tool call (BigQuery benchmarks,
 pure-arithmetic risk math) — never model memory.
+
+*नींव is the foundation of a building. It is also the first stage of
+construction the system verifies.*
 
 ## Pipeline
 
@@ -24,18 +28,15 @@ BoQ pdf + photos + loan context
 Three packages, one direction of dependency:
 
 ```
-src/frontend  →  src/backend  →  authored, pipeline-shaped fixtures
-src/agents    →  standalone, driven by `adk web`
+src/frontend  →  src/backend  →  SQLite, seeded from captured pipeline runs
+src/agents    →  the ADK pipeline, driven by the backend or by `adk web`
 ```
 
-- **`src/agents/neev_pipeline/`** — the ADK pipeline above. Run `adk web` from
-  `src/agents/`; it discovers `neev_pipeline.agent.root_agent`. Unchanged by the
-  application work.
-- **`src/backend/`** — FastAPI + SQLAlchemy + SQLite. 17 API paths, 115 tests.
-  Declares **no** Google dependency: there is no `google` package in its venv, so
-  it cannot make a billed call.
-- **`src/frontend/`** — Next.js App Router + Tailwind v4. 17 routes, all 15
-  handoff screens, role enforcement in `proxy.ts`.
+- **`src/agents/neev_pipeline/`** — the pipeline above. `adk web` from
+  `src/agents/` discovers `neev_pipeline.agent.root_agent`.
+- **`src/backend/`** — FastAPI + SQLAlchemy + SQLite. 22 API paths, 239 tests.
+- **`src/frontend/`** — Next.js App Router + Tailwind v4. 16 routes, role
+  enforcement in `proxy.ts`.
 
 ### Run it
 
@@ -43,34 +44,51 @@ src/agents    →  standalone, driven by `adk web`
 bash scripts/dev.sh          # both servers, seeded, fixture mode
 ```
 
-Prints the four demo URLs. See **`docs/Neev_Demo_Runbook.md`** for what to say at
-each one.
+Prints the demo URLs. Sign in with a username and password — the demo accounts
+are listed in **`docs/Neev_Demo_Runbook.md`**, which is also what to say at each
+screen.
 
 ### Test it
 
 ```bash
-python3 -m tests.test_offline                                  # 28, no venv, no network
-cd src/backend && .venv/bin/python -m pytest tests/ -q         # 115
-cd src/frontend && npm run verify                              # typecheck, lint, no-raw-hex, build
+python3 -m tests.test_offline                             # 60, no venv, no network
+cd src/backend && .venv/bin/python -m pytest tests/ -q    # 239
+cd src/frontend && npm run verify                         # typecheck, lint, no-raw-hex, build, 13 tests
 ```
 
-`src/backend/tests/test_golden_path.py` walks all four demo beats through the real
-HTTP surface, and asserts structurally that no billed call is reachable.
-
-### Fixture mode, and why
+## Two modes, and what actually stops a billed call
 
 `NEEV_MODE` defaults to `fixture` and falls back to `fixture` for any
-unrecognised value, so a typo cannot select the live path. Live mode additionally
-requires `NEEV_ALLOW_BILLED_CALLS=1`; without it, constructing the live runner
-raises. Backend tests block outbound sockets.
+unrecognised value, so a typo cannot select the live path. Live mode
+**additionally** requires `NEEV_ALLOW_BILLED_CALLS=1`; without it, constructing
+the live runner raises. `app/services/runner.py::get_runner` is the only place
+in the backend that reads the mode, and `test_no_service_but_the_runner_factory_reads_the_mode`
+keeps it that way.
 
-The fixtures are **shaped like the pipeline's real output** — the five ADK
-`output_key` shapes — not like the screens, and
-`src/backend/tests/test_fixture_contract.py` proves every fixture validates
-against the schemas a live run must emit. So going live changes where the object
-comes from and nothing else. `scripts/record_golden_run.py` captures a real run
-into the same schema; it refuses to start unless billed calls are explicitly
-permitted.
+The backend venv and the deployed image **do** carry `google-adk` and
+`google-genai`, because the live runner needs them. So the guard is not absence
+of the library — it is that nothing imports it until a live run starts: the
+imports sit inside method bodies, and `test_no_google_import_at_module_scope`
+plus `test_serving_the_whole_app_loads_no_billed_library` fail if one escapes to
+module scope. Backend tests also block outbound sockets outright
+(`tests/conftest.py`, autouse).
+
+A deployed service is capped as well — `NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY` and
+`NEEV_MAX_ANALYSES_PER_DAY` — because the demo is public and a live analysis
+costs real money.
+
+### The fixtures are captured runs, not mockups
+
+`app/fixtures/loan_*_pipeline.json` are ten **real** pipeline runs, recorded
+through `scripts/record_golden_run.py` and validated against the same schemas a
+live run must emit (`tests/test_fixture_contract.py`). The raw ADK session state
+for each is in `.golden_runs/` — saved *before* parsing, so
+`record_golden_run.py --from-raw <file>` re-parses one at no cost. Going live
+changes where the object comes from and nothing else.
+
+Loan 1001 is the golden HOLD case; 1002 is clean. The other eight came out of
+the same live pipeline over synthetic BoQs, and two of them reached ESCALATE on
+their own.
 
 ## Layout
 
@@ -83,69 +101,51 @@ permitted.
   `components/ui/` (the shared kit), `lib/`
 - `fixtures/` — `sample_boq.pdf` (Ravi golden case: 40 items, 4 seeded flaws),
   `clean_boq.pdf` (negative test: benchmark-aligned, full scope, GST stated),
-  `rate_benchmarks.csv` (30 CPWD-DSR-derived rates — see `verified` column),
-  `draw_schedule.csv` (10 loans; 1001 = golden HOLD case, 1002 = clean case)
-- `scripts/` — `dev.sh` (start both servers, seeded, fixture mode),
-  `load_bigquery.sh` (loads fixtures + portfolio view), `boq_data.py` +
-  `make_sample_boq.py --all` (regenerate both BoQ PDFs), `golden_run.py`
-  (programmatic pipeline test loop, needs GCP), `record_golden_run.py`
-  (captures a live run into the fixture schema — refuses to run unless billed
-  calls are explicitly permitted)
-- `tests/` — offline suite, no GCP creds needed: `python3 -m tests.test_offline`
-- `docs/` — `Neev_Demo_Runbook.md` (start here to demo), setup guide,
-  `superpowers/specs/` and `superpowers/plans/` for the design and build plan
-- `figures/` — 6 pitch diagrams
-- `HANDOFF.md` — day-1 drop notes and remaining to-dos
+  `rate_benchmarks.csv` (30 CPWD-DSR-derived rates — see the `verified` column),
+  `draw_schedule.csv` (10 loans), `site_photos/` (the golden case's real site
+  photographs, served only through an authorizing endpoint), `synthetic/`
+- `scripts/` — `dev.sh` (both servers, seeded), `deploy_cloudrun.sh` (Cloud
+  Run, Vertex AI), `load_bigquery.sh`, `boq_data.py` + `make_sample_boq.py`
+  (regenerate the BoQ PDFs), `synthetic_boqs.py`, `record_golden_run.py`
+  (capture a live run into the fixture schema), `golden_run.py`,
+  `verify_against_bigquery.py`
+- `tests/` — offline suite, no GCP creds needed
+- `docs/` — `Neev_Demo_Runbook.md` (start here to demo),
+  `Neev_Idea_Submission.md` (the pitch), `Neev_Setup_Guide.md`,
+  `Neev_Prod_Deploy_Plan.md`, `Neev_Two_Week_Plan.md` (cost arithmetic),
+  `Neev_Demo_Video_Plan.md`, `Neev_Data_Inventory.md`, `Review_Remediation.md`
+- `design_handoff_neev/` — the 16 hi-fi screen prototypes the frontend implements
+- `figures/` — pitch diagrams and the landing hero
 
-## Run the pipeline alone (Cloud Shell)
+## Run the pipeline alone
 
-Separate from the web app, and the only part that spends credits:
+Separate from the web app:
 
 ```bash
 python3.11 -m venv src/agents/.venv && source src/agents/.venv/bin/activate
 pip install -e src/agents
 cp .env.example .env        # fill in GOOGLE_API_KEY
 bash scripts/load_bigquery.sh
-cd src/agents && adk web --allow_origins 'regex:https://.*\.cloudshell\.dev'
+cd src/agents && adk web
 ```
 
-Then run the three demo-proof cases in one command (after putting 2–3 site
-photos + one blurry photo in `demo_assets/`):
+Upload `fixtures/sample_boq.pdf` for loan 1001 (₹18L disbursed at slab) →
+4 flags + GST_SILENT, HOLD.
 
-```bash
-python3 scripts/golden_run.py --all \
-  --photos demo_assets/slab1.jpg demo_assets/slab2.jpg \
-  --blurry demo_assets/blurry.jpg
-# golden   sample_boq.pdf + loan 1001 -> HOLD, >=4 flags
-# clean    clean_boq.pdf  + loan 1002 -> RELEASE
-# escalate blurry photo              -> ESCALATE
-```
+A deployment authenticates to **Vertex AI** as the Cloud Run service account
+rather than using an API key, because the Gemini API's free tier allows 20
+`generateContent` requests per day per model — about two analyses — while Vertex
+bills the project's Cloud Billing account. Three environment variables, no code
+change.
 
-Or interactively: upload `fixtures/sample_boq.pdf` for loan 1001 (₹18L
-disbursed at slab) in `adk web` → 4 flags + GST_SILENT, exposure ~1.0–1.4, HOLD.
-
-Beat 4 (lender portfolio): `load_bigquery.sh` also creates the
-`portfolio_hotlist` view — a sanction-proxy screen, worst loans first
-(loan 1001 surfaces at exposure 1.29):
+Beat 4 (lender portfolio) also has a BigQuery form: `load_bigquery.sh` creates
+the `portfolio_hotlist` view, worst loans first.
 
 ```sql
 SELECT * FROM `<project>.buildguard_data.portfolio_hotlist` LIMIT 10
 ```
 
-## Tests (anywhere, offline)
-
-```bash
-python3 -m tests.test_offline
-```
-
-28 checks: risk math golden/clean/escalation cases, all BoQ check functions,
-config invariants, pipeline wiring, portfolio-view/SQL-config lockstep, and
-cross-validation of BOTH BoQ fixtures against the benchmark table (the Ravi
-BoQ triggers exactly its seeded flaws; the clean BoQ triggers none).
-
-## Live Google Docs (polished, share these)
+## Submission documents
 
 - Idea Submission: https://docs.google.com/document/d/1JYcsxk8gSDNYBVRSKt3crod9Y1vm0gMUkrvz9cVM1YE/edit
 - Demo Plan: https://docs.google.com/document/d/1UbmU8ff2jM7ZcD1E19HslLIPuDyOZtOXFG_dEy0f8YI/edit
-
-(Set sharing to "anyone with link → Viewer" before submitting.)

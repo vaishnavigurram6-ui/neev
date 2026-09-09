@@ -84,12 +84,10 @@ Frontend uses `npm`.
   `adk web` runs from `src/agents/` and discovers `neev_pipeline.agent.root_agent`. The GCP project
   `buildguard-ai-2026` and BigQuery dataset `buildguard_data` keep those names —
   only the Python package was renamed.
-- `docs/superpowers/specs/` — design specs; the current one is
-  `2026-08-27-neev-app-restructure-design.md`
-- `docs/superpowers/plans/` — implementation plans; the current one is
-  `2026-08-28-neev-app-restructure-plan.md` (21 tasks, 3 phases). Task 1's
-  toolchain step and the whole pipeline relocation are already done; the plan's
-  "Global Constraints" section is binding on every task.
+- `docs/superpowers/` held the restructure spec and its 21-task plan. Both were
+  removed before submission: they are a record of how this repo was built by an
+  agent, not of what it does, and the plan's "Global Constraints" have all
+  landed in the code and in this file. `git log` still has them.
 - `design_handoff_neev/` — 16 hi-fi screen prototypes plus a build-notes README
 - `fixtures/` — golden-case data: loan 1001 (Ravi, flagged) and 1002 (clean)
 - `tests/test_offline.py` — 28 checks, no credentials, no network, ~0.002s

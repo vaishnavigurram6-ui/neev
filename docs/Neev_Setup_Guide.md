@@ -136,7 +136,6 @@ photos of a slab-stage site, plus one deliberately blurry shot.
 | `scripts/golden_run.py` | Programmatic 3-case demo verification |
 | `tests/test_offline.py` | The 28-test offline suite |
 | `docs/` | Hackathon submission, demo script, implementation plan |
-| `HANDOFF.md` | Day-1 drop notes (historical) |
 
 ## 8. Design rules (don't break these)
 

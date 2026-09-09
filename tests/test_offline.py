@@ -1,7 +1,7 @@
 # tests/test_offline.py — offline validation of every non-LLM, non-BigQuery path.
 # Runs anywhere (no GCP creds, no network): Google libraries are stubbed so the
 # modules import, then the pure math is exercised against the golden Ravi case
-# from HANDOFF.md, the clean case, and the low-confidence escalation case.
+# the golden case, the clean case, and the low-confidence escalation case.
 #
 # Run from repo root:  python3 -m tests.test_offline    (or: pytest tests/)
 
@@ -152,7 +152,7 @@ class TestConfig(unittest.TestCase):
 
 class TestDisbursalRisk(unittest.TestCase):
     def test_golden_ravi_case_holds(self):
-        # HANDOFF.md golden numbers: expected cost ₹35L, slab stage (50% weight),
+        # Golden-case numbers: expected cost ₹35L, slab stage (50% weight),
         # ₹18L disbursed of ₹28L sanctioned -> exposure 1.03, gap -₹7.5L, HOLD.
         r = assess_tranche(
             expected_total_cost=3_500_000,
