@@ -5,8 +5,7 @@ accept a variation is deciding against one figure — so most of these pin the
 arithmetic rather than the status string.
 """
 
-OWNER_LOGIN = {"role": "owner", "phone": "9849012345"}
-BANK_LOGIN = {"role": "bank", "phone": "9812345678"}
+from tests.conftest import BANK_LOGIN, OWNER_1002_LOGIN, OWNER_LOGIN
 
 
 def _as(client, login):

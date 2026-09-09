@@ -35,6 +35,12 @@ class Settings(BaseSettings):
     # steps away and comes back is bounced to /login through no fault of their
     # own. Set it on a deployment and sessions survive a cold start.
     neev_session_secret: str = ""
+    # The one password every demo account shares. A gate, not a secret: it is
+    # printed in the runbook so a judge can sign in. It exists because the
+    # deployed URL is public and sign-in used to accept any ten-digit number,
+    # which meant anyone who found the link could start analyses that cost
+    # money. Override it on a deployment to keep it out of a public repo.
+    neev_demo_password: str = "neev-demo"
     # How many analyses one loan may start in a rolling 24 hours, and how many
     # the whole service may. A live analysis costs real money — about Rs 3.81 —
     # and the deployed demo is a public URL whose sign-in accepts any ten-digit

@@ -13,7 +13,6 @@ import Link from 'next/link';
 import JourneyStages from '@/components/marketing/JourneyStages';
 import AccessibilityCluster from '@/components/ui/AccessibilityCluster';
 import Logo from '@/components/ui/Logo';
-import type { Role } from '@/lib/session';
 import LoginForm from './LoginForm';
 
 export const metadata: Metadata = {
@@ -35,14 +34,10 @@ export default async function LoginPage({
 }) {
   const params = await searchParams;
   const next = first(params.next);
-  // `?role=` wins where a lender-facing link sets it. Otherwise the destination
-  // says which side of the table this is: the middleware and the (bank) layout
-  // both send officers here as `?next=/bank/...` with no role, and a lender who
-  // does not notice the toggle would otherwise be signed in as an owner and have
-  // their own destination discarded as out-of-tree.
-  const asked = first(params.role);
-  const role: Role =
-    asked === 'bank' || (asked !== 'owner' && next.startsWith('/bank')) ? 'bank' : 'owner';
+  // `?role=` used to preselect a side of the table, and no longer needs to: the
+  // account decides the role, and the server answers with it. `next` still
+  // matters — it is where the visitor was heading before the middleware turned
+  // them away — and `actions.ts` refuses one outside the signed-in role's tree.
 
   return (
     <main className="grid min-h-screen grid-cols-[1fr_1.1fr]">
@@ -79,7 +74,7 @@ export default async function LoginPage({
         </div>
 
         <div className="m-auto w-[400px] max-w-full">
-          <LoginForm initialRole={role} next={next} />
+          <LoginForm next={next} />
 
           {/* The prototype sends this to Owner Onboarding, which is gated, so an
               unauthenticated click bounces off the middleware straight back here.

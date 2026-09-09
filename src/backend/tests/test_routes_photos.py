@@ -12,10 +12,11 @@ from sqlalchemy import select
 
 from app.db import models
 from app.db.session import SessionLocal
+from tests.conftest import BANK_LOGIN, OWNER_1002_LOGIN, OWNER_LOGIN
 
-OWNER_1001 = {"role": "owner", "phone": "9849012345"}
-OWNER_1002 = {"role": "owner", "phone": "9849012345", "loan_id": "1002"}
-BANK = {"role": "bank", "phone": "9812345678"}
+OWNER_1001 = OWNER_LOGIN
+OWNER_1002 = OWNER_1002_LOGIN
+BANK = BANK_LOGIN
 
 PNG = (
     b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06"

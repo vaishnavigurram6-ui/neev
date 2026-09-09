@@ -30,6 +30,7 @@ from sqlalchemy import select
 
 from app.db import models
 from app.db.session import SessionLocal
+from tests.conftest import BANK_LOGIN, OWNER_LOGIN
 
 
 # Modules whose mere import means a billed path is loaded.
@@ -109,7 +110,7 @@ def test_the_golden_path(client, beat):
     # ---- Beat 1: the owner uploads a BoQ and watches it being read -----------
     session = client.post(
         "/api/auth/session",
-        json={"role": "owner", "phone": "9999999999", "loan_id": "1001"},
+        json=OWNER_LOGIN,
     )
     assert session.status_code == 200, session.text
 
@@ -168,7 +169,7 @@ def test_the_golden_path(client, beat):
 
     # ---- Beat 4: the bank holds a tranche, with evidence ---------------------
     assert client.post(
-        "/api/auth/session", json={"role": "bank", "phone": "8888888888", "loan_id": "1001"}
+        "/api/auth/session", json=BANK_LOGIN
     ).status_code == 200
 
     portfolio = client.get("/api/portfolio").json()
@@ -218,7 +219,7 @@ def test_the_golden_path(client, beat):
 
 def test_a_second_decision_updates_rather_than_duplicating(client):
     client.post(
-        "/api/auth/session", json={"role": "bank", "phone": "8888888888", "loan_id": "1001"}
+        "/api/auth/session", json=BANK_LOGIN
     )
     for action in ("HOLD", "ESCALATE"):
         assert client.post(
@@ -238,7 +239,7 @@ def test_a_second_decision_updates_rather_than_duplicating(client):
 def test_an_owner_cannot_release_their_own_tranche(client):
     """The premise of the product is that the bank verifies before money moves."""
     client.post(
-        "/api/auth/session", json={"role": "owner", "phone": "9999999999", "loan_id": "1001"}
+        "/api/auth/session", json=OWNER_LOGIN
     )
     refused = client.post("/api/loans/1001/tranches/4/decision", json={"action": "RELEASE"})
     assert refused.status_code == 403, refused.text

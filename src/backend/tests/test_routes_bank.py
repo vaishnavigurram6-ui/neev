@@ -7,14 +7,14 @@ double-clicking "Hold" must not write two entries into the loan file.
 
 # `client` and `seeded_db` come from tests/conftest.py.
 import pytest
+from tests.conftest import BANK_LOGIN, OWNER_LOGIN
 
 
 @pytest.fixture(autouse=True)
 def _authenticated_reads(client):
     _as_officer(client)
 
-BANK_LOGIN = {"role": "bank", "phone": "9812345678"}
-OWNER_LOGIN = {"role": "owner", "phone": "9999999999", "loan_id": "1001"}
+BANK_LOGIN = BANK_LOGIN
 
 
 def _as_officer(client):

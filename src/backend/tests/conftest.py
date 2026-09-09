@@ -44,6 +44,13 @@ def _force_fixture_mode(monkeypatch):
     get_settings.cache_clear()
 
 
+# The demo accounts, as tests use them. Imported rather than retyped so a
+# change to the account list is one edit, not forty.
+OWNER_LOGIN = {"username": "ravi", "password": "neev-demo"}
+OWNER_1002_LOGIN = {"username": "prasad", "password": "neev-demo"}
+BANK_LOGIN = {"username": "officer", "password": "neev-demo"}
+
+
 @pytest.fixture(autouse=True)
 def _empty_job_registry():
     """The job registry is a module-level singleton, so jobs outlive the test
@@ -109,5 +116,5 @@ def client(seeded_db):
 @pytest.fixture
 def signed_client(client):
     """Explicitly authenticated route fixture; anonymous tests retain client."""
-    assert client.post("/api/auth/session", json={"role": "bank", "phone": "9999999999"}).status_code == 200
+    assert client.post("/api/auth/session", json=BANK_LOGIN).status_code == 200
     return client

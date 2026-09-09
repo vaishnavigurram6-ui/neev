@@ -75,8 +75,6 @@ const COPY = {
   received: 'received {day}',
   checked: '{n} items checked against {locality} benchmarks',
 
-  markedUpPdf: 'Marked-up PDF',
-  pdfWhy: 'A marked-up PDF of your BoQ is out of scope for this build (spec §10).',
   uploadRevised: 'Upload revised BoQ',
   // Neev does not message the contractor: WhatsApp sending is out of scope
   // (spec §10). The button records that these questions are ready and marks them
@@ -89,7 +87,7 @@ const COPY = {
   sentOne: '1 question logged on your file, ready to send to',
   sentMany: '{n} questions logged on your file, ready to send to',
   withContractor: 'your contractor',
-  sendNote: 'Neev does not message anyone for you — copy the text below and send it yourself.',
+  sendNote: 'Neev does not message anyone for you — copy the text above and send it yourself.',
 
   attention: '{flagged} findings across a {total}-item document',
   toggleLabel: 'Which BoQ lines to show',
@@ -290,40 +288,18 @@ export default async function BoqReviewPage({
         eyebrow={COPY.eyebrow}
         title={COPY.title}
         sub={subParts.join(' · ')}
+        // One action. There were three, and two of them dragged a paragraph of
+        // small print into the top of the page: a disabled "Marked-up PDF"
+        // button explaining itself with a spec section number, and a send
+        // control whose note said "copy the text below" from above everything
+        // it referred to. The PDF button is gone — a dead control citing a spec
+        // is documentation, and docs/Neev_Demo_Runbook.md is where what-is-not-
+        // built belongs — and the send control moved down beside the text it
+        // talks about.
         actions={
-          <>
-            {/* Disabled, and it says why in text: a `title` alone reaches
-                neither a keyboard user (a disabled button is out of the tab
-                order) nor a screen reader reliably. */}
-            <div className="flex flex-col items-start gap-[6px]">
-              <Button disabled aria-describedby="pdf-why">
-                {COPY.markedUpPdf}
-              </Button>
-              <p id="pdf-why" className="max-w-[190px] text-[11px] leading-[1.45] text-faint">
-                {COPY.pdfWhy}
-              </p>
-            </div>
-            <Button href={reviseHref} className="self-start">
-              {COPY.uploadRevised}
-            </Button>
-            {boq.questions.length > 0 && (
-              <SendQuestionsForm
-                loanId={boq.loan_id}
-                count={boq.questions.length}
-                contractor={boq.contractor}
-                alreadySent={questionsSent}
-                copy={{
-                  send: COPY.send,
-                  sendAgain: COPY.sendAgain,
-                  sending: COPY.sending,
-                  sentOne: COPY.sentOne,
-                  sentMany: COPY.sentMany,
-                  sendNote: COPY.sendNote,
-                  withContractor: COPY.withContractor,
-                }}
-              />
-            )}
-          </>
+          <Button href={reviseHref} className="self-start">
+            {COPY.uploadRevised}
+          </Button>
         }
       />
 
@@ -472,6 +448,26 @@ export default async function BoqReviewPage({
                   manualLabel: COPY.copyManualLabel,
                 }}
               />
+              {/* Beside the copy button, because its own note says "copy the
+                  text below" — which was true of the questions panel and not of
+                  the page header it used to sit in. */}
+              <div className="mt-[12px] border-t border-line pt-[12px]">
+                <SendQuestionsForm
+                  loanId={boq.loan_id}
+                  count={boq.questions.length}
+                  contractor={boq.contractor}
+                  alreadySent={questionsSent}
+                  copy={{
+                    send: COPY.send,
+                    sendAgain: COPY.sendAgain,
+                    sending: COPY.sending,
+                    sentOne: COPY.sentOne,
+                    sentMany: COPY.sentMany,
+                    sendNote: COPY.sendNote,
+                    withContractor: COPY.withContractor,
+                  }}
+                />
+              </div>
             </Panel>
           )}
 

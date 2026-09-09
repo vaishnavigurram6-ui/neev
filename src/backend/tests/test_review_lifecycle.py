@@ -12,6 +12,7 @@ from app.db.session import SessionLocal
 from app.schemas.events import DoneEvent, ErrorEvent
 from app.services.jobs import JobRegistry
 from app.services.runner import BoqAnalysisRequest
+from tests.conftest import BANK_LOGIN, OWNER_1002_LOGIN, OWNER_LOGIN
 
 
 PNG = (
@@ -37,7 +38,7 @@ def test_demo_login_is_explicitly_gated(client, monkeypatch):
     from app.core.settings import get_settings
     monkeypatch.setenv("NEEV_DEMO_AUTH", "false")
     get_settings.cache_clear()
-    assert client.post("/api/auth/session", json={"role": "bank", "phone": "9999999999"}).status_code == 403
+    assert client.post("/api/auth/session", json=BANK_LOGIN).status_code == 403
 
 
 def test_forged_unsigned_session_is_rejected(client):
@@ -150,7 +151,7 @@ def test_the_cap_is_per_loan_not_global(signed_client, monkeypatch):
         signed_client.cookies.clear()
         signed_client.post(
             "/api/auth/session",
-            json={"role": "owner", "phone": "9849012345", "loan_id": "1002"},
+            json=OWNER_1002_LOGIN,
         )
         assert signed_client.post("/api/loans/1002/boq", files=pdf).status_code == 200
     finally:
@@ -169,7 +170,7 @@ async def test_reporting_photos_runs_the_inspector_and_the_risk_agent(client, in
     from app.db.session import SessionLocal
     from app.services.jobs import registry
 
-    client.post("/api/auth/session", json={"role": "owner", "phone": "9849012345"})
+    client.post("/api/auth/session", json=OWNER_LOGIN)
     with SessionLocal() as db:
         before = next(t for t in db.get(models.Loan, "1001").tranches if t.number == 4)
         # Wipe the seeded reading so a stale value cannot make this pass.
@@ -217,7 +218,7 @@ async def test_a_milestone_with_no_stored_analysis_stays_under_review(client):
 
     client.post(
         "/api/auth/session",
-        json={"role": "owner", "phone": "9849012345", "loan_id": "1002"},
+        json=OWNER_1002_LOGIN,
     )
     with SessionLocal() as db:
         loan = db.get(models.Loan, "1002")

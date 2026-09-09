@@ -5,9 +5,12 @@ loan the link was sent for. The OTP step is a screen concern in this phase; the
 backend accepts the phone and issues the session cookie.
 """
 
+import hmac
+
 from fastapi import APIRouter, HTTPException, Response, status
 from pydantic import BaseModel, Field
 
+from app.api import accounts
 from app.api.deps import (
     BANK_LOAN_SLOT,
     BANK_NAME,
@@ -27,18 +30,25 @@ router = APIRouter(prefix="/api", tags=["auth"])
 # mid-walkthrough, short enough that a shared laptop forgets by tomorrow.
 SESSION_MAX_AGE_S = 12 * 60 * 60
 
-# With no OTP and no phone column, a phone number cannot identify a loan, so an
-# owner signing in without one lands on the golden case. This is a demo
-# affordance and disappears the moment real auth resolves phone -> borrower.
-DEMO_OWNER_LOAN_ID = "1001"
-
-
 class LoginRequest(BaseModel):
+    """A named demo account and the shared demo password.
+
+    Was a phone number and a six-digit code that accepted any six digits — a
+    flow nobody could narrate honestly, and one that mapped every owner onto
+    loan 1001 however they signed in. See `app.api.accounts`.
+    """
+
+    username: str = Field(min_length=1, max_length=40)
+    password: str = Field(min_length=1, max_length=200)
+
+
+class AccountView(BaseModel):
+    """One account the login screen can offer, so a visitor does not have to be
+    told which username shows what."""
+
+    username: str
     role: Role
-    # Indian mobile numbers are ten digits. Validated because the login screen's
-    # inline validation must have something real to agree with.
-    phone: str = Field(pattern=r"^\d{10}$")
-    loan_id: str | None = None
+    label: str
 
 
 class LoginResponse(BaseModel):
@@ -61,17 +71,45 @@ def owner_sub(loan: models.Loan | None) -> str:
     return f"Owner · {loan.plot_label or loan.locality}"
 
 
+@router.get("/auth/accounts", response_model=list[AccountView])
+def list_accounts() -> list[AccountView]:
+    """Which accounts exist, for the login screen's own hint list.
+
+    Usernames only. No password, and nothing about the loans behind them beyond
+    the label a visitor needs to choose.
+    """
+    if not get_settings().neev_demo_auth:
+        return []
+    return [
+        AccountView(username=a.username, role=a.role, label=a.label)
+        for a in accounts.DEMO_ACCOUNTS
+    ]
+
+
 @router.post("/auth/session", response_model=LoginResponse)
 def create_session(body: LoginRequest, response: Response, db: DbSession) -> LoginResponse:
-    if not get_settings().neev_demo_auth:
+    settings = get_settings()
+    if not settings.neev_demo_auth:
         raise HTTPException(403, "Demo sign-in is disabled. A verified identity provider is required.")
-    if body.role == "bank":
+
+    account = accounts.find(body.username)
+    # `compare_digest` on the password, and one message for both failures: a
+    # login that says "no such user" tells anyone who asks which usernames
+    # exist. It is a demo, but the habit is the point.
+    password_ok = hmac.compare_digest(body.password, settings.neev_demo_password)
+    if account is None or not password_ok:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="That username and password do not match a demo account.",
+        )
+
+    if account.role == "bank":
         loan_id, name = BANK_LOAN_SLOT, BANK_NAME
     else:
-        # An owner signs in against a specific loan — the one the bank's link
-        # named. Signing in for a loan that does not exist is a 404, not a
-        # session that 404s on every subsequent request.
-        loan_id = body.loan_id or DEMO_OWNER_LOAN_ID
+        # The account names the loan, so a borrower signing in cannot land on
+        # somebody else's contract. A loan the seed does not have is a 404
+        # rather than a session that 404s on every request it makes.
+        loan_id = account.loan_id
         loan = db.get(models.Loan, loan_id)
         if loan is None:
             raise HTTPException(
@@ -81,13 +119,13 @@ def create_session(body: LoginRequest, response: Response, db: DbSession) -> Log
 
     response.set_cookie(
         SESSION_COOKIE,
-        encode_cookie(body.role, loan_id, name),
+        encode_cookie(account.role, loan_id, name),
         max_age=SESSION_MAX_AGE_S,
         httponly=True,
         samesite="lax",
         path="/",
     )
-    return LoginResponse(role=body.role, loan_id=loan_id, name=name)
+    return LoginResponse(role=account.role, loan_id=loan_id, name=name)
 
 
 @router.delete("/auth/session", status_code=status.HTTP_204_NO_CONTENT)

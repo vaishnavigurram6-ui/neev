@@ -177,7 +177,7 @@ export default function OnboardingWizard({ loan }: { loan: LoanFacts }) {
    *  into a `File` here means the rest of this wizard — validation, the upload
    *  relay, the Analyzing screen — cannot tell it from a file they chose.
    */
-  const useSample = async () => {
+  const takeTheSample = async () => {
     if (fetchingSample) return;
     setFetchingSample(true);
     setError(null);
@@ -350,7 +350,7 @@ export default function OnboardingWizard({ loan }: { loan: LoanFacts }) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => void useSample()}
+                onClick={() => void takeTheSample()}
                 disabled={fetchingSample}
               >
                 {fetchingSample ? COPY.useSampleBusy : COPY.useSample}

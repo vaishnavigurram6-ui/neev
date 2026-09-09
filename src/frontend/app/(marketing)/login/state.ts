@@ -3,33 +3,26 @@
 // It lives in its own module because `actions.ts` carries the `'use server'`
 // directive, and such a file may only export async functions — a plain
 // `initialLoginState` helper there would be a build error.
-import type { Role } from '@/lib/session';
-
-/** Phone first, then the code. Two steps in one <form>, not two routes: the
- *  number typed in step one must survive step two without a round trip. */
-export type LoginStep = 'phone' | 'code';
+//
+// One step, two fields. It was two steps — a phone number, then a six-digit
+// code that accepted any six digits — which could not be narrated honestly and
+// mapped every owner onto the same loan however they signed in. Named accounts
+// replaced it; see `app/api/accounts.py`.
 
 export interface LoginError {
-  /** Which control the message belongs to. `form` is for failures that belong to
-   *  neither field — an unreachable or unhappy backend. */
-  field: 'phone' | 'code' | 'form';
+  /** Which control the message belongs to. `form` is for failures that belong
+   *  to neither field — a rejected credential, or an unreachable backend. */
+  field: 'username' | 'password' | 'form';
   message: string;
 }
 
 export interface LoginState {
-  step: LoginStep;
-  role: Role;
-  /** Normalised to ten digits, no spaces, no country code. */
-  phone: string;
+  /** Kept across a failed attempt so the visitor does not retype it. The
+   *  password is never echoed back. */
+  username: string;
   error: LoginError | null;
 }
 
-export function initialLoginState(role: Role): LoginState {
-  return { step: 'phone', role, phone: '', error: null };
-}
-
-/** "9849012345" -> "98490 12345", the grouping the design shows. Anything that
- *  is not a ten-digit number is returned untouched rather than mangled. */
-export function formatPhone(phone: string): string {
-  return /^\d{10}$/.test(phone) ? `${phone.slice(0, 5)} ${phone.slice(5)}` : phone;
+export function initialLoginState(username = ''): LoginState {
+  return { username, error: null };
 }

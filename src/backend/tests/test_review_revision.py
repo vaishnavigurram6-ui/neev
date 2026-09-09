@@ -8,6 +8,7 @@ from app.db.session import SessionLocal
 from app.fixtures.loader import load_pipeline_output
 from app.services.persistence import store_revision
 from app.services.runner import BoqAnalysisRequest
+from tests.conftest import OWNER_LOGIN
 
 
 def test_new_revision_questions_and_risk_replace_only_the_target_snapshot(signed_client):
@@ -73,7 +74,7 @@ def test_job_status_and_stream_enforce_owner_loan(client):
     from app.services.jobs import Job, registry
     registry._jobs["boundary-test"] = Job(id="boundary-test", loan_id="1002", status="done")
     try:
-        client.post("/api/auth/session", json={"role": "owner", "phone": "9999999999", "loan_id": "1001"})
+        client.post("/api/auth/session", json=OWNER_LOGIN)
         for path in ("/api/jobs/boundary-test", "/api/jobs/boundary-test/events"):
             assert client.get(path).status_code == 403
     finally:

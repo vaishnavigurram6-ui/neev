@@ -10,6 +10,7 @@ import json
 from urllib.parse import unquote
 
 import pytest
+from tests.conftest import BANK_LOGIN, OWNER_1002_LOGIN, OWNER_LOGIN
 
 def captured(loan_id: str = "1001"):
     """The captured run's own figures, read rather than transcribed.
@@ -28,8 +29,7 @@ def captured(loan_id: str = "1001"):
 
 # `client`, `seeded_db` and `instant_pipeline` come from tests/conftest.py.
 
-OWNER_LOGIN = {"role": "owner", "phone": "9999999999", "loan_id": "1001"}
-BANK_LOGIN = {"role": "bank", "phone": "9812345678"}
+BANK_LOGIN = BANK_LOGIN
 
 
 @pytest.fixture(autouse=True)
@@ -122,9 +122,22 @@ def test_a_malformed_cookie_is_no_session_not_a_crash(client):
     assert client.get("/api/me").status_code == 401
 
 
-def test_a_bad_phone_is_rejected(client):
-    response = client.post("/api/auth/session", json={"role": "owner", "phone": "12"})
-    assert response.status_code == 422
+def test_the_wrong_password_is_rejected(client):
+    """401, and the same message a bad username gets.
+
+    A login that distinguishes "no such user" from "wrong password" tells anyone
+    who asks which usernames exist. It is a demo, but the habit is the point.
+    """
+    wrong_password = client.post(
+        "/api/auth/session", json={"username": "ravi", "password": "wrong"}
+    )
+    no_such_user = client.post(
+        "/api/auth/session", json={"username": "nobody", "password": "neev-demo"}
+    )
+    assert wrong_password.status_code == no_such_user.status_code == 401
+    assert wrong_password.json()["detail"] == no_such_user.json()["detail"]
+    # And no cookie is issued by either.
+    assert "neev_session" not in wrong_password.cookies
 
 
 def test_a_forged_name_in_the_cookie_does_not_become_the_borrowers(client):
@@ -135,9 +148,19 @@ def test_a_forged_name_in_the_cookie_does_not_become_the_borrowers(client):
     assert client.get("/api/me").status_code == 401
 
 
-def test_an_owner_session_for_an_unknown_loan_is_rejected(client):
-    response = client.post("/api/auth/session", json={"role": "owner", "phone": "9999999999", "loan_id": "9999"})
-    assert response.status_code == 404
+def test_an_account_names_its_own_loan(client):
+    """A username picks the identity and the identity picks the loan, so a
+    borrower cannot land on somebody else's contract however they sign in.
+    That was the old flow's real problem: every owner became loan 1001."""
+    for login, expected in ((OWNER_LOGIN, "1001"), (OWNER_1002_LOGIN, "1002")):
+        client.cookies.clear()
+        body = client.post("/api/auth/session", json=login).json()
+        assert body["loan_id"] == expected, login
+        assert body["role"] == "owner"
+    # And the accounts on offer are discoverable without guessing.
+    listed = client.get("/api/auth/accounts").json()
+    assert {a["username"] for a in listed} == {"ravi", "prasad", "officer"}
+    assert all("password" not in a for a in listed)
 
 
 # ---------------------------------------------------------------- the loan

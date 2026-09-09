@@ -205,27 +205,44 @@ judge discover it. It costs nothing, has no quota, and the BoQ screen labels
 itself "Demo replay" so the claim is on the page rather than only in your
 narration.
 
-**Not built.** Real OTP, translation, text-to-speech, marked-up PDF export,
-WhatsApp sending. Each renders as a disabled control that says why, rather than
-a dead button that lies.
+**Not built.** Real identity, translation, text-to-speech, marked-up PDF
+export, WhatsApp sending. Most render as a disabled control that says why,
+rather than a dead button that lies — the exception is the marked-up PDF, whose
+button is gone: a dead control explaining itself with a spec section number is
+documentation wearing an interface, and this is where documentation goes.
 
-## Who a judge is, when they sign in
+## The demo accounts, and their password
 
-Nobody. Sign-in takes any ten-digit number starting 6-9 and any six digits as
-the code, and there is no identity behind it — `NEEV_DEMO_AUTH` gates the whole
-endpoint and `deps.py` says in its own docstring that this is not identity
-verification. Two consequences worth knowing before a judged session:
+The login screen asks for a username and a password and lists nothing, on
+purpose: a product does not tell a visitor whose account to borrow. The
+credentials are documentation, so they live here.
 
-**Every "home owner" is Ravi, on loan 1001.** `create_session` maps an owner to
-`DEMO_OWNER_LOAN_ID` regardless of the number typed. That is deliberate — only
-1001 and 1002 have a recorded pipeline output, so handing a judge loan 1007
-would land them on a BoQ screen with nothing to show.
+| Username | Password | Signs in as |
+|---|---|---|
+| `ravi` | `neev-demo` | Ravi Kumar — the flagged contract, loan 1001 |
+| `prasad` | `neev-demo` | D. Prasad — the clean contract, loan 1002 |
+| `officer` | `neev-demo` | Credit officer — the whole book |
 
-**So two judges signed in at once share one loan and one database.** Cloud Run
-runs at `--max-instances 1` because SQLite lives on the instance's disk, so if
-two people report a milestone on 1001 within a minute of each other, the second
-overwrites the first and both see the same figures. For a walkthrough, let one
-person drive. For a booth, expect it and reset between visitors:
+One shared password, set by `NEEV_DEMO_PASSWORD`. Override it on a deployment if
+you would rather it were not the one printed in this repo:
+
+    NEEV_DEMO_PASSWORD='say-it-out-loud' NEEV_DEPLOY_SANDBOX=1 bash scripts/deploy_cloudrun.sh
+
+It is a gate, not identity. It exists because the deployed URL is public and
+sign-in used to take any ten-digit number and any six-digit code, which meant
+anyone who found the link could start analyses that cost about ₹3.81 each.
+
+**A username picks the loan**, which is the part that matters for a demo: `ravi`
+and `prasad` are two borrowers with two contracts and cannot overwrite each
+other. Only 1001 and 1002 have a recorded pipeline run behind them, so those are
+the only two borrowers worth offering — any other loan would land a visitor on a
+contract screen with nothing to show.
+
+**Two judges on the same account still collide.** Cloud Run runs at
+`--max-instances 1` because SQLite lives on the instance's disk, so if two
+people sign in as `ravi` and both report a milestone, the second overwrites the
+first. Give them one account each, or let one person drive. To reset between
+visitors:
 
     pkill -f "uvicorn app.main:app"
     cd src/backend && rm -rf artifacts && .venv/bin/python -m app.db.seed --reset

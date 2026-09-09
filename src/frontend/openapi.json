@@ -1,6 +1,34 @@
 {
   "components": {
     "schemas": {
+      "AccountView": {
+        "description": "One account the login screen can offer, so a visitor does not have to be\ntold which username shows what.",
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "owner",
+              "bank"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "role",
+          "label"
+        ],
+        "title": "AccountView",
+        "type": "object"
+      },
       "Body_report_milestone_api_loans__loan_id__milestones_post": {
         "properties": {
           "note": {
@@ -1008,35 +1036,24 @@
         "type": "object"
       },
       "LoginRequest": {
+        "description": "A named demo account and the shared demo password.\n\nWas a phone number and a six-digit code that accepted any six digits \u2014 a\nflow nobody could narrate honestly, and one that mapped every owner onto\nloan 1001 however they signed in. See `app.api.accounts`.",
         "properties": {
-          "loan_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Loan Id"
-          },
-          "phone": {
-            "pattern": "^\\d{10}$",
-            "title": "Phone",
+          "password": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Password",
             "type": "string"
           },
-          "role": {
-            "enum": [
-              "owner",
-              "bank"
-            ],
-            "title": "Role",
+          "username": {
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Username",
             "type": "string"
           }
         },
         "required": [
-          "role",
-          "phone"
+          "username",
+          "password"
         ],
         "title": "LoginRequest",
         "type": "object"
@@ -2317,6 +2334,32 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/auth/accounts": {
+      "get": {
+        "description": "Which accounts exist, for the login screen's own hint list.\n\nUsernames only. No password, and nothing about the loans behind them beyond\nthe label a visitor needs to choose.",
+        "operationId": "list_accounts_api_auth_accounts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AccountView"
+                  },
+                  "title": "Response List Accounts Api Auth Accounts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Accounts",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/api/auth/session": {
       "delete": {
         "operationId": "delete_session_api_auth_session_delete",
