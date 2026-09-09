@@ -21,6 +21,7 @@ export default function CardTable<T>({
   caption,
   skin = 'owner',
   rowHref,
+  rowHrefColumn,
   rowTone,
   groupBy,
   emptyMessage = 'Nothing to show yet.',
@@ -31,6 +32,11 @@ export default function CardTable<T>({
   caption: string;
   skin?: Skin;
   rowHref?: (row: T) => string;
+  /** Which column carries the row's link, by `key`. Defaults to the first,
+   *  which is right when that column is the row's name — and wrong when it is
+   *  a four-digit id, where the link ends up too small to find and says
+   *  nothing about where it goes. */
+  rowHrefColumn?: string;
   rowTone?: (row: T) => Tone | null;
   groupBy?: (row: T) => string;
   emptyMessage?: string;
@@ -83,20 +89,24 @@ export default function CardTable<T>({
                 const tone = rowTone?.(row) ?? null;
                 const tint = tone ? toneClasses(tone, skin).bg : '';
                 const href = rowHref?.(row);
+                const linkColumn = rowHrefColumn ?? columns[0]?.key;
                 return (
                   <tr
                     key={index}
                     className={`border-b border-rowline last:border-0 hover:bg-hover ${tint}`}
                   >
-                    {columns.map((column, columnIndex) => (
+                    {columns.map((column) => (
                       <td
                         key={column.key}
                         className={`px-[15px] py-[12px] align-top text-[13px] ${
                           column.align === 'right' ? 'text-right' : 'text-left'
                         }`}
                       >
-                        {href && columnIndex === 0 ? (
-                          <Link href={href} className="hover:text-action">
+                        {href && column.key === linkColumn ? (
+                          <Link
+                            href={href}
+                            className="rounded-[4px] hover:text-action focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
+                          >
                             {column.render(row)}
                           </Link>
                         ) : (

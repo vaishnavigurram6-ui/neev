@@ -57,21 +57,20 @@ const COLUMNS: Column<PortfolioRowView>[] = [
     key: 'loan',
     header: 'Loan',
     width: '92px',
-    render: (row) => (
-      <>
-        <Figure value={row.loan_id} size="sm" />
-        {/* The drill-in link is this cell. On its own the link text is four
-            digits, so name the destination for anyone listening to it. */}
-        <span className="sr-only">{` — open the tranche decision for ${row.borrower}`}</span>
-      </>
-    ),
+    render: (row) => <Figure value={row.loan_id} size="sm" />,
   },
   {
     key: 'borrower',
     header: 'Borrower · Location',
+    // The row's drill-in. The borrower's name rather than the loan id: it is
+    // the biggest target in the row, it is what an officer is looking for, and
+    // a link whose whole text is four digits tells a screen reader nothing
+    // about where it goes.
     render: (row) => (
       <span className="text-[13px] text-ink">
-        <b>{row.borrower}</b> <span className="text-faint">{`· ${row.locality}`}</span>
+        <b className="text-action underline decoration-1 underline-offset-2">{row.borrower}</b>{' '}
+        <span className="text-faint">{`· ${row.locality}`}</span>
+        <span className="sr-only">{` — open the loan file for ${row.borrower}`}</span>
       </span>
     ),
   },
@@ -229,6 +228,7 @@ export default async function PortfolioHotlistPage({
           skin="bank"
           caption={COPY.caption}
           rowHref={(row) => row.href}
+          rowHrefColumn="borrower"
           // The prototype tints the rows that stop a release. Same intent, one
           // vocabulary: the tint is the row's own tone, and only where the tone
           // means something needs doing.
