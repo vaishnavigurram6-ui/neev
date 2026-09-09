@@ -96,6 +96,40 @@ Frontend uses `npm`.
 - `docs/Neev_Demo_Runbook.md` — how to run and narrate the demo; start here
 - `scripts/dev.sh` — starts both servers, seeded, in fixture mode
 
+## Decided but not built: two books, and signup
+
+Deferred on 2026-09-10 until after the first deploy — auth is the riskiest thing
+to rewrite hours before a one-shot deploy, and the three named accounts carry
+the demo. Recorded here so it is not re-derived.
+
+The prompt was a fair one: **there could be an officer named ravi as well.**
+Usernames only collide once people can create them, so signup and the collision
+are one piece of work, not two.
+
+The shape, when it happens:
+
+- **Role-scoped usernames.** Unique on `(role, username)`, so borrower-`ravi`
+  and officer-`ravi` are separate accounts. The role comes from where the
+  visitor is — `/login` against `/login?role=bank`, which already chooses the
+  page's copy — and is used as a **lookup key, never as a claim of privilege**.
+  That distinction is the whole lesson of the old toggle, which let the request
+  assert `role: bank` and be believed.
+- **Signup is borrower-only.** Staff access to the whole book is never
+  self-served; officers stay provisioned by the seed. That asymmetry is also
+  what makes two books make sense rather than being symmetry for its own sake.
+- **A new borrower gets their own loan**, described on the form: sanctioned
+  amount, locality, built-up area. Verified reachable on 2026-09-10 — a loan
+  with no tranches and no revisions returns 200 from `/api/loans/{id}` and
+  `/progress`, and 404 from `/boq/latest` and `/sanction-check`, which the
+  screens already render as "nothing checked yet". So the core loop works for a
+  brand-new account, and Build Progress stays honestly empty until a draw
+  exists.
+- **Real hashing** (`hashlib.scrypt`), and the demo accounts become seeded rows
+  rather than the tuple in `app/api/accounts.py`.
+
+Roughly three hours: table and migration, hashing, the signup endpoint and loan
+creation, the role-scoped lookup, the page, and tests.
+
 ## State of the build (2026-08-28)
 
 Phases 0-2 of the plan are complete and merged: all 21 tasks except the final
