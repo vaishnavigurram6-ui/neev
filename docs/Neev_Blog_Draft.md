@@ -9,9 +9,8 @@
 >
 > Medium doesn't render pasted Markdown. Two ways in: paste the text and apply
 > Medium's own heading styles as you go, or use *Import a story* if you host it
-> somewhere first. Images, in order: `figures/fig0_problem.png` near the top,
-> `figures/fig1_lifecycle.png` at "Four moments", `figures/fig3_pipeline.png` at
-> "Five readers".
+> somewhere first. The three figures are referenced inline below and render on
+> GitHub; on Medium you'll need to upload each one where its caption sits.
 
 ---
 
@@ -40,7 +39,9 @@ one house in their entire life.
 
 The person who wrote it has built hundreds.
 
-*[INSERT `figures/fig0_problem.png` — the asymmetry]*
+![One house against four hundred](../figures/fig0_problem.png)
+
+*One house against four hundred.*
 
 ## This isn't a story about crooked builders
 
@@ -78,20 +79,36 @@ think about again.
 
 ## The advice is all out there already
 
-And that's the frustrating bit, honestly. Search for this and you'll find plenty
-— red-flag checklists, line-by-line walkthroughs, free spreadsheet templates.
-People have written good, careful stuff about it. Most of it is right.
+And that's the frustrating bit, honestly. Search for this and you'll find
+plenty. Red-flag checklists. Line-by-line walkthroughs. Free spreadsheet
+templates. And now thousands of reels and YouTube videos — genuinely good ones,
+made by people who actually know construction, walking you through exactly what
+to watch for at every stage.
 
-But look at what every single one of them quietly assumes. That you'll sit down
-and work through a hundred-odd technical lines across a dozen sections. That
-you'll check each rate against local benchmarks, which you don't have. And that
-you'll spot the things that *aren't* there — which is so much harder than
-spotting something wrong, because a missing item has nothing on the page for
-your eye to snag on. You can't skim for an absence.
+I've watched a lot of them. And here's the thing I noticed: I couldn't recall a
+single one at the moment it would have helped.
 
-So the knowledge exists. It just can't reach the person who needs it, at the one
-moment they need it. That's the whole gap — and it happens to be exactly the
-kind of gap software is good at closing.
+That's not really a memory problem. It's a timing problem. You watch a reel
+about terrace waterproofing in February. The waterproofing decision turns up on
+site in September — with a mason standing there asking whether you want it done
+now or later, while you're trying to remember whether the video said two coats
+or three, and whether ₹340 a square metre was the number or whether that was
+something else entirely.
+
+The knowledge went in. It just isn't available in the ninety seconds where it
+would change anything.
+
+And the written stuff has a quieter version of the same problem. Look at what
+every checklist assumes: that you'll sit down and work through a hundred-odd
+technical lines across a dozen sections, checking each rate against local
+benchmarks you don't have, and spotting the things that *aren't* there — which
+is so much harder than spotting something wrong, because a missing item has
+nothing on the page for your eye to snag on. You can't skim for an absence.
+
+So the knowledge exists, in enormous quantity. It just can't reach the person
+who needs it, in the shape they need it, at the one moment they need it. That's
+the whole gap — and it happens to be exactly the kind of gap software is good at
+closing.
 
 ## And it all goes wrong later, which is the cruel part
 
@@ -127,6 +144,12 @@ in there at all. Flag "good quality tiles" for naming no brand and no standard.
 Flag the payment schedule that wants 45% of the money before there's anything
 meaningful standing on the plot.
 
+That's really what all those reels are — thousands of people's hard-won
+knowledge about what a fair rate looks like and what usually goes missing,
+scattered across a thousand videos. Collect it once, into numbers a system can
+check a line against, and it stops depending on whether you happened to watch
+the right clip in February.
+
 And then — this is the part I think actually matters — keep reading it.
 
 Because a construction loan doesn't get handed over in one go. It comes out in
@@ -138,7 +161,9 @@ the money that's gone out so far in line with what's genuinely standing there?
 And when the contractor comes back with an extra — because they will — what's it
 worth against the line that was signed in the first place?
 
-*[INSERT `figures/fig1_lifecycle.png` — four checkpoints on one contract]*
+![Four checkpoints on one contract](../figures/fig1_lifecycle.png)
+
+*Four checkpoints on one contract.*
 
 ## Four moments, same piece of paper
 
@@ -149,7 +174,8 @@ Four places worth reading it, and they're not the same question:
 - **At sanction** — will the approved amount actually finish this house at local
   rates? Not "does the budget add up", but "does this end with a roof"?
 - **Through the build** — do the photos from site show the stage being claimed
-  for payment?
+  for payment? Answered while the stage is still happening, not in a report
+  afterwards.
 - **On every change** — what's this extra worth, against what was agreed?
 
 ## Five readers, and one stubborn rule
@@ -161,7 +187,9 @@ decides what stage they show. One turns all that into a release-or-hold call.
 And the last one writes the finding twice — once for the family, once for the
 credit officer.
 
-*[INSERT `figures/fig3_pipeline.png` — the five-agent pipeline]*
+![Five agents in sequence](../figures/fig3_pipeline.png)
+
+*Five agents in sequence.*
 
 But the decision I'd defend hardest isn't about the agents at all. It's a rule
 about shutting up:
