@@ -3,7 +3,7 @@
 #
 # Run this yourself. It calls `gcloud run deploy`, which CLAUDE.md keeps out of
 # agent hands even with the dry run lifted, because two free deploys existed for
-# this hackathon and THIS SCRIPT SPENDS BOTH IN ONE INVOCATION.
+# this programme and THIS SCRIPT SPENDS BOTH IN ONE INVOCATION.
 #
 # It deploys LIVE by default (NEEV_MODE=live): uploads are read by the
 # five-agent ADK pipeline, which bills about Rs 3.81 per analysis. Set
@@ -16,7 +16,7 @@
 # raising it means putting a card on an AI Studio account. Vertex AI runs the
 # same models, authenticates as the Cloud Run service account (so there is no
 # key to leak or rotate), and bills against the project's Cloud Billing
-# account, which is where hackathon credits live. Set
+# account, which is where the programme credits live. Set
 # NEEV_GENAI_BACKEND=apikey to use a Gemini API key from Secret Manager
 # instead.
 #

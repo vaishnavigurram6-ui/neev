@@ -182,7 +182,7 @@ allows **20 `generateContent` requests per day per model**
 agents plus tool round-trips, so that is about **two analyses a day**, and
 lifting it means putting a card on an AI Studio account. Vertex AI runs the same
 models with no such cap, authenticates as the Cloud Run service account, and
-bills the project's Cloud Billing account, which is where hackathon credits sit.
+bills the project's Cloud Billing account, which is where the programme credits sit.
 `scripts/deploy_cloudrun.sh` uses Vertex by default; locally, set
 `GOOGLE_GENAI_USE_VERTEXAI=true GOOGLE_CLOUD_PROJECT=buildguard-ai-2026
 GOOGLE_CLOUD_LOCATION=global`. Proven end to end on 2026-09-09: 40 line items,
@@ -306,7 +306,7 @@ needs: every flag names the row that caused it. An embedding match that is wrong
 is silent and unexplainable.
 
 RAG would be the right tool for querying the full CPWD DSR — thousands of pages,
-rather than the 30 items someone pre-extracted from it. That is post-hackathon.
+rather than the 30 items someone pre-extracted from it. That is for after the submission.
 
 ## Screens beyond the demo path
 
