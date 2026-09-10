@@ -10,12 +10,20 @@ Gemini completions and vision, the ADK pipeline, and `gcloud run deploy` are all
 permitted now. `GOOGLE_API_KEY` is restored in `.env` (the value came from
 `.env.disabled-backup`, which stays git-ignored).
 
+Note what that does *not* do: nothing loads `.env` on its own. No Python here
+calls `load_dotenv`, and `scripts/dev.sh` never sources it — only
+`scripts/deploy_cloudrun.sh` reads it, by `sed`, for the session secret and for
+the key on the `apikey` path. So a local `NEEV_MODE=live` backend runs with no
+`GOOGLE_API_KEY` in its environment at all, and reaches Gemini through Vertex.
+Export the key by hand for the key path.
+
 What that changes, and what it does not:
 
 | Operation | Status |
 |---|---|
 | Gemini completions and vision, `adk web`, `scripts/golden_run.py`, `record_golden_run.py` | **Permitted.** Each full pipeline run costs about ₹3.81 — see `docs/Neev_Two_Week_Plan.md`. Say what a run will cost before making it, and do not run the pipeline in a loop without asking. |
-| **A pipeline run while the key is on the free tier** | **Budget it like a scarce resource, because it is.** The free tier allows 20 `generateContent` requests per day *per model*, and one analysis is five agents plus tool round-trips — roughly **two analyses a day**. Spending them on a debugging loop leaves none for a demo. Check `https://ai.dev/rate-limit` before running, and prefer `--from-raw` replay (free) for anything that is not specifically testing the live path. |
+| **A pipeline run on the API-key path** (`NEEV_GENAI_BACKEND=apikey`, or any route run with `GOOGLE_API_KEY` exported and `GOOGLE_GENAI_USE_VERTEXAI` unset — which is how `adk web` and a bare `record_golden_run.py` behave, though the latter takes either) | **Budget it like a scarce resource, because it is.** AI Studio's free tier allows 20 `generateContent` requests per day *per model*, and one analysis is five agents plus tool round-trips — roughly **two analyses a day**. Spending them on a debugging loop leaves none for a demo. Check `https://ai.dev/rate-limit` before running, and prefer `--from-raw` replay (free) for anything that is not specifically testing the live path. |
+| **A pipeline run on the Vertex path** (`GOOGLE_GENAI_USE_VERTEXAI=true` — what `scripts/dev.sh` sets for `NEEV_MODE=live`, and what a deployment uses) | **No 20/day wall. This is the default and the one to use.** Vertex bills the project's Cloud Billing account, where the hackathon credits are, so the bound is credit (~₹3.81 a check) and the app's own caps — `NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY` (12) and `NEEV_MAX_ANALYSES_PER_DAY` (60), read under the `NEEV_` prefix in `app/core/settings.py` and enforced in `app/api/routes/boq.py`, locally as well as on a deployment. Do not quote the two-a-day figure at this path; it is the row above. |
 | BigQuery reads and `bq load` on this project's own tables | **Permitted.** Kilobytes, inside the free tier. |
 | `gcloud` read-only and metadata commands | **Permitted.** |
 | **`gcloud run deploy`** | **STILL GATED. The owner approves every one.** Two free deploys existed for this hackathon and `scripts/deploy_cloudrun.sh` spends both in a single invocation (backend, then frontend). A third costs money. Never run it unasked. |
@@ -23,10 +31,13 @@ What that changes, and what it does not:
 
 ### Rules
 
-1. **`NEEV_MODE=live` needs `NEEV_ALLOW_BILLED_CALLS=1`** and a key in the
-   environment. That belt-and-braces check stays: it is what stops a stray
-   `NEEV_MODE=live` in a shell from billing, and `get_runner` is still the only
-   place that reads the mode.
+1. **`NEEV_MODE=live` needs `NEEV_ALLOW_BILLED_CALLS=1`** and a credential — an
+   API key on the key path, application-default credentials on the Vertex one.
+   In code the flag is the whole gate: `app/core/settings.py` raises
+   `BilledCallsNotPermitted` without it and checks for no key, because on Vertex
+   there is none to check. That belt-and-braces check stays: it is what stops a
+   stray `NEEV_MODE=live` in a shell from billing, and `get_runner` is still the
+   only place that reads the mode.
 2. **Tests must never reach the network**, unchanged and non-negotiable. Follow
    `tests/test_offline.py`, which stubs the Google libraries in `sys.modules`
    and runs with no credentials. A test that bills is a test that bills on every
