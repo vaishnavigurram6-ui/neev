@@ -105,39 +105,32 @@ measured is worse than one that says nothing.
 carry three sections beyond the title: **1. Project description · 2. Project use
 case · 3. Architecture diagram**.*
 
-**Written 2026-09-10. Paste this:**
-
-```
-https://docs.google.com/document/d/1aHwUxgrJ8P93r4CP5gofRSI2a5gHdYmEN6pMyNTXDjI/edit
-```
-
-It carries all three mandated sections, in this order and named exactly as the
-form asks: **1. Project description · 2. Project use case · 3. Architecture
-diagram** — plus a stack table and a section stating what is honestly not built,
-which a reviewer would otherwise have to find for themselves.
-
-> **TWO THINGS TO DO IN THE DOC BEFORE YOU SUBMIT.**
+> **The content is written and lives in this repo:**
+> **[`docs/Neev_Project_Documentation.md`](Neev_Project_Documentation.md)** —
+> the three mandated sections in the form's own order and names, plus the stack
+> and a section on what is honestly not built.
 >
-> **1. Set sharing to "anyone with the link → Viewer".** I could not do this: the
-> Drive tool available to me shares only with a named person, not by link. The
-> form says a doc the panel cannot open makes the submission unvalidatable.
+> **What is left is to put it in a Google Doc, in the account you are submitting
+> from.** A doc was created on 2026-09-10 and then trashed: it landed in
+> `mohith@nexthop.ai` (the account connected to the tooling), and only the owner
+> can set the link sharing the form requires — so submitting it would have meant
+> a doc the panel might not open.
 >
-> **2. Insert the five figures.** The doc has five placeholder lines reading
-> `[FIGURE n — insert image by URL: …]`, each carrying the exact URL. Google's
-> HTML importer does not fetch remote images, so they arrived as text. For each:
-> *Insert → Image → By URL*, paste the URL from the placeholder, then delete the
-> placeholder line. Figure 5 in §3 is the architecture diagram the form
-> specifically requires, so that one is not optional.
+> Steps: new Google Doc in the submitting account → paste the Markdown → insert
+> the five figures → share "anyone with the link → Viewer" → open it in a
+> private window to prove it → paste that URL here.
 >
-> The URLs work because the repo is public:
-> - `figures/fig0_problem.png` — the asymmetry (§2.1)
-> - `figures/fig1_lifecycle.png` — the four checkpoints (§2.5)
-> - `figures/fig2_boq_hub.png` — one document, two readers (§2.6)
-> - `figures/fig4_bank.png` — what the lender sees (§2.7)
-> - `figures/fig3_pipeline.png` — **the architecture diagram** (§3)
+> **Two things learned building it once, worth not rediscovering:**
+> - Google's HTML importer does **not** fetch remote `<img>` sources. Insert
+>   each figure by hand — drag the PNG from `figures/`, or *Insert → Image → By
+>   URL* with
+>   `https://raw.githubusercontent.com/vaishnavigurram6-ui/neev/main/figures/<name>.png`
+>   (the repo is public, so these resolve).
+> - Bold inside a table cell can survive as literal `**asterisks**`. Keep table
+>   cells plain.
 >
-> All five are at
-> `https://raw.githubusercontent.com/vaishnavigurram6-ui/neev/main/figures/<name>`
+> `figures/fig3_pipeline.png` is the architecture diagram the form specifically
+> mandates, so that one is not optional.
 
 ---
 
@@ -435,7 +428,7 @@ want to have accomplished?** · multiple choice · required
 | # | Item | State |
 |---|---|---|
 | 1 | Q2 is the **Patchamomma registration email** | **only you can confirm** |
-| 2 | Q7 doc: insert the 5 figures, then share "anyone with link → Viewer" | **to do — I cannot share by link** |
+| 2 | Q7 Google Doc: create it **in the submitting account**, three named sections, figures inserted, shared "anyone with link → Viewer" | **to do** |
 | 3 | Q13 live URL, opened in a private window | after the deploy |
 | 4 | Q14 demo video uploaded, under 3 min, opened in a private window | **to do** |
 | 5 | Q15 GitHub repo is public | **done 2026-09-10** |
