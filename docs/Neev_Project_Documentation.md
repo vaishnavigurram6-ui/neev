@@ -2,6 +2,12 @@
 
 **Your contractor has priced four hundred houses. You're pricing one.**
 
+> **Neev** is pronounced **"neev"** — one syllable, like *leave* with an n.
+> Written नींव in Hindi, it's the word for the foundation of a building: the
+> first thing that gets built, and the first thing anyone checks before building
+> on top of it. That's the whole intention behind the name — this is the thing
+> you look at before you commit.
+
 Neev reads the Bill of Quantities sitting at the centre of a self-construction
 home loan, flags what's inflated, missing or vaguely worded — and then keeps
 checking that same contract against what's actually been built, at every
@@ -394,10 +400,13 @@ Saying it here rather than leaving it for a reviewer to find.
 - **The benchmark rates are provisional.** They're CPWD DSR 2023-derived and
   Hyderabad-factored, but not independently verified line by line. The
   `verified` column says so, and so do the screens.
-- **The database is ephemeral.** SQLite sits on the Cloud Run instance disk and
-  gets re-seeded from the repository on every cold start, so anything a visitor
-  creates lasts as long as the instance does. Moving to Cloud SQL is a
-  connection-string change — the ORM means no query would have to move.
+- **The database is deliberately disposable, and that has a cost.** SQLite sits
+  on the Cloud Run instance disk and gets re-seeded from the repository on every
+  cold start. That's on purpose: it's why every visitor opens the same ten loans
+  and the same 126 flags, and why the demo can't drift. The cost is that
+  anything *you* create — a signup, a decision, an upload — lasts only as long
+  as that instance does. Real durability is a connection-string change to Cloud
+  SQL; the ORM means not one query would have to move.
 - **There's no identity verification.** Signing in is a username and a password,
   not a KYC'd identity. The seam for a real provider is one endpoint that every
   screen already reads its identity from.
@@ -407,7 +416,3 @@ Saying it here rather than leaving it for a reviewer to find.
 - **Hindi, Telugu and read-aloud aren't built.** The interface says "coming"
   rather than pretending they work.
 
----
-
-*Neev — नींव — is the Hindi word for the foundation of a building. It's the first
-thing that gets built, and the first thing worth checking.*

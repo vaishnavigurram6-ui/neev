@@ -14,6 +14,14 @@
 
 ---
 
+*A quick note on the name, since it's the first word here: **Neev** is
+pronounced **"neev"** — one syllable, like *leave* with an n. It's नींव in
+Hindi, the word for a building's foundation. The first thing that gets built,
+and the first thing anyone checks before building on top of it. Which is exactly
+what this is about.*
+
+---
+
 Picture a kitchen table on a weekday evening.
 
 There's a family sitting at it. They've got a plot of land — maybe it came down
@@ -228,7 +236,3 @@ claimed.
 One document. One set of numbers. Two people who can finally have a specific
 conversation instead of a vague one.
 
----
-
-*Neev — नींव — is the Hindi word for the foundation of a building. It's the first
-thing that gets built. Felt like the right thing to name it after.*
