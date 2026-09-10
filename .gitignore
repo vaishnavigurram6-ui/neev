@@ -58,3 +58,9 @@ docs/Review_Remediation.md
 # explored in a parallel session and not adopted: the two-service path is the
 # exercised one. Kept on disk because the analysis is worth more than the code.
 deploy/
+
+# Demo audio and video rendered in another session. 23MB of mp3/mp4, and the
+# form wants a YouTube or Drive link for the video rather than a file in the
+# repo. Ignored so a `git add -A` cannot sweep it in -- which is exactly how
+# deploy/ got committed by mistake.
+Claude outputs/
