@@ -107,6 +107,24 @@ def test_decision_events_are_append_only_and_retries_are_deduplicated(signed_cli
     with SessionLocal() as db:
         assert [e.action for e in db.scalars(select(models.DecisionEvent).order_by(models.DecisionEvent.id))] == ["HOLD", "ESCALATE"]
 
+
+def _route_sees_a_live_runner(monkeypatch):
+    """Exercise the cap on the only path it guards, and stay offline doing it.
+
+    `conftest` forces fixture mode for every test, and the cap is now live-only,
+    so a test that wants to see it has to say which runner the route resolves.
+    A stub rather than NEEV_MODE=live: the real one would drag ADK into a suite
+    that must never import it, and `assert_billed_calls_permitted` would want a
+    flag no test should ever set.
+    """
+    from app.api.routes import boq
+
+    class _LiveRunner:
+        mode = "live"
+
+    monkeypatch.setattr(boq, "get_runner", lambda *a, **k: _LiveRunner())
+
+
 def test_the_daily_cap_stops_a_public_url_spending_without_limit(signed_client, monkeypatch):
     """A live analysis costs real money and the deployed demo is a public URL
     whose sign-in accepts any ten-digit number. On the Gemini free tier Google's
@@ -117,6 +135,7 @@ def test_the_daily_cap_stops_a_public_url_spending_without_limit(signed_client, 
     """
     from app.core.settings import get_settings
 
+    _route_sees_a_live_runner(monkeypatch)
     monkeypatch.setenv("NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY", "2")
     get_settings.cache_clear()
     try:
@@ -139,6 +158,7 @@ def test_the_cap_is_per_loan_not_global(signed_client, monkeypatch):
     """One borrower exhausting their own allowance must not lock out the book."""
     from app.core.settings import get_settings
 
+    _route_sees_a_live_runner(monkeypatch)
     monkeypatch.setenv("NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY", "1")
     monkeypatch.setenv("NEEV_MAX_ANALYSES_PER_DAY", "50")
     get_settings.cache_clear()
@@ -154,6 +174,28 @@ def test_the_cap_is_per_loan_not_global(signed_client, monkeypatch):
             json=OWNER_1002_LOGIN,
         )
         assert signed_client.post("/api/loans/1002/boq", files=pdf).status_code == 200
+    finally:
+        get_settings.cache_clear()
+
+
+def test_a_fixture_replay_is_never_capped(signed_client, monkeypatch):
+    """The cap guards credit, and a fixture replay spends none.
+
+    It reads a recorded run off disk and never reaches a model, so counting it
+    against the daily allowance throttles the one path that is free — which is
+    the path a demo recording uses, where being cut off after twelve takes is
+    the whole problem. The guard asks the runner what it is rather than reading
+    NEEV_MODE, keeping `get_runner` the only place that resolves the mode.
+    """
+    from app.core.settings import get_settings
+
+    monkeypatch.setenv("NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY", "2")
+    monkeypatch.setenv("NEEV_MAX_ANALYSES_PER_DAY", "2")
+    get_settings.cache_clear()
+    try:
+        pdf = {"file": ("boq.pdf", b"%PDF-1.4 test\n%%EOF", "application/pdf")}
+        for _ in range(5):
+            assert signed_client.post("/api/loans/1001/boq", files=pdf).status_code == 200
     finally:
         get_settings.cache_clear()
 

@@ -13,6 +13,11 @@ writes the revision and its `raw_output` through `app/services/persistence.py`.
 `app/api/analysis.py` reads `raw_output` first, so a live run substitutes with no
 change here. This route still reads no mode, which is the property that made the
 fix possible in the first place.
+
+It does ask the resolved runner what it is, once, in the daily-cap guard — a
+free replay has no credit to protect. That is a different thing from reading
+NEEV_MODE: the mode is still resolved in exactly one place, and this route would
+keep working if a third runner appeared.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -28,7 +33,7 @@ from app.mappers.boq import to_boq_review
 from app.mappers.sanction import to_sanction_check
 from app.schemas.views import BoqReviewView, SanctionCheckView
 from app.services.jobs import registry
-from app.services.runner import BoqAnalysisRequest
+from app.services.runner import BoqAnalysisRequest, get_runner
 from app.services.artifacts import read_upload, store_artifact
 from app.api.routes.loans import _current_tranche
 
@@ -85,7 +90,18 @@ def _refuse_if_over_the_daily_cap(loan: models.Loan) -> None:
     already paid for the agents that answered, and a revision only exists if the
     run succeeded. Two limits, because one loan hammering its own upload and a
     hundred loans doing it once each cost the same.
+
+    A fixture replay is exempt, because there is nothing to protect: it reads a
+    recorded run off disk and reaches no model. Capping it only throttles the
+    free path — which is the path a demo recording uses, where running out of
+    takes is the whole cost. The question is asked of the runner rather than of
+    NEEV_MODE, so `get_runner` stays the one place that resolves the mode and
+    this route keeps reading none (see the module docstring, and
+    `jobs.py::_persist`, which reads `runner.mode` the same way).
     """
+    if get_runner().mode != "live":
+        return
+
     settings = get_settings()
     cutoff = datetime.now(timezone.utc) - timedelta(days=1)
 
