@@ -28,96 +28,22 @@ same numbers.
 
 # 1. Project description
 
-## The moment this exists for
+## What it does
 
-Picture a kitchen table on a weekday evening.
+Neev reads a contractor's Bill of Quantities — the line-item contract behind a
+self-construction home loan — and checks every line against what that item
+actually costs in that locality. It flags rates that are inflated, scope that's
+missing, specs too vague to hold anyone to, and payment schedules front-loaded
+before there's anything built.
 
-A family's sitting at it. They've got a plot — maybe it came down from a
-grandparent, maybe it's on the edge of a city that's been growing out toward it
-for twenty years. They've got a sanction letter from a housing finance company,
-which took months to get. And they've got a document the contractor dropped
-off: a Bill of Quantities. Eighty lines. Sometimes a hundred and fifty. Every
-job in the build, with a quantity and a rate beside it.
+Then it keeps checking the same contract for the rest of the build. A
+construction loan doesn't come out in one go; it comes out in tranches against
+milestones, and each milestone is a moment where somebody says "this stage is
+done, release the money." So the document gets read again at every one of them,
+against photographs of what's actually standing on site.
 
-Somebody's going to sign it tonight, or maybe tomorrow. The contractor's
-waiting.
-
-Here's the thing about that piece of paper, though. It isn't paperwork. It's
-*the contract*. It decides what "branded fittings" turns out to mean six months
-from now. It decides what's included and what gets billed later as an extra.
-And when there's an argument in month seven — and there usually is one — it's
-the only thing anyone can point at.
-
-So it matters enormously. And the person signing it will build exactly one
-house in their life. The person who wrote it has built hundreds.
-
-![The asymmetry](../figures/fig0_problem.png)
-
-*One house against four hundred — and the gap lives in a single document.*
-
-## Why this isn't a story about crooked builders
-
-I want to get that out of the way early, because it's where everyone's mind
-goes, and it's mostly wrong.
-
-Think about your first ever hand of cards against someone who's played four
-hundred. They're not cheating. They don't need to. They just know which way
-things tend to go, and you're finding out as you play.
-
-That's the situation. A contractor who's priced four hundred houses knows what
-RCC actually costs in that neighbourhood this year. They know which line items
-get quietly left out and argued about later. They know how much of the money to
-ask for up front, before there's anything standing on the plot to show for it.
-None of that needs bad intentions. It only needs that one person's done this
-before and the other hasn't.
-
-My favourite example is steel, because it's the one that convinced me this is a
-real problem and not just a feeling.
-
-If someone's overcharging you on steel in an Indian house build, it usually
-isn't the rate. It's the **grade**. Fe 415, Fe 500, Fe 500D — stronger steel
-means a properly designed structure needs fewer kilos of it to do the same job.
-So a line that just says "TMT bars," with no grade written down, has quietly
-left the door open: supply the weaker stuff, more of it, at a rate that looks
-completely fine.
-
-And it *does* look fine. That's what gets me. The owner checks the rate, decides
-it seems about right, and they're correct — the rate was never where the money
-was going.
-
-## The advice is already out there. It just can't get through.
-
-There's no shortage of help. Red-flag checklists, line-by-line walkthroughs,
-free spreadsheet templates, and now thousands of reels and videos made by people
-who genuinely know construction.
-
-It fails in two different ways, and both are worth naming.
-
-The **written** stuff quietly assumes you'll sit down and work through a
-hundred-odd technical lines across a dozen sections, checking each rate against
-local benchmarks you don't have, and spotting the things that *aren't* there —
-which is so much harder than spotting something wrong, because a missing item
-has nothing on the page for your eye to snag on. You can't skim for an absence.
-
-The **videos** don't fail when you watch them. They fail months later. You watch
-a reel about terrace waterproofing in February; the decision turns up on site in
-September with a mason standing there asking whether you want it done now, and
-you can't remember whether it said two coats or three. The knowledge went in. It
-just isn't available in the ninety seconds where it would change anything.
-
-So the knowledge exists, in enormous quantity. It just can't reach the person who
-needs it, in the shape they need it, at the moment they need it. That's the gap.
-
-## What Neev actually does
-
-It reads the document instead. Every line, against what that item really costs in
-*that* neighbourhood, this year.
-
-And then it keeps reading it — which is the part I think matters most. Because a
-construction loan doesn't get handed over in one go. It comes out in tranches
-against milestones: foundation, plinth, slab, brickwork, finishing. Every one of
-those is a moment where somebody says "right, this stage is done, release the
-money." So the same contract can be checked again at every single one.
+Two people use it, over the same numbers: the family building the house, and the
+credit officer funding it.
 
 ![Four checkpoints on one contract](../figures/fig1_lifecycle.png)
 
@@ -129,6 +55,58 @@ money." So the same contract can be checked again at every single one.
 | **At sanction** | Will the approved amount actually finish this house at local rates? Not "does the budget add up", but "does this end with a roof"? |
 | **Through the build** | Do the photos from site show the stage being claimed for payment? Answered while the stage is still happening, not in a report afterwards. |
 | **On every change** | What's this extra worth, against the line that was signed? |
+
+## Why anyone needs this
+
+Picture a kitchen table on a weekday evening. A family with a plot — maybe
+inherited, maybe on the edge of a city that's been growing out toward it for
+twenty years. A sanction letter that took months to get. And a document the
+contractor dropped off: eighty lines, sometimes a hundred and fifty, every job
+in the build with a quantity and a rate beside it.
+
+Somebody signs it tonight. The contractor's waiting.
+
+That paper isn't paperwork — it's *the contract*. It decides what "branded
+fittings" turns out to mean six months from now, what's included and what gets
+billed later as an extra, and when there's an argument in month seven, it's the
+only thing anyone can point at. And the person signing it will build exactly one
+house in their life. The person who wrote it has built hundreds.
+
+![The asymmetry](../figures/fig0_problem.png)
+
+*One house against four hundred — and the gap lives in a single document.*
+
+That's not a story about crooked builders, which is where everyone's mind goes
+first. Think about your first ever hand of cards against someone who's played
+four hundred: they're not cheating, they just know which way things tend to go.
+
+Steel is the example that convinced me it's real. Overcharging on steel usually
+isn't the rate — it's the **grade**. Fe 415, Fe 500, Fe 500D; stronger steel
+means a properly designed structure needs fewer kilos to do the same job. So a
+line that just says "TMT bars," with no grade written down, has quietly left the
+door open: weaker stuff, more of it, at a rate that looks completely fine. And
+it *does* look fine. The owner checks the rate, decides it's about right, and
+they're correct — the rate was never where the money was going.
+
+## Why the advice already out there can't reach them
+
+There's no shortage of help: red-flag checklists, line-by-line walkthroughs,
+spreadsheet templates, and thousands of reels and videos made by people who
+genuinely know construction. It fails in two different ways.
+
+The **written** material assumes you'll work through a hundred-odd technical
+lines, checking each rate against local benchmarks you don't have, and spotting
+the things that *aren't* there — much harder than spotting something wrong,
+because a missing item has nothing on the page for your eye to snag on. You
+can't skim for an absence.
+
+The **videos** don't fail when you watch them. They fail months later. You watch
+a reel about terrace waterproofing in February; the decision turns up on site in
+September with a mason asking whether you want it done now, and you can't
+remember whether it said two coats or three.
+
+So the knowledge exists, in enormous quantity. It just can't reach the person who
+needs it, in the shape they need it, at the moment they need it.
 
 ## The one rule the whole thing follows
 
@@ -146,8 +124,6 @@ lending decision is worse than a blank space, because somebody will act on it.
 
 Honestly, the hardest part of building this wasn't getting five agents to talk.
 It was getting them to stop.
-
----
 
 # 2. Project use case
 
