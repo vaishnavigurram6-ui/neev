@@ -1,82 +1,97 @@
-# Your contractor has priced four hundred houses. You're pricing one.
+# Nobody reads the paper that decides their house
+
+### And honestly? Nobody could.
 
 > **Draft for Medium. Not published.** Q16 on the Patchamomma form asks for a
-> published Medium post and says plainly that it will not affect ranking — so
-> this is optional, and it is here to be pasted, edited in your own voice, and
-> published only if you want to.
+> published Medium post and says plainly it won't affect ranking — so this is
+> optional. It's here to be pasted, edited into your own voice, and published
+> only if you feel like it.
 >
-> Medium does not render pasted Markdown. Two ways in: paste the text and apply
-> Medium's own heading/quote styles as you go, or use *Import a story* if you
-> host this somewhere first. Suggested images, in order: `figures/fig0_problem.png`
-> near the top, `figures/fig1_lifecycle.png` at "Four moments", and
-> `figures/fig3_pipeline.png` at "Five readers". Sub-title suggestion: *"The most
-> important document in an Indian home loan is the one nobody reads."*
+> Medium doesn't render pasted Markdown. Two ways in: paste the text and apply
+> Medium's own heading styles as you go, or use *Import a story* if you host it
+> somewhere first. Images, in order: `figures/fig0_problem.png` near the top,
+> `figures/fig1_lifecycle.png` at "Four moments", `figures/fig3_pipeline.png` at
+> "Five readers".
 
 ---
 
-There is a moment, in a lot of Indian households, that decides more about the
-next two years than anyone in the room realises.
+Picture a kitchen table on a weekday evening.
 
-A family has a plot. Often it was inherited, often it is on the edge of a city
-that has grown out to meet it. They have a sanction letter from a housing
-finance company. And they have a document from a contractor: a Bill of
-Quantities, eighty to a hundred and fifty lines long, listing every activity in
-the build with a quantity and a rate.
+There's a family sitting at it. They've got a plot of land — maybe it came down
+from a grandparent, maybe it's on the edge of a city that's been quietly growing
+out toward it for twenty years. They've got a sanction letter from a housing
+finance company, which took months and a lot of paperwork to get. And they've
+got a document the contractor dropped off: a Bill of Quantities. Eighty lines.
+Sometimes a hundred and fifty. Every job in the build, with a quantity and a
+rate next to it.
 
-Someone signs it. Usually after an evening of looking at it, because the
-contractor is waiting and the monsoon is coming and the money has been
-approved.
+Somebody's going to sign that tonight, or maybe tomorrow. The contractor's
+waiting. The monsoon isn't going to wait either.
 
-That document is not paperwork. It is the contract. It decides what "branded
-fittings" turns out to mean. It decides what is inside the scope and what will
-be billed later as an extra. It is the only thing anyone can point at when there
-is an argument in month seven.
+Here's the thing I don't think most of us realise about that piece of paper.
+It isn't paperwork. It's *the contract*. It's the thing that decides what
+"branded fittings" turns out to mean six months from now. It decides what's
+included and what gets billed later as an extra. And when there's an argument in
+month seven — and there's usually an argument in month seven — it's the only
+thing anyone can point at.
 
-And the person signing it will build **one house in their lifetime.** The person
-who wrote it has built hundreds.
+So it matters enormously. And the person signing it is going to build exactly
+one house in their entire life.
 
-## The asymmetry is not about honesty
+The person who wrote it has built hundreds.
 
-It would be easier if this were a story about bad contractors. It mostly isn't.
+*[INSERT `figures/fig0_problem.png` — the asymmetry]*
 
-It is a story about a document that requires expertise to read, handed to
-someone who has no reason to have that expertise, at the one moment in their
-life when they need it. A contractor who has priced four hundred houses knows
-what a fair rate for RCC is in that locality this year. They know which line
-items are usually left out and argued about later. They know how much of the
-money to ask for before the slab is cast. None of that requires malice. It
-requires only that one side has done this before.
+## This isn't a story about crooked builders
 
-Here is my favourite example, because it is the one that convinced me the
-problem is real rather than theoretical.
+I want to get that out of the way early, because it's where everyone's mind
+goes first, and I think it's mostly wrong.
 
-Steel overcharging in Indian residential construction usually does not happen
-through the rate. It happens through the **grade**. Fe 415, Fe 500, Fe 500D —
-higher grade steel is stronger, so a correctly designed structure needs fewer
-kilograms of it for the same result. A quote that says "TMT bars" with no grade
-named has left itself room to supply a lower grade, in a higher quantity, at a
-rate that looks entirely normal on the page.
+Think about sitting down to your first ever hand of cards against someone who's
+played four hundred. They're not cheating. They don't need to. They just know
+which way things tend to go, and you're finding out as you play.
 
-An owner reading that line sees "TMT bars — 4,200 kg — ₹68/kg" and thinks: that
-rate seems about right. And it is about right. The rate was never the problem.
+That's the situation. A contractor who's priced four hundred houses knows what
+RCC actually costs in that neighbourhood this year. They know which line items
+get quietly left out and argued about later. They know how much of the money to
+ask for up front, before there's anything standing on the plot to show for it.
+None of that requires bad intentions. It only requires that one person has done
+this before and the other hasn't.
 
-You cannot expect someone to catch that. Not once, not under time pressure, not
-in a domain they will encounter exactly once.
+Let me give you my favourite example, because it's the one that convinced me
+this is a real problem and not just a vibe.
 
-## The advice already exists. It just cannot be used.
+Steel. If someone's overcharging you on steel in an Indian house build, it
+usually isn't the rate. It's the *grade*. There's Fe 415, Fe 500, Fe 500D —
+and stronger steel means a properly designed structure needs fewer kilos of it
+to do the same job. So a line that just says "TMT bars," with no grade written
+down, has quietly left the door open: supply the weaker stuff, more of it, at a
+rate that looks completely fine.
 
-There is no shortage of guidance for Indian homeowners. Red-flag checklists.
-Line-by-line walkthrough articles. Free spreadsheet templates. Every one of them
-is well meant and most of them are correct.
+And it does look fine. That's the part that gets me. The owner checks the rate,
+decides it seems about right, and they're *correct* — the rate was never where
+the money was going.
 
-And every one of them assumes the owner will sit down and manually audit a
-hundred-odd technical line items across a dozen sections, checking each rate
-against local benchmarks they do not have, looking for scope that is absent —
-which is much harder than looking for scope that is wrong, because absence has
-nothing on the page to catch your eye.
+You can't reasonably expect anyone to catch that. Not once in a lifetime, not
+with the contractor's van idling outside, not in a subject they'll never need to
+think about again.
 
-The knowledge exists. The person who needs it cannot apply it. That gap is the
-whole problem, and it is a gap that software is unusually well suited to close.
+## The advice is all out there already
+
+And that's the frustrating bit, honestly. Search for this and you'll find plenty
+— red-flag checklists, line-by-line walkthroughs, free spreadsheet templates.
+People have written good, careful stuff about it. Most of it is right.
+
+But look at what every single one of them quietly assumes. That you'll sit down
+and work through a hundred-odd technical lines across a dozen sections. That
+you'll check each rate against local benchmarks, which you don't have. And that
+you'll spot the things that *aren't* there — which is so much harder than
+spotting something wrong, because a missing item has nothing on the page for
+your eye to snag on. You can't skim for an absence.
+
+So the knowledge exists. It just can't reach the person who needs it, at the one
+moment they need it. That's the whole gap — and it happens to be exactly the
+kind of gap software is good at closing.
 
 ## What goes wrong is slow, and then total
 
