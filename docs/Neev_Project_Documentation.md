@@ -65,7 +65,7 @@ figures the deployed service actually produced, all checkable on the live app:
 
 | Finding | Detail |
 |---|---|
-| 14 flags | 3 rate outliers · 3 missing scope · 6 vague specifications |
+| 14 flags | across five types — rate outliers, missing scope, underspecified items, front-loaded payment terms, GST silence |
 | RCC at ₹9,800/cum | against a ₹8,036 Kompally benchmark — **22% over**, with both numbers shown |
 | ₹1,42,654 absent | external plaster and terrace waterproofing aren't in the document at all |
 | 45% due before the slab | ₹12,81,568 before there's meaningful structure |
