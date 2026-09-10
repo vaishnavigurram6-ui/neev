@@ -53,3 +53,8 @@ docs/Neev_Demo_Video_Plan.md
 docs/Neev_Prod_Deploy_Plan.md
 docs/Neev_Two_Week_Plan.md
 docs/Review_Remediation.md
+
+# A shelved alternative deployment (one Cloud Run service, two containers),
+# explored in a parallel session and not adopted: the two-service path is the
+# exercised one. Kept on disk because the analysis is worth more than the code.
+deploy/
