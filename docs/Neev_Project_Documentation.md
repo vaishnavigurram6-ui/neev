@@ -372,7 +372,7 @@ caps are enforced server-side, because the URL is public. And authorization is
 injected per loan, so one borrower reading another's contract gets a 403 and
 only an officer can read the whole book.
 
-**337 automated tests** — 264 backend, 60 offline, 13 frontend — plus typecheck,
+**338 automated tests** — 265 backend, 60 offline, 13 frontend — plus typecheck,
 lint and a production build. Both container images were built and run as a pair
 locally before either was deployed.
 

@@ -34,7 +34,7 @@ src/agents    →  the ADK pipeline, driven by the backend or by `adk web`
 
 - **`src/agents/neev_pipeline/`** — the pipeline above. `adk web` from
   `src/agents/` discovers `neev_pipeline.agent.root_agent`.
-- **`src/backend/`** — FastAPI + SQLAlchemy + SQLite. 23 API paths, 264 tests.
+- **`src/backend/`** — FastAPI + SQLAlchemy + SQLite. 23 API paths, 265 tests.
 - **`src/frontend/`** — Next.js App Router + Tailwind v4. 17 routes, role
   enforcement in `proxy.ts`.
 
@@ -71,7 +71,7 @@ checked yet" — so the core loop works from an empty account.
 
 ```bash
 python3 -m tests.test_offline                             # 60, no venv, no network
-cd src/backend && .venv/bin/python -m pytest tests/ -q    # 264
+cd src/backend && .venv/bin/python -m pytest tests/ -q    # 265
 cd src/frontend && npm run verify                         # typecheck, lint, no-raw-hex, build, 13 tests
 ```
 
