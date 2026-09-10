@@ -93,107 +93,114 @@ So the knowledge exists. It just can't reach the person who needs it, at the one
 moment they need it. That's the whole gap — and it happens to be exactly the
 kind of gap software is good at closing.
 
-## What goes wrong is slow, and then total
+## And it all goes wrong later, which is the cruel part
 
-The failure does not show up at signing. It shows up months later, when nothing
-can be done.
+Nothing bad happens at signing. That's what makes this so hard to care about in
+the moment. The evening you sign, everything's fine. Everyone's optimistic.
+There's a plan.
 
-For the family: the money runs out before the house is habitable. This is worse
-than it sounds, because a half-built structure is worth **less** than the bare
-plot was — clearing it costs money. By the time the shortfall is obvious there
-is no leverage left, no room to re-scope, and they are still paying rent
-somewhere else.
+It shows up months later, when there's nothing to be done about it.
 
-For the lender: money has gone out against work that does not exist, or against
-a budget that was never going to reach completion. If the borrower walks, the
-security is an unfinished building.
+For the family, the money runs out before the house is liveable. And that's
+worse than it sounds — because a half-built structure is worth *less* than the
+empty plot was. Clearing it costs money. So by the time the shortfall is obvious
+there's no leverage left, nothing to renegotiate with, and they're still paying
+rent somewhere else while it sits there.
 
-Both of those trace back to the same document, unread. And it is not a rare
-document — self-construction is a substantial share of affordable-housing
-lending in India. Every one of those loans has a Bill of Quantities that nobody
-audited line by line.
+For the lender, money's gone out against work that isn't there, or against a
+budget that was never going to reach a roof. If the borrower walks away, what's
+left as security is an unfinished building.
 
-## The idea
+Both of those trace back to the same document that nobody read. And this isn't
+some rare edge case — self-construction is a big slice of affordable-housing
+lending in India. Every one of those loans has a Bill of Quantities behind it
+that nobody went through line by line.
 
-So: read the document.
+## So here's the idea: read the thing
 
-Not summarise it. Read it, the way a quantity surveyor who had seen four hundred
-houses would read it — every line, against what that item actually costs in
-*that locality*, this year. Flag the rate that is 22% above benchmark. Flag the
-waterproofing that is missing entirely. Flag "good quality tiles" for having no
-brand and no IS standard. Flag the payment schedule that wants 45% of the money
-before there is any meaningful structure to show for it.
+Not summarise it. Read it — properly, the way someone who'd seen four hundred
+houses would read it. Every line, against what that item actually costs in *that
+neighbourhood*, this year.
 
-Then keep reading it. That is the part I think matters most, and the part that
-makes this more than a document checker.
+Flag the rate sitting 22% above the benchmark. Flag the waterproofing that isn't
+in there at all. Flag "good quality tiles" for naming no brand and no standard.
+Flag the payment schedule that wants 45% of the money before there's anything
+meaningful standing on the plot.
 
-A construction loan is not disbursed once. It goes out in tranches, against
-milestones — foundation, plinth, slab, brickwork, finishing. Each of those is a
-moment where somebody says "this stage is done, release the money." So the same
-contract can be checked again at every one of them: does the site actually look
-like the stage being claimed? Is the money released so far in line with the
-value of what is standing there? And when the contractor comes back with an
-extra — as they will — what is it worth against the line that was originally
-signed?
+And then — this is the part I think actually matters — keep reading it.
 
-## Four moments, one contract
+Because a construction loan doesn't get handed over in one go. It comes out in
+tranches, against milestones: foundation, plinth, slab, brickwork, finishing.
+Every one of those is a moment where somebody says "right, this stage is done,
+release the money." Which means the same contract can be checked again at every
+single one of them. Does the site actually look like the stage being claimed? Is
+the money that's gone out so far in line with what's genuinely standing there?
+And when the contractor comes back with an extra — because they will — what's it
+worth against the line that was signed in the first place?
 
-That gives four points where the same document is worth reading, and they are
-not the same question:
+*[INSERT `figures/fig1_lifecycle.png` — four checkpoints on one contract]*
 
-- **Before signing** — what in here is inflated, missing, or vague enough to be
-  argued about later?
+## Four moments, same piece of paper
+
+Four places worth reading it, and they're not the same question:
+
+- **Before signing** — what in here is inflated, missing, or vague enough to
+  become an argument later?
 - **At sanction** — will the approved amount actually finish this house at local
-  rates? Not "is the budget internally consistent", but "does this end with a
-  roof".
-- **Through the build** — do the photographs from site show the stage being
-  claimed for payment?
-- **On every change** — what is this extra worth, measured against what was
-  agreed?
+  rates? Not "does the budget add up", but "does this end with a roof"?
+- **Through the build** — do the photos from site show the stage being claimed
+  for payment?
+- **On every change** — what's this extra worth, against what was agreed?
 
-## Five readers, and one rule
+## Five readers, and one stubborn rule
 
-Under the hood this is five specialised agents in sequence, each handing its
-findings to the next: one that prices the quote line by line, one that prices
-what is *absent* and asks whether the sanction actually finishes the house, one
-that looks at site photographs and decides what stage they show, one that turns
-that into a release-or-hold judgement, and one that writes the finding twice —
-once for the family, once for the credit officer.
+Under the hood it's five agents in a row, each handing what it found to the next
+one. One prices the quote line by line. One prices what's *missing* and works out
+whether the sanction actually finishes the house. One looks at site photos and
+decides what stage they show. One turns all that into a release-or-hold call.
+And the last one writes the finding twice — once for the family, once for the
+credit officer.
 
-But the design decision I would defend hardest is not about the agents. It is a
-rule about restraint:
+*[INSERT `figures/fig3_pipeline.png` — the five-agent pipeline]*
 
-> **Every number has to come from somewhere checkable, and where there is
+But the decision I'd defend hardest isn't about the agents at all. It's a rule
+about shutting up:
+
+> **Every number has to come from somewhere you can check. And where there's
 > nothing to check, the system says nothing.**
 
-An item with no benchmark is withheld, not estimated. A photograph the inspector
-cannot read produces no measurement, and therefore no figure derived from a
-measurement. Provisional data says on screen that it is provisional.
+An item with no benchmark gets withheld, not estimated. A photo the inspector
+can't read produces no measurement — and therefore no number that depends on a
+measurement. Data that's still provisional says so, on the screen, where you
+can see it.
 
-This is not modesty for its own sake. It is the difference between a tool a
-credit officer can use and one they cannot. A confident wrong number in a
-lending decision is worse than a blank, because someone will act on it. The
-hardest engineering in this project was not getting the agents to speak — it was
-getting them to stop.
+That's not modesty for its own sake. It's the whole difference between something
+a credit officer can use and something they can't. A confident wrong number in a
+lending decision is worse than a blank space, because somebody will act on it.
+
+Honestly, the hardest part of building this wasn't getting five agents to talk.
+It was getting them to stop.
 
 ## Both sides of the table
 
-One last thing, and it is the reason the product has two faces rather than one.
+One last thing, and it's the reason this has two faces instead of one.
 
-The disputes this is meant to prevent are disputes about what was agreed. That
-means it is not enough for the borrower to have a good reading of the contract,
-or for the lender to have one. They have to be looking at the *same* reading.
+The arguments this is meant to head off are arguments about *what was agreed*.
+So it's not enough for the family to have a good reading of the contract. It's
+not enough for the lender to have one either. They both need to be looking at
+the same reading.
 
-So the borrower sees their contract read line by line, in plain language, with a
-note they can send their contractor themselves — because the point is that they
-negotiate, not that software negotiates for them. And the lender sees the same
-findings, plus their whole book ranked by exposure, plus the site photographs
-next to the milestone that was claimed.
+So the family sees their contract gone through line by line, in plain language,
+with a note they can send the contractor themselves. That last bit's deliberate
+— the point is that *they* negotiate, not that some software negotiates on their
+behalf. And the lender sees the same findings, plus their whole book sorted by
+exposure, plus the site photos sitting right next to the milestone that was
+claimed.
 
-One document. One set of numbers. Two people who can now have a specific
+One document. One set of numbers. Two people who can finally have a specific
 conversation instead of a vague one.
 
 ---
 
-*Neev — नींव — is the Hindi word for the foundation of a building. It is the
-first thing that gets built, and the first thing worth verifying.*
+*Neev — नींव — is the Hindi word for the foundation of a building. It's the first
+thing that gets built. Felt like the right thing to name it after.*
