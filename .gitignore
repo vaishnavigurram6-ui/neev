@@ -64,3 +64,10 @@ deploy/
 # repo. Ignored so a `git add -A` cannot sweep it in -- which is exactly how
 # deploy/ got committed by mistake.
 Claude outputs/
+
+# Source art, not shipped. The landing hero ships as the derived 153KB
+# src/frontend/public/marketing/hero-family.jpg -- that README already said this
+# 7.5MB source was out of git, and now it is. fig5_storyboard went orphaned when
+# the demo plan doc did. Both still on disk.
+figures/landing image.png
+figures/fig5_storyboard.png
