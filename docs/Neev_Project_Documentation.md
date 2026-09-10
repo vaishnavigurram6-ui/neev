@@ -152,6 +152,15 @@ switches, and authorization is injected per loan, so one borrower reading
 another's contract gets a 403. **338 tests** — 265 backend, 60 offline, 13
 frontend — plus typecheck, lint and a production build.
 
+And the accuracy claim is measurable, not asserted. `fixtures/synthetic/` holds
+40 generated quotes whose defects are known because the generator planted them,
+so `src/agents/.venv/bin/python scripts/synthetic_boqs.py score` grades the
+grounding tools against ground truth — no model, no cost, half a minute. Today:
+**100% recall and precision** on rate outliers, absent scope, front-loading and
+GST silence, over a benchmark table that priced 826 of 866 items. The rest are
+wordings nobody wrote a rate for, and that gap is exactly what gets withheld
+rather than passed as clean.
+
 ---
 
 # 4. Where it stands
