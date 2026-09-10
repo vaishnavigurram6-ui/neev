@@ -37,10 +37,6 @@ extra, and it's the only thing anyone can point at when there's an argument in
 month seven. The person signing it will build **one house in their life**. The
 person who wrote it has built hundreds.
 
-![One house against four hundred](../figures/fig0_problem.png)
-
-*The asymmetry the product exists to close.*
-
 **It isn't a story about dishonesty.** A contractor who's priced four hundred
 houses knows what RCC costs in that locality this year, which items get left out
 and argued about later, and how much to ask for before the slab is cast. Steel
@@ -57,10 +53,6 @@ don't have, hunting for scope that's *absent*, which is harder than finding
 scope that's wrong. So Neev reads the document instead, and keeps reading it:
 a construction loan is disbursed in tranches against milestones, and each one is
 a moment where somebody claims a stage is done.
-
-![Four checkpoints on one contract](../figures/fig1_lifecycle.png)
-
-*Four checkpoints on one contract, from signing to finishing.*
 
 | Checkpoint | The question answered |
 |---|---|
