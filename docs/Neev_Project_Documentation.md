@@ -349,34 +349,69 @@ environment variables, no code change.
 | `loan_history` | LTV → default-rate bands | Kaggle Loan_Default, 148,670 mortgages. Used **only** as a lookup prior, never trained on — the dataset has fatal target leakage | `disbursal_risk` |
 | `draw_schedule` | 40 tranches · 10 loans | Synthetic. There's no public dataset of bank disbursement ladders anywhere | `disbursal_risk` |
 
-## 3.5 The fixture seam
+## 3.5 Recorded runs, and the guardrails around them
 
-One interface, `PipelineRunner`, with two implementations behind it: a live
-runner that calls Vertex, and a fixture runner that replays a recorded run.
-`NEEV_MODE` picks, and it's read in exactly one place — there's a test that fails
-if a second reader appears.
+Two things worth naming, because both are the kind of claim a reader should be
+able to check rather than take on trust.
 
-The ten seeded loans are **real recorded runs**, not mockups. They were captured
-through `scripts/record_golden_run.py` and validated against the same schemas a
-live run has to emit, which is what stops a recording and a live run from
-drifting apart. The raw ADK session state for each one is committed, saved
-*before* parsing, so a capture can be re-parsed later at no cost.
+**The ten seeded loans are real recorded runs, not mockups.** There's one
+interface, `PipelineRunner`, with a live runner that calls Vertex and a fixture
+runner that replays a capture; `NEEV_MODE` picks, and it's read in exactly one
+place, with a test that fails if a second reader appears. The captures went
+through `scripts/record_golden_run.py` and are validated against the same
+schemas a live run has to emit — which is what stops a recording and a live run
+from drifting apart. The raw ADK session state for each is committed, saved
+*before* parsing.
 
-## 3.6 The guardrails
-
-| Concern | How it's handled |
-|---|---|
-| Tests must never bill | An autouse fixture blocks outbound sockets; 60 offline tests run with no credentials at all |
-| A stray live mode | `NEEV_MODE=live` also needs `NEEV_ALLOW_BILLED_CALLS=1`, and an unrecognised mode falls back to fixture |
-| A public URL spending money | Per-loan and per-service daily analysis caps, enforced server-side |
-| API drift | A checked-in OpenAPI contract fails the suite if the API changes without being regenerated |
-| A two-minute analysis looking stalled | Server-sent phase events with a 15-second heartbeat |
-| Cross-borrower access | Authorization is injected per loan — one borrower reading another's contract gets 403, and only an officer can read the book |
-| Uploads | 10 MB cap, PDF envelope validation, image decode-and-verify, decompression-bomb guard; evidence served only through an authorizing endpoint |
+**And nothing in the test suite can spend money.** An autouse fixture blocks
+outbound sockets, and 60 of the tests run with no credentials at all. Live mode
+needs two separate switches — `NEEV_MODE=live` *and*
+`NEEV_ALLOW_BILLED_CALLS=1` — and an unrecognised mode falls back to fixture
+rather than guessing. On the deployed service, per-loan and per-day analysis
+caps are enforced server-side, because the URL is public. And authorization is
+injected per loan, so one borrower reading another's contract gets a 403 and
+only an officer can read the whole book.
 
 **337 automated tests** — 264 backend, 60 offline, 13 frontend — plus typecheck,
 lint and a production build. Both container images were built and run as a pair
-locally before either of them was deployed.
+locally before either was deployed.
+
+## 3.6 What it costs to run
+
+Every figure here is measured from this project, not estimated.
+
+| What | Cost | Notes |
+|---|---|---|
+| One full BoQ analysis | **₹3.81** | Five agents, ~342k input tokens, about two minutes |
+| One milestone check | **₹1.50** | Two agents, about 35 seconds |
+| Warm backend, 14 days | **₹740** | `--min-instances 1` at 1 vCPU / 2 GiB, free tier applied |
+| Frontend | **~₹0** | `--min-instances 0`; a Next standalone server boots in a second or two |
+| BigQuery | **₹0** | The benchmark tables are kilobytes — well inside the free tier |
+| One deploy | **₹1–3** | Cloud Build machine-minutes. There's no per-deploy charge |
+
+A full analysis used to cost **₹26.08**. Most of that was a BigQuery pattern
+that billed the 10 MB minimum per lookup rather than the data it read; batching
+the benchmark queries took it to ₹3.81 — 85% less — and that is the version
+running now.
+
+The standing cost is the interesting one. `--min-instances 1` looks extravagant
+for a demo, but Cloud Run bills an idle minimum instance on a different SKU from
+an active one — ₹0.000238862 per vCPU-second against ₹0.00229308, roughly ten
+times less. Two weeks of a warm backend is about ₹740. With the ADK pipeline in
+the image, a cold start costs 15–30 seconds of blank screen, so ₹740 buys a
+judge not watching a spinner.
+
+The caps put a ceiling on the worst case: 12 analyses per loan per day and 60
+across the service, so the most the deployed app can spend on agents in a day is
+about **₹229**. That matters because the service is
+`--allow-unauthenticated` — the caps are the only thing between a crawler and
+the billing account.
+
+There's no upkeep cost beyond that, and it's worth saying why: **nothing here is
+trained.** No fine-tuning, no embeddings to refresh, no model to retrain as
+rates move. The benchmarks are a BigQuery table, so keeping the pricing current
+is a CSV reload, not a training run — which is also what makes it plausible to
+extend to a second city.
 
 ---
 
