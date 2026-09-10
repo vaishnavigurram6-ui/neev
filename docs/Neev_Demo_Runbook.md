@@ -7,7 +7,7 @@ so nothing can bill even by accident.*
 
 ## Start it
 
-**Safety update (2026-09-08):** see [Review remediation](Review_Remediation.md).
+**Safety update (2026-09-08):** the guardrails are described in [the project documentation](Neev_Project_Documentation.md) §3.5.
 The dev script explicitly enables sandbox login; direct backend starts need
 NEEV_DEMO_AUTH=true. Uploaded documents are retained, but fixture mode replays
 the sample rather than analyzing the upload. Rates are provisional, not verified

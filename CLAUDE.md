@@ -21,12 +21,12 @@ What that changes, and what it does not:
 
 | Operation | Status |
 |---|---|
-| Gemini completions and vision, `adk web`, `scripts/golden_run.py`, `record_golden_run.py` | **Permitted.** Each full pipeline run costs about ₹3.81 — see `docs/Neev_Two_Week_Plan.md`. Say what a run will cost before making it, and do not run the pipeline in a loop without asking. |
+| Gemini completions and vision, `adk web`, `scripts/golden_run.py`, `record_golden_run.py` | **Permitted.** Each full pipeline run costs about ₹3.81 — see `docs/Neev_Project_Documentation.md` §3.6. Say what a run will cost before making it, and do not run the pipeline in a loop without asking. |
 | **A pipeline run on the API-key path** (`NEEV_GENAI_BACKEND=apikey`, or any route run with `GOOGLE_API_KEY` exported and `GOOGLE_GENAI_USE_VERTEXAI` unset — which is how `adk web` and a bare `record_golden_run.py` behave, though the latter takes either) | **Budget it like a scarce resource, because it is.** AI Studio's free tier allows 20 `generateContent` requests per day *per model*, and one analysis is five agents plus tool round-trips — roughly **two analyses a day**. Spending them on a debugging loop leaves none for a demo. Check `https://ai.dev/rate-limit` before running, and prefer `--from-raw` replay (free) for anything that is not specifically testing the live path. |
 | **A pipeline run on the Vertex path** (`GOOGLE_GENAI_USE_VERTEXAI=true` — what `scripts/dev.sh` sets for `NEEV_MODE=live`, and what a deployment uses) | **No 20/day wall. This is the default and the one to use.** Vertex bills the project's Cloud Billing account, where the hackathon credits are, so the bound is credit (~₹3.81 a check) and the app's own caps — `NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY` (12) and `NEEV_MAX_ANALYSES_PER_DAY` (60), read under the `NEEV_` prefix in `app/core/settings.py` and enforced in `app/api/routes/boq.py`, locally as well as on a deployment. Do not quote the two-a-day figure at this path; it is the row above. |
 | BigQuery reads and `bq load` on this project's own tables | **Permitted.** Kilobytes, inside the free tier. |
 | `gcloud` read-only and metadata commands | **Permitted.** |
-| **`gcloud run deploy`** | **STILL GATED. The owner approves every one.** Two free deploys existed for this hackathon and `scripts/deploy_cloudrun.sh` spends both in a single invocation (backend, then frontend). A third costs money. Never run it unasked. |
+| **`gcloud run deploy`** | **STILL GATED. The owner approves every one.** Both deploys are SPENT as of 2026-09-10: `neev-api` and `neev-web` are live in `asia-south1`, deployed separately so a live analysis could be verified between them. The two-deploy limit is the **organiser's rule**, not a GCP charge — Cloud Build bills machine-minutes and there is no per-deploy SKU, so a redeploy costs ₹1–3. That does not make it free to do: ask first, every time. |
 | Anything that deletes or rewrites cloud state — `bq rm`, dropping a dataset, deleting a service | **GATED.** Ask first. Reversibility is the test, not cost. |
 
 ### Rules
@@ -102,7 +102,13 @@ Frontend uses `npm`.
 - `design_handoff_neev/` — 16 hi-fi screen prototypes plus a build-notes README
 - `fixtures/` — golden-case data: loan 1001 (Ravi, flagged) and 1002 (clean)
 - `tests/test_offline.py` — 28 checks, no credentials, no network, ~0.002s
-- `docs/Neev_Demo_Runbook.md` — how to run and narrate the demo; start here
+- `docs/Neev_Project_Documentation.md` — what Neev is, who uses it, how it works
+  and what a run costs; the submission's own documentation, and the best single
+  read. `docs/Neev_Demo_Runbook.md` is how to run and narrate the demo.
+- Six working docs are **on disk but deliberately untracked** (see `.gitignore`):
+  the form answers, the blog draft, the video shot list, the deploy plan, the
+  two-week plan and the review log. None of them describe the product, and the
+  repository is a submission artefact now.
 - `scripts/dev.sh` — starts both servers, seeded, in fixture mode
 
 ## Two books, and signup — built 2026-09-10

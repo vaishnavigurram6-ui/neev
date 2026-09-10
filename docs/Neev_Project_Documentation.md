@@ -428,26 +428,42 @@ extend to a second city.
 
 ---
 
-# 5. What isn't built, honestly
+# 5. Where it stands, and what would take it further
 
-Saying it here rather than leaving it for a reviewer to find.
+Four things aren't finished. Each one has a specific next step rather than a
+vague intention, and none of them is load-bearing for what the app does today.
 
-- **The benchmark rates are provisional.** They're CPWD DSR 2023-derived and
-  Hyderabad-factored, but not independently verified line by line. The
-  `verified` column says so, and so do the screens.
-- **The database is deliberately disposable, and that has a cost.** SQLite sits
-  on the Cloud Run instance disk and gets re-seeded from the repository on every
-  cold start. That's on purpose: it's why every visitor opens the same ten loans
-  and the same 126 flags, and why the demo can't drift. The cost is that
-  anything *you* create — a signup, a decision, an upload — lasts only as long
-  as that instance does. Real durability is a connection-string change to Cloud
-  SQL; the ORM means not one query would have to move.
-- **There's no identity verification.** Signing in is a username and a password,
-  not a KYC'd identity. The seam for a real provider is one endpoint that every
-  screen already reads its identity from.
-- **Nothing is trained.** The LTV bands are a lookup prior taken from a public
-  dataset that must never be fit, because it has fatal target leakage. We took
-  the bands and left the dataset alone.
-- **Hindi, Telugu and read-aloud aren't built.** The interface says "coming"
-  rather than pretending they work.
+- **The benchmark rates need verifying.** They're CPWD DSR 2023-derived and
+  Hyderabad-factored, which is a defensible starting point but not an audited
+  one — and the `verified` column in the data says so, as do the screens. The
+  work is a line-by-line check against the published DSR, and it's a
+  spreadsheet afternoon rather than an engineering problem. Nothing else has to
+  change: the benchmarks are a BigQuery table, so better numbers are a reload.
+- **Durability is one connection string away.** SQLite on the instance disk is
+  what makes the demo reproducible — every visitor opens the same ten loans —
+  but it means what a visitor creates lives as long as the instance. Pointing
+  `DATABASE_URL` at Cloud SQL fixes it, and because everything goes through the
+  ORM, not one query would have to move.
+- **Identity is a username and a password.** Fine for a demo, not for money.
+  Every screen already reads who it's talking to from a single endpoint, so an
+  actual provider drops in behind that seam without a screen changing.
+- **It's English only for now.** The interface says "coming" for Hindi, Telugu
+  and read-aloud rather than pretending otherwise — which matters more than
+  usual here, because the people this is for are not, mostly, reading their
+  contract in English. That's the first thing worth building next.
 
+## What's actually there
+
+A borrower can upload a contractor's quote and get it read line by line against
+local rates, with every flag naming the number it was measured against, and a
+note they can send the contractor themselves. A credit officer can open their
+whole book ranked by exposure, and for any disbursement see the site
+photographs beside the milestone that was claimed, the arithmetic, and a
+recommendation with its reasons. Both of them are reading the same document.
+
+That's running now, on live agents, at
+[neev-web-516665930454.asia-south1.run.app](https://neev-web-516665930454.asia-south1.run.app)
+— and every number on this page can be checked against it.
+
+*Neev — नींव. The first thing that gets built, and the first thing worth
+checking.*

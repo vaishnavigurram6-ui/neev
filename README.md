@@ -135,10 +135,11 @@ keep the name, but no visitor reads either.
   (capture a live run into the fixture schema), `golden_run.py`,
   `verify_against_bigquery.py`
 - `tests/` — offline suite, no GCP creds needed
-- `docs/` — `Neev_Demo_Runbook.md` (start here to demo),
-  `Neev_Idea_Submission.md` (the pitch), `Neev_Setup_Guide.md`,
-  `Neev_Prod_Deploy_Plan.md`, `Neev_Two_Week_Plan.md` (cost arithmetic),
-  `Neev_Demo_Video_Plan.md`, `Neev_Data_Inventory.md`, `Review_Remediation.md`
+- `docs/` — `Neev_Project_Documentation.md` (what it is, who uses it, how it
+  works, what it costs — start here), `Neev_Demo_Runbook.md` (how to demo it,
+  and the accounts), `Neev_Setup_Guide.md` (zero to running),
+  `Neev_Idea_Submission.md` (the pitch), `Neev_Data_Inventory.md` (where every
+  table came from)
 - `design_handoff_neev/` — the 16 hi-fi screen prototypes the frontend implements
 - `figures/` — pitch diagrams and the landing hero
 

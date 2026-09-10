@@ -43,3 +43,13 @@ artifacts/
 # and a judge get the documents without installing reportlab. Safe to track
 # because scripts/synthetic_boqs.py sets rl_config.invariant, which fixes the
 # CreationDate and document id -- regenerating produces identical bytes.
+
+# Working notes kept out of the submitted repository. All still on disk; none of
+# them describe the product, and two of them (the form answers and the blog
+# draft) are drafts of things that are not ours to publish from here.
+docs/Neev_Submission_Form_Answers.md
+docs/Neev_Blog_Draft.md
+docs/Neev_Demo_Video_Plan.md
+docs/Neev_Prod_Deploy_Plan.md
+docs/Neev_Two_Week_Plan.md
+docs/Review_Remediation.md

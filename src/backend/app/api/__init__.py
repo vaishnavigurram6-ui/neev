@@ -10,5 +10,5 @@ Two rules hold across every module here:
 
 Private APIs require signed sessions, role checks and owner/loan checks.
 Demo sign-in is disabled unless NEEV_DEMO_AUTH=true; it is not a real identity
-provider. See docs/Review_Remediation.md for production deployment gates.
+provider. See docs/Neev_Project_Documentation.md section 3.5 for the guardrails.
 """

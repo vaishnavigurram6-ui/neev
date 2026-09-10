@@ -1,0 +1,107 @@
+# Neev as ONE Cloud Run service, both halves inside it.
+#
+# Why this exists: the hackathon allows a limited number of deploys, and
+# `scripts/deploy_cloudrun.sh` spends two -- `neev-api` then `neev-web`. Every
+# call the frontend makes is already server-to-server (lib/api.ts is
+# `server-only`, login is a server action, photos are proxied through a Next
+# route handler), so the backend never needed a public address. Once it does
+# not, it can be a sidecar on loopback and the pair is one service.
+#
+# What this does NOT fix: SQLite. It still lives on the instance's disk, so
+# maxScale stays 1 for exactly the reason it always did -- two instances would
+# be two divergent books, however many containers each instance holds. If
+# anything this is a small step back, because the frontend could previously
+# scale past one instance on its own and now cannot.
+#
+# Two costs to weigh against the saved deploy. Multi-container cannot use
+# `gcloud run deploy --source`, so both images must be built and pushed first
+# and this file maintained by hand; and resources are summed per INSTANCE, so
+# the warm instance goes from 1 CPU / 2Gi to 2 CPU / 3Gi -- roughly double the
+# standing cost of ~Rs 740 a fortnight.
+#
+# Not applied by any script in this repo. `gcloud run services replace` is a
+# deploy, and CLAUDE.md keeps those in the owner's hands.
+#
+#   deploy/render-service.sh | gcloud run services replace - --region asia-south1
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: neev
+  labels:
+    cloud.googleapis.com/location: ${REGION}
+spec:
+  template:
+    metadata:
+      annotations:
+        # One instance, always warm. maxScale is the SQLite correctness bound
+        # described above; minScale buys away a cold start that pays for an ADK
+        # import plus a reseed, which is 15-30s of blank screen otherwise.
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "1"
+        # Start `api` first and wait for its startup probe. Without this the
+        # frontend can serve a request before the backend is listening, and the
+        # first page a judge loads is the one that says it cannot reach the
+        # backend.
+        run.googleapis.com/container-dependencies: '{"web":["api"]}'
+    spec:
+      # A live analysis runs ~107s and the SSE stream is held open for all of
+      # it, so the service timeout has to outlast the pipeline, not the page.
+      timeoutSeconds: 600
+      containerConcurrency: 80
+      containers:
+        # --- ingress: the only container with a port ------------------------
+        - name: web
+          image: ${WEB_IMAGE}
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            - name: NEEV_API_BASE
+              value: "http://127.0.0.1:8000"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+        # --- sidecar: reachable on loopback, never from the internet --------
+        - name: api
+          image: ${API_IMAGE}
+          env:
+            # Cloud Run injects PORT only into the ingress container, so the
+            # sidecar is told explicitly. docker-entrypoint.sh already honours
+            # it, which is why neither Dockerfile changes for this layout.
+            - name: PORT
+              value: "8000"
+            - name: NEEV_MODE
+              value: "${MODE}"
+            - name: NEEV_DEMO_AUTH
+              value: "true"
+            - name: NEEV_SESSION_SECRET
+              value: "${SESSION_SECRET}"
+            - name: GOOGLE_CLOUD_PROJECT
+              value: "${PROJECT}"
+            - name: NEEV_GEMINI_MODEL
+              value: "${GEMINI_MODEL}"
+            - name: NEEV_DEMO_PASSWORD
+              value: "${DEMO_PASSWORD}"
+            # The public URL accepts any ten-digit number as a sign-in, and in
+            # live mode every upload spends about Rs 3.81. These are what stand
+            # between a crawler and the billing account.
+            - name: NEEV_MAX_ANALYSES_PER_LOAN_PER_DAY
+              value: "${MAX_PER_LOAN}"
+            - name: NEEV_MAX_ANALYSES_PER_DAY
+              value: "${MAX_PER_DAY}"
+${LIVE_ENV}
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            failureThreshold: 40
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+  traffic:
+    - percent: 100
+      latestRevision: true
